@@ -52,8 +52,8 @@ const userSchema = new mongoose.Schema(
     {
       type: String,
       trim: true,
-      enum: ["CSE", "CIVIL", "IT", "MECHANICAL", "ELECTRICAL", "ELECTRONICS"],
-      required: [true, "Department is required"],
+      default: null,
+      
     },
 
     experties:
