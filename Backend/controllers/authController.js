@@ -61,9 +61,23 @@ export const login = asyncHandler(async (req, res, next) =>
 
 });
 
+//create logout function
+export const logout = asyncHandler(async (req, res, next) =>
+{
+    res.status(200).cookie("token", "",
+    {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+    }).json({
+        success: true,
+        message: "User logged out successfully"
+    });
+
+});
+
 
 export const getUser = asyncHandler(async (req, res, next) =>{});
-export const logout = asyncHandler(async (req, res, next) =>{});
+
 export const forgotPassword = asyncHandler(async (req, res, next) =>{});
 export const resetPassword = asyncHandler(async (req, res, next) =>{});
 
