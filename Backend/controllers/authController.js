@@ -1,5 +1,5 @@
 
-import { asyncHandler } from "../middlewares/asyncHandeler.js"
+import { asyncHandler } from "../middlewares/asyncHandler.js"
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/user.js";
 import { generateToken } from "../utils/generateToken.js";
