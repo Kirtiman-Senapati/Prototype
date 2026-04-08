@@ -64,8 +64,8 @@ const userSchema = new mongoose.Schema(
 
     maxStudents:
     {
-      type: [Number],
-      default: [5],
+      type: Number,
+      default: 5,
       min: [1, "Min students must be at least 1"],
     },
 
@@ -101,7 +101,7 @@ const userSchema = new mongoose.Schema(
 
 
 // Encrypt password before saving
-userSchema.pre("save", async function (next)
+userSchema.pre("save", async function(next)
 {
   if (!this.isModified("password"))
   {
