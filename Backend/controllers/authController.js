@@ -89,7 +89,34 @@ export const getUser = asyncHandler(async (req, res, next) =>
 
 });
 
-export const forgotPassword = asyncHandler(async (req, res, next) =>{});
+
+//forgot password  functions
+
+export const forgotPassword = asyncHandler(async (req, res, next) =>
+
+{
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user)
+    {
+        return next(new ErrorHandler("User not found with this email", 404));
+    }
+    
+    const resetToken = user.getResetPasswordToken();
+
+    await user.save({ validateBeforeSave: false });
+
+    // Create reset password URL
+    const resetPasswordUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    // Simulate sending email template that shows the reset password URL
+
+    const message = `You requested a password reset. Please click on the following link to reset your password: \n\n ${resetPasswordUrl} \n\n If you did not request this, please ignore this email.`;
+    
+    // Here you would typically send the email using a service like Nodemailer
+    // For now, we'll just log the message
+    console.log(message);
+});
 export const resetPassword = asyncHandler(async (req, res, next) =>{});
 
 
