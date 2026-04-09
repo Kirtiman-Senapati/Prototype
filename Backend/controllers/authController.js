@@ -133,9 +133,11 @@ export const forgotPassword = asyncHandler(async (req, res, next) =>
 
     catch (error)
     {
-        console.log("REAL EMAIL ERROR:", error);
+        console.log("REAL EMAIL ERROR:", error); //for debugging purposes, log the real error from the email service
+        
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
+
         await user.save({ validateBeforeSave: false });
 
         return next(new ErrorHandler(error.message||"Failed to send email. Please try again later.", 500));
@@ -145,7 +147,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) =>
 //reset password function
 export const resetPassword = asyncHandler(async (req, res, next) =>
     {
-        console.log("Is next a function?", typeof next);console.log("Is next a function?", typeof next);
+        console.log("Is next a function?", typeof next); // Debugging line to check if next is a function
         const { token } = req.params;
         const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
 

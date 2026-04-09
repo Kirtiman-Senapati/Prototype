@@ -10,7 +10,7 @@ class ErrorHandler extends Error
 
 export const errorMiddleware = (err, req, res, next) => 
 {
-    console.log("Error Middleware Invoked:", err);
+    console.log("Error Middleware Invoked:", err);// Log the error for debugging purposes
     err.message = err.message || "Internal Server Error";
     err.statusCode = err.statusCode || 500;
 
