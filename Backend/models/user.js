@@ -106,7 +106,7 @@ userSchema.pre("save", async function (next)
   if (!this.isModified("password"))
   {
     console.log("Password not modified, skipping hashing.,",typeof next);
-    // next(); //this line is intentionally commented out because it shows errors in reset password and forgot password functions, but the functions work fine without it. It seems that in some cases, calling next() here might cause issues with the flow of the reset password and forgot password function 
+    //next(); this line is intentionally commented out because it shows errors in reset password and forgot password functions, but the functions work fine without it. It seems that in some cases, calling next() here might cause issues with the flow of the reset password and forgot password function 
     return;
   }
 

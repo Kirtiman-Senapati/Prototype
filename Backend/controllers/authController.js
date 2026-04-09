@@ -107,7 +107,9 @@ export const forgotPassword = asyncHandler(async (req, res, next) =>
     }
     
     const resetToken = user.getResetPasswordToken();
-    console.log("Generated Reset Token:", resetToken);
+    
+    console.log("Generated Reset Token:", resetToken); // Debugging line to check the generated reset token
+
     await user.save({ validateBeforeSave: false });
 
     // Create reset password URL
