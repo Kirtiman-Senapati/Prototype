@@ -3,6 +3,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.js"
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/user.js";
 import { generateToken } from "../utils/generateToken.js";
+import { generateResetPasswordEmailTemplate } from "../utils/emailTemplate.js";
 
 //REGISTER USER
 export const registerUser = asyncHandler(async (req, res, next) =>
@@ -111,11 +112,29 @@ export const forgotPassword = asyncHandler(async (req, res, next) =>
 
     // Simulate sending email template that shows the reset password URL
 
-    const message = `You requested a password reset. Please click on the following link to reset your password: \n\n ${resetPasswordUrl} \n\n If you did not request this, please ignore this email.`;
-    
-    // Here you would typically send the email using a service like Nodemailer
-    // For now, we'll just log the message
-    console.log(message);
+    const message = generateResetPasswordEmailTemplate(resetPasswordUrl);
+
+    try
+    {
+        await sendEmail({
+            to: user.email,
+            subject: "Academic Project Monitoring System - Password Reset Request",
+            html: message,
+        });
+
+        res.status(200).json({
+            success: true,
+            message: `Password reset email sent to ${user.email}`,
+        });
+    }
+
+    catch (error)
+    {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save({ validateBeforeSave: false });
+        return next(new ErrorHandler(error.message||"Failed to send email. Please try again later.", 500));
+    }
 });
 export const resetPassword = asyncHandler(async (req, res, next) =>{});
 

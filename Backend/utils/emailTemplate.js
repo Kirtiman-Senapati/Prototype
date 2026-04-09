@@ -92,7 +92,7 @@ export const generateResetPasswordEmailTemplate = (resetPasswordUrl) =>
         
         <!-- Header -->
         <div class="email-header">
-          <h1>Password Reset Request</h1>
+          <h1>Academic Project Monitoring System - Password Reset Request</h1>
         </div>
 
         <!-- Body -->
