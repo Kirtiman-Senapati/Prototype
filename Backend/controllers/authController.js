@@ -4,6 +4,8 @@ import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/user.js";
 import { generateToken } from "../utils/generateToken.js";
 import { generateResetPasswordEmailTemplate } from "../utils/emailTemplate.js";
+import { sendEmail } from "../services/emailService.js";
+import crypto from "crypto";
 
 //REGISTER USER
 export const registerUser = asyncHandler(async (req, res, next) =>
@@ -124,18 +126,53 @@ export const forgotPassword = asyncHandler(async (req, res, next) =>
 
         res.status(200).json({
             success: true,
-            message: `Password reset email sent to ${user.email}`,
+            message: `Password reset email sent to ${user.email} successfully`,
         });
     }
 
     catch (error)
     {
+        console.log("REAL EMAIL ERROR:", error);
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
         await user.save({ validateBeforeSave: false });
+
         return next(new ErrorHandler(error.message||"Failed to send email. Please try again later.", 500));
     }
 });
-export const resetPassword = asyncHandler(async (req, res, next) =>{});
+
+//reset password function
+export const resetPassword = asyncHandler(async (req, res, next) =>
+    {
+        console.log("Is next a function?", typeof next);console.log("Is next a function?", typeof next);
+        const { token } = req.params;
+        const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
+
+        const user = await User.findOne({ resetPasswordToken, resetPasswordExpire: { $gt: Date.now() } });
+
+        if (!user)
+        {
+            return next(new ErrorHandler("Invalid or expired password reset token", 400));
+        }
+
+        if (!req.body.password || !req.body.confirmPassword)
+        {
+            return next(new ErrorHandler("Please provide both password and confirm password", 400));
+        }
+
+        if (req.body.password !== req.body.confirmPassword)
+        {
+            return next(new ErrorHandler("Passwords do not match", 400));
+        }
+
+        user.password = req.body.password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        generateToken(user, 200, "Password reset successfully", res);
+
+    });
 
 
