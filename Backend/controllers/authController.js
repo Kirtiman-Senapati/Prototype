@@ -98,6 +98,7 @@ export const getUser = asyncHandler(async (req, res, next) =>
 export const forgotPassword = asyncHandler(async (req, res, next) =>
 
 {
+    console.log("Forgot Password Request Body:", req.body);
     const user = await User.findOne({ email: req.body.email });
 
     if (!user)
@@ -106,7 +107,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) =>
     }
     
     const resetToken = user.getResetPasswordToken();
-
+    console.log("Generated Reset Token:", resetToken);
     await user.save({ validateBeforeSave: false });
 
     // Create reset password URL
