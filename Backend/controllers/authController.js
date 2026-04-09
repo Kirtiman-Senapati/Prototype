@@ -76,7 +76,18 @@ export const logout = asyncHandler(async (req, res, next) =>
 });
 
 
-export const getUser = asyncHandler(async (req, res, next) =>{});
+//create get user function
+
+export const getUser = asyncHandler(async (req, res, next) =>
+{
+    const user = req.user;
+
+    res.status(200).json({
+        success: true,
+        user,
+    });
+
+});
 
 export const forgotPassword = asyncHandler(async (req, res, next) =>{});
 export const resetPassword = asyncHandler(async (req, res, next) =>{});
