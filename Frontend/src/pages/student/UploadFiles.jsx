@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { uploadProjectFile } from "../../store/slices/studentSlice";
+import { uploadProjectFile, getStudentDashboard } from "../../store/slices/studentSlice";
 import { FileText, MonitorPlay, Archive, UploadCloud, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -15,6 +15,12 @@ const UploadFiles = () => {
     
     const dispatch = useDispatch();
     const { project } = useSelector((state) => state.student);
+
+    useEffect(() => {
+        if (!project) {
+            dispatch(getStudentDashboard());
+        }
+    }, [dispatch, project]);
 
     const handleUploadAll = async () => {
         setUploading(true);
@@ -215,3 +221,4 @@ const UploadFiles = () => {
 };
 
 export default UploadFiles;
+
