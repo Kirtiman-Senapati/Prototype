@@ -35,6 +35,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { Loader } from "lucide-react";
 import { checkAuth } from "./store/slices/authSlice";
+const ProtectedRoute = ({ children }) => {
+  const { authUser, isCheckingAuth } = useSelector((state) => state.auth);
+  
+  if (isCheckingAuth) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-slate-50">
+        <Loader className="animate-spin text-blue-600" size={32} />
+      </div>
+    );
+  }
+  
+  if (!authUser) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
 
 const App = () => {
   const dispatch = useDispatch();
@@ -54,7 +71,7 @@ const App = () => {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
             {/* Student Routes */}
             <Route index element={<StudentDashboard />} />
             <Route path="submit-proposal" element={<SubmitProposal />} />
