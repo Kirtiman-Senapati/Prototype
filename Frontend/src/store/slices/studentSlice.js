@@ -2,13 +2,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
 
-// 1. Create and export the missing submitProposal thunk
 export const submitProposal = createAsyncThunk(
   "student/submitProposal",
   async (proposalData, { rejectWithValue }) => {
     try {
-      // Note: Adjust the "/proposals" URL to match your actual backend API route
-      const response = await axiosInstance.post("/proposals", proposalData);
+      const response = await axiosInstance.post("/student/proposal", proposalData);
       toast.success("Proposal submitted successfully!");
       return response.data;
     } catch (error) {
@@ -18,32 +16,88 @@ export const submitProposal = createAsyncThunk(
   }
 );
 
+export const getStudentDashboard = createAsyncThunk(
+  "student/getDashboard",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/student/dashboard");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
+export const getAvailableSupervisors = createAsyncThunk(
+  "student/getAvailableSupervisors",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/student/supervisors");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
+export const requestSupervisor = createAsyncThunk(
+  "student/requestSupervisor",
+  async (requestData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/student/request-supervisor", requestData);
+      toast.success("Supervisor requested!");
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to request supervisor");
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
+export const uploadProjectFile = createAsyncThunk(
+  "student/uploadProjectFile",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/student/upload", formData, {
+         headers: { "Content-Type": "multipart/form-data" }
+      });
+      toast.success("File uploaded!");
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to upload file");
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 const studentSlice = createSlice({
   name: "student",
   initialState: {
     project: null,
-    files: [],
+    requests: [],
+    notifications: [],
     supervisors: [],
-    dashboardStats: [],
-    supervisor: null,
-    deadlines: [],
-    feedback: [],
-    status: null,
-    isLoading: false, // Added a loading state to track the API request
+    isLoading: false,
   },
   reducers: {},
   extraReducers: (builder) => {
-    // 2. Handle the loading, success, and error states of your thunk
     builder
-      .addCase(submitProposal.pending, (state) => {
-        state.isLoading = true;
+      .addCase(getStudentDashboard.pending, (state) => { state.isLoading = true; })
+      .addCase(getStudentDashboard.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.project = action.payload.project;
+        state.requests = action.payload.requests;
+        state.notifications = action.payload.notifications || [];
+      })
+      .addCase(getStudentDashboard.rejected, (state) => { state.isLoading = false; })
+      .addCase(getAvailableSupervisors.fulfilled, (state, action) => {
+        state.supervisors = action.payload.supervisors;
       })
       .addCase(submitProposal.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.project = action.payload; // Assuming the API returns the created project
+        state.project = action.payload.project;
       })
-      .addCase(submitProposal.rejected, (state) => {
-        state.isLoading = false;
+      .addCase(uploadProjectFile.fulfilled, (state, action) => {
+        state.project = action.payload.project;
       });
   },
 });

@@ -1,61 +1,43 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { axiosInstance } from "../../lib/axios"; // Adjust path if needed
+import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
 
-// 1. Export the missing getAllProjects thunk
-export const getAllProjects = createAsyncThunk(
-  "admin/getAllProjects",
-  async (_, { rejectWithValue }) => {
+export const getAdminDashboard = createAsyncThunk("admin/dashboard", async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/admin/projects");
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data);
-    }
-  }
-);
+        const response = await axiosInstance.get("/admin/dashboard");
+        return response.data;
+    } catch (err) { return rejectWithValue(err.response?.data); }
+});
 
-// 2. Export the missing approveProject thunk (This specifically fixes your crash)
-export const approveProject = createAsyncThunk(
-  "admin/approveProject",
-  async (projectId, { rejectWithValue }) => {
+export const getAllUsers = createAsyncThunk("admin/users", async (_, { rejectWithValue }) => {
     try {
-      // Adjust the URL to match your backend API
-      const response = await axiosInstance.patch(`/admin/projects/${projectId}/approve`);
-      toast.success("Project approved successfully!");
-      return response.data;
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to approve project");
-      return rejectWithValue(error.response?.data);
-    }
-  }
-);
+        const response = await axiosInstance.get("/admin/users");
+        return response.data;
+    } catch (err) { return rejectWithValue(err.response?.data); }
+});
 
-// 3. Export the missing rejectProject thunk
-export const rejectProject = createAsyncThunk(
-  "admin/rejectProject",
-  async (projectId, { rejectWithValue }) => {
+export const deleteUser = createAsyncThunk("admin/deleteUser", async (userId, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.patch(`/admin/projects/${projectId}/reject`);
-      toast.success("Project rejected.");
-      return response.data;
-    } catch (error) {
-      toast.error("Failed to reject project");
-      return rejectWithValue(error.response?.data);
-    }
-  }
-);
+        const response = await axiosInstance.delete(`/admin/user/${userId}`);
+        toast.success("User deleted");
+        return userId;
+    } catch (err) { return rejectWithValue(err.response?.data); }
+});
 
 const adminSlice = createSlice({
-  name: "admin",
-  initialState: {
-    projects: [],
-    isLoading: false,
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    // You can handle pending/fulfilled/rejected states here for your UI
-  },
+    name: "admin",
+    initialState: {
+        stats: null,
+        users: [],
+        isLoading: false,
+    },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(getAdminDashboard.fulfilled, (state, action) => { state.stats = action.payload.stats; })
+            .addCase(getAllUsers.fulfilled, (state, action) => { state.users = action.payload.users; })
+            .addCase(deleteUser.fulfilled, (state, action) => { state.users = state.users.filter(u => u._id !== action.payload); });
+    }
 });
 
 export default adminSlice.reducer;

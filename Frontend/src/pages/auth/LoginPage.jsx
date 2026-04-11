@@ -86,29 +86,83 @@ const LoginPage = () =>
   {
     if (authUser) 
     {
+        // the App.jsx routing logic encapsulates dashboards under "/dashboard"
+        // and handles role based visibility there or via role-specific paths
        switch (formData.role) 
        {   
         case "Student":
-          navigate("/student");
+          navigate("/dashboard");
           break;
-        case "Teacher":
-          navigate("/teacher");
+        case "Supervisor":
+          navigate("/dashboard/teacher");
           break;
         case "Admin":
-          navigate("/admin");
+          navigate("/dashboard/admin");
           break;
         default:
-          navigate("/login");
+          navigate("/dashboard");
        }
     }
-  }, [authUser]);
+  }, [authUser, formData.role, navigate]);
   
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
-      <div className="card w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Login Page</h1>
-        {/* You will build your form here later */}
-        <p>Your app is working!</p>
+      <div className="card w-full max-w-md p-8">
+        <h1 className="text-2xl font-bold text-center text-slate-800 mb-2">Welcome Back</h1>
+        <p className="text-center text-slate-500 mb-8">Sign in to your account</p>
+        
+        <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+                <label className="label">Email Address</label>
+                <input 
+                    type="email" 
+                    name="email"
+                    placeholder="Enter your email" 
+                    className={`input ${errors.email ? 'input-error' : ''}`}
+                    value={formData.email}
+                    onChange={handleChange}
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+            </div>
+
+            <div>
+                <label className="label">Password</label>
+                <input 
+                    type="password" 
+                    name="password"
+                    placeholder="••••••••" 
+                    className={`input ${errors.password ? 'input-error' : ''}`}
+                    value={formData.password}
+                    onChange={handleChange}
+                />
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+            </div>
+
+            <div>
+                 <label className="label">Account Role</label>
+                 <select 
+                     name="role" 
+                     className="input bg-white w-full"
+                     value={formData.role} 
+                     onChange={handleChange}
+                 >
+                     <option value="Student">Student</option>
+                     <option value="Supervisor">Supervisor</option>
+                     <option value="Admin">Administrator</option>
+                 </select>
+            </div>
+
+            <button 
+                type="submit" 
+                className="btn-primary w-full mt-4 flex justify-center items-center h-11"
+                disabled={isLoggingIn}
+            >
+                {isLoggingIn ? "Signing In..." : "Sign In"}
+            </button>
+            <div className="text-center mt-4">
+                 <a href="/forgot-password" className="text-sm text-blue-600 hover:underline">Forgot password?</a>
+            </div>
+        </form>
       </div>
     </div>
   );
