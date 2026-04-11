@@ -3,6 +3,7 @@ import { useEffect } from "react";
 
 // Auth Pages
 import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
@@ -33,46 +34,56 @@ import ProjectsPage from "./pages/admin/ProjectsPage";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { Loader } from "lucide-react";
+import { checkAuth } from "./store/slices/authSlice";
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Auth Routes */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+    <>
+      <BrowserRouter>
+        <Routes>
+          {/* Auth Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-        {/* Dashboard Routes */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          {/* Student Routes */}
-          <Route index element={<StudentDashboard />} />
-          <Route path="submit-proposal" element={<SubmitProposal />} />
-          <Route path="upload-files" element={<UploadFiles />} />
-          <Route path="supervisor" element={<SupervisorPage />} />
-          <Route path="feedback" element={<FeedbackPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
+          {/* Dashboard Routes */}
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            {/* Student Routes */}
+            <Route index element={<StudentDashboard />} />
+            <Route path="submit-proposal" element={<SubmitProposal />} />
+            <Route path="upload-files" element={<UploadFiles />} />
+            <Route path="supervisor" element={<SupervisorPage />} />
+            <Route path="feedback" element={<FeedbackPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
 
-          {/* Teacher Routes */}
-          <Route path="teacher" element={<TeacherDashboard />} />
-          <Route path="pending-requests" element={<PendingRequests />} />
-          <Route path="assigned-students" element={<AssignedStudents />} />
-          <Route path="teacher-files" element={<TeacherFiles />} />
+            {/* Teacher Routes */}
+            <Route path="teacher" element={<TeacherDashboard />} />
+            <Route path="pending-requests" element={<PendingRequests />} />
+            <Route path="assigned-students" element={<AssignedStudents />} />
+            <Route path="teacher-files" element={<TeacherFiles />} />
 
-          {/* Admin Routes */}
-          <Route path="admin" element={<AdminDashboard />} />
-          <Route path="manage-students" element={<ManageStudents />} />
-          <Route path="manage-teachers" element={<ManageTeachers />} />
-          <Route path="assign-supervisor" element={<AssignSupervisor />} />
-          <Route path="deadlines" element={<DeadlinesPage />} />
-          <Route path="projects" element={<ProjectsPage />} />
-        </Route>
+            {/* Admin Routes */}
+            <Route path="admin" element={<AdminDashboard />} />
+            <Route path="manage-students" element={<ManageStudents />} />
+            <Route path="manage-teachers" element={<ManageTeachers />} />
+            <Route path="assign-supervisor" element={<AssignSupervisor />} />
+            <Route path="deadlines" element={<DeadlinesPage />} />
+            <Route path="projects" element={<ProjectsPage />} />
+          </Route>
 
-        {/* Redirect to login if not authenticated */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Redirect to login if not authenticated */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+      <ToastContainer position="top-right" autoClose={3000} />
+    </>
   );
 };
 

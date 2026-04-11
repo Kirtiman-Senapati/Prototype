@@ -21,23 +21,52 @@ export const login = createAsyncThunk("auth/login",async (data ,thunkAPI) =>
     } 
     catch (error) 
     {
-      toast.error(error.response.data.message || "Login failed!");
-      return thunkAPI.rejectWithValue(error.response.data);
+      toast.error(error.response?.data?.message || "Login failed!");
+      return thunkAPI.rejectWithValue(error.response?.data);
     }
   }
 );
+
+export const registerUser = createAsyncThunk("auth/register", async (data, thunkAPI) => {
+    try {
+        const response = await axiosInstance.post("/auth/register", data, {
+            headers: { "Content-Type": "application/json" }
+        });
+        toast.success(response.data.message || "Registration successful!");
+        return response.data;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Registration failed!");
+        return thunkAPI.rejectWithValue(error.response?.data);
+    }
+});
+
+export const checkAuth = createAsyncThunk("auth/checkAuth", async (_, thunkAPI) => {
+    try {
+        const response = await axiosInstance.get("/auth/me");
+        return response.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.response?.data);
+    }
+});
+
+export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
+    try {
+        await axiosInstance.get("/auth/logout");
+        toast.success("Logged out successfully");
+        return null;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.response?.data);
+    }
+});
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     authUser: null,
-    isSigningUp: false,
     isLoggingIn: false,
-    isUpdatingProfile: false,
-    isUpdatingPassword: false,
-    isRequestingForToken: false,
     isCheckingAuth: true,
   },
+  reducers: {},
   extraReducers: (builder) => 
   {
     builder.addCase(login.pending, (state) => 
@@ -52,6 +81,18 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state) => 
       {
         state.isLoggingIn = false;
+      })
+      .addCase(checkAuth.pending, (state) => { state.isCheckingAuth = true; })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+          state.authUser = action.payload.user;
+          state.isCheckingAuth = false;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+          state.authUser = null;
+          state.isCheckingAuth = false;
+      })
+      .addCase(logout.fulfilled, (state) => {
+          state.authUser = null;
       });
   },
 });
