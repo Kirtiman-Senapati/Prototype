@@ -30,6 +30,17 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
     if (status === "Accepted" && request.type === "Supervisor") {
         const student = await User.findById(request.fromUser);
         if (student) {
+            // CRITICAL FIX: If student already had a previous supervisor, we must remove them from that supervisor's array!
+            if (student.supervisor && student.supervisor.toString() !== req.user._id.toString()) {
+                const oldSupervisor = await User.findById(student.supervisor);
+                if (oldSupervisor) {
+                    oldSupervisor.assignedStudents = oldSupervisor.assignedStudents.filter(
+                        id => id.toString() !== student._id.toString()
+                    );
+                    await oldSupervisor.save();
+                }
+            }
+
             student.supervisor = req.user._id;
             await student.save();
 

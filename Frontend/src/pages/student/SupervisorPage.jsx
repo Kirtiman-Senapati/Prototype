@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAvailableSupervisors, requestSupervisor } from "../../store/slices/studentSlice";
+import { getAvailableSupervisors, requestSupervisor, getStudentDashboard } from "../../store/slices/studentSlice";
 import { toast } from "react-toastify";
 
 const SupervisorPage = () => {
@@ -14,7 +14,10 @@ const SupervisorPage = () => {
 
   useEffect(() => {
     dispatch(getAvailableSupervisors());
-  }, [dispatch]);
+    if (!project) {
+        dispatch(getStudentDashboard());
+    }
+  }, [dispatch, project]);
 
   const handleOpenModal = (id) => {
     setSelectedTeacherId(id);
@@ -37,6 +40,13 @@ const SupervisorPage = () => {
         <p className="text-slate-500 mt-1">Browse and request a supervisor for your project.</p>
       </div>
 
+      {project?.supervisor && (
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl flex flex-col justify-center">
+            <h3 className="font-bold text-emerald-700">Supervisor Already Assigned</h3>
+            <p className="text-sm mt-1 text-emerald-600 font-medium">You have successfully been assigned to a supervisor. You cannot request a new one.</p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {supervisors && supervisors.map((teacher) => (
           <div key={teacher._id} className="card flex flex-col justify-between">
@@ -56,10 +66,10 @@ const SupervisorPage = () => {
             
             <button 
               onClick={() => handleOpenModal(teacher._id)}
-              className="btn-primary w-full mt-6"
+              className="btn-primary w-full mt-6 disabled:bg-slate-300 disabled:cursor-not-allowed disabled:border-slate-300 disabled:text-slate-500"
               disabled={project?.supervisor}
             >
-              Request Supervisor
+              {project?.supervisor ? "Already Assigned" : "Request Supervisor"}
             </button>
           </div>
         ))}

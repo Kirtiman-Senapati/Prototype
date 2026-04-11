@@ -65,6 +65,12 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
          return next(new ErrorHandler("Please provide all fields", 400));
     }
 
+    // Strictly enforce 1 supervisor rule
+    const studentCheck = await User.findById(req.user._id);
+    if (studentCheck.supervisor) {
+        return next(new ErrorHandler("Already Superviser Assigned", 400));
+    }
+
     // Create new supervisor request
     const newRequest = await Request.create({
         type: "Supervisor",
@@ -122,3 +128,4 @@ export const getStudentDashboard = asyncHandler(async (req, res, next) => {
         notifications
     });
 });
+
