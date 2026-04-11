@@ -8,56 +8,28 @@ const Sidebar = ({ open, setOpen, userRole }) => {
     switch (userRole) {
       case "Student":
         return [
-          { name: "Home", path: "/student", icon: "home" },
-          {
-            name: "Submit Proposal",
-            path: "/student/submit-proposal",
-            icon: "document",
-          },
-          {
-            name: "Upload Files",
-            path: "/student/upload-files",
-            icon: "upload",
-          },
-          { name: "Supervisor", path: "/student/supervisor", icon: "user" },
-          { name: "Feedback", path: "/student/feedback", icon: "chat" },
-          {
-            name: "Notifications",
-            path: "/student/notifications",
-            icon: "bell",
-          },
+          { name: "Home", path: "/dashboard", icon: "home" },
+          { name: "Submit Proposal", path: "/dashboard/submit-proposal", icon: "document" },
+          { name: "Upload Files", path: "/dashboard/upload-files", icon: "upload" },
+          { name: "Supervisor", path: "/dashboard/supervisor", icon: "user" },
+          { name: "Feedback", path: "/dashboard/feedback", icon: "chat" },
+          { name: "Notifications", path: "/dashboard/notifications", icon: "bell" },
         ];
-      case "Teacher":
+      case "Supervisor":
         return [
-          { name: "Home", path: "/teacher", icon: "home" },
-          {
-            name: "Pending Requests",
-            path: "/teacher/pending-requests",
-            icon: "clock",
-          },
-          {
-            name: "Assigned Students",
-            path: "/teacher/assigned-students",
-            icon: "users",
-          },
-          { name: "Files", path: "/teacher/files", icon: "folder" },
+          { name: "Home", path: "/dashboard/teacher", icon: "home" },
+          { name: "Pending Requests", path: "/dashboard/pending-requests", icon: "clock" },
+          { name: "Assigned Students", path: "/dashboard/assigned-students", icon: "users" },
+          { name: "Files", path: "/dashboard/teacher-files", icon: "folder" },
         ];
       case "Admin":
         return [
-          { name: "Home", path: "/admin", icon: "home" },
-          { name: "Manage Students", path: "/admin/students", icon: "users" },
-          {
-            name: "Manage Teachers",
-            path: "/admin/teachers",
-            icon: "academic",
-          },
-          {
-            name: "Assign Supervisor",
-            path: "/admin/assign-supervisor",
-            icon: "link",
-          },
-          { name: "Deadlines", path: "/admin/deadlines", icon: "calendar" },
-          { name: "Projects", path: "/admin/projects", icon: "folder" },
+          { name: "Home", path: "/dashboard/admin", icon: "home" },
+          { name: "Manage Students", path: "/dashboard/manage-students", icon: "users" },
+          { name: "Manage Teachers", path: "/dashboard/manage-teachers", icon: "academic" },
+          { name: "Assign Supervisor", path: "/dashboard/assign-supervisor", icon: "link" },
+          { name: "Deadlines", path: "/dashboard/deadlines", icon: "calendar" },
+          { name: "Projects", path: "/dashboard/projects", icon: "folder" },
         ];
       default:
         return [];

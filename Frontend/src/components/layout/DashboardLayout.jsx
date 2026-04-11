@@ -2,9 +2,11 @@ import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import { useSelector } from "react-redux";
 
-const DashboardLayout = ({ userRole }) => {
+const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { authUser } = useSelector((state) => state.auth);
 
   return (
     <div className="min-h-screen bg-slate-50 pt-[66px]">
@@ -12,7 +14,7 @@ const DashboardLayout = ({ userRole }) => {
       <Navbar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
-        userRole={userRole}
+        userRole={authUser?.role}
       />
 
       <div className="flex">
@@ -20,7 +22,7 @@ const DashboardLayout = ({ userRole }) => {
         <Sidebar
           open={sidebarOpen}
           setOpen={setSidebarOpen}
-          userRole={userRole}
+          userRole={authUser?.role}
         />
 
         {/* Main Content */}
@@ -47,3 +49,4 @@ const DashboardLayout = ({ userRole }) => {
 };
 
 export default DashboardLayout;
+
