@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import CheckEmailPage from "./pages/auth/CheckEmailPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 // Dashboard Layouts
@@ -68,7 +69,8 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/check-email" element={<CheckEmailPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
           {/* Dashboard Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>

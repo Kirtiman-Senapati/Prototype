@@ -113,7 +113,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) =>
     await user.save({ validateBeforeSave: false });
 
     // Create reset password URL
-    const resetPasswordUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    const resetPasswordUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     // Simulate sending email template that shows the reset password URL
 
@@ -146,9 +146,9 @@ export const forgotPassword = asyncHandler(async (req, res, next) =>
     }
 });
 
-//reset password function
+   //reset password function
 export const resetPassword = asyncHandler(async (req, res, next) =>
-    {
+{
         console.log("Is next a function?", typeof next); // Debugging line to check if next is a function
         const { token } = req.params;
         const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
@@ -178,6 +178,6 @@ export const resetPassword = asyncHandler(async (req, res, next) =>
 
         generateToken(user, 200, "Password reset successfully", res);
 
-    });
+});
 
 
