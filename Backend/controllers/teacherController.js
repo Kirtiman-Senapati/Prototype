@@ -114,11 +114,43 @@ export const getTeacherDashboard = asyncHandler(async (req, res, next) => {
     const pendingRequestsCount = await Request.countDocuments({ toUser: req.user._id, status: "Pending" });
     const assignedStudentsCount = req.user.assignedStudents.length;
 
+    // Fetch projects assigned to this supervisor
+    const projects = await Project.find({ supervisor: req.user._id }).populate("student", "name");
+    
+    // Extract recent files
+    let recentFiles = [];
+    projects.forEach(p => {
+        if (p.files && p.files.length > 0) {
+            p.files.forEach(f => {
+                recentFiles.push({
+                    _id: f._id,
+                    filename: f.filename,
+                    url: f.url,
+                    type: f.type,
+                    uploadedAt: f.uploadedAt,
+                    studentName: p.student?.name || "Unknown"
+                });
+            });
+        }
+    });
+    
+    // Sort descending by uploadedAt and grab top 5
+    recentFiles.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+    recentFiles = recentFiles.slice(0, 5);
+
+    // Get recent activity (latest 5 requests handled or pending)
+    const recentActivity = await Request.find({ toUser: req.user._id })
+        .populate("fromUser", "name")
+        .sort({ updatedAt: -1 })
+        .limit(5);
+
     res.status(200).json({
         success: true,
         stats: {
             pendingRequests: pendingRequestsCount,
             assignedStudents: assignedStudentsCount
-        }
+        },
+        recentFiles,
+        recentActivity
     });
 });
