@@ -128,4 +128,3 @@ export const getStudentDashboard = asyncHandler(async (req, res, next) => {
         notifications
     });
 });
-

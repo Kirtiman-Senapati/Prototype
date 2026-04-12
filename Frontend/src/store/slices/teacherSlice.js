@@ -46,7 +46,7 @@ export const handleRequest = createAsyncThunk(
       toast.success(response.data.message);
       return response.data;
     } catch (error) {
-      toast.error("Failed to handle request");
+      toast.error(error.response?.data?.message || "Failed to handle request");
       return rejectWithValue(error.response?.data);
     }
   }

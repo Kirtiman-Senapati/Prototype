@@ -24,40 +24,52 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Request not found", 404));
     }
 
+    // Bulletproof validation logic to prevent ANY overlapping accepts
+    let studentToAssign = null;
+    if (status === "Accepted" && request.type === "Supervisor") {
+        studentToAssign = await User.findById(request.fromUser);
+        
+        const checkProject = await Project.findOne({ student: request.fromUser });
+
+        let assignedTeacherId = null;
+        if (checkProject && checkProject.supervisor) {
+            assignedTeacherId = checkProject.supervisor.toString();
+        } else if (studentToAssign && studentToAssign.supervisor) {
+            assignedTeacherId = studentToAssign.supervisor.toString();
+        }
+
+        if (assignedTeacherId && assignedTeacherId !== req.user._id.toString()) {
+            const oldSup = await User.findById(assignedTeacherId);
+            const supName = oldSup ? oldSup.name : "another faculty member";
+            return next(new ErrorHandler(`Already ${supName} assigned supervisor`, 400));
+        }
+    }
+
     request.status = status;
     await request.save();
 
-    if (status === "Accepted" && request.type === "Supervisor") {
-        const student = await User.findById(request.fromUser);
-        if (student) {
-            // CRITICAL FIX: If student already had a previous supervisor, we must remove them from that supervisor's array!
-            if (student.supervisor && student.supervisor.toString() !== req.user._id.toString()) {
-                const oldSupervisor = await User.findById(student.supervisor);
-                if (oldSupervisor) {
-                    oldSupervisor.assignedStudents = oldSupervisor.assignedStudents.filter(
-                        id => id.toString() !== student._id.toString()
-                    );
-                    await oldSupervisor.save();
-                }
-            }
+    if (status === "Accepted" && request.type === "Supervisor" && studentToAssign) {
+        // Assign logic
+        studentToAssign.supervisor = req.user._id;
+        // Use findByIdAndUpdate to forcibly bypass any pre-save schema validation failures
+        await User.findByIdAndUpdate(studentToAssign._id, { supervisor: req.user._id });
 
-            student.supervisor = req.user._id;
-            await student.save();
-
-            // also add to teacher's assigned students
-            if (!req.user.assignedStudents.includes(student._id)) {
-                req.user.assignedStudents.push(student._id);
-                await req.user.save();
-            }
-
-            // update project supervisor
-            const project = await Project.findOne({ student: student._id });
-            if (project) {
-                project.supervisor = req.user._id;
-                project.status = "Approved"; // Optionally approve immediately
-                await project.save();
-            }
+        // also add to teacher's assigned students
+        if (!req.user.assignedStudents.includes(studentToAssign._id)) {
+            await User.findByIdAndUpdate(req.user._id, { $addToSet: { assignedStudents: studentToAssign._id } });
         }
+
+        // update project supervisor
+        const project = await Project.findOne({ student: studentToAssign._id });
+        if (project) {
+            await Project.findByIdAndUpdate(project._id, { supervisor: req.user._id, status: "Approved" });
+        }
+
+        // CRITICAL: Auto-reject any other pending supervisor requests from this student to cleanup the database instantly
+        await Request.updateMany(
+            { fromUser: studentToAssign._id, type: "Supervisor", status: "Pending", _id: { $ne: requestId } },
+            { $set: { status: "Rejected" } }
+        );
     }
 
     res.status(200).json({
