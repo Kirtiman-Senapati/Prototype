@@ -117,7 +117,7 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
 });
 
 export const getStudentDashboard = asyncHandler(async (req, res, next) => {
-    const project = await Project.findOne({ student: req.user._id }).populate("supervisor", "name email");
+    const project = await Project.findOne({ student: req.user._id }).populate("supervisor", "name email department experties");
     const requests = await Request.find({ fromUser: req.user._id });
     const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(5);
     
