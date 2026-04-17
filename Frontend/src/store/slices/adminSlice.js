@@ -28,13 +28,19 @@ const adminSlice = createSlice({
     name: "admin",
     initialState: {
         stats: null,
+        recentProjects: [],
+        recentActivity: [],
         users: [],
         isLoading: false,
     },
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getAdminDashboard.fulfilled, (state, action) => { state.stats = action.payload.stats; })
+            .addCase(getAdminDashboard.fulfilled, (state, action) => { 
+                state.stats = action.payload.stats; 
+                state.recentProjects = action.payload.recentProjects || [];
+                state.recentActivity = action.payload.recentActivity || [];
+            })
             .addCase(getAllUsers.fulfilled, (state, action) => { state.users = action.payload.users; })
             .addCase(deleteUser.fulfilled, (state, action) => { state.users = state.users.filter(u => u._id !== action.payload); });
     }

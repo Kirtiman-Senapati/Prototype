@@ -8,13 +8,28 @@ export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
     const totalProjects = await Project.countDocuments();
 
+    // Get recently created projects
+    const recentProjects = await Project.find()
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .populate("student", "name email")
+        .populate("supervisor", "name email");
+
+    // Get recent users as activity
+    const recentActivity = await User.find({ role: { $ne: "Admin" } })
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .select("name role createdAt");
+
     res.status(200).json({
         success: true,
         stats: {
             totalStudents,
             totalTeachers,
             totalProjects
-        }
+        },
+        recentProjects,
+        recentActivity
     });
 });
 

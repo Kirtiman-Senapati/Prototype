@@ -1,48 +1,104 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminDashboard } from "../../store/slices/adminSlice";
+import { Users, GraduationCap, FolderKanban, ShieldCheck } from "lucide-react";
+
+import StatCard from "./components/StatCard";
+import ActionCard from "./components/ActionCard";
+import ActivityList from "./components/ActivityList";
+import ProjectList from "./components/ProjectList";
 
 const AdminDashboard = () => {
     const dispatch = useDispatch();
-    const { stats, isLoading } = useSelector((state) => state.admin);
+    const { stats, recentProjects, recentActivity, isLoading } = useSelector((state) => state.admin);
 
     useEffect(() => {
         dispatch(getAdminDashboard());
     }, [dispatch]);
 
-    if (isLoading) {
-        return <div className="flex justify-center items-center h-full">Loading...</div>;
+    if (isLoading && !stats) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+        );
     }
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-slate-800">System Overview</h1>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="card p-6 text-center hover:shadow-md transition-shadow">
-                    <h2 className="text-slate-500 font-medium uppercase tracking-wide text-sm">Total Students</h2>
-                    <p className="text-4xl font-bold text-blue-600 mt-4">{stats?.totalStudents || 0}</p>
-                </div>
-                
-                <div className="card p-6 text-center hover:shadow-md transition-shadow">
-                    <h2 className="text-slate-500 font-medium uppercase tracking-wide text-sm">Total Teachers</h2>
-                    <p className="text-4xl font-bold text-green-600 mt-4">{stats?.totalTeachers || 0}</p>
-                </div>
-
-                <div className="card p-6 text-center hover:shadow-md transition-shadow">
-                    <h2 className="text-slate-500 font-medium uppercase tracking-wide text-sm">Total Projects</h2>
-                    <p className="text-4xl font-bold text-purple-600 mt-4">{stats?.totalProjects || 0}</p>
+        <div className="space-y-6 pb-8">
+            {/* Header Section */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-md">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                        <ShieldCheck size={32} className="text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Welcome back, Admin</h1>
+                        <p className="text-blue-100 mt-1">Here's your system overview for today.</p>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <div className="card">
-                     <h2 className="card-title mb-4">Quick Links</h2>
-                     <div className="space-y-3">
-                         <a href="/dashboard/manage-students" className="block text-blue-600 hover:underline">Manage Students ↗</a>
-                         <a href="/dashboard/manage-teachers" className="block text-blue-600 hover:underline">Manage Supervisors ↗</a>
-                     </div>
-                 </div>
+            {/* Stats Cards Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <StatCard 
+                    title="Total Students" 
+                    value={stats?.totalStudents || 0} 
+                    icon={Users}
+                    colorClass="text-blue-600"
+                    bgColorClass="bg-blue-50"
+                />
+                <StatCard 
+                    title="Total Teachers" 
+                    value={stats?.totalTeachers || 0} 
+                    icon={GraduationCap}
+                    colorClass="text-green-600"
+                    bgColorClass="bg-green-50"
+                />
+                <StatCard 
+                    title="Total Projects" 
+                    value={stats?.totalProjects || 0} 
+                    icon={FolderKanban}
+                    colorClass="text-purple-600"
+                    bgColorClass="bg-purple-50"
+                />
+            </div>
+
+            {/* Quick Actions Section */}
+            <div>
+                <h2 className="text-lg font-semibold text-slate-800 mb-4 px-1">Quick Actions</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <ActionCard 
+                        title="Manage Students" 
+                        description="View, edit, or remove students"
+                        icon={Users}
+                        to="/dashboard/manage-students"
+                        colorClass="text-blue-600"
+                        bgColorClass="bg-blue-50"
+                    />
+                    <ActionCard 
+                        title="Manage Supervisors" 
+                        description="Assign or remove teacher roles"
+                        icon={GraduationCap}
+                        to="/dashboard/manage-teachers"
+                        colorClass="text-green-600"
+                        bgColorClass="bg-green-50"
+                    />
+                    <ActionCard 
+                        title="Manage Projects" 
+                        description="Review active and completed projects"
+                        icon={FolderKanban}
+                        to="/dashboard/projects"
+                        colorClass="text-purple-600"
+                        bgColorClass="bg-purple-50"
+                    />
+                </div>
+            </div>
+
+            {/* Activity & Projects Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <ActivityList activities={recentActivity} />
+                <ProjectList projects={recentProjects} />
             </div>
         </div>
     );
