@@ -65,6 +65,12 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
          return next(new ErrorHandler("Please provide all fields", 400));
     }
 
+    // STRICT VALIDATION: Student MUST have a Project Proposal before requesting
+    const projectExists = await Project.findOne({ student: req.user._id });
+    if (!projectExists) {
+        return next(new ErrorHandler("Please submit your Project Proposal first before requesting a supervisor.", 400));
+    }
+
     // Strictly enforce 1 supervisor rule
     const studentCheck = await User.findById(req.user._id);
     if (studentCheck.supervisor) {
@@ -118,7 +124,8 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
 
 export const getStudentDashboard = asyncHandler(async (req, res, next) => {
     const project = await Project.findOne({ student: req.user._id }).populate("supervisor", "name email department experties");
-    const requests = await Request.find({ fromUser: req.user._id });
+
+    const requests = await Request.find({ fromUser: req.user._id }).populate("toUser", "name email department experties");
     const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(5);
     
     res.status(200).json({
