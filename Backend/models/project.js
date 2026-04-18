@@ -42,6 +42,9 @@ const projectSchema = new mongoose.Schema(
             enum: ["Pending", "Approved", "Rejected", "Completed"],
             default: "Pending",
         },
+        deadline: {
+            type: Date,
+        },
         files: [fileSchema],
         tasks: [taskSchema],
     },
@@ -49,3 +52,4 @@ const projectSchema = new mongoose.Schema(
 );
 
 export const Project = mongoose.model("Project", projectSchema);
+

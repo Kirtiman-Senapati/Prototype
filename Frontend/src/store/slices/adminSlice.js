@@ -60,6 +60,17 @@ export const updateProjectStatusAdmin = createAsyncThunk("admin/updateProjectSta
     }
 });
 
+export const updateProjectDeadlineAdmin = createAsyncThunk("admin/updateProjectDeadline", async ({ id, deadline }, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.put(`/admin/project/${id}/deadline`, { deadline });
+        toast.success("Deadline updated successfully automatically saving to database!");
+        return response.data;
+    } catch (err) { 
+        toast.error(err.response?.data?.message || "Error updating project deadline");
+        return rejectWithValue(err.response?.data); 
+    }
+});
+
 const adminSlice = createSlice({
     name: "admin",
     initialState: {

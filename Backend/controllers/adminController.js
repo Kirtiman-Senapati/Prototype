@@ -167,3 +167,42 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
         project
     });
 });
+
+export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { deadline } = req.body;
+
+    if (!deadline) {
+        return next(new ErrorHandler("Please provide a valid deadline", 400));
+    }
+
+    const project = await Project.findById(id).populate("student supervisor");
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    project.deadline = deadline;
+    await project.save();
+
+    // 🚀 Socket.IO: Real-Time Event Emmision to Student
+    import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
+        const io = getIo();
+        if (io && project.student && project.student._id) {
+            const studentSocketId = getReceiverSocketId(project.student._id.toString());
+            if (studentSocketId) {
+                // Emit event directly to the student
+                io.to(studentSocketId).emit("deadlineUpdated", {
+                    projectId: project._id,
+                    projectTitle: project.title,
+                    deadline: project.deadline
+                });
+            }
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Deadline updated successfully",
+        project
+    });
+});

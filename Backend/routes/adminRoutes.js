@@ -7,7 +7,8 @@ import {
     getUnassignedProjects,
     getSupervisors,
     assignSupervisor,
-    updateProjectStatus
+    updateProjectStatus,
+    updateProjectDeadline
 } from "../controllers/adminController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
@@ -23,5 +24,6 @@ router.get("/unassigned-projects", getUnassignedProjects);
 router.get("/supervisors", getSupervisors);
 router.patch("/assign-supervisor/:id", assignSupervisor);
 router.patch("/project/:id/status", updateProjectStatus);
+router.put("/project/:id/deadline", updateProjectDeadline);
 
 export default router;

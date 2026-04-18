@@ -33,6 +33,15 @@ const StudentDashboard = () => {
         dispatch(getStudentDashboard());
     });
 
+    socket.on("deadlineUpdated", (data) => {
+        toast.info(<div>A new absolute project deadline has been set:<br/><strong className="text-sm mt-1 block">{new Date(data.deadline).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</strong></div>, {
+            icon: "📅",
+            autoClose: 6000,
+            className: "border-l-4 border-blue-500"
+        });
+        dispatch(getStudentDashboard());
+    });
+
     return () => {
         socket.disconnect();
     };
@@ -302,4 +311,3 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
-
