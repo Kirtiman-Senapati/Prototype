@@ -21,16 +21,17 @@ export const upload = multer({ storage });
 
 export const submitProposal = asyncHandler(async (req, res, next) => {
     const { title, description } = req.body;
-    
+
     if (!title || !description) {
         return next(new ErrorHandler("Please provide title and description", 400));
     }
-    
+
     // Check if project exists
     let project = await Project.findOne({ student: req.user._id });
     if (project) {
         project.title = title;
         project.description = description;
+        project.status = "Pending"; // Reset status for Admin Review
         await project.save();
     } else {
         project = await Project.create({
@@ -38,7 +39,7 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
             description,
             student: req.user._id,
         });
-        
+
         req.user.project = project._id;
         await req.user.save();
     }
@@ -60,9 +61,9 @@ export const getAvailableSupervisors = asyncHandler(async (req, res, next) => {
 
 export const requestSupervisor = asyncHandler(async (req, res, next) => {
     const { teacherId, title, description } = req.body;
-    
+
     if (!teacherId || !title || !description) {
-         return next(new ErrorHandler("Please provide all fields", 400));
+        return next(new ErrorHandler("Please provide all fields", 400));
     }
 
     // STRICT VALIDATION: Student MUST have a Project Proposal before requesting
@@ -70,7 +71,7 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
     if (!projectExists) {
         return next(new ErrorHandler("Please submit your Project Proposal first before requesting a supervisor.", 400));
     }
-    
+
     if (projectExists.status !== "Approved") {
         return next(new ErrorHandler("Your project proposal must be approved before you can request a supervisor.", 400));
     }
@@ -131,7 +132,7 @@ export const getStudentDashboard = asyncHandler(async (req, res, next) => {
 
     const requests = await Request.find({ fromUser: req.user._id }).populate("toUser", "name email department experties");
     const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(5);
-    
+
     res.status(200).json({
         success: true,
         project,
