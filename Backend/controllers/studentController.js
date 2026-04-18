@@ -70,6 +70,10 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
     if (!projectExists) {
         return next(new ErrorHandler("Please submit your Project Proposal first before requesting a supervisor.", 400));
     }
+    
+    if (projectExists.status !== "Approved") {
+        return next(new ErrorHandler("Your project proposal must be approved before you can request a supervisor.", 400));
+    }
 
     // Strictly enforce 1 supervisor rule
     const studentCheck = await User.findById(req.user._id);

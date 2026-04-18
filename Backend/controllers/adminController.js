@@ -34,10 +34,34 @@ export const getAdminDashboard = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllUsers = asyncHandler(async (req, res, next) => {
-    const users = await User.find({ role: { $ne: "Admin" } }).select("-password");
+    // Adding .lean() to allow direct property modification
+    const users = await User.find({ role: { $ne: "Admin" } }).select("-password").lean();
+    
+    // Self-healing cross-reference: fetch all accepted projects that have supervisors
+    const assignedProjects = await Project.find({ supervisor: { $ne: null } });
+    
+    // Map student IDs to their assigned supervisor IDs
+    const studentSupervisorMap = {};
+    assignedProjects.forEach(p => {
+        if (p.student) {
+            studentSupervisorMap[p.student.toString()] = p.supervisor.toString();
+        }
+    });
+
+    // Retroactively populate the supervisor field for students missing it in the User collection
+    const populatedUsers = users.map(u => {
+        if (u.role === "Student") {
+            const assignedSup = studentSupervisorMap[u._id.toString()];
+            if (assignedSup) {
+                u.supervisor = assignedSup;
+            }
+        }
+        return u;
+    });
+
     res.status(200).json({
         success: true,
-        users
+        users: populatedUsers
     });
 });
 
@@ -65,5 +89,81 @@ export const getAllProjects = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         projects
+    });
+});
+
+export const getUnassignedProjects = asyncHandler(async (req, res, next) => {
+    const projects = await Project.find({ status: "Approved", supervisor: null }).populate("student", "name email");
+    res.status(200).json({
+        success: true,
+        projects
+    });
+});
+
+export const getSupervisors = asyncHandler(async (req, res, next) => {
+    const supervisors = await User.find({ role: "Supervisor" }).select("name email department experties");
+    res.status(200).json({
+        success: true,
+        supervisors
+    });
+});
+
+export const assignSupervisor = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { supervisorId } = req.body;
+
+    if (!supervisorId) {
+        return next(new ErrorHandler("Please provide a supervisor ID", 400));
+    }
+
+    const project = await Project.findById(id);
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    project.supervisor = supervisorId;
+    await project.save();
+
+    // UPDATE the Student's User Document
+    await User.findByIdAndUpdate(project.student, { supervisor: supervisorId });
+
+    // UPDATE the Teacher's User Document
+    await User.findByIdAndUpdate(supervisorId, { $addToSet: { assignedStudents: project.student } });
+
+    // Clear any pending requests this student made to other supervisors
+    await import("../models/Request.js").then(async ({ Request }) => {
+         await Request.updateMany(
+            { fromUser: project.student, type: "Supervisor", status: "Pending" },
+             { $set: { status: "Rejected" } }
+         );
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Supervisor assigned successfully",
+        project
+    });
+});
+
+export const updateProjectStatus = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status || !["Pending", "Approved", "Rejected"].includes(status)) {
+        return next(new ErrorHandler("Invalid status provided", 400));
+    }
+
+    const project = await Project.findById(id).populate("student supervisor");
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    project.status = status;
+    await project.save();
+
+    res.status(200).json({
+        success: true,
+        message: `Project ${status.toLowerCase()} successfully`,
+        project
     });
 });

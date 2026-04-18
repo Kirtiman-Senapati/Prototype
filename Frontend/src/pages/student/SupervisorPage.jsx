@@ -3,23 +3,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAvailableSupervisors, requestSupervisor, getStudentDashboard } from "../../store/slices/studentSlice";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
-import { ArrowRight, CheckCircle, User, BookOpen } from "lucide-react";
+import { ArrowRight, CheckCircle, User, BookOpen, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 const SupervisorPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { supervisors, project, authUser } = useSelector((state) => state.student);
+  const { supervisors, project, authUser, requests } = useSelector((state) => state.student);
   
   const [selectedTeacherId, setSelectedTeacherId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
     dispatch(getAvailableSupervisors());
     if (!project) {
         dispatch(getStudentDashboard());
     }
   }, [dispatch, project]);
+
   // Real-Time Socket Connection
   useEffect(() => {
     if (!authUser?._id) return;
@@ -27,6 +30,7 @@ const SupervisorPage = () => {
     const socket = io("http://localhost:4000", {
         query: { userId: authUser._id }
     });
+
     socket.on("requestStatusUpdated", (data) => {
         if (data.status === "Accepted") {
             toast.success("Great news! Your supervisor request was accepted.");
@@ -36,15 +40,18 @@ const SupervisorPage = () => {
         }
         dispatch(getStudentDashboard());
     });
+
     return () => {
         socket.disconnect();
     };
   }, [authUser, dispatch, navigate]);
+
   const handleOpenModal = (id) => {
     setSelectedTeacherId(id);
     setTitle(project?.title || "");
     setIsModalOpen(true);
   };
+
   const handleRequest = (e) => {
     e.preventDefault();
     dispatch(requestSupervisor({ teacherId: selectedTeacherId, title, description }))
@@ -55,6 +62,7 @@ const SupervisorPage = () => {
         }
       });
   };
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {project?.supervisor ? (
@@ -113,13 +121,23 @@ const SupervisorPage = () => {
                  Submit Project Proposal <ArrowRight size={18} />
              </button>
           </div>
+      ) : project.status !== "Approved" ? (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[300px]">
+             <div className="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center shrink-0">
+                 <Clock size={40} />
+             </div>
+             <div className="max-w-md mx-auto">
+                 <h2 className="text-2xl font-bold text-slate-800">Proposal Pending Approval</h2>
+                 <p className="text-slate-600 mt-2">Your project proposal is currently pending. You can request a supervisor once your proposal has been approved by an admin.</p>
+             </div>
+          </div>
       ) : (
         <>
           <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-6 md:p-8 text-white shadow-lg overflow-hidden relative mb-8">
             <div className="relative z-10">
                 <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Available Supervisors</h1>
                 <p className="mt-2 text-slate-300 text-md font-medium opacity-90">
-                    Browse and request a supervisor for your project.
+                    Browse and request a supervisor for your approved project.
                 </p>
             </div>
             {/* Decorative background shape */}
@@ -127,40 +145,57 @@ const SupervisorPage = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                  {supervisors && supervisors.length > 0 ? (
-                     supervisors.map((teacher) => (
-                        <div key={teacher._id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 -mr-8 -mt-8 rounded-full opacity-50 transition-transform group-hover:scale-150 duration-500"></div>
-                            
-                            <div className="flex items-start justify-between relative z-10 mb-4">
-                               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-sm">
-                                   {teacher.name.charAt(0)}
-                               </div>
-                            </div>
-                            
-                            <div className="relative z-10 flex-1">
-                                <h3 className="font-bold text-lg text-slate-800 leading-tight">{teacher.name}</h3>
-                                <p className="text-sm text-slate-500 mt-0.5">{teacher.email}</p>
+                     supervisors.map((teacher) => {
+                        const hasSentRequest = requests?.some(req => 
+                            req.type === "Supervisor" && 
+                            req.toUser?._id === teacher._id && 
+                            req.status === "Pending"
+                        );
+
+                        return (
+                            <div key={teacher._id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 -mr-8 -mt-8 rounded-full opacity-50 transition-transform group-hover:scale-150 duration-500"></div>
                                 
-                                <div className="mt-4">
-                                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Expertise Fields</p>
-                                   <div className="flex flex-wrap gap-1.5">
-                                      {teacher.experties && teacher.experties.length > 0 ? teacher.experties.map((exp, idx) => (
-                                          <span key={idx} className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-md font-medium border border-slate-200">{exp}</span>
-                                      )) : <span className="text-xs text-slate-400 italic">No expertise specified</span>}
+                                <div className="flex items-start justify-between relative z-10 mb-4">
+                                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                                       {teacher.name.charAt(0)}
                                    </div>
                                 </div>
+                                
+                                <div className="relative z-10 flex-1">
+                                    <h3 className="font-bold text-lg text-slate-800 leading-tight">{teacher.name}</h3>
+                                    <p className="text-sm text-slate-500 mt-0.5">{teacher.email}</p>
+                                    
+                                    <div className="mt-4">
+                                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Expertise Fields</p>
+                                       <div className="flex flex-wrap gap-1.5">
+                                          {teacher.experties && teacher.experties.length > 0 ? teacher.experties.map((exp, idx) => (
+                                              <span key={idx} className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-md font-medium border border-slate-200">{exp}</span>
+                                          )) : <span className="text-xs text-slate-400 italic">No expertise specified</span>}
+                                       </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-6 pt-4 border-t border-slate-100 relative z-10">
+                                    {hasSentRequest ? (
+                                        <button 
+                                            disabled
+                                            className="w-full flex items-center justify-center gap-2 bg-slate-100 text-slate-500 py-2.5 rounded-xl font-medium cursor-not-allowed border border-slate-200"
+                                        >
+                                            <Clock size={16} /> Request Sent
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            onClick={() => handleOpenModal(teacher._id)}
+                                            className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl font-medium transition-colors shadow-sm"
+                                        >
+                                            Request Supervisor <ArrowRight size={16} />
+                                        </button>
+                                    )}
+                                </div>
                             </div>
-                            
-                            <div className="mt-6 pt-4 border-t border-slate-100 relative z-10">
-                                <button 
-                                    onClick={() => handleOpenModal(teacher._id)}
-                                    className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl font-medium transition-colors shadow-sm"
-                                >
-                                    Request Supervisor <ArrowRight size={16} />
-                                </button>
-                            </div>
-                        </div>
-                     ))
+                        );
+                     })
                  ) : (
                      <div className="col-span-full py-12 flex flex-col items-center justify-center text-slate-500 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
                          <User size={48} className="opacity-20 mb-3" />
@@ -210,4 +245,5 @@ const SupervisorPage = () => {
     </div>
   );
 };
+
 export default SupervisorPage;

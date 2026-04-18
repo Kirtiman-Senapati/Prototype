@@ -24,6 +24,42 @@ export const deleteUser = createAsyncThunk("admin/deleteUser", async (userId, { 
     } catch (err) { return rejectWithValue(err.response?.data); }
 });
 
+export const getUnassignedProjects = createAsyncThunk("admin/unassignedProjects", async (_, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.get("/admin/unassigned-projects");
+        return response.data;
+    } catch (err) { return rejectWithValue(err.response?.data); }
+});
+
+export const getAdminSupervisors = createAsyncThunk("admin/supervisors", async (_, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.get("/admin/supervisors");
+        return response.data;
+    } catch (err) { return rejectWithValue(err.response?.data); }
+});
+
+export const assignSupervisorAdmin = createAsyncThunk("admin/assignSupervisor", async ({ id, supervisorId }, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.patch(`/admin/assign-supervisor/${id}`, { supervisorId });
+        toast.success("Supervisor assigned successfully");
+        return response.data;
+    } catch (err) { 
+        toast.error(err.response?.data?.message || "Error assigning supervisor");
+        return rejectWithValue(err.response?.data); 
+    }
+});
+
+export const updateProjectStatusAdmin = createAsyncThunk("admin/updateProjectStatus", async ({ id, status }, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.patch(`/admin/project/${id}/status`, { status });
+        toast.success(`Project ${status.toLowerCase()} successfully`);
+        return response.data;
+    } catch (err) { 
+        toast.error(err.response?.data?.message || "Error updating project status");
+        return rejectWithValue(err.response?.data); 
+    }
+});
+
 const adminSlice = createSlice({
     name: "admin",
     initialState: {
@@ -31,6 +67,8 @@ const adminSlice = createSlice({
         recentProjects: [],
         recentActivity: [],
         users: [],
+        unassignedProjects: [],
+        supervisors: [],
         isLoading: false,
     },
     reducers: {},
@@ -42,7 +80,19 @@ const adminSlice = createSlice({
                 state.recentActivity = action.payload.recentActivity || [];
             })
             .addCase(getAllUsers.fulfilled, (state, action) => { state.users = action.payload.users; })
-            .addCase(deleteUser.fulfilled, (state, action) => { state.users = state.users.filter(u => u._id !== action.payload); });
+            .addCase(deleteUser.fulfilled, (state, action) => { state.users = state.users.filter(u => u._id !== action.payload); })
+            .addCase(getUnassignedProjects.fulfilled, (state, action) => { state.unassignedProjects = action.payload.projects; })
+            .addCase(getAdminSupervisors.fulfilled, (state, action) => { state.supervisors = action.payload.supervisors; })
+            .addCase(assignSupervisorAdmin.fulfilled, (state, action) => {
+                const updatedProject = action.payload.project;
+                const index = state.unassignedProjects.findIndex(p => p._id === updatedProject._id);
+                if (index !== -1) {
+                    state.unassignedProjects[index].supervisor = updatedProject.supervisor; 
+                }
+            })
+            // no need to tightly couple state array updates here as component fetches data directly, 
+            // but we can add an empty fulfilled for updateProjectStatusAdmin to avoid missing the action
+            .addCase(updateProjectStatusAdmin.fulfilled, (state, action) => {})
     }
 });
 
