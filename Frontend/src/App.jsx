@@ -54,6 +54,13 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+const DashboardIndex = () => {
+    const { authUser } = useSelector((state) => state.auth);
+    if (authUser?.role === "Admin") return <Navigate to="/dashboard/admin" replace />;
+    if (authUser?.role === "Supervisor") return <Navigate to="/dashboard/teacher" replace />;
+    return <StudentDashboard />;
+};
+
 const App = () => {
   const dispatch = useDispatch();
 
@@ -75,7 +82,7 @@ const App = () => {
           {/* Dashboard Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
             {/* Student Routes */}
-            <Route index element={<StudentDashboard />} />
+            <Route index element={<DashboardIndex />} />
             <Route path="submit-proposal" element={<SubmitProposal />} />
             <Route path="upload-files" element={<UploadFiles />} />
             <Route path="supervisor" element={<SupervisorPage />} />
