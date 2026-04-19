@@ -66,8 +66,8 @@ const SupervisorPage = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {project?.supervisor ? (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 grid grid-cols-1 lg:grid-cols-2 gap-6">
+           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overflow-hidden flex flex-col hover:shadow-md transition-shadow">
                <div className="flex items-center justify-between mb-6">
                    <div className="flex items-center gap-2">
                       <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Current Supervisor</h2>
@@ -103,6 +103,43 @@ const SupervisorPage = () => {
                                   )}
                               </div>
                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+
+           {/* Project Details Card */}
+           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative h-full flex flex-col hover:shadow-md transition-shadow">
+               <div className="flex items-center justify-between mb-4">
+                   <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Project Details</h2>
+                   <span className={`px-3 py-1 rounded-full text-xs font-bold border shadow-sm ${
+                       project.status === 'Approved' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                       project.status === 'Pending' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                       'bg-red-100 text-red-700 border-red-200'
+                   }`}>
+                       {project.status || "Approved"}
+                   </span>
+               </div>
+               <div className="flex-1 flex flex-col space-y-4">
+                   <div>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Project Title</p>
+                       <p className="font-bold text-lg text-slate-800 leading-tight">{project.title || "N/A"}</p>
+                   </div>
+                   
+                   <div className="grid grid-cols-2 gap-4">
+                      <div>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Deadline</p>
+                          <p className="font-medium text-slate-800">{project.deadline ? new Date(project.deadline).toLocaleDateString('en-GB') : 'Not set yet'}</p>
+                      </div>
+                      <div>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Created On</p>
+                          <p className="font-medium text-slate-800">{project.createdAt ? new Date(project.createdAt).toLocaleDateString('en-GB') : 'N/A'}</p>
+                      </div>
+                   </div>
+                   <div className="flex-1 min-h-0 relative">
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Description</p>
+                       <div className="max-h-[80px] overflow-y-auto pr-2 custom-scrollbar">
+                          <p className="text-sm text-slate-600 leading-relaxed font-medium">{project.description || "No description provided."}</p>
                        </div>
                    </div>
                </div>
