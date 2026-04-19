@@ -42,6 +42,20 @@ const StudentDashboard = () => {
         dispatch(getStudentDashboard());
     });
 
+    socket.on("projectStatusUpdated", (data) => {
+        if (data.status === "Approved") {
+            toast.success("Congratulations! Your project proposal was APPROVED by an admin.", { autoClose: 6000 });
+        } else if (data.status === "Rejected") {
+            toast.error("Your project proposal was REJECTED. You must submit a new proposal.", { autoClose: 8000 });
+        }
+        dispatch(getStudentDashboard());
+    });
+
+    socket.on("supervisorAssignedAdmin", () => {
+        toast.success("An admin has directly assigned a supervisor to your project!", { icon: "🎓", autoClose: 6000 });
+        dispatch(getStudentDashboard());
+    });
+
     return () => {
         socket.disconnect();
     };
@@ -311,3 +325,4 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+

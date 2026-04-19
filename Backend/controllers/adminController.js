@@ -147,6 +147,22 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
          );
     });
 
+    // 🚀 Socket.IO: Real-Time Event Emmision to Student
+    import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
+        const io = getIo();
+        if (io && project.student) {
+            const studentId = project.student._id ? project.student._id.toString() : project.student.toString();
+            const studentSocketId = getReceiverSocketId(studentId);
+            if (studentSocketId) {
+                // Emit event directly to the student
+                io.to(studentSocketId).emit("supervisorAssignedAdmin", {
+                    projectId: project._id,
+                    supervisorId: supervisorId
+                });
+            }
+        }
+    });
+
     res.status(200).json({
         success: true,
         message: "Supervisor assigned successfully",
@@ -169,6 +185,22 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
 
     project.status = status;
     await project.save();
+
+    // 🚀 Socket.IO: Real-Time Event Emmision to Student
+    import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
+        const io = getIo();
+        if (io && project.student) {
+            const studentId = project.student._id ? project.student._id.toString() : project.student.toString();
+            const studentSocketId = getReceiverSocketId(studentId);
+            if (studentSocketId) {
+                // Emit event directly to the student
+                io.to(studentSocketId).emit("projectStatusUpdated", {
+                    projectId: project._id,
+                    status: project.status
+                });
+            }
+        }
+    });
 
     res.status(200).json({
         success: true,
@@ -196,8 +228,9 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
     // 🚀 Socket.IO: Real-Time Event Emmision to Student
     import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
         const io = getIo();
-        if (io && project.student && project.student._id) {
-            const studentSocketId = getReceiverSocketId(project.student._id.toString());
+        if (io && project.student) {
+            const studentId = project.student._id ? project.student._id.toString() : project.student.toString();
+            const studentSocketId = getReceiverSocketId(studentId);
             if (studentSocketId) {
                 // Emit event directly to the student
                 io.to(studentSocketId).emit("deadlineUpdated", {

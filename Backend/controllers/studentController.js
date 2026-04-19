@@ -48,6 +48,14 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
         await req.user.save();
     }
 
+    // Socket Emission for Admin Dashboard Updates
+    import("../utils/socket.js").then(({ getIo }) => {
+        const io = getIo();
+        if (io) {
+            io.emit("adminDashboardUpdate");
+        }
+    });
+
     res.status(201).json({
         success: true,
         message: "Project Proposal Submitted successfully",
@@ -144,4 +152,3 @@ export const getStudentDashboard = asyncHandler(async (req, res, next) => {
         notifications
     });
 });
-

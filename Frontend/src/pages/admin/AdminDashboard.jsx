@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminDashboard } from "../../store/slices/adminSlice";
 import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare } from "lucide-react";
+import { io } from "socket.io-client";
+import { toast } from "react-toastify";
 
 import StatCard from "./components/StatCard";
 import ActionCard from "./components/ActionCard";
@@ -11,10 +13,28 @@ import ProjectList from "./components/ProjectList";
 const AdminDashboard = () => {
     const dispatch = useDispatch();
     const { stats, recentProjects, pendingProjects, recentActivity, isLoading } = useSelector((state) => state.admin);
+    const { authUser } = useSelector((state) => state.auth);
 
     useEffect(() => {
         dispatch(getAdminDashboard());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (!authUser?._id) return;
+        
+        const socket = io("http://localhost:4000", {
+            query: { userId: authUser._id }
+        });
+
+        socket.on("adminDashboardUpdate", () => {
+            toast.info("A new project proposal was just submitted!", { icon: "📝", autoClose: 4000 });
+            dispatch(getAdminDashboard());
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [authUser, dispatch]);
 
     if (isLoading && !stats) {
         return (
