@@ -29,6 +29,10 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
     // Check if project exists
     let project = await Project.findOne({ student: req.user._id });
     if (project) {
+        if (project.status === "Pending" || project.status === "Approved") {
+            return next(new ErrorHandler("You already have an active proposal. Please wait for the admin's decision or submit only if rejected.", 400));
+        }
+        
         project.title = title;
         project.description = description;
         project.status = "Pending"; // Reset status for Admin Review
@@ -140,3 +144,4 @@ export const getStudentDashboard = asyncHandler(async (req, res, next) => {
         notifications
     });
 });
+
