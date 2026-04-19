@@ -7,6 +7,7 @@ export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
     const totalProjects = await Project.countDocuments();
+    const pendingProposals = await Project.countDocuments({ status: "Pending" });
 
     // Get recently created projects
     const recentProjects = await Project.find()
@@ -14,6 +15,12 @@ export const getAdminDashboard = asyncHandler(async (req, res, next) => {
         .limit(5)
         .populate("student", "name email")
         .populate("supervisor", "name email");
+
+    // Get pending projects explicitly
+    const pendingProjects = await Project.find({ status: "Pending" })
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .populate("student", "name email");
 
     // Get recent users as activity
     const recentActivity = await User.find({ role: { $ne: "Admin" } })
@@ -26,9 +33,11 @@ export const getAdminDashboard = asyncHandler(async (req, res, next) => {
         stats: {
             totalStudents,
             totalTeachers,
-            totalProjects
+            totalProjects,
+            pendingProposals
         },
         recentProjects,
+        pendingProjects,
         recentActivity
     });
 });

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminDashboard } from "../../store/slices/adminSlice";
-import { Users, GraduationCap, FolderKanban, ShieldCheck } from "lucide-react";
+import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare } from "lucide-react";
 
 import StatCard from "./components/StatCard";
 import ActionCard from "./components/ActionCard";
@@ -10,7 +10,7 @@ import ProjectList from "./components/ProjectList";
 
 const AdminDashboard = () => {
     const dispatch = useDispatch();
-    const { stats, recentProjects, recentActivity, isLoading } = useSelector((state) => state.admin);
+    const { stats, recentProjects, pendingProjects, recentActivity, isLoading } = useSelector((state) => state.admin);
 
     useEffect(() => {
         dispatch(getAdminDashboard());
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
             </div>
 
             {/* Stats Cards Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 <StatCard 
                     title="Total Students" 
                     value={stats?.totalStudents || 0} 
@@ -62,12 +62,27 @@ const AdminDashboard = () => {
                     colorClass="text-purple-600"
                     bgColorClass="bg-purple-50"
                 />
+                <StatCard 
+                    title="Pending Proposals" 
+                    value={stats?.pendingProposals || 0} 
+                    icon={Clock}
+                    colorClass="text-amber-600"
+                    bgColorClass="bg-amber-50"
+                />
             </div>
 
             {/* Quick Actions Section */}
             <div>
                 <h2 className="text-lg font-semibold text-slate-800 mb-4 px-1">Quick Actions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    <ActionCard 
+                        title="Review Proposals" 
+                        description="Approve and assign supervisors"
+                        icon={CheckSquare}
+                        to="/dashboard/assign-supervisor"
+                        colorClass="text-amber-600"
+                        bgColorClass="bg-amber-50"
+                    />
                     <ActionCard 
                         title="Manage Students" 
                         description="View, edit, or remove students"
@@ -96,12 +111,14 @@ const AdminDashboard = () => {
             </div>
 
             {/* Activity & Projects Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <ActivityList activities={recentActivity} />
-                <ProjectList projects={recentProjects} />
+                <ProjectList projects={recentProjects} title="Recent Projects" viewAllLink="/dashboard/projects" />
+                <ProjectList projects={pendingProjects} title="Pending Proposals" viewAllLink="/dashboard/assign-supervisor" />
             </div>
         </div>
     );
 };
 
 export default AdminDashboard;
+

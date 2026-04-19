@@ -1,12 +1,22 @@
 import React from 'react';
 import { FolderKanban, CheckCircle2, Clock, XCircle } from 'lucide-react';
 
-const ProjectList = ({ projects }) => {
+const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dashboard/projects", emptyMessage }) => {
+    const displayEmptyMessage = emptyMessage || `No ${title.toLowerCase()} found`;
+
     if (!projects || projects.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-64">
-                <FolderKanban size={48} className="text-slate-300 mb-4" />
-                <p>No recent projects found</p>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                <div className="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                    <h2 className="font-bold text-slate-800">{title}</h2>
+                    <a href={viewAllLink} className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline">View All</a>
+                </div>
+                <div className="p-6 flex flex-col items-center justify-center text-slate-500 h-[264px]">
+                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
+                        <FolderKanban size={28} className="text-slate-300" />
+                    </div>
+                    <p className="font-medium">{displayEmptyMessage}</p>
+                </div>
             </div>
         );
     }
@@ -16,7 +26,7 @@ const ProjectList = ({ projects }) => {
             case 'Approved':
                 return 'bg-green-100 text-green-700 border-green-200';
             case 'Pending':
-                return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+                return 'bg-amber-100 text-amber-700 border-amber-200';
             case 'Rejected':
                 return 'bg-red-100 text-red-700 border-red-200';
             case 'Completed':
@@ -44,8 +54,8 @@ const ProjectList = ({ projects }) => {
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                <h2 className="font-bold text-slate-800">Recent Projects</h2>
-                <a href="/dashboard/projects" className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline">View All</a>
+                <h2 className="font-bold text-slate-800">{title}</h2>
+                <a href={viewAllLink} className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline">View All</a>
             </div>
             <div className="divide-y divide-slate-100">
                 {projects.map((project) => (

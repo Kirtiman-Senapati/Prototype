@@ -76,6 +76,7 @@ const adminSlice = createSlice({
     initialState: {
         stats: null,
         recentProjects: [],
+        pendingProjects: [],
         recentActivity: [],
         users: [],
         unassignedProjects: [],
@@ -88,6 +89,7 @@ const adminSlice = createSlice({
             .addCase(getAdminDashboard.fulfilled, (state, action) => { 
                 state.stats = action.payload.stats; 
                 state.recentProjects = action.payload.recentProjects || [];
+                state.pendingProjects = action.payload.pendingProjects || [];
                 state.recentActivity = action.payload.recentActivity || [];
             })
             .addCase(getAllUsers.fulfilled, (state, action) => { state.users = action.payload.users; })
