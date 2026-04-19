@@ -279,8 +279,21 @@ const DeadlinesPage = () => {
                                                             }
                                                         }}
                                                     >
-                                                        <p className="text-sm font-bold text-slate-800 line-clamp-1">{p.title}</p>
-                                                        <p className="text-[11px] text-slate-500 font-medium mt-0.5">{p.student?.name} • {p.supervisor?.name || "Unassigned supervisor"}</p>
+                                                        <div className="flex flex-col gap-1">
+                                                            <p className="text-sm font-bold text-slate-800 line-clamp-1">{p.title}</p>
+                                                            <p className="text-xs text-slate-600 font-medium">{p.student?.name || "Unknown Student"}</p>
+                                                            <div className="flex items-center gap-2 mt-0.5">
+                                                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
+                                                                    p.status === 'Approved' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                                    p.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                                                    p.status === 'Rejected' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                                    'bg-slate-50 text-slate-700 border-slate-200'
+                                                                }`}>
+                                                                    {p.status || "Unknown"}
+                                                                </span>
+                                                                <span className="text-xs text-slate-500 font-medium">Supervisor: {p.supervisor?.name || "Unassigned"}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 ))
                                             )}
