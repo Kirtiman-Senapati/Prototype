@@ -39,7 +39,7 @@ const ActivityList = ({ activities }) => {
                                     {activity.status}
                                 </span>
                                 <span className="text-xs text-slate-400">
-                                    {new Date(activity.createdAt).toLocaleDateString('en-GB')}
+                                    {new Date(activity.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(activity.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                                 </span>
                             </div>
                         </div>

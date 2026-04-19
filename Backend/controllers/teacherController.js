@@ -106,6 +106,11 @@ export const addTask = asyncHandler(async (req, res, next) => {
 export const getTeacherDashboard = asyncHandler(async (req, res, next) => {
     const pendingRequestsCount = await Request.countDocuments({ toUser: req.user._id, status: "Pending" });
     const assignedStudentsCount = req.user.assignedStudents.length;
+    const completedProjectsCount = await Project.countDocuments({ supervisor: req.user._id, status: "Completed" });
+    
+    // Fetch completed projects details for the modal
+    const completedProjectsList = await Project.find({ supervisor: req.user._id, status: "Completed" }).populate("student", "name");
+    
     // Fetch projects assigned to this supervisor
     const projects = await Project.find({ supervisor: req.user._id }).populate("student", "name");
     
@@ -138,8 +143,10 @@ export const getTeacherDashboard = asyncHandler(async (req, res, next) => {
         success: true,
         stats: {
             pendingRequests: pendingRequestsCount,
-            assignedStudents: assignedStudentsCount
+            assignedStudents: assignedStudentsCount,
+            completedProjects: completedProjectsCount
         },
+        completedProjectsList,
         recentFiles,
         recentActivity
     });

@@ -63,7 +63,7 @@ const RecentFilesList = ({ files }) => {
                                     {file.filename}
                                 </p>
                                 <p className="text-xs text-slate-500 mt-0.5 truncate">
-                                    {file.studentName} • {new Date(file.uploadedAt).toLocaleDateString('en-GB')}
+                                    {file.studentName} • {new Date(file.uploadedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(file.uploadedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                                 </p>
                             </div>
                         </div>

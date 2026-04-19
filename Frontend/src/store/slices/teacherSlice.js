@@ -60,6 +60,7 @@ const teacherSlice = createSlice({
     assignedStudents: [],
     recentFiles: [],
     recentActivity: [],
+    completedProjectsList: [],
     isLoading: false,
   },
   reducers: {},
@@ -71,6 +72,7 @@ const teacherSlice = createSlice({
         state.stats = action.payload.stats;
         state.recentFiles = action.payload.recentFiles || [];
         state.recentActivity = action.payload.recentActivity || [];
+        state.completedProjectsList = action.payload.completedProjectsList || [];
       })
       .addCase(getTeacherDashboard.rejected, (state) => { state.isLoading = false; })
       .addCase(getPendingRequests.fulfilled, (state, action) => {
