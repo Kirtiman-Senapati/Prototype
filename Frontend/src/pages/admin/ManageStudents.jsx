@@ -1,15 +1,28 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsers, deleteUser, adminAddStudent } from "../../store/slices/adminSlice";
-import { Users, Trash2, ShieldAlert, Plus, X } from "lucide-react";
+import { getAllUsers, deleteUser, adminAddStudent, adminUpdateUser } from "../../store/slices/adminSlice";
+import { Users, Trash2, ShieldAlert, Plus, X, Search, Filter, Edit2 } from "lucide-react";
 
 const ManageStudents = () => {
     const dispatch = useDispatch();
     const { users, isLoading } = useSelector((state) => state.admin);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editId, setEditId] = useState(null);
     const [formData, setFormData] = useState({ name: "", email: "", password: "", department: "" });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Filters
+    const [searchQuery, setSearchQuery] = useState("");
+    const [departmentFilter, setDepartmentFilter] = useState("");
+
+    const departments = [
+        "Computer Science & Engineering",
+        "Information Technology",
+        "Civil Engineering",
+        "Electrical Engineering",
+        "Mechanical Engineering"
+    ];
 
     useEffect(() => {
         dispatch(getAllUsers());
@@ -17,16 +30,54 @@ const ManageStudents = () => {
 
     const students = users?.filter(u => u.role === "Student") || [];
 
+    // Apply strict filtering
+    const filteredStudents = students.filter(student => {
+        const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              student.email.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesDept = departmentFilter === "" || student.department === departmentFilter;
+        return matchesSearch && matchesDept;
+    });
+
+    const uniqueDepartments = [...new Set(students.map(s => s.department).filter(Boolean))];
+
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const openCreateModal = () => {
+        setEditId(null);
+        setFormData({ name: "", email: "", password: "", department: "" });
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (user) => {
+        setEditId(user._id);
+        setFormData({ name: user.name, email: user.email, password: "", department: user.department || "" });
+        setIsModalOpen(true);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const resultAction = await dispatch(adminAddStudent(formData));
-        setIsSubmitting(false);
-        if (adminAddStudent.fulfilled.match(resultAction)) {
-            setIsModalOpen(false);
-            setFormData({ name: "", email: "", password: "", department: "" });
+        let resultAction;
+        
+        if (editId) {
+            // Edit user flow
+            const dataToSubmit = { ...formData };
+            if (!dataToSubmit.password) delete dataToSubmit.password;
+            
+            resultAction = await dispatch(adminUpdateUser({ userId: editId, userData: dataToSubmit }));
+            setIsSubmitting(false);
+            if (adminUpdateUser.fulfilled.match(resultAction)) {
+                setIsModalOpen(false);
+                setEditId(null);
+            }
+        } else {
+            // Create user flow
+            resultAction = await dispatch(adminAddStudent(formData));
+            setIsSubmitting(false);
+            if (adminAddStudent.fulfilled.match(resultAction)) {
+                setIsModalOpen(false);
+                setFormData({ name: "", email: "", password: "", department: "" });
+            }
         }
     };
 
@@ -40,6 +91,7 @@ const ManageStudents = () => {
 
     return (
         <div className="space-y-6 pb-8">
+            {/* Header & Main Actions */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
@@ -47,11 +99,11 @@ const ManageStudents = () => {
                     </div>
                     <div>
                         <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Manage Students</h1>
-                        <p className="text-slate-500 mt-1">View, edit, and safely provision student accounts.</p>
+                        <p className="text-slate-500 mt-1">View, edit, filter, and safely provision student accounts.</p>
                     </div>
                 </div>
                 <button 
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={openCreateModal}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-md flex items-center gap-2"
                 >
                     <Plus size={18} />
@@ -59,9 +111,36 @@ const ManageStudents = () => {
                 </button>
             </div>
 
+            {/* Filter Section */}
+            <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input 
+                        type="text" 
+                        placeholder="Search student by name or email..." 
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none"
+                    />
+                </div>
+                <div className="relative w-full md:w-64">
+                    <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <select 
+                        value={departmentFilter}
+                        onChange={(e) => setDepartmentFilter(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none bg-white appearance-none"
+                    >
+                        <option value="">All Departments</option>
+                        {uniqueDepartments.map(dept => (
+                            <option key={dept} value={dept}>{dept}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse min-w-[700px]">
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-sm uppercase tracking-wider">
                                 <th className="px-6 py-4 font-medium">Student Info</th>
@@ -71,61 +150,78 @@ const ManageStudents = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {students.map((user) => (
-                                <tr key={user._id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm shrink-0">
-                                                {user.name?.charAt(0).toUpperCase()}
+                            {filteredStudents.length > 0 ? (
+                                filteredStudents.map((user) => (
+                                    <tr key={user._id} className="hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm shrink-0">
+                                                    {user.name?.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <div className="font-semibold text-slate-800">{user.name}</div>
+                                                    <div className="text-sm text-slate-500">{user.email}</div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <div className="font-semibold text-slate-800">{user.name}</div>
-                                                <div className="text-sm text-slate-500">{user.email}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-slate-600 font-medium">
+                                            {user.department || "-"}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${user.supervisor ? 'bg-green-100 text-green-700 border-green-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}>
+                                                {user.supervisor ? "Assigned" : "Pending"}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex justify-end items-center gap-1">
+                                                <button 
+                                                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
+                                                    onClick={() => openEditModal(user)}
+                                                    title="Edit Student"
+                                                >
+                                                    <Edit2 size={18} className="group-hover:scale-110 transition-transform" />
+                                                </button>
+                                                <button 
+                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors group"
+                                                    onClick={() => {
+                                                        if (window.confirm(`Are you sure you want to delete ${user.name}? This action cannot be undone.`)) {
+                                                            dispatch(deleteUser(user._id));
+                                                        }
+                                                    }}
+                                                    title="Delete Student"
+                                                >
+                                                    <Trash2 size={18} className="group-hover:scale-110 transition-transform" />
+                                                </button>
                                             </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" className="p-12 text-center text-slate-500 bg-slate-50/50">
+                                        <div className="flex flex-col items-center justify-center">
+                                            <ShieldAlert size={48} className="text-slate-300 mb-4" />
+                                            <p className="text-lg font-medium text-slate-600">No students found.</p>
+                                            {searchQuery || departmentFilter ? (
+                                                <button onClick={() => { setSearchQuery(""); setDepartmentFilter(""); }} className="mt-2 text-blue-600 font-medium hover:underline">Clear Filters</button>
+                                            ) : (
+                                                <p className="text-sm mt-1">Students registered in the system will appear here.</p>
+                                            )}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-slate-600 font-medium">
-                                        {user.department || "-"}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${user.supervisor ? 'bg-green-100 text-green-700 border-green-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}>
-                                            {user.supervisor ? "Assigned" : "Pending"}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button 
-                                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex items-center justify-center group"
-                                            onClick={() => {
-                                                if (window.confirm(`Are you sure you want to delete ${user.name}? This action cannot be undone.`)) {
-                                                    dispatch(deleteUser(user._id));
-                                                }
-                                            }}
-                                            title="Delete Student"
-                                        >
-                                            <Trash2 size={18} className="group-hover:scale-110 transition-transform" />
-                                        </button>
-                                    </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>
-                
-                {students.length === 0 && (
-                    <div className="p-12 flex flex-col items-center justify-center text-slate-500 bg-slate-50/50">
-                        <ShieldAlert size={48} className="text-slate-300 mb-4" />
-                        <p className="text-lg font-medium text-slate-600">No students found.</p>
-                        <p className="text-sm mt-1">Students registered in the system will appear here.</p>
-                    </div>
-                )}
             </div>
 
-            {/* 🔥 ADD STUDENT MODAL */}
+            {/* 🔥 ADD/EDIT STUDENT MODAL */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-center p-5 border-b border-slate-100">
-                            <h2 className="text-lg font-bold text-slate-800">Add New Student</h2>
+                            <h2 className="text-lg font-bold text-slate-800">{editId ? "Edit Student Details" : "Add New Student"}</h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition">
                                 <X size={20} />
                             </button>
@@ -140,22 +236,25 @@ const ManageStudents = () => {
                                 <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="student@university.edu" />
                             </div>
                             <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Temporary Password <span className="text-red-500">*</span></label>
-                                <input type="password" name="password" value={formData.password} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="••••••••" />
+                                <label className="block text-sm font-semibold text-slate-700 mb-1.5 flex justify-between">
+                                    <span>{editId ? 'New Password' : 'Temporary Password'} {editId ? '' : <span className="text-red-500">*</span>}</span>
+                                    {editId && <span className="font-normal text-xs text-slate-400">(Leave blank to keep current)</span>}
+                                </label>
+                                <input type="password" name="password" value={formData.password} onChange={handleChange} required={!editId} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="••••••••" />
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Department (Optional)</label>
                                 <select name="department" value={formData.department} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none bg-white">
                                     <option value="">Select a department...</option>
-                                    <option value="Computer Science">Computer Science</option>
-                                    <option value="Software Engineering">Software Engineering</option>
-                                    <option value="Information Technology">Information Technology</option>
+                                    {departments.map((dep, index) => (
+                                        <option key={index} value={dep}>{dep}</option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="pt-4 flex gap-3">
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-2.5 rounded-xl text-slate-700 font-medium bg-slate-100 hover:bg-slate-200 transition">Cancel</button>
                                 <button type="submit" disabled={isSubmitting} className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-70 transition flex justify-center items-center">
-                                    {isSubmitting ? <span className="animate-spin h-5 w-5 border-2 border-white/30 border-t-white rounded-full"></span> : "Add Student"}
+                                    {isSubmitting ? <span className="animate-spin h-5 w-5 border-2 border-white/30 border-t-white rounded-full"></span> : (editId ? "Save Changes" : "Add Student")}
                                 </button>
                             </div>
                         </form>
@@ -167,4 +266,5 @@ const ManageStudents = () => {
 };
 
 export default ManageStudents;
+
 

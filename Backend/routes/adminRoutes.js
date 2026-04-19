@@ -10,7 +10,8 @@ import {
     updateProjectStatus,
     updateProjectDeadline,
     addStudent,
-    addSupervisor
+    addSupervisor,
+    updateUserDetails
 } from "../controllers/adminController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
@@ -29,5 +30,6 @@ router.patch("/project/:id/status", updateProjectStatus);
 router.put("/project/:id/deadline", updateProjectDeadline);
 router.post("/student", addStudent);
 router.post("/supervisor", addSupervisor);
+router.patch("/user/:id", updateUserDetails);
 
 export default router;

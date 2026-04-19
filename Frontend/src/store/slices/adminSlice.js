@@ -46,6 +46,17 @@ export const adminAddSupervisor = createAsyncThunk("admin/addSupervisor", async 
     }
 });
 
+export const adminUpdateUser = createAsyncThunk("admin/updateUser", async ({ userId, userData }, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.patch(`/admin/user/${userId}`, userData);
+        toast.success("User updated successfully!");
+        return response.data.user;
+    } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to update user");
+        return rejectWithValue(err.response?.data);
+    }
+});
+
 export const getUnassignedProjects = createAsyncThunk("admin/unassignedProjects", async (_, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.get("/admin/unassigned-projects");
@@ -117,6 +128,12 @@ const adminSlice = createSlice({
             .addCase(getAllUsers.fulfilled, (state, action) => { state.users = action.payload.users; })
             .addCase(adminAddStudent.fulfilled, (state, action) => { state.users = [action.payload, ...state.users]; })
             .addCase(adminAddSupervisor.fulfilled, (state, action) => { state.users = [action.payload, ...state.users]; })
+            .addCase(adminUpdateUser.fulfilled, (state, action) => {
+                const index = state.users.findIndex(u => u._id === action.payload._id);
+                if (index !== -1) {
+                    state.users[index] = action.payload;
+                }
+            })
             .addCase(deleteUser.fulfilled, (state, action) => { state.users = state.users.filter(u => u._id !== action.payload); })
             .addCase(getUnassignedProjects.fulfilled, (state, action) => { state.unassignedProjects = action.payload.projects; })
             .addCase(getAdminSupervisors.fulfilled, (state, action) => { state.supervisors = action.payload.supervisors; })

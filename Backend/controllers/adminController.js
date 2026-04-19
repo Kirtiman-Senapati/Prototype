@@ -311,3 +311,40 @@ export const addSupervisor = asyncHandler(async (req, res, next) => {
         user
     });
 });
+
+export const updateUserDetails = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { name, email, department, experties, password } = req.body;
+
+    let user = await User.findById(id);
+
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (department) user.department = department;
+    
+    if (password) {
+        user.password = password; // Pre-save hook will hash this
+    }
+
+    if (user.role === "Supervisor" && experties !== undefined) {
+        let parsedExpertise = [];
+        if (experties) {
+            parsedExpertise = Array.isArray(experties) 
+                ? experties 
+                : experties.split(',').map(e => e.trim()).filter(e => e);
+        }
+        user.experties = parsedExpertise;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+        message: "User details updated successfully",
+        user
+    });
+});
