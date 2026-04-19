@@ -248,3 +248,66 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         project
     });
 });
+
+export const addStudent = asyncHandler(async (req, res, next) => {
+    const { name, email, password, department } = req.body;
+
+    if (!name || !email || !password) {
+        return next(new ErrorHandler("Please fill name, email and password", 400));
+    }
+
+    let user = await User.findOne({ email });
+    if (user) {
+        return next(new ErrorHandler("User already exists with this email", 400));
+    }
+
+    user = await User.create({
+        name,
+        email,
+        password,
+        department,
+        role: "Student",
+    });
+
+    res.status(201).json({
+        success: true,
+        message: "Student added successfully",
+        user
+    });
+});
+
+export const addSupervisor = asyncHandler(async (req, res, next) => {
+    const { name, email, password, department, experties } = req.body;
+
+    if (!name || !email || !password || !department) {
+        return next(new ErrorHandler("Please fill all required fields", 400));
+    }
+
+    let user = await User.findOne({ email });
+    if (user) {
+        return next(new ErrorHandler("User already exists with this email", 400));
+    }
+
+    // Convert comma-separated expertise into an array if it's a string
+    let parsedExpertise = [];
+    if (experties) {
+        parsedExpertise = Array.isArray(experties) 
+            ? experties 
+            : experties.split(',').map(e => e.trim()).filter(e => e);
+    }
+
+    user = await User.create({
+        name,
+        email,
+        password,
+        department,
+        experties: parsedExpertise,
+        role: "Supervisor",
+    });
+
+    res.status(201).json({
+        success: true,
+        message: "Supervisor added successfully",
+        user
+    });
+});

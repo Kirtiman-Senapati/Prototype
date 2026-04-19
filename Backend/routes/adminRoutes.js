@@ -8,7 +8,9 @@ import {
     getSupervisors,
     assignSupervisor,
     updateProjectStatus,
-    updateProjectDeadline
+    updateProjectDeadline,
+    addStudent,
+    addSupervisor
 } from "../controllers/adminController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
@@ -25,5 +27,7 @@ router.get("/supervisors", getSupervisors);
 router.patch("/assign-supervisor/:id", assignSupervisor);
 router.patch("/project/:id/status", updateProjectStatus);
 router.put("/project/:id/deadline", updateProjectDeadline);
+router.post("/student", addStudent);
+router.post("/supervisor", addSupervisor);
 
 export default router;

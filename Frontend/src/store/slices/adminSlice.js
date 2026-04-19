@@ -24,6 +24,28 @@ export const deleteUser = createAsyncThunk("admin/deleteUser", async (userId, { 
     } catch (err) { return rejectWithValue(err.response?.data); }
 });
 
+export const adminAddStudent = createAsyncThunk("admin/addStudent", async (studentData, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.post("/admin/student", studentData);
+        toast.success("Student added successfully!");
+        return response.data.user;
+    } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to add student");
+        return rejectWithValue(err.response?.data);
+    }
+});
+
+export const adminAddSupervisor = createAsyncThunk("admin/addSupervisor", async (supervisorData, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.post("/admin/supervisor", supervisorData);
+        toast.success("Teacher/Supervisor added successfully!");
+        return response.data.user;
+    } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to add supervisor");
+        return rejectWithValue(err.response?.data);
+    }
+});
+
 export const getUnassignedProjects = createAsyncThunk("admin/unassignedProjects", async (_, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.get("/admin/unassigned-projects");
@@ -93,6 +115,8 @@ const adminSlice = createSlice({
                 state.recentActivity = action.payload.recentActivity || [];
             })
             .addCase(getAllUsers.fulfilled, (state, action) => { state.users = action.payload.users; })
+            .addCase(adminAddStudent.fulfilled, (state, action) => { state.users = [action.payload, ...state.users]; })
+            .addCase(adminAddSupervisor.fulfilled, (state, action) => { state.users = [action.payload, ...state.users]; })
             .addCase(deleteUser.fulfilled, (state, action) => { state.users = state.users.filter(u => u._id !== action.payload); })
             .addCase(getUnassignedProjects.fulfilled, (state, action) => { state.unassignedProjects = action.payload.projects; })
             .addCase(getAdminSupervisors.fulfilled, (state, action) => { state.supervisors = action.payload.supervisors; })

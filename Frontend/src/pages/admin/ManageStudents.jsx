@@ -1,11 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsers, deleteUser } from "../../store/slices/adminSlice";
-import { Users, Trash2, ShieldAlert } from "lucide-react";
+import { getAllUsers, deleteUser, adminAddStudent } from "../../store/slices/adminSlice";
+import { Users, Trash2, ShieldAlert, Plus, X } from "lucide-react";
 
 const ManageStudents = () => {
     const dispatch = useDispatch();
     const { users, isLoading } = useSelector((state) => state.admin);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({ name: "", email: "", password: "", department: "" });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         dispatch(getAllUsers());
@@ -13,7 +17,20 @@ const ManageStudents = () => {
 
     const students = users?.filter(u => u.role === "Student") || [];
 
-    if (isLoading) {
+    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        const resultAction = await dispatch(adminAddStudent(formData));
+        setIsSubmitting(false);
+        if (adminAddStudent.fulfilled.match(resultAction)) {
+            setIsModalOpen(false);
+            setFormData({ name: "", email: "", password: "", department: "" });
+        }
+    };
+
+    if (isLoading && students.length === 0) {
         return (
             <div className="flex justify-center items-center h-full min-h-[400px]">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -23,14 +40,23 @@ const ManageStudents = () => {
 
     return (
         <div className="space-y-6 pb-8">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-center gap-4">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                    <Users size={28} />
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                        <Users size={28} />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Manage Students</h1>
+                        <p className="text-slate-500 mt-1">View, edit, and safely provision student accounts.</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Manage Students</h1>
-                    <p className="text-slate-500 mt-1">View, edit, and remove student accounts from the system.</p>
-                </div>
+                <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-md flex items-center gap-2"
+                >
+                    <Plus size={18} />
+                    Add Student
+                </button>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
@@ -39,6 +65,7 @@ const ManageStudents = () => {
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-sm uppercase tracking-wider">
                                 <th className="px-6 py-4 font-medium">Student Info</th>
+                                <th className="px-6 py-4 font-medium">Department</th>
                                 <th className="px-6 py-4 font-medium">Supervisor</th>
                                 <th className="px-6 py-4 font-medium text-right">Actions</th>
                             </tr>
@@ -49,7 +76,7 @@ const ManageStudents = () => {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm shrink-0">
-                                                {user.name.charAt(0).toUpperCase()}
+                                                {user.name?.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
                                                 <div className="font-semibold text-slate-800">{user.name}</div>
@@ -57,8 +84,11 @@ const ManageStudents = () => {
                                             </div>
                                         </div>
                                     </td>
+                                    <td className="px-6 py-4 text-slate-600 font-medium">
+                                        {user.department || "-"}
+                                    </td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${user.supervisor ? 'bg-green-100 text-green-700 border-green-200' : 'bg-yellow-100 text-yellow-700 border-yellow-200'}`}>
+                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${user.supervisor ? 'bg-green-100 text-green-700 border-green-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}>
                                             {user.supervisor ? "Assigned" : "Pending"}
                                         </span>
                                     </td>
@@ -89,8 +119,52 @@ const ManageStudents = () => {
                     </div>
                 )}
             </div>
+
+            {/* 🔥 ADD STUDENT MODAL */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center p-5 border-b border-slate-100">
+                            <h2 className="text-lg font-bold text-slate-800">Add New Student</h2>
+                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Full Name <span className="text-red-500">*</span></label>
+                                <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="e.g. Ali Reza" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email Address <span className="text-red-500">*</span></label>
+                                <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="student@university.edu" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Temporary Password <span className="text-red-500">*</span></label>
+                                <input type="password" name="password" value={formData.password} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="••••••••" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Department (Optional)</label>
+                                <select name="department" value={formData.department} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none bg-white">
+                                    <option value="">Select a department...</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Software Engineering">Software Engineering</option>
+                                    <option value="Information Technology">Information Technology</option>
+                                </select>
+                            </div>
+                            <div className="pt-4 flex gap-3">
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-2.5 rounded-xl text-slate-700 font-medium bg-slate-100 hover:bg-slate-200 transition">Cancel</button>
+                                <button type="submit" disabled={isSubmitting} className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-70 transition flex justify-center items-center">
+                                    {isSubmitting ? <span className="animate-spin h-5 w-5 border-2 border-white/30 border-t-white rounded-full"></span> : "Add Student"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default ManageStudents;
+
