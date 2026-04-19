@@ -46,23 +46,26 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
     // Adding .lean() to allow direct property modification
     const users = await User.find({ role: { $ne: "Admin" } }).select("-password").lean();
     
-    // Self-healing cross-reference: fetch all accepted projects that have supervisors
-    const assignedProjects = await Project.find({ supervisor: { $ne: null } });
+    // Fetch all projects to map project details to students
+    const allProjects = await Project.find();
     
-    // Map student IDs to their assigned supervisor IDs
-    const studentSupervisorMap = {};
-    assignedProjects.forEach(p => {
+    // Map student IDs to their project
+    const studentProjectMap = {};
+    allProjects.forEach(p => {
         if (p.student) {
-            studentSupervisorMap[p.student.toString()] = p.supervisor.toString();
+            studentProjectMap[p.student.toString()] = p;
         }
     });
 
-    // Retroactively populate the supervisor field for students missing it in the User collection
+    // Populate supervisor and proposal status for students
     const populatedUsers = users.map(u => {
         if (u.role === "Student") {
-            const assignedSup = studentSupervisorMap[u._id.toString()];
-            if (assignedSup) {
-                u.supervisor = assignedSup;
+            const project = studentProjectMap[u._id.toString()];
+            if (project) {
+                u.supervisor = project.supervisor ? project.supervisor.toString() : u.supervisor;
+                u.proposalStatus = project.status;
+            } else {
+                u.proposalStatus = null;
             }
         }
         return u;

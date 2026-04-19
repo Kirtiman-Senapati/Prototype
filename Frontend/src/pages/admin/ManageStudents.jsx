@@ -15,6 +15,27 @@ const ManageStudents = () => {
     // Filters
     const [searchQuery, setSearchQuery] = useState("");
     const [departmentFilter, setDepartmentFilter] = useState("");
+    const [statusFilter, setStatusFilter] = useState("");
+
+    const getStudentStatus = (user) => {
+        if (!user.proposalStatus) {
+            return { label: "No Proposal", color: "bg-slate-100 text-slate-700 border-slate-200", reason: "Not started" };
+        }
+        if (user.proposalStatus === "Rejected") {
+            return { label: "Rejected", color: "bg-red-100 text-red-700 border-red-200", reason: "Proposal rejected" };
+        }
+        if (user.proposalStatus === "Pending") {
+            return { label: "Pending Approval", color: "bg-yellow-100 text-yellow-800 border-yellow-200", reason: "Waiting" };
+        }
+        if (user.proposalStatus === "Approved" || user.proposalStatus === "Completed") {
+            if (user.supervisor) {
+                return { label: "Assigned", color: "bg-green-100 text-green-700 border-green-200", reason: "Done" };
+            } else {
+                return { label: "Pending Supervisor", color: "bg-orange-100 text-orange-700 border-orange-200", reason: "Action needed" };
+            }
+        }
+        return { label: "Unknown", color: "bg-slate-100 text-slate-700 border-slate-200", reason: "Unknown status" };
+    };
 
     const departments = [
         "Computer Science & Engineering",
@@ -35,7 +56,11 @@ const ManageStudents = () => {
         const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                               student.email.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesDept = departmentFilter === "" || student.department === departmentFilter;
-        return matchesSearch && matchesDept;
+        
+        const statusInfo = getStudentStatus(student);
+        const matchesStatus = statusFilter === "" || statusInfo.label === statusFilter;
+
+        return matchesSearch && matchesDept && matchesStatus;
     });
 
     const uniqueDepartments = [...new Set(students.map(s => s.department).filter(Boolean))];
@@ -136,6 +161,21 @@ const ManageStudents = () => {
                         ))}
                     </select>
                 </div>
+                <div className="relative w-full md:w-56">
+                    <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <select 
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none bg-white appearance-none"
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="Pending Approval">Pending Approval</option>
+                        <option value="No Proposal">No Proposal</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Pending Supervisor">Pending Supervisor</option>
+                        <option value="Assigned">Assigned</option>
+                    </select>
+                </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
@@ -168,9 +208,19 @@ const ManageStudents = () => {
                                             {user.department || "-"}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${user.supervisor ? 'bg-green-100 text-green-700 border-green-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}>
-                                                {user.supervisor ? "Assigned" : "Pending"}
-                                            </span>
+                                            {(() => {
+                                                const statusInfo = getStudentStatus(user);
+                                                return (
+                                                    <div className="flex flex-col items-start gap-1">
+                                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${statusInfo.color}`}>
+                                                            {statusInfo.label}
+                                                        </span>
+                                                        <span className="text-xs text-slate-500 font-medium whitespace-nowrap">
+                                                            Reason: {statusInfo.reason}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })()}
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex justify-end items-center gap-1">
@@ -202,8 +252,8 @@ const ManageStudents = () => {
                                         <div className="flex flex-col items-center justify-center">
                                             <ShieldAlert size={48} className="text-slate-300 mb-4" />
                                             <p className="text-lg font-medium text-slate-600">No students found.</p>
-                                            {searchQuery || departmentFilter ? (
-                                                <button onClick={() => { setSearchQuery(""); setDepartmentFilter(""); }} className="mt-2 text-blue-600 font-medium hover:underline">Clear Filters</button>
+                                            {searchQuery || departmentFilter || statusFilter ? (
+                                                <button onClick={() => { setSearchQuery(""); setDepartmentFilter(""); setStatusFilter(""); }} className="mt-2 text-blue-600 font-medium hover:underline">Clear Filters</button>
                                             ) : (
                                                 <p className="text-sm mt-1">Students registered in the system will appear here.</p>
                                             )}
