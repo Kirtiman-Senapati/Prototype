@@ -31,7 +31,7 @@ const ManageStudents = () => {
             if (user.supervisor) {
                 return { label: "Assigned", color: "bg-green-100 text-green-700 border-green-200", reason: "Done" };
             } else {
-                return { label: "Pending Supervisor", color: "bg-orange-100 text-orange-700 border-orange-200", reason: "Action needed" };
+                return { label: "Waiting Supervisor", color: "bg-orange-100 text-orange-700 border-orange-200", reason: "Supervisor not assigned" };
             }
         }
         return { label: "Unknown", color: "bg-slate-100 text-slate-700 border-slate-200", reason: "Unknown status" };
@@ -172,7 +172,7 @@ const ManageStudents = () => {
                         <option value="Pending Approval">Pending Approval</option>
                         <option value="No Proposal">No Proposal</option>
                         <option value="Rejected">Rejected</option>
-                        <option value="Pending Supervisor">Pending Supervisor</option>
+                        <option value="Waiting Supervisor">Waiting Supervisor</option>
                         <option value="Assigned">Assigned</option>
                     </select>
                 </div>
@@ -316,5 +316,6 @@ const ManageStudents = () => {
 };
 
 export default ManageStudents;
+
 
 
