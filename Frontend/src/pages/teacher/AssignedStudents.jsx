@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAssignedStudents } from "../../store/slices/teacherSlice";
+import { getAssignedStudents, sendFeedbackData } from "../../store/slices/teacherSlice";
 import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
 import StudentCard from "./components/StudentCard";
 import DashboardHeader from "./components/DashboardHeader";
 import { Users, Loader } from "lucide-react";
+import FeedbackModal from "../../components/modal/FeedbackModal";
 
 const AssignedStudents = () => {
     const dispatch = useDispatch();
     const { assignedStudents, isLoading } = useSelector((state) => state.teacher);
     const [selectedProject, setSelectedProject] = useState(null);
+    const [feedbackStudent, setFeedbackStudent] = useState(null);
+    const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
     const [taskData, setTaskData] = useState({ title: "", description: "", deadline: "" });
 
@@ -27,6 +30,23 @@ const AssignedStudents = () => {
                 setSelectedProject(null);
                 dispatch(getAssignedStudents());
             }).catch(() => toast.error("Failed to add task"));
+    };
+
+    const handleSendFeedback = async ({ title, type, message }) => {
+        setIsSubmittingFeedback(true);
+        try {
+            await dispatch(sendFeedbackData({
+                studentId: feedbackStudent._id,
+                title,
+                type,
+                message
+            })).unwrap();
+            setFeedbackStudent(null);
+        } catch (error) {
+            // Error handled by redux
+        } finally {
+            setIsSubmittingFeedback(false);
+        }
     };
 
     if (isLoading && (!assignedStudents || assignedStudents.length === 0)) {
@@ -52,6 +72,7 @@ const AssignedStudents = () => {
                             key={student._id} 
                             student={student} 
                             onAddTask={() => setSelectedProject(student.project)} 
+                            onAddFeedback={() => setFeedbackStudent(student)}
                         />
                     ))}
                 </div>
@@ -92,6 +113,14 @@ const AssignedStudents = () => {
                     </div>
                 </div>
             )}
+
+            <FeedbackModal 
+                isOpen={!!feedbackStudent} 
+                onClose={() => setFeedbackStudent(null)}
+                onSubmit={handleSendFeedback}
+                isSubmitting={isSubmittingFeedback}
+                studentName={feedbackStudent?.name}
+            />
         </div>
     );
 };

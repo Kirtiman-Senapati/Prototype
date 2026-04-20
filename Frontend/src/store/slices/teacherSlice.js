@@ -52,6 +52,20 @@ export const handleRequest = createAsyncThunk(
   }
 );
 
+export const sendFeedbackData = createAsyncThunk(
+  "teacher/sendFeedback",
+  async (feedbackData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/feedback/send", feedbackData);
+      toast.success("Feedback sent successfully");
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to send feedback");
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 const teacherSlice = createSlice({
   name: "teacher",
   initialState: {

@@ -70,6 +70,18 @@ export const uploadProjectFile = createAsyncThunk(
   }
 );
 
+export const getStudentFeedback = createAsyncThunk(
+  "student/getFeedback",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/feedback/student");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 const studentSlice = createSlice({
   name: "student",
   initialState: {
@@ -77,6 +89,7 @@ const studentSlice = createSlice({
     requests: [],
     notifications: [],
     supervisors: [],
+    feedbacks: [],
     isLoading: false,
   },
   reducers: {},
@@ -98,6 +111,9 @@ const studentSlice = createSlice({
       })
       .addCase(uploadProjectFile.fulfilled, (state, action) => {
         state.project = action.payload.project;
+      })
+      .addCase(getStudentFeedback.fulfilled, (state, action) => {
+        state.feedbacks = action.payload.feedbacks;
       });
   },
 });

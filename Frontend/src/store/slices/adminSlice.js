@@ -57,6 +57,17 @@ export const adminUpdateUser = createAsyncThunk("admin/updateUser", async ({ use
     }
 });
 
+export const sendFeedbackAdminData = createAsyncThunk("admin/sendFeedback", async (feedbackData, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.post("/feedback/send", feedbackData);
+        toast.success("Feedback sent successfully");
+        return response.data;
+    } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to send feedback");
+        return rejectWithValue(err.response?.data);
+    }
+});
+
 export const getUnassignedProjects = createAsyncThunk("admin/unassignedProjects", async (_, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.get("/admin/unassigned-projects");

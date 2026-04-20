@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getStudentDashboard } from "../../store/slices/studentSlice";
+import { getStudentDashboard, getStudentFeedback } from "../../store/slices/studentSlice";
 import { BookOpen, Calendar, MessageSquare, Clock, Bell, Loader, CheckCircle, XCircle, AlertCircle, ArrowRight, Briefcase } from "lucide-react";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
@@ -9,11 +9,12 @@ import { useNavigate } from "react-router-dom";
 const StudentDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { project, notifications, requests, isLoading } = useSelector((state) => state.student);
+  const { project, notifications, requests, feedbacks, isLoading } = useSelector((state) => state.student);
   const { authUser } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getStudentDashboard());
+    dispatch(getStudentFeedback());
   }, [dispatch]);
 
   // Real-Time Socket Connection
@@ -56,6 +57,11 @@ const StudentDashboard = () => {
         dispatch(getStudentDashboard());
     });
 
+    socket.on("newFeedback", () => {
+        toast.info("You just received new feedback!", { icon: "💬" });
+        dispatch(getStudentFeedback());
+    });
+
     return () => {
         socket.disconnect();
     };
@@ -73,13 +79,8 @@ const StudentDashboard = () => {
   let displayStatus = "No request";
   let latestRequest = null;
   
-  // Extract feedback dynamically from existing project tasks
-  const taskFeedback = project?.tasks 
-      ? project.tasks.filter(t => t.feedback && t.feedback.trim() !== "").map(t => ({
-            message: t.feedback,
-            createdAt: t.updatedAt || new Date().toISOString() // Fallback if no specific timestamp exists
-        }))
-      : [];
+  // Real Feedback mapped directly from latest payload
+  const latestFeedback = feedbacks && feedbacks.length > 0 ? [...feedbacks].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 3) : [];
   
   if (project?.supervisor) {
       displayStatus = "Accepted";
@@ -194,7 +195,7 @@ const StudentDashboard = () => {
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-center transition-transform hover:-translate-y-1">
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Feedback</p>
-                    <p className="font-bold text-slate-800 line-clamp-1">{taskFeedback.length} Messages</p>
+                    <p className="font-bold text-slate-800 line-clamp-1">{feedbacks?.length || 0} Messages</p>
                 </div>
              </div>
 
@@ -224,13 +225,25 @@ const StudentDashboard = () => {
                          <h2 className="font-bold text-slate-800 flex items-center gap-2"><MessageSquare size={18} className="text-emerald-500"/> Latest Feedback</h2>
                      </div>
                      <div className="flex-1">
-                        {taskFeedback.length > 0 ? (
+                        {latestFeedback.length > 0 ? (
                             <div className="space-y-3 overflow-y-auto pr-2 custom-scrollbar max-h-[150px]">
-                                 {taskFeedback.map((fb, idx) => (
-                                     <div key={idx} className="p-4 bg-slate-50 border border-slate-100 rounded-xl">
-                                         <p className="text-sm text-slate-800 font-medium">{fb.message}</p>
-                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-2">
-                                             {new Date(fb.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(fb.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                 {latestFeedback.map((fb, idx) => (
+                                     <div key={idx} className="p-4 bg-slate-50 border border-slate-100 rounded-xl relative group">
+                                         {/* Badge */}
+                                         <div className="absolute top-4 right-4">
+                                             <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest border ${
+                                                 fb.type === 'Positive' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                 fb.type === 'Needs Revision' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                 'bg-blue-50 text-blue-700 border-blue-200'
+                                             }`}>
+                                                 {fb.type}
+                                             </span>
+                                         </div>
+                                         <h4 className="text-sm font-bold text-slate-800 mb-1 pr-16 truncate">{fb.title}</h4>
+                                         <p className="text-xs text-slate-600 font-medium mb-3 line-clamp-2">{fb.message}</p>
+                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-2 flex justify-between">
+                                             <span>{fb.sender?.name || "Unknown"}</span>
+                                             <span>{new Date(fb.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
                                          </p>
                                      </div>
                                  ))}

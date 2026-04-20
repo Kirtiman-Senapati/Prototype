@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
-import { updateProjectStatusAdmin } from "../../store/slices/adminSlice";
-import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X } from "lucide-react";
+import { updateProjectStatusAdmin, sendFeedbackAdminData } from "../../store/slices/adminSlice";
+import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X, MessageSquare } from "lucide-react";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
+import FeedbackModal from "../../components/modal/FeedbackModal";
 
 const ProjectsPage = () => {
     const dispatch = useDispatch();
@@ -15,7 +16,20 @@ const ProjectsPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState("All");
     const [selectedProject, setSelectedProject] = useState(null); // For modal
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+    const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+    const [studentFeedbacks, setStudentFeedbacks] = useState([]);
+    const [isLoadingFeedbacks, setIsLoadingFeedbacks] = useState(false);
     const { authUser } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        if (!selectedProject?.student?._id) return;
+        setIsLoadingFeedbacks(true);
+        axiosInstance.get(`/feedback/student/${selectedProject.student._id}`)
+            .then(res => setStudentFeedbacks(res.data.feedbacks || []))
+            .catch(() => toast.error("Failed to load feedback history"))
+            .finally(() => setIsLoadingFeedbacks(false));
+    }, [selectedProject?.student?._id]);
 
     useEffect(() => {
         fetchProjects();
@@ -96,6 +110,27 @@ const ProjectsPage = () => {
         if (type === "Presentation") return <MonitorPlay className={`text-amber-500 ${className}`} />;
         if (type === "Code") return <Archive className={`text-purple-500 ${className}`} />;
         return <File className={`text-slate-500 ${className}`} />;
+    };
+
+    const handleSendFeedback = async ({ title, type, message }) => {
+        setIsSubmittingFeedback(true);
+        try {
+            await dispatch(sendFeedbackAdminData({
+                studentId: selectedProject.student._id,
+                title,
+                type,
+                message
+            })).unwrap();
+            setIsFeedbackModalOpen(false);
+            
+            // Refresh local feedback history instantly
+            const res = await axiosInstance.get(`/feedback/student/${selectedProject.student._id}`);
+            setStudentFeedbacks(res.data.feedbacks || []);
+        } catch (error) {
+            // Toast handles error
+        } finally {
+            setIsSubmittingFeedback(false);
+        }
     };
 
     // Filter Logic
@@ -258,13 +293,22 @@ const ProjectsPage = () => {
                     <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
                         
                         {/* Modal Header */}
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
-                                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                                    <FolderKanban size={20} /> 
-                                </div>
-                                Project Details
-                            </h2>
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white sticky top-0 z-10 rounded-t-2xl">
+                            <div className="flex items-center gap-4">
+                                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
+                                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                                        <FolderKanban size={20} /> 
+                                    </div>
+                                    Project Details
+                                </h2>
+                                <button 
+                                    onClick={() => setIsFeedbackModalOpen(true)}
+                                    className="inline-flex items-center gap-2 bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 hover:border-blue-300 px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-all"
+                                >
+                                    <MessageSquare size={16} />
+                                    Feedback
+                                </button>
+                            </div>
                             <button 
                                 onClick={() => setSelectedProject(null)}
                                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
@@ -401,6 +445,62 @@ const ProjectsPage = () => {
                                 )}
                             </div>
 
+                            {/* FEEDBACK HISTORY TIMELINE */}
+                            <div className="pt-4 border-t border-slate-100">
+                                <div className="flex items-center justify-between mb-4 pl-1">
+                                    <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <MessageSquare size={14} className="text-emerald-500" /> Feedback Timeline
+                                    </h3>
+                                    <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">Total: {studentFeedbacks.length}</span>
+                                </div>
+                                
+                                {isLoadingFeedbacks ? (
+                                    <div className="flex justify-center p-8">
+                                        <div className="w-6 h-6 border-2 border-slate-200 border-t-emerald-500 rounded-full animate-spin"></div>
+                                    </div>
+                                ) : studentFeedbacks.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {studentFeedbacks.map((fb, idx) => (
+                                            <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-4 relative group hover:border-emerald-200 transition-colors">
+                                                <div className="absolute top-4 right-4">
+                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest border ${
+                                                         fb.type === 'Positive' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                         fb.type === 'Needs Revision' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                         'bg-blue-50 text-blue-700 border-blue-200'
+                                                     }`}>
+                                                         {fb.type}
+                                                     </span>
+                                                </div>
+                                                <h4 className="text-sm font-bold text-slate-800 pr-20">{fb.title}</h4>
+                                                <p className="text-sm text-slate-600 mt-2 mb-3 bg-white p-3 rounded-lg border border-slate-100">{fb.message}</p>
+                                                
+                                                <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-200/60">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[11px] font-bold text-slate-700 flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
+                                                            {fb.sender?.name || "Unknown"}
+                                                            <span className={`text-[9px] px-1.5 py-0.5 rounded-md self-start sm:self-auto ${
+                                                                fb.senderRole === "Admin" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"
+                                                            }`}>
+                                                                {fb.senderRole}
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                    <span className="text-[10px] font-bold text-slate-400">
+                                                        {new Date(fb.createdAt).toLocaleDateString('en-GB')} • {new Date(fb.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="bg-slate-50 border border-slate-200 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center">
+                                        <MessageSquare size={24} className="text-slate-300 mb-2" />
+                                        <p className="text-sm font-bold text-slate-600">No Feedback Provided</p>
+                                        <p className="text-xs font-medium text-slate-400 mt-1">This student hasn't received any feedback on this project yet.</p>
+                                    </div>
+                                )}
+                            </div>
+
                         </div>
                         
                         {/* Modal Footer (Optional, mostly for actions if pending) */}
@@ -427,6 +527,14 @@ const ProjectsPage = () => {
                     </div>
                 </div>
             )}
+
+            <FeedbackModal 
+                isOpen={isFeedbackModalOpen} 
+                onClose={() => setIsFeedbackModalOpen(false)}
+                onSubmit={handleSendFeedback}
+                isSubmitting={isSubmittingFeedback}
+                studentName={selectedProject?.student?.name}
+            />
         </div>
     );
 };

@@ -1,8 +1,8 @@
-import { Plus } from "lucide-react";
+import { Plus, MessageSquare } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import FileItem from "./FileItem";
 
-const StudentCard = ({ student, onAddTask }) => {
+const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-slate-300 transition-all flex flex-col h-full overflow-hidden">
             <div className="p-6 flex flex-col h-full">
@@ -48,13 +48,20 @@ const StudentCard = ({ student, onAddTask }) => {
 
                 {/* Action Section */}
                 {student.project && (
-                    <div className="mt-auto pt-2">
+                    <div className="mt-auto pt-2 flex gap-3">
+                        <button 
+                            onClick={onAddFeedback}
+                            className="flex-1 bg-white border border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm text-sm"
+                        >
+                            <MessageSquare size={16} />
+                            Feedback
+                        </button>
                         <button 
                             onClick={onAddTask}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm text-sm"
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm text-sm"
                         >
                             <Plus size={16} strokeWidth={2.5} />
-                            Add Task
+                            Task
                         </button>
                     </div>
                 )}
