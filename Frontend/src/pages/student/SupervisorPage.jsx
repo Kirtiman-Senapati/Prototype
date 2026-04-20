@@ -128,7 +128,7 @@ const SupervisorPage = () => {
                    
                    <div className="grid grid-cols-2 gap-4">
                       <div>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Deadline</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Submission Deadline</p>
                           <p className="font-medium text-slate-800">{project.deadline ? new Date(project.deadline).toLocaleDateString('en-GB') : 'Not set yet'}</p>
                       </div>
                       <div>
