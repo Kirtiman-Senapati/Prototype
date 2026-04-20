@@ -279,8 +279,11 @@ const StudentDashboard = () => {
                                 >
                                   {task.status === 'Completed' ? <CheckCircle size={22} className="fill-green-50" /> : <div className="w-[20px] h-[20px] rounded-full border-2 border-current group-hover:border-green-500 group-hover:bg-green-50 flex items-center justify-center" />}
                                 </button>
-                                <div>
-                                     <p className={`text-sm font-bold ${task.status === 'Completed' ? 'text-slate-500 line-through decoration-slate-300' : 'text-slate-800'}`}>{task.title}</p>
+                                <div className="flex-1">
+                                     <div className="flex items-center gap-2 mb-0.5 mt-0.5">
+                                         <p className={`text-sm font-bold leading-tight ${task.status === 'Completed' ? 'text-slate-500 line-through decoration-slate-300' : 'text-slate-800'}`}>{task.title}</p>
+                                         <span className={`text-[8px] font-extrabold uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm border ${task.assignedByRole === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-indigo-50 text-indigo-700 border-indigo-200'}`}>By {task.assignedByRole === 'admin' ? 'Admin' : 'Supervisor'}</span>
+                                     </div>
                                      {task.deadline && (
                                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
                                              {task.status === 'Completed' && task.completedAt ? (
@@ -385,3 +388,4 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+

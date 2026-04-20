@@ -49,7 +49,32 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                 {/* Tasks Section */}
                 {student.project && student.project.tasks && student.project.tasks.length > 0 && (
                     <div className="mb-6 flex-1">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Assigned Tasks</p>
+                        <div className="flex justify-between items-center mb-2">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Assigned Tasks</p>
+                            {(() => {
+                                const tasks = student.project.tasks;
+                                const completed = tasks.filter(t => t.status === "Completed").length;
+                                const progress = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+                                return (
+                                    <span className="text-[10px] font-extrabold text-blue-600">{progress}% Done</span>
+                                );
+                            })()}
+                        </div>
+                        
+                        {/* Progress Bar */}
+                        {(() => {
+                            const tasks = student.project.tasks;
+                            const completed = tasks.filter(t => t.status === "Completed").length;
+                            const progress = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+                            return (
+                                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200 mb-3">
+                                    <div 
+                                        className="bg-blue-600 h-1.5 rounded-full transition-all duration-1000 ease-out" 
+                                        style={{ width: `${progress}%` }}
+                                    ></div>
+                                </div>
+                            );
+                        })()}
                         <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
                             {[...student.project.tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task, i) => (
                                 <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm flex flex-col gap-1.5 hover:shadow-sm transition-shadow">
@@ -64,6 +89,7 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                                         </span>
                                     </div>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between">
+                                        <span>BY {task.assignedByRole === "admin" ? "ADMIN" : "SUPERVISOR"}</span>
                                         {task.status === 'Completed' && task.completedAt ? (
                                             <span className="text-green-600 flex items-center gap-1">✔ Completed on {new Date(task.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
                                         ) : task.deadline ? (

@@ -2,6 +2,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Project } from "../models/Project.js";
 import { User } from "../models/user.js";
+import { addTaskToProject } from "./teacherController.js";
 
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
@@ -349,5 +350,23 @@ export const updateUserDetails = asyncHandler(async (req, res, next) => {
         success: true,
         message: "User details updated successfully",
         user
+    });
+});
+
+
+
+export const addTaskAdmin = asyncHandler(async (req, res, next) => {
+    // strict admin protection
+    if (req.user.role !== "Admin") {
+        return next(new ErrorHandler("Access denied", 403));
+    }
+
+    const { projectId, title, description, deadline } = req.body;
+    const project = await addTaskToProject(projectId, { title, description, deadline }, "admin", req.user._id);
+
+    res.status(201).json({
+        success: true,
+        message: "Task added successfully by admin",
+        project
     });
 });

@@ -115,6 +115,17 @@ export const updateProjectDeadlineAdmin = createAsyncThunk("admin/updateProjectD
     }
 });
 
+export const assignTaskAdminData = createAsyncThunk("admin/assignTask", async (taskData, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.post("/admin/task", taskData);
+        toast.success("Task assigned successfully");
+        return response.data;
+    } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to assign task");
+        return rejectWithValue(err.response?.data);
+    }
+});
+
 const adminSlice = createSlice({
     name: "admin",
     initialState: {

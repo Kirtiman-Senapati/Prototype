@@ -85,18 +85,29 @@ export const getAssignedStudents = asyncHandler(async (req, res, next) => {
         students
     });
 });
+export const addTaskToProject = async (projectId, taskData, assignedByRole, userId) => {
+    const project = await Project.findById(projectId);
+    if (!project) throw new ErrorHandler("Project not found", 404);
+
+    if (assignedByRole === "supervisor") {
+        if (!project.supervisor || project.supervisor.toString() !== userId.toString()) {
+            throw new ErrorHandler("Unauthorized: Not the supervisor", 403);
+        }
+    }
+
+    project.tasks.push({
+        ...taskData,
+        assignedByRole
+    });
+
+    await project.save();
+    return project;
+};
+
 export const addTask = asyncHandler(async (req, res, next) => {
     const { projectId, title, description, deadline } = req.body;
-    const project = await Project.findById(projectId);
-    if (!project || project.supervisor.toString() !== req.user._id.toString()) {
-        return next(new ErrorHandler("Project not found or unauthorized", 404));
-    }
-    project.tasks.push({
-        title,
-        description,
-        deadline
-    });
-    await project.save();
+    const project = await addTaskToProject(projectId, { title, description, deadline }, "supervisor", req.user._id);
+
     res.status(201).json({
         success: true,
         message: "Task added successfully",

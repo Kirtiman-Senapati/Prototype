@@ -15,6 +15,7 @@ const taskSchema = new mongoose.Schema({
     deadline: { type: Date },
     feedback: { type: String, default: "" },
     completedAt: { type: Date },
+    assignedByRole: { type: String, enum: ["admin", "supervisor"], default: "supervisor" },
 });
 
 const projectSchema = new mongoose.Schema(

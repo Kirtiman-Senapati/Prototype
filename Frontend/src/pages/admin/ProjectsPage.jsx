@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
-import { updateProjectStatusAdmin, sendFeedbackAdminData } from "../../store/slices/adminSlice";
-import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X, MessageSquare } from "lucide-react";
+import { updateProjectStatusAdmin, sendFeedbackAdminData, assignTaskAdminData } from "../../store/slices/adminSlice";
+import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X, MessageSquare, Plus, CheckCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 import FeedbackModal from "../../components/modal/FeedbackModal";
@@ -17,7 +17,10 @@ const ProjectsPage = () => {
     const [filter, setFilter] = useState("All");
     const [selectedProject, setSelectedProject] = useState(null); // For modal
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+    const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+    const [taskData, setTaskData] = useState({ title: "", description: "", deadline: "" });
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+    const [isSubmittingTask, setIsSubmittingTask] = useState(false);
     const [studentFeedbacks, setStudentFeedbacks] = useState([]);
     const [isLoadingFeedbacks, setIsLoadingFeedbacks] = useState(false);
     const { authUser } = useSelector((state) => state.auth);
@@ -130,6 +133,26 @@ const ProjectsPage = () => {
             // Toast handles error
         } finally {
             setIsSubmittingFeedback(false);
+        }
+    };
+
+    const handleAssignTask = async (e) => {
+        e.preventDefault();
+        setIsSubmittingTask(true);
+        try {
+            const res = await dispatch(assignTaskAdminData({ projectId: selectedProject._id, ...taskData })).unwrap();
+            setTaskData({ title: "", description: "", deadline: "" });
+            setIsTaskModalOpen(false);
+            // Refresh detailed project local state (merge tasks to preserve populated fields like student/supervisor)
+            if (res.project && res.project.tasks) {
+                setSelectedProject(prev => ({ ...prev, tasks: res.project.tasks }));
+            }
+            // Refresh global list to keep state consistent
+            fetchProjects();
+        } catch (error) {
+            // Error managed by Redux
+        } finally {
+            setIsSubmittingTask(false);
         }
     };
 
@@ -301,13 +324,22 @@ const ProjectsPage = () => {
                                     </div>
                                     Project Details
                                 </h2>
-                                <button 
-                                    onClick={() => setIsFeedbackModalOpen(true)}
-                                    className="inline-flex items-center gap-2 bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 hover:border-blue-300 px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-all"
-                                >
-                                    <MessageSquare size={16} />
-                                    Feedback
-                                </button>
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={() => setIsFeedbackModalOpen(true)}
+                                        className="inline-flex items-center gap-2 bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 hover:border-blue-300 px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-all"
+                                    >
+                                        <MessageSquare size={16} />
+                                        Feedback
+                                    </button>
+                                    <button 
+                                        onClick={() => setIsTaskModalOpen(true)}
+                                        className="inline-flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700 px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-all"
+                                    >
+                                        <Plus size={16} />
+                                        Task
+                                    </button>
+                                </div>
                             </div>
                             <button 
                                 onClick={() => setSelectedProject(null)}
@@ -384,6 +416,72 @@ const ProjectsPage = () => {
                                             </div>
                                         )}
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* TASK TRACKING & PROGRESS */}
+                            <div className="pt-2">
+                                <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
+                                    <CheckCircle size={14} className="text-blue-500" /> Task Progress
+                                </h3>
+                                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                                    {(() => {
+                                        const tasks = selectedProject.tasks || [];
+                                        const totalTasks = tasks.length;
+                                        const completedTasks = tasks.filter(t => t.status === "Completed").length;
+                                        const taskProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                                        
+                                        return (
+                                            <div className="flex flex-col gap-4">
+                                                <div className="flex justify-between items-end">
+                                                    <div>
+                                                        <p className="text-sm font-bold text-slate-700">Completion Status</p>
+                                                        <p className="text-xs text-slate-500 mt-0.5">{completedTasks} of {totalTasks} tasks completed</p>
+                                                    </div>
+                                                    <span className="text-2xl font-extrabold text-blue-600">{taskProgress}%</span>
+                                                </div>
+                                                
+                                                {/* Progress Bar (SaaS Feel) */}
+                                                <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200 shadow-inner">
+                                                    <div 
+                                                        className="bg-blue-600 h-3 rounded-full transition-all duration-1000 ease-out" 
+                                                        style={{ width: `${taskProgress}%` }}
+                                                    ></div>
+                                                </div>
+                                                
+                                                {totalTasks > 0 ? (
+                                                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
+                                                        {[...tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((t, i) => (
+                                                            <div key={i} className="flex flex-col gap-1.5 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                                                                <div className="flex justify-between items-start gap-2">
+                                                                    <p className={`text-sm font-bold line-clamp-1 ${t.status === "Completed" ? "text-slate-500 line-through decoration-slate-300" : "text-slate-800"}`}>{t.title}</p>
+                                                                    <span className={`text-[9px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded border shrink-0 ${
+                                                                        t.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                                        t.status === 'In Progress' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                                                        'bg-slate-100 text-slate-600 border-slate-200'
+                                                                    }`}>
+                                                                        {t.status}
+                                                                    </span>
+                                                                </div>
+                                                                <p className="text-[10px] uppercase font-bold text-slate-400 flex justify-between">
+                                                                    <span>By: {t.assignedByRole === "admin" ? "Admin" : "Supervisor"}</span>
+                                                                    {t.status === "Completed" && t.completedAt ? (
+                                                                        <span className="text-green-600">Done {new Date(t.completedAt).toLocaleDateString()}</span>
+                                                                    ) : t.deadline ? (
+                                                                        <span>Due {new Date(t.deadline).toLocaleDateString()}</span>
+                                                                    ) : null}
+                                                                </p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className="mt-2 text-center p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-sm font-medium">
+                                                        No tasks assigned yet.
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             </div>
 
@@ -535,6 +633,42 @@ const ProjectsPage = () => {
                 isSubmitting={isSubmittingFeedback}
                 studentName={selectedProject?.student?.name}
             />
+
+            {/* Task Add Modal for Admin */}
+            {isTaskModalOpen && selectedProject && (
+                <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                    <div className="modal-content bg-white p-6 border border-slate-200 rounded-xl shadow-xl max-w-md w-full animate-in zoom-in-95 duration-200">
+                        <div className="mb-6 flex justify-between items-start">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><Plus className="text-blue-600" /> Assign Task</h2>
+                                <p className="text-sm text-slate-500 mt-1">Project: <span className="font-semibold text-slate-700">{selectedProject.title}</span></p>
+                            </div>
+                            <button onClick={() => setIsTaskModalOpen(false)} className="text-slate-400 hover:text-slate-600 rounded-full p-1"><X size={20}/></button>
+                        </div>
+                        <form onSubmit={handleAssignTask} className="space-y-4">
+                            <div>
+                                <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Task Title</label>
+                                <input required className="input w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 rounded-lg text-sm" placeholder="e.g. Complete Literature Review" value={taskData.title} onChange={e => setTaskData({...taskData, title: e.target.value})} />
+                            </div>
+                            <div>
+                                <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Description</label>
+                                <textarea required className="input w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 rounded-lg text-sm min-h-[100px]" placeholder="Add details about this task..." value={taskData.description} onChange={e => setTaskData({...taskData, description: e.target.value})} />
+                            </div>
+                            <div>
+                                <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Deadline</label>
+                                <input required type="date" className="input w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 rounded-lg text-sm text-slate-600" value={taskData.deadline} onChange={e => setTaskData({...taskData, deadline: e.target.value})} />
+                            </div>
+                            <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
+                                <button type="button" onClick={() => setIsTaskModalOpen(false)} className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
+                                <button type="submit" disabled={isSubmittingTask} className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2">
+                                    {isSubmittingTask && <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>}
+                                    Assign Task
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

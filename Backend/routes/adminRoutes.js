@@ -11,7 +11,8 @@ import {
     updateProjectDeadline,
     addStudent,
     addSupervisor,
-    updateUserDetails
+    updateUserDetails,
+    addTaskAdmin
 } from "../controllers/adminController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
@@ -31,5 +32,6 @@ router.put("/project/:id/deadline", updateProjectDeadline);
 router.post("/student", addStudent);
 router.post("/supervisor", addSupervisor);
 router.patch("/user/:id", updateUserDetails);
+router.post("/task", addTaskAdmin);
 
 export default router;
