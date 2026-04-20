@@ -189,7 +189,7 @@ const StudentDashboard = () => {
                     <p className="font-bold text-slate-800 line-clamp-1">{project.supervisor?.name || "Unassigned"}</p>
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-center transition-transform hover:-translate-y-1">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Deadline</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Submission Deadline</p>
                     <p className="font-bold text-slate-800 line-clamp-1">{project.deadline ? new Date(project.deadline).toLocaleDateString() : 'Not Set'}</p>
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-center transition-transform hover:-translate-y-1">

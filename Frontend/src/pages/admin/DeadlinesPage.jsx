@@ -304,7 +304,7 @@ const DeadlinesPage = () => {
 
                             {/* Date Picker */}
                             <div className="space-y-2 pt-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Deadline Date</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Submission Deadline Date</label>
                                 <div className="relative">
                                     <input 
                                         type="date" 
@@ -341,3 +341,4 @@ const DeadlinesPage = () => {
 };
 
 export default DeadlinesPage;
+

@@ -132,6 +132,14 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
 
     await project.save();
 
+    // Socket Emission for Admin Dashboard Updates
+    import("../utils/socket.js").then(({ getIo }) => {
+        const io = getIo();
+        if (io) {
+            io.emit("adminDashboardUpdate");
+        }
+    });
+
     res.status(200).json({
         success: true,
         message: "File uploaded successfully",
