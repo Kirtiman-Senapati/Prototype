@@ -5,7 +5,8 @@ import {
     requestSupervisor,
     uploadProjectFile,
     getStudentDashboard,
-    upload
+    upload,
+    updateTaskStatus
 } from "../controllers/studentController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
@@ -18,5 +19,6 @@ router.post("/proposal", submitProposal);
 router.get("/supervisors", getAvailableSupervisors);
 router.post("/request-supervisor", requestSupervisor);
 router.post("/upload", upload.single("file"), uploadProjectFile);
+router.patch("/task/:taskId/status", updateTaskStatus);
 
 export default router;

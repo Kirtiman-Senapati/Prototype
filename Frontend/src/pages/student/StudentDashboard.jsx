@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getStudentDashboard, getStudentFeedback } from "../../store/slices/studentSlice";
+import { getStudentDashboard, getStudentFeedback, updateTaskStatus } from "../../store/slices/studentSlice";
 import { BookOpen, Calendar, MessageSquare, Clock, Bell, Loader, CheckCircle, XCircle, AlertCircle, ArrowRight, Briefcase } from "lucide-react";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
@@ -259,23 +259,44 @@ const StudentDashboard = () => {
                      </div>
                  </div>
 
-                 {/* Upcoming Deadlines */}
+                 {/* Assigned Tasks */}
                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col hover:shadow-md transition-shadow">
                    <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-                     <h2 className="font-bold text-slate-800 flex items-center gap-2"><Clock size={18} className="text-indigo-500"/> Upcoming Deadlines</h2>
+                     <h2 className="font-bold text-slate-800 flex items-center gap-2"><Clock size={18} className="text-indigo-500"/> Assigned Tasks</h2>
+                     <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md">{project.tasks?.length || 0} Total</span>
                    </div>
                    <div className="flex-1">
-                     {project.tasks && project.tasks.filter(t => t.deadline && t.status !== "Completed").length > 0 ? (
+                     {project.tasks && project.tasks.length > 0 ? (
                        <div className="space-y-3 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
-                         {project.tasks.filter(t => t.deadline && t.status !== "Completed").sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task, i) => (
-                            <div key={i} className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100 transition hover:bg-slate-100">
-                              <div>
-                                   <p className="text-sm font-bold text-slate-800">{task.title}</p>
-                                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
-                                       {new Date(task.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(task.deadline).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-                                   </p>
+                         {[...project.tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task, i) => (
+                            <div key={i} className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100 transition hover:bg-slate-100 group">
+                              <div className="flex items-center gap-3">
+                                <button 
+                                  onClick={() => task.status !== 'Completed' && dispatch(updateTaskStatus({ taskId: task._id, status: 'Completed' }))}
+                                  className={`shrink-0 flex items-center justify-center transition-colors ${task.status === 'Completed' ? 'text-green-500' : 'text-slate-300 hover:text-green-500 cursor-pointer'}`}
+                                  title={task.status === 'Completed' ? 'Completed' : 'Mark as Complete'}
+                                  disabled={task.status === 'Completed'}
+                                >
+                                  {task.status === 'Completed' ? <CheckCircle size={22} className="fill-green-50" /> : <div className="w-[20px] h-[20px] rounded-full border-2 border-current group-hover:border-green-500 group-hover:bg-green-50 flex items-center justify-center" />}
+                                </button>
+                                <div>
+                                     <p className={`text-sm font-bold ${task.status === 'Completed' ? 'text-slate-500 line-through decoration-slate-300' : 'text-slate-800'}`}>{task.title}</p>
+                                     {task.deadline && (
+                                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
+                                             {task.status === 'Completed' && task.completedAt ? (
+                                                 <span className="text-green-600">Completed on {new Date(task.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                             ) : (
+                                                 <>Due {new Date(task.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(task.deadline).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</>
+                                             )}
+                                         </p>
+                                     )}
+                                </div>
                               </div>
-                              <span className={`px-2.5 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold shadow-sm ${task.status === 'In Progress' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}`}>{task.status}</span>
+                              <span className={`px-2.5 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold shadow-sm ${
+                                  task.status === 'Completed' ? 'bg-green-100 text-green-700 border border-green-200' :
+                                  task.status === 'In Progress' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 
+                                  'bg-slate-100 text-slate-600 border border-slate-200'
+                              }`}>{task.status}</span>
                             </div>
                          ))}
                        </div>
@@ -284,7 +305,7 @@ const StudentDashboard = () => {
                          <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-3">
                             <CheckCircle size={24} className="text-green-500" />
                          </div>
-                         <p className="text-sm font-medium">No pending deadlines. Great job!</p>
+                         <p className="text-sm font-medium">No assigned tasks. Great job!</p>
                        </div>
                      )}
                    </div>

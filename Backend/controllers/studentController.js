@@ -160,3 +160,45 @@ export const getStudentDashboard = asyncHandler(async (req, res, next) => {
         notifications
     });
 });
+
+export const updateTaskStatus = asyncHandler(async (req, res, next) => {
+    const { taskId } = req.params;
+    const { status } = req.body;
+
+    const project = await Project.findOne({ student: req.user._id });
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    const task = project.tasks.id(taskId);
+    if (!task) {
+        return next(new ErrorHandler("Task not found", 404));
+    }
+
+    task.status = status;
+    if (status === "Completed") {
+        task.completedAt = new Date();
+    } else {
+        task.completedAt = undefined;
+    }
+
+    await project.save();
+
+    // Socket Emission for Admin and Supervisor Dashboard Updates
+    import("../utils/socket.js").then(({ getIo }) => {
+        const io = getIo();
+        if (io) {
+            io.emit("adminDashboardUpdate");
+            if (project.supervisor) {
+                // If there's a specific supervisor dashboard update event, emit it
+                io.emit("teacherDashboardUpdate");
+            }
+        }
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Task status updated successfully",
+        project
+    });
+});

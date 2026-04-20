@@ -82,6 +82,20 @@ export const getStudentFeedback = createAsyncThunk(
   }
 );
 
+export const updateTaskStatus = createAsyncThunk(
+  "student/updateTaskStatus",
+  async ({ taskId, status }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.patch(`/student/task/${taskId}/status`, { status });
+      toast.success(status === "Completed" ? "Task marked as completed!" : "Task status updated");
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update task status");
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 const studentSlice = createSlice({
   name: "student",
   initialState: {
@@ -114,6 +128,9 @@ const studentSlice = createSlice({
       })
       .addCase(getStudentFeedback.fulfilled, (state, action) => {
         state.feedbacks = action.payload.feedbacks;
+      })
+      .addCase(updateTaskStatus.fulfilled, (state, action) => {
+        state.project = action.payload.project;
       });
   },
 });

@@ -46,6 +46,36 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                     </div>
                 )}
 
+                {/* Tasks Section */}
+                {student.project && student.project.tasks && student.project.tasks.length > 0 && (
+                    <div className="mb-6 flex-1">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Assigned Tasks</p>
+                        <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
+                            {[...student.project.tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task, i) => (
+                                <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm flex flex-col gap-1.5 hover:shadow-sm transition-shadow">
+                                    <div className="flex justify-between items-start gap-2">
+                                        <p className={`font-semibold ${task.status === 'Completed' ? 'text-slate-500 line-through decoration-slate-300' : 'text-slate-800'}`}>{task.title}</p>
+                                        <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest border shrink-0 ${
+                                            task.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
+                                            task.status === 'In Progress' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                            'bg-slate-100 text-slate-600 border-slate-200'
+                                        }`}>
+                                            {task.status}
+                                        </span>
+                                    </div>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between">
+                                        {task.status === 'Completed' && task.completedAt ? (
+                                            <span className="text-green-600 flex items-center gap-1">✔ Completed on {new Date(task.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                        ) : task.deadline ? (
+                                            <span>Due {new Date(task.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                        ) : <span>No Deadline</span>}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Action Section */}
                 {student.project && (
                     <div className="mt-auto pt-2 flex gap-3">
