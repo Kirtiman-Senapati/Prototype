@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
 import { updateProjectStatusAdmin } from "../../store/slices/adminSlice";
 import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X } from "lucide-react";
 import { toast } from "react-toastify";
+import { io } from "socket.io-client";
 
 const ProjectsPage = () => {
     const dispatch = useDispatch();
@@ -14,17 +15,40 @@ const ProjectsPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState("All");
     const [selectedProject, setSelectedProject] = useState(null); // For modal
+    const { authUser } = useSelector((state) => state.auth);
 
     useEffect(() => {
         fetchProjects();
     }, []);
 
+    useEffect(() => {
+        if (!authUser?._id) return;
+        
+        const socket = io("http://localhost:4000", {
+            query: { userId: authUser._id }
+        });
+
+        socket.on("adminDashboardUpdate", () => {
+            fetchProjects();
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [authUser]);
+
     const fetchProjects = () => {
-        setIsLoading(true);
         axiosInstance.get("/admin/projects")
             .then(res => {
                 setProjects(res.data.projects);
                 setIsLoading(false);
+                
+                // If a project modal is currently open, instantly refresh its inner detailed state
+                setSelectedProject(prev => {
+                    if (!prev) return null;
+                    const updated = res.data.projects.find(p => p._id === prev._id);
+                    return updated || prev;
+                });
             })
             .catch(() => setIsLoading(false));
     };
