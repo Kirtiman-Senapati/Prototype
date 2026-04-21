@@ -1,9 +1,10 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
-import { Project } from "../models/Project.js";
-import { Request } from "../models/Request.js";
+import { Project } from "../models/project.js";
+import { Request } from "../models/request.js";
 import { User } from "../models/user.js";
 import { getIo, getReceiverSocketId } from "../utils/socket.js";
+import { logActivity } from "../utils/activityLogger.js";
 export const getPendingRequests = asyncHandler(async (req, res, next) => {
     const requests = await Request.find({ toUser: req.user._id, status: "Pending" }).populate("fromUser", "name email department");
     res.status(200).json({
@@ -60,6 +61,15 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
             { fromUser: studentToAssign._id, type: "Supervisor", status: "Pending", _id: { $ne: requestId } },
             { $set: { status: "Rejected" } }
         );
+
+        await logActivity({
+            actor: req.user._id,
+            targetUsers: [studentToAssign._id],
+            actionType: "REQUEST_ACCEPTED",
+            message: `Supervisor **${req.user.name}** accepted **${studentToAssign.name}**'s request`,
+            priority: "high"
+        });
+
         const io = getIo();
         if (io) {
             const studentSocket = getReceiverSocketId(studentToAssign._id.toString());
@@ -71,6 +81,15 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
             const studentSocket = getReceiverSocketId(request.fromUser.toString());
             if (studentSocket) io.to(studentSocket).emit("requestStatusUpdated", { status: "Rejected" });
         }
+
+        const studentInfo = await User.findById(request.fromUser).select("name");
+        await logActivity({
+            actor: req.user._id,
+            targetUsers: [request.fromUser],
+            actionType: "REQUEST_REJECTED",
+            message: `Supervisor **${req.user.name}** rejected **${studentInfo ? studentInfo.name + "'s" : "your"}** request`,
+            priority: "high"
+        });
     }
     res.status(200).json({
         success: true,
@@ -107,6 +126,16 @@ export const addTaskToProject = async (projectId, taskData, assignedByRole, user
 export const addTask = asyncHandler(async (req, res, next) => {
     const { projectId, title, description, deadline } = req.body;
     const project = await addTaskToProject(projectId, { title, description, deadline }, "supervisor", req.user._id);
+
+    await project.populate("student", "name");
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [project.student._id],
+        actionType: "TASK_ASSIGNED",
+        message: `Supervisor **${req.user.name}** assigned a new task "${title}" to **${project.student.name}**`,
+        relatedProject: project._id,
+        priority: "high"
+    });
 
     res.status(201).json({
         success: true,

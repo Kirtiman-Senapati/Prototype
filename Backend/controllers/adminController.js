@@ -1,9 +1,9 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
-import { Project } from "../models/Project.js";
+import { Project } from "../models/project.js";
 import { User } from "../models/user.js";
 import { addTaskToProject } from "./teacherController.js";
-
+import { logActivity } from "../utils/activityLogger.js";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
@@ -91,6 +91,12 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
 
     await user.deleteOne();
     
+    await logActivity({
+        actor: req.user._id,
+        actionType: "USER_DELETED",
+        message: `**Admin** deleted user **${user.name}** (${user.role})`,
+    });
+
     res.status(200).json({
         success: true,
         message: "User deleted successfully"
@@ -167,6 +173,15 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
         }
     });
 
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [project.student, supervisorId],
+        actionType: "SUPERVISOR_ASSIGNED",
+        message: `**Admin** assigned supervisor for project "${project.title}"`,
+        relatedProject: project._id,
+        priority: "high"
+    });
+
     res.status(200).json({
         success: true,
         message: "Supervisor assigned successfully",
@@ -204,6 +219,15 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
                 });
             }
         }
+    });
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [project.student, project.supervisor].filter(Boolean),
+        actionType: status === "Approved" ? "PROJECT_APPROVED" : "PROJECT_REJECTED",
+        message: `Project proposal "${project.title}" was ${status.toLowerCase()} by **Admin**`,
+        relatedProject: project._id,
+        priority: status === "Rejected" ? "high" : "medium"
     });
 
     res.status(200).json({
@@ -246,6 +270,15 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         }
     });
 
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [project.student, project.supervisor].filter(Boolean),
+        actionType: "DEADLINE_SET",
+        message: `**Admin** updated deadline for project "${project.title}" to ${new Date(deadline).toLocaleDateString()}`,
+        relatedProject: project._id,
+        priority: "medium"
+    });
+
     res.status(200).json({
         success: true,
         message: "Deadline updated successfully",
@@ -271,6 +304,12 @@ export const addStudent = asyncHandler(async (req, res, next) => {
         password,
         department,
         role: "Student",
+    });
+
+    await logActivity({
+        actor: req.user._id,
+        actionType: "USER_ADDED",
+        message: `**Admin** added a new Student: **${name}**`,
     });
 
     res.status(201).json({
@@ -307,6 +346,12 @@ export const addSupervisor = asyncHandler(async (req, res, next) => {
         department,
         experties: parsedExpertise,
         role: "Supervisor",
+    });
+
+    await logActivity({
+        actor: req.user._id,
+        actionType: "USER_ADDED",
+        message: `**Admin** added a new Supervisor: **${name}**`,
     });
 
     res.status(201).json({
@@ -346,6 +391,12 @@ export const updateUserDetails = asyncHandler(async (req, res, next) => {
 
     await user.save();
 
+    await logActivity({
+        actor: req.user._id,
+        actionType: "USER_EDITED",
+        message: `**Admin** updated details for user: **${user.name}**`,
+    });
+
     res.status(200).json({
         success: true,
         message: "User details updated successfully",
@@ -363,6 +414,15 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
 
     const { projectId, title, description, deadline } = req.body;
     const project = await addTaskToProject(projectId, { title, description, deadline }, "admin", req.user._id);
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [project.student, project.supervisor].filter(Boolean),
+        actionType: "TASK_ASSIGNED",
+        message: `Admin assigned a new task "${title}" to project "${project.title}"`,
+        relatedProject: project._id,
+        priority: "high"
+    });
 
     res.status(201).json({
         success: true,

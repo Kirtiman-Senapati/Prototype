@@ -1,11 +1,12 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
-import { Project } from "../models/Project.js";
-import { Request } from "../models/Request.js";
+import { Project } from "../models/project.js";
+import { Request } from "../models/request.js";
 import { User } from "../models/user.js";
-import { Notification } from "../models/Notification.js";
+import { Notification } from "../models/notification.js";
 import multer from "multer";
 import path from "path";
+import { logActivity } from "../utils/activityLogger.js";
 
 // Set up Multer for file uploads
 const storage = multer.diskStorage({
@@ -56,6 +57,14 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
         }
     });
 
+    await logActivity({
+        actor: req.user._id,
+        actionType: "PROPOSAL_SUBMITTED",
+        message: `**${req.user.name}** submitted a new project proposal: "${title}"`,
+        relatedProject: project._id,
+        priority: "medium"
+    });
+
     res.status(201).json({
         success: true,
         message: "Project Proposal Submitted successfully",
@@ -103,6 +112,14 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
         description
     });
 
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [teacherId],
+        actionType: "SUPERVISOR_REQUESTED",
+        message: `**${req.user.name}** requested you to be their supervisor for project`,
+        priority: "high"
+    });
+
     res.status(201).json({
         success: true,
         message: "Supervisor request sent",
@@ -138,6 +155,14 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
         if (io) {
             io.emit("adminDashboardUpdate");
         }
+    });
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [project.supervisor].filter(Boolean),
+        actionType: "FILE_UPLOADED",
+        message: `**${req.user.name}** uploaded a new file: ${req.file.originalname}`,
+        relatedProject: project._id,
     });
 
     res.status(200).json({
@@ -195,6 +220,17 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
             }
         }
     });
+
+    if (status === "Completed") {
+        await logActivity({
+            actor: req.user._id,
+            targetUsers: [project.supervisor].filter(Boolean),
+            actionType: "TASK_COMPLETED",
+            message: `**${req.user.name}** marked task "${task.title}" as completed`,
+            relatedProject: project._id,
+            priority: "medium"
+        });
+    }
 
     res.status(200).json({
         success: true,

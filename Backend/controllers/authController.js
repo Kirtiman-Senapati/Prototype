@@ -6,6 +6,7 @@ import { generateToken } from "../utils/generateToken.js";
 import { generateResetPasswordEmailTemplate } from "../utils/emailTemplate.js";
 import { sendEmail } from "../services/emailService.js";
 import crypto from "crypto";
+import { logActivity } from "../utils/activityLogger.js";
 
 //REGISTER USER
 export const registerUser = asyncHandler(async (req, res, next) =>
@@ -29,6 +30,15 @@ export const registerUser = asyncHandler(async (req, res, next) =>
     
     user = new User({ name, email, password, role });
     await user.save();
+    
+    // Log activity
+    await logActivity({
+        actor: user._id,
+        actionType: "NEW_USER_REGISTERED",
+        message: `New ${role.toLowerCase()} registered: **${name}**`,
+        priority: "low"
+    });
+
     generateToken(user, 201, "User registered successfully", res);
 
 
@@ -179,5 +189,6 @@ export const resetPassword = asyncHandler(async (req, res, next) =>
         generateToken(user, 200, "Password reset successfully", res);
 
 });
+
 
 

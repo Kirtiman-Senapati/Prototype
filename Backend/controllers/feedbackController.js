@@ -3,6 +3,7 @@ import ErrorHandler from "../middlewares/error.js";
 import { Feedback } from "../models/Feedback.js";
 import { User } from "../models/user.js";
 import { getIo, getReceiverSocketId } from "../utils/socket.js";
+import { logActivity } from "../utils/activityLogger.js";
 
 // Send Feedback (Teacher or Admin)
 export const sendFeedback = asyncHandler(async (req, res, next) => {
@@ -61,6 +62,21 @@ export const sendFeedback = asyncHandler(async (req, res, next) => {
              if (svSocket) io.to(svSocket).emit("teacherDashboardUpdate");
         }
     }
+
+    let messageLog = "";
+    if (senderRole === "Admin") {
+         messageLog = `**Admin** sent feedback to Student **${student.name}** : "${message}"`;
+    } else {
+         messageLog = `Supervisor **${req.user.name}** sent feedback to student **${student.name}** : "${message}"`;
+    }
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [studentId],
+        actionType: "FEEDBACK_GIVEN",
+        message: messageLog,
+        priority: "medium"
+    });
 
     res.status(201).json({
         success: true,

@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getTeacherDashboard, getAssignedStudents, getPendingRequests } from "../../store/slices/teacherSlice";
+import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { Loader, Users, FileSignature, ArrowRight, ClipboardList, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { io } from "socket.io-client";
 import DashboardHeader from "./components/DashboardHeader";
 import StatCard from "./components/StatCard";
 import ActivityList from "./components/ActivityList";
@@ -11,8 +13,9 @@ import { useState } from "react";
 
 const TeacherDashboard = () => {
     const dispatch = useDispatch();
-    const { stats, recentFiles, recentActivity, completedProjectsList, isLoading, assignedStudents, requests } = useSelector((state) => state.teacher);
+    const { stats, recentFiles, completedProjectsList, isLoading, assignedStudents, requests } = useSelector((state) => state.teacher);
     const { authUser } = useSelector((state) => state.auth);
+    const { activities } = useSelector((state) => state.activity);
 
     const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
     const [isAssignedModalOpen, setIsAssignedModalOpen] = useState(false);
@@ -22,9 +25,17 @@ const TeacherDashboard = () => {
         dispatch(getTeacherDashboard());
         dispatch(getAssignedStudents());
         dispatch(getPendingRequests());
+        dispatch(getActivities());
     }, [dispatch]);
 
-    if (isLoading && (!stats && !recentFiles && !recentActivity)) {
+    useEffect(() => {
+        if (!authUser?._id) return;
+        const socket = io("http://localhost:4000", { query: { userId: authUser._id } });
+        socket.on("newActivity", (activity) => { dispatch(addRealtimeActivity(activity)); });
+        return () => socket.disconnect();
+    }, [authUser, dispatch]);
+
+    if (isLoading && !stats) {
         return (
             <div className="flex justify-center items-center h-full min-h-[400px]">
                 <Loader className="animate-spin text-blue-500" size={40} />
@@ -128,7 +139,7 @@ const TeacherDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Recent Activity */}
                 <div>
-                    <ActivityList activities={recentActivity} />
+                    <ActivityList activities={activities || []} />
                 </div>
 
                 {/* Recent Files */}
@@ -311,7 +322,3 @@ const TeacherDashboard = () => {
 };
 
 export default TeacherDashboard;
-
-
-
-

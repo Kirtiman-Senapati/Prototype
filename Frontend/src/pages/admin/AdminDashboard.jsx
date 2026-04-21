@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminDashboard } from "../../store/slices/adminSlice";
+import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare } from "lucide-react";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
@@ -12,11 +13,13 @@ import ProjectList from "./components/ProjectList";
 
 const AdminDashboard = () => {
     const dispatch = useDispatch();
-    const { stats, recentProjects, pendingProjects, recentActivity, isLoading } = useSelector((state) => state.admin);
+    const { stats, recentProjects, pendingProjects, isLoading } = useSelector((state) => state.admin);
+    const { activities } = useSelector((state) => state.activity);
     const { authUser } = useSelector((state) => state.auth);
 
     useEffect(() => {
         dispatch(getAdminDashboard());
+        dispatch(getActivities());
     }, [dispatch]);
 
     useEffect(() => {
@@ -27,8 +30,12 @@ const AdminDashboard = () => {
         });
 
         socket.on("adminDashboardUpdate", () => {
-            toast.info("A new project proposal was just submitted!", { icon: "📝", autoClose: 4000 });
+            toast.info("A dashboard update occurred!", { autoClose: 4000 });
             dispatch(getAdminDashboard());
+        });
+
+        socket.on("systemActivity", (activity) => {
+            dispatch(addRealtimeActivity(activity));
         });
 
         return () => {
@@ -132,7 +139,7 @@ const AdminDashboard = () => {
 
             {/* Activity & Projects Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <ActivityList activities={recentActivity} />
+                <ActivityList activities={activities || []} />
                 <ProjectList projects={recentProjects} title="Recent Projects" viewAllLink="/dashboard/projects" />
                 <ProjectList projects={pendingProjects} title="Pending Proposals" viewAllLink="/dashboard/assign-supervisor" />
             </div>
@@ -141,4 +148,5 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
 

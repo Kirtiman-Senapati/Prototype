@@ -9,6 +9,7 @@ import teacherRouter from "./routes/teacherRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import projectRouter from "./routes/projectRoutes.js";
 import feedbackRouter from "./routes/feedbackRoutes.js";
+import activityRouter from "./routes/activityRoutes.js";
 import { errorMiddleware } from "./middlewares/error.js";
 //change dns servers to avoid dns resolution issues in some environments
 
@@ -45,6 +46,7 @@ app.use("/api/v1/teacher", teacherRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/project", projectRouter);
 app.use("/api/v1/feedback", feedbackRouter);
+app.use("/api/v1/activities", activityRouter);
 
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getStudentDashboard, getStudentFeedback, updateTaskStatus } from "../../store/slices/studentSlice";
+import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { BookOpen, Calendar, MessageSquare, Clock, Bell, Loader, CheckCircle, XCircle, AlertCircle, ArrowRight, Briefcase } from "lucide-react";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
@@ -10,11 +11,14 @@ const StudentDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { project, notifications, requests, feedbacks, isLoading } = useSelector((state) => state.student);
+  const { activities } = useSelector((state) => state.activity);
   const { authUser } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getStudentDashboard());
+    dispatch(getStudentDashboard());
     dispatch(getStudentFeedback());
+    dispatch(getActivities());
   }, [dispatch]);
 
   // Real-Time Socket Connection
@@ -57,6 +61,11 @@ const StudentDashboard = () => {
         dispatch(getStudentDashboard());
     });
 
+    socket.on("newActivity", (activity) => {
+        dispatch(addRealtimeActivity(activity));
+        // Also fetch dashboard updates if needed, but not strictly necessary for activity list
+    });
+
     socket.on("newFeedback", () => {
         toast.info("You just received new feedback!", { icon: "💬" });
         dispatch(getStudentFeedback());
@@ -79,8 +88,15 @@ const StudentDashboard = () => {
   let displayStatus = "No request";
   let latestRequest = null;
   
-  // Real Feedback mapped directly from latest payload
   const latestFeedback = feedbacks && feedbacks.length > 0 ? [...feedbacks].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 3) : [];
+
+  const renderMessage = (text) => {
+      if (!text) return null;
+      const parts = text.split(/\*\*(.*?)\*\*/g);
+      return parts.map((part, i) => 
+          i % 2 === 1 ? <strong key={i} className="font-bold text-slate-900">{part}</strong> : part
+      );
+  };
   
   if (project?.supervisor) {
       displayStatus = "Accepted";
@@ -320,17 +336,17 @@ const StudentDashboard = () => {
                      <h2 className="font-bold text-slate-800 flex items-center gap-2"><Clock size={18} className="text-purple-500"/> Recent Activity</h2>
                    </div>
                    <div className="flex-1">
-                     {requests && requests.length > 0 ? (
+                     {activities && activities.length > 0 ? (
                        <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
-                         {requests.map((req, i) => (
+                         {activities.slice(0, 5).map((act, i) => (
                             <div key={i} className="flex gap-3 items-start pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                              <div className={`p-2 rounded-full shrink-0 shadow-sm mt-0.5 text-white ${req.status === 'Accepted' ? 'bg-emerald-500' : req.status === 'Rejected' ? 'bg-red-500' : 'bg-blue-500'}`}>
-                                {req.status === 'Accepted' ? <CheckCircle size={14} /> : req.status === 'Rejected' ? <XCircle size={14} /> : <Clock size={14} />}
+                              <div className={`p-2 rounded-full shrink-0 shadow-sm mt-0.5 text-white bg-purple-500`}>
+                                <Clock size={14} />
                               </div>
                               <div>
-                                <p className="text-sm text-slate-800 font-medium">Supervisor request to <span className="font-bold text-blue-600">{req.toUser?.name}</span> was {req.status.toLowerCase()}.</p>
+                                <p className="text-sm text-slate-700 font-medium whitespace-pre-wrap">{renderMessage(act.message)}</p>
                                 <p className="text-[10px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">
-                                    {new Date(req.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(req.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                    {new Date(act.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(act.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                                 </p>
                               </div>
                             </div>
@@ -388,4 +404,3 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
-
