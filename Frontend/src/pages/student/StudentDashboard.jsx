@@ -98,6 +98,16 @@ const StudentDashboard = () => {
       );
   };
   
+  const selfActivities = activities?.filter(a => {
+      const actorId = (a.actor?._id || a.actor)?.toString();
+      return actorId === authUser?._id?.toString();
+  }) || [];
+
+  const sysActivities = activities?.filter(a => {
+      const actorId = (a.actor?._id || a.actor)?.toString();
+      return actorId !== authUser?._id?.toString();
+  }) || [];
+
   if (project?.supervisor) {
       displayStatus = "Accepted";
   } else if (!project) {
@@ -336,9 +346,9 @@ const StudentDashboard = () => {
                      <h2 className="font-bold text-slate-800 flex items-center gap-2"><Clock size={18} className="text-purple-500"/> Recent Activity</h2>
                    </div>
                    <div className="flex-1">
-                     {activities && activities.length > 0 ? (
+                     {selfActivities.length > 0 ? (
                        <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
-                         {activities.slice(0, 5).map((act, i) => (
+                         {selfActivities.slice(0, 5).map((act, i) => (
                             <div key={i} className="flex gap-3 items-start pb-4 border-b border-slate-50 last:border-0 last:pb-0">
                               <div className={`p-2 rounded-full shrink-0 shadow-sm mt-0.5 text-white bg-purple-500`}>
                                 <Clock size={14} />
@@ -369,17 +379,17 @@ const StudentDashboard = () => {
                      <h2 className="font-bold text-slate-800 flex items-center gap-2"><Bell size={18} className="text-amber-500"/> Recent Notifications</h2>
                    </div>
                    <div className="flex-1">
-                     {notifications && notifications.length > 0 ? (
+                     {sysActivities.length > 0 ? (
                        <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
-                         {notifications.map((notif, i) => (
+                         {sysActivities.slice(0, 5).map((act, i) => (
                             <div key={i} className="flex gap-4 items-start pb-4 border-b border-slate-50 last:border-0 last:pb-0">
                               <div className="bg-amber-50 text-amber-600 p-2.5 rounded-full shrink-0 mt-0.5 shadow-sm border border-amber-100">
                                 <Bell size={16} />
                               </div>
                               <div className="pt-0.5">
-                                <p className="text-sm text-slate-800 font-medium leading-snug">{notif.message}</p>
+                                <p className="text-sm text-slate-800 font-medium leading-snug">{renderMessage(act.message)}</p>
                                 <p className="text-[10px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">
-                                    {new Date(notif.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(notif.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                    {new Date(act.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(act.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                                 </p>
                               </div>
                             </div>
@@ -404,3 +414,4 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+

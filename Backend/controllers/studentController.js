@@ -112,11 +112,13 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
         description
     });
 
+    const targetTeacher = await User.findById(teacherId).select("name");
+
     await logActivity({
         actor: req.user._id,
         targetUsers: [teacherId],
         actionType: "SUPERVISOR_REQUESTED",
-        message: `**${req.user.name}** requested you to be their supervisor for project`,
+        message: `**${req.user.name}** requested supervisor **${targetTeacher?.name || "Teacher"}** to supervise the project **${projectExists.title}**`,
         priority: "high"
     });
 

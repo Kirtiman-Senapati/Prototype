@@ -22,9 +22,11 @@ export const getActivities = async (req, res) => {
       };
     } else if (userRole === "Student") {
       // Student sees activities targeting them
-      query = { 
-        targetUsers: userId,
-        clearedBy: { $ne: userId }
+      query = {
+        $and: [
+           { $or: [{ targetUsers: userId }, { actor: userId }] },
+           { clearedBy: { $ne: userId } }
+        ]
       };
     }
 
