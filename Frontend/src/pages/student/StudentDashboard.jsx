@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getStudentDashboard, getStudentFeedback, updateTaskStatus } from "../../store/slices/studentSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
@@ -6,14 +6,14 @@ import { BookOpen, Calendar, MessageSquare, Clock, Bell, Loader, CheckCircle, XC
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import MessageModal from "./components/MessageModal";
 const StudentDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { project, notifications, requests, feedbacks, isLoading } = useSelector((state) => state.student);
   const { activities } = useSelector((state) => state.activity);
   const { authUser } = useSelector((state) => state.auth);
-
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   useEffect(() => {
     dispatch(getStudentDashboard());
     dispatch(getStudentDashboard());
@@ -232,13 +232,24 @@ const StudentDashboard = () => {
                  <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col hover:shadow-md transition-shadow">
                      <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                          <h2 className="font-bold text-slate-800 flex items-center gap-2"><Briefcase size={18} className="text-blue-500"/> Project Overview</h2>
-                         <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase border shadow-sm ${
-                             project.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                             project.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                             'bg-red-50 text-red-700 border-red-200'
-                         }`}>
-                             {project.status}
-                         </span>
+                         <div className="flex items-center gap-2">
+                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase border shadow-sm ${
+                                 project.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                 project.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                 'bg-red-50 text-red-700 border-red-200'
+                             }`}>
+                                 {project.status}
+                             </span>
+                             {project.supervisor && (
+                                 <button 
+                                     onClick={() => setIsMessageModalOpen(true)}
+                                     className="bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                                     title="Send Message/Update to Supervisor"
+                                 >
+                                     <MessageSquare size={14} /> Update
+                                 </button>
+                             )}
+                         </div>
                      </div>
                      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar max-h-[150px]">
                          <p className="text-sm text-slate-600 leading-relaxed font-medium">{project.description}</p>
@@ -409,9 +420,16 @@ const StudentDashboard = () => {
              </div>
           </div>
       )}
+
+      {/* Include Message Modal */}
+      <MessageModal 
+          isOpen={isMessageModalOpen}
+          onClose={() => setIsMessageModalOpen(false)}
+          supervisorName={project?.supervisor?.name}
+          projectId={project?._id}
+      />
     </div>
   );
 };
 
 export default StudentDashboard;
-

@@ -12,6 +12,7 @@ const Sidebar = ({ open, setOpen, userRole }) => {
           { name: "Submit Proposal", path: "/dashboard/submit-proposal", icon: "document" },
           { name: "Upload Files", path: "/dashboard/upload-files", icon: "upload" },
           { name: "Supervisor", path: "/dashboard/supervisor", icon: "user" },
+          { name: "Conversations", path: "/dashboard/conversations", icon: "chat" },
           { name: "Feedback", path: "/dashboard/feedback", icon: "chat" },
           { name: "Notifications", path: "/dashboard/notifications", icon: "bell" },
         ];
@@ -20,6 +21,7 @@ const Sidebar = ({ open, setOpen, userRole }) => {
           { name: "Home", path: "/dashboard/teacher", icon: "home" },
           { name: "Pending Requests", path: "/dashboard/pending-requests", icon: "clock" },
           { name: "Assigned Students", path: "/dashboard/assigned-students", icon: "users" },
+          { name: "Conversations", path: "/dashboard/conversations", icon: "chat" },
           { name: "Files", path: "/dashboard/teacher-files", icon: "folder" },
         ];
       case "Admin":
@@ -30,6 +32,7 @@ const Sidebar = ({ open, setOpen, userRole }) => {
           { name: "Assign Supervisor", path: "/dashboard/assign-supervisor", icon: "link" },
           { name: "Deadlines", path: "/dashboard/deadlines", icon: "calendar" },
           { name: "Projects", path: "/dashboard/projects", icon: "folder" },
+          { name: "Conversations", path: "/dashboard/conversations", icon: "chat" },
         ];
       default:
         return [];
@@ -431,3 +434,4 @@ const Sidebar = ({ open, setOpen, userRole }) => {
 };
 
 export default Sidebar;
+

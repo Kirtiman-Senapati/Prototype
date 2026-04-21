@@ -32,12 +32,19 @@ const activitySchema = new mongoose.Schema(
         "SUPERVISOR_ASSIGNED",
         "DEADLINE_SET",
         "NEW_USER_REGISTERED",
+        "STUDENT_MESSAGE",
+        "SUPERVISOR_MESSAGE",
+        "ADMIN_MESSAGE",
       ],
       required: true,
     },
     message: {
       type: String,
       required: true,
+    },
+    tag: {
+      type: String,
+      enum: ["Progress", "Issue", "Completion", "General", "Blocked", "Resolved"],
     },
     relatedProject: {
       type: mongoose.Schema.Types.ObjectId,

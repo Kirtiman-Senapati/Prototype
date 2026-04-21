@@ -4,11 +4,13 @@ import { Project } from "../models/project.js";
 import { User } from "../models/user.js";
 import { addTaskToProject } from "./teacherController.js";
 import { logActivity } from "../utils/activityLogger.js";
+import { Activity } from "../models/activity.js";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
     const totalProjects = await Project.countDocuments();
     const pendingProposals = await Project.countDocuments({ status: "Pending" });
+    const completedProjects = await Activity.countDocuments({ tag: "Completed" });
 
     // Get recently created projects
     const recentProjects = await Project.find()
@@ -35,7 +37,8 @@ export const getAdminDashboard = asyncHandler(async (req, res, next) => {
             totalStudents,
             totalTeachers,
             totalProjects,
-            pendingProposals
+            pendingProposals,
+            completedProjects
         },
         recentProjects,
         pendingProjects,
@@ -419,7 +422,7 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [project.student, project.supervisor].filter(Boolean),
         actionType: "TASK_ASSIGNED",
-        message: `Admin assigned a new task "${title}" to project "${project.title}"`,
+        message: `**Admin** assigned a new task "${title}" to project "${project.title}"`,
         relatedProject: project._id,
         priority: "high"
     });

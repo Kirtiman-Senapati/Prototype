@@ -37,6 +37,18 @@ export const clearActivities = createAsyncThunk(
   }
 );
 
+export const sendUnifiedMessage = createAsyncThunk(
+  "activity/sendMessage",
+  async (messageData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/activities/message", messageData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 const activitySlice = createSlice({
   name: "activity",
   initialState: {

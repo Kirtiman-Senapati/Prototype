@@ -96,6 +96,20 @@ export const updateTaskStatus = createAsyncThunk(
   }
 );
 
+export const sendProjectMessage = createAsyncThunk(
+  "student/sendMessage",
+  async (messageData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/student/message", messageData);
+      toast.success("Message sent successfully!");
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to send message");
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 const studentSlice = createSlice({
   name: "student",
   initialState: {
@@ -136,4 +150,3 @@ const studentSlice = createSlice({
 });
 
 export default studentSlice.reducer;
-;

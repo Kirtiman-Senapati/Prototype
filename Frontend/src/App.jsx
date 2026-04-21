@@ -32,6 +32,7 @@ import ManageTeachers from "./pages/admin/ManageTeachers";
 import AssignSupervisor from "./pages/admin/AssignSupervisor";
 import DeadlinesPage from "./pages/admin/DeadlinesPage";
 import ProjectsPage from "./pages/admin/ProjectsPage";
+import ConversationsPage from "./pages/common/ConversationsPage";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { Loader } from "lucide-react";
@@ -88,12 +89,14 @@ const App = () => {
             <Route path="supervisor" element={<SupervisorPage />} />
             <Route path="feedback" element={<FeedbackPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="conversations" element={<ConversationsPage />} />
 
             {/* Teacher Routes */}
             <Route path="teacher" element={<TeacherDashboard />} />
             <Route path="pending-requests" element={<PendingRequests />} />
             <Route path="assigned-students" element={<AssignedStudents />} />
             <Route path="teacher-files" element={<TeacherFiles />} />
+            <Route path="conversations" element={<ConversationsPage />} />
 
             {/* Admin Routes */}
             <Route path="admin" element={<AdminDashboard />} />
@@ -102,6 +105,7 @@ const App = () => {
             <Route path="assign-supervisor" element={<AssignSupervisor />} />
             <Route path="deadlines" element={<DeadlinesPage />} />
             <Route path="projects" element={<ProjectsPage />} />
+            <Route path="conversations" element={<ConversationsPage />} />
           </Route>
 
           {/* Redirect to login if not authenticated */}

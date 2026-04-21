@@ -1,5 +1,8 @@
 import { Activity } from "../models/activity.js";
 import { getIo, getReceiverSocketId } from "./socket.js";
+import { User } from "../models/user.js";
+import { sendEmail } from "../services/emailService.js";
+import { generateNotificationEmailTemplate } from "./notificationEmailTemplate.js";
 
 /**
  * Logs an activity to the database and emits real-time sockets
@@ -18,6 +21,7 @@ export const logActivity = async ({
   message,
   relatedProject = null,
   priority = "low",
+  tag
 }) => {
   try {
     const newActivity = await Activity.create({
@@ -27,6 +31,7 @@ export const logActivity = async ({
       message,
       relatedProject,
       priority,
+      tag
     });
 
     // Populate actor details for the socket payload
@@ -39,10 +44,25 @@ export const logActivity = async ({
     if (io) {
       if (targetUsers && targetUsers.length > 0) {
         // Emit to specific users
-        targetUsers.forEach((userId) => {
+        targetUsers.forEach(async (userId) => {
           const socketId = getReceiverSocketId(userId.toString());
           if (socketId) {
             io.to(socketId).emit("newActivity", populatedActivity);
+          }
+
+          // Trigger email notification for any targeted user (unified)
+          try {
+            const user = await User.findById(userId);
+            if (user && user.email) {
+              const emailHtml = generateNotificationEmailTemplate(populatedActivity.message);
+              await sendEmail({
+                to: user.email,
+                subject: "New Update - Academic Project Monitoring System",
+                html: emailHtml
+              });
+            }
+          } catch (emailErr) {
+            console.error("Error sending notification email: ", emailErr);
           }
         });
       }
@@ -60,3 +80,4 @@ export const logActivity = async ({
     console.error("Error logging activity: ", error);
   }
 };
+
