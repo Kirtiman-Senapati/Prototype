@@ -5,6 +5,7 @@ import { axiosInstance } from "../../lib/axios";
 import { Search, CheckCircle2, User, Users, Briefcase, Filter, ShieldAlert, Clock, XCircle, Check, Eye, FolderKanban, X, Calendar, Archive, File, FileText, MonitorPlay, Download } from "lucide-react";
 import { getAdminSupervisors, assignSupervisorAdmin, updateProjectStatusAdmin } from "../../store/slices/adminSlice";
 import { getActivities } from "../../store/slices/activitySlice";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 const AssignSupervisor = () => {
     const dispatch = useDispatch();
@@ -21,6 +22,12 @@ const AssignSupervisor = () => {
         dispatch(getAdminSupervisors());
         fetchProjects();
     }, [dispatch]);
+
+    useAutoRefresh(() => {
+        dispatch(getAdminSupervisors());
+        fetchProjects();
+        dispatch(getActivities());
+    });
 
     const fetchProjects = () => {
         setIsLoading(true);

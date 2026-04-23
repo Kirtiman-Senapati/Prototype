@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAdminDashboard } from "../../store/slices/adminSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare } from "lucide-react";
-import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 import StatCard from "./components/StatCard";
 import ActionCard from "./components/ActionCard";
@@ -22,26 +22,18 @@ const AdminDashboard = () => {
         dispatch(getActivities());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (!authUser?._id) return;
-        
-        const socket = io("http://localhost:4000", {
-            query: { userId: authUser._id }
-        });
+    useAutoRefresh(() => {
+        toast.info("A dashboard update occurred!", { autoClose: 4000 });
+        dispatch(getAdminDashboard());
+    }, "adminDashboardUpdate");
 
-        socket.on("adminDashboardUpdate", () => {
-            toast.info("A dashboard update occurred!", { autoClose: 4000 });
-            dispatch(getAdminDashboard());
-        });
+    useAutoRefresh(() => {
+        dispatch(getAdminDashboard());
+    });
 
-        socket.on("systemActivity", (activity) => {
-            dispatch(addRealtimeActivity(activity));
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, [authUser, dispatch]);
+    useAutoRefresh((activity) => {
+        dispatch(addRealtimeActivity(activity));
+    }, "systemActivity");
 
     if (isLoading && !stats) {
         return (

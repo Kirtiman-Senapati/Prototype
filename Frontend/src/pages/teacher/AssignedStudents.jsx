@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAssignedStudents, sendFeedbackData } from "../../store/slices/teacherSlice";
 import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 import StudentCard from "./components/StudentCard";
 import DashboardHeader from "./components/DashboardHeader";
 import { Users, Loader } from "lucide-react";
@@ -24,18 +24,9 @@ const AssignedStudents = () => {
         dispatch(getAssignedStudents());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (!authUser?._id) return;
-        const socket = io("http://localhost:4000", {
-            query: { userId: authUser._id }
-        });
-        
-        socket.on("refreshData", () => {
-            dispatch(getAssignedStudents());
-        });
-
-        return () => socket.disconnect();
-    }, [authUser, dispatch]);
+    useAutoRefresh(() => {
+        dispatch(getAssignedStudents());
+    });
 
     const handleAddTask = (e) => {
         e.preventDefault();

@@ -37,6 +37,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { Loader } from "lucide-react";
 import { checkAuth } from "./store/slices/authSlice";
+import { connectSocket, disconnectSocket } from "./socket/socket";
+
 const ProtectedRoute = ({ children }) => {
   const { authUser, isCheckingAuth } = useSelector((state) => state.auth);
   
@@ -65,9 +67,19 @@ const DashboardIndex = () => {
 const App = () => {
   const dispatch = useDispatch();
 
+  const { authUser } = useSelector((state) => state.auth);
+
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (authUser) {
+      connectSocket(authUser._id);
+    } else {
+      disconnectSocket();
+    }
+  }, [authUser]);
 
   return (
     <>

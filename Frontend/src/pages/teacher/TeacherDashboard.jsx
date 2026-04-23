@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getTeacherDashboard, getAssignedStudents, getPendingRequests } from "../../store/slices/teacherSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { Loader, Users, FileSignature, ArrowRight, ClipboardList, Clock, CheckCircle2, XCircle } from "lucide-react";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 import DashboardHeader from "./components/DashboardHeader";
 import StatCard from "./components/StatCard";
 import ActivityList from "./components/ActivityList";
@@ -28,16 +28,15 @@ const TeacherDashboard = () => {
         dispatch(getActivities());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (!authUser?._id) return;
-        const socket = io("http://localhost:4000", { query: { userId: authUser._id } });
-        socket.on("newActivity", (activity) => { dispatch(addRealtimeActivity(activity)); });
-        socket.on("userDeleted", () => {
-            dispatch(getTeacherDashboard());
-            dispatch(getAssignedStudents());
-        });
-        return () => socket.disconnect();
-    }, [authUser, dispatch]);
+    useAutoRefresh((activity) => {
+        dispatch(addRealtimeActivity(activity));
+    }, "newActivity");
+
+    useAutoRefresh(() => {
+        dispatch(getTeacherDashboard());
+        dispatch(getAssignedStudents());
+        dispatch(getPendingRequests());
+    });
 
     if (isLoading && !stats) {
         return (

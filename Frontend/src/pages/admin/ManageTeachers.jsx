@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, deleteUser, adminAddSupervisor, adminUpdateUser } from "../../store/slices/adminSlice";
 import { GraduationCap, Trash2, ShieldAlert, Plus, X, Search, Filter, BookOpen, Users as UsersIcon, Edit2 } from "lucide-react";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 const ManageTeachers = () => {
     const dispatch = useDispatch();
@@ -27,17 +27,11 @@ const ManageTeachers = () => {
 
     useEffect(() => {
         dispatch(getAllUsers());
-        
-        const socket = io("http://localhost:4000");
-        socket.on("userDeleted", () => {
-            dispatch(getAllUsers()); // Real-time UI update on delete
-        });
-
-        return () => {
-            socket.off("userDeleted");
-            socket.disconnect();
-        };
     }, [dispatch]);
+
+    useAutoRefresh(() => {
+        dispatch(getAllUsers());
+    });
 
     const teachers = users?.filter(u => u.role === "Supervisor") || [];
 

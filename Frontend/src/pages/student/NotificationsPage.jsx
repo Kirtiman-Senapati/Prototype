@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getActivities, markActivitiesRead, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { Bell, Check, Clock, AlertTriangle, FileText, CheckCircle, Trash2, MailOpen, UserPlus, Info } from "lucide-react";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 const formatTimeAgo = (dateString) => {
   const date = new Date(dateString);
@@ -49,12 +49,9 @@ const NotificationsPage = () => {
     dispatch(getActivities());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!authUser?._id) return;
-    const socket = io("http://localhost:4000", { query: { userId: authUser._id } });
-    socket.on("newActivity", (activity) => { dispatch(addRealtimeActivity(activity)); });
-    return () => socket.disconnect();
-  }, [authUser, dispatch]);
+  useAutoRefresh((activity) => {
+    dispatch(addRealtimeActivity(activity));
+  }, "newActivity");
 
   const stats = useMemo(() => {
     let unreadCount = 0;

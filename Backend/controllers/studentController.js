@@ -7,6 +7,7 @@ import { Notification } from "../models/notification.js";
 import multer from "multer";
 import path from "path";
 import { logActivity } from "../utils/activityLogger.js";
+import { emitRefresh } from "../utils/socketEvents.js";
 
 // Set up Multer for file uploads
 const storage = multer.diskStorage({
@@ -52,9 +53,7 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
     // Socket Emission for Admin Dashboard Updates
     import("../utils/socket.js").then(({ getIo }) => {
         const io = getIo();
-        if (io) {
-            io.emit("adminDashboardUpdate");
-        }
+        emitRefresh(io);
     });
 
     const admins = await User.find({ role: "Admin" }).select("_id");
@@ -158,9 +157,7 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
     // Socket Emission for Admin Dashboard Updates
     import("../utils/socket.js").then(({ getIo }) => {
         const io = getIo();
-        if (io) {
-            io.emit("adminDashboardUpdate");
-        }
+        emitRefresh(io);
     });
 
     const admins = await User.find({ role: "Admin" }).select("_id");
@@ -225,13 +222,7 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
     // Socket Emission for Admin and Supervisor Dashboard Updates
     import("../utils/socket.js").then(({ getIo }) => {
         const io = getIo();
-        if (io) {
-            io.emit("adminDashboardUpdate");
-            if (project.supervisor) {
-                // If there's a specific supervisor dashboard update event, emit it
-                io.emit("teacherDashboardUpdate");
-            }
-        }
+        emitRefresh(io);
     });
 
     if (status === "Completed") {

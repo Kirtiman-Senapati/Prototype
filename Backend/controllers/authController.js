@@ -7,6 +7,8 @@ import { generateResetPasswordEmailTemplate } from "../utils/emailTemplate.js";
 import { sendEmail } from "../services/emailService.js";
 import crypto from "crypto";
 import { logActivity } from "../utils/activityLogger.js";
+import { getIo } from "../utils/socket.js";
+import { emitRefresh } from "../utils/socketEvents.js";
 
 //REGISTER USER
 export const registerUser = asyncHandler(async (req, res, next) =>
@@ -42,6 +44,9 @@ export const registerUser = asyncHandler(async (req, res, next) =>
         message: `New ${role.toLowerCase()} registered: **${name}**`,
         priority: "low"
     });
+
+    const io = getIo();
+    emitRefresh(io);
 
     generateToken(user, 201, "User registered successfully", res);
 

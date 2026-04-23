@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getStudentDashboard, getStudentFeedback, updateTaskStatus } from "../../store/slices/studentSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { BookOpen, Calendar, MessageSquare, Clock, Bell, Loader, CheckCircle, XCircle, AlertCircle, ArrowRight, Briefcase } from "lucide-react";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { formatDateTime } from "../../utils/timeFormat";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -24,60 +24,54 @@ const StudentDashboard = () => {
     dispatch(getActivities());
   }, [dispatch]);
 
-  // Real-Time Socket Connection
-  useEffect(() => {
-    if (!authUser?._id) return;
-    
-    const socket = io("http://localhost:4000", {
-        query: { userId: authUser._id }
-    });
+  // Real-Time Auto Refresh via Global Socket
+  useAutoRefresh(() => {
+    dispatch(getStudentDashboard());
+    dispatch(getStudentFeedback());
+    dispatch(getActivities());
+  });
 
-    socket.on("requestStatusUpdated", (data) => {
-        if (data.status === "Accepted") {
-            toast.success("Great news! Your supervisor request was accepted.");
-        } else if (data.status === "Rejected") {
-            toast.error("Your supervisor request was rejected. You can request another supervisor.");
-        }
-        dispatch(getStudentDashboard());
-    });
+  useAutoRefresh((data) => {
+      if (data && data.status === "Accepted") {
+          toast.success("Great news! Your supervisor request was accepted.");
+      } else if (data && data.status === "Rejected") {
+          toast.error("Your supervisor request was rejected. You can request another supervisor.");
+      }
+      dispatch(getStudentDashboard());
+  }, "requestStatusUpdated");
 
-    socket.on("deadlineUpdated", (data) => {
-        toast.info(<div>A new absolute project deadline has been set:<br/><strong className="text-sm mt-1 block">{new Date(data.deadline).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</strong></div>, {
-            icon: "📅",
-            autoClose: 6000,
-            className: "border-l-4 border-blue-500"
-        });
-        dispatch(getStudentDashboard());
-    });
+  useAutoRefresh((data) => {
+      if (!data || !data.deadline) return;
+      toast.info(<div>A new absolute project deadline has been set:<br/><strong className="text-sm mt-1 block">{new Date(data.deadline).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</strong></div>, {
+          icon: "📅",
+          autoClose: 6000,
+          className: "border-l-4 border-blue-500"
+      });
+      dispatch(getStudentDashboard());
+  }, "deadlineUpdated");
 
-    socket.on("projectStatusUpdated", (data) => {
-        if (data.status === "Approved") {
-            toast.success("Congratulations! Your project proposal was APPROVED by an admin.", { autoClose: 6000 });
-        } else if (data.status === "Rejected") {
-            toast.error("Your project proposal was REJECTED. You must submit a new proposal.", { autoClose: 8000 });
-        }
-        dispatch(getStudentDashboard());
-    });
+  useAutoRefresh((data) => {
+      if (data && data.status === "Approved") {
+          toast.success("Congratulations! Your project proposal was APPROVED by an admin.", { autoClose: 6000 });
+      } else if (data && data.status === "Rejected") {
+          toast.error("Your project proposal was REJECTED. You must submit a new proposal.", { autoClose: 8000 });
+      }
+      dispatch(getStudentDashboard());
+  }, "projectStatusUpdated");
 
-    socket.on("supervisorAssignedAdmin", () => {
-        toast.success("An admin has directly assigned a supervisor to your project!", { icon: "🎓", autoClose: 6000 });
-        dispatch(getStudentDashboard());
-    });
+  useAutoRefresh(() => {
+      toast.success("An admin has directly assigned a supervisor to your project!", { icon: "🎓", autoClose: 6000 });
+      dispatch(getStudentDashboard());
+  }, "supervisorAssignedAdmin");
 
-    socket.on("newActivity", (activity) => {
-        dispatch(addRealtimeActivity(activity));
-        // Also fetch dashboard updates if needed, but not strictly necessary for activity list
-    });
+  useAutoRefresh((activity) => {
+      dispatch(addRealtimeActivity(activity));
+  }, "newActivity");
 
-    socket.on("newFeedback", () => {
-        toast.info("You just received new feedback!", { icon: "💬" });
-        dispatch(getStudentFeedback());
-    });
-
-    return () => {
-        socket.disconnect();
-    };
-  }, [authUser, dispatch]);
+  useAutoRefresh(() => {
+      toast.info("You just received new feedback!", { icon: "💬" });
+      dispatch(getStudentFeedback());
+  }, "newFeedback");
 
   if (isLoading) {
     return (

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPendingRequests, handleRequest } from "../../store/slices/teacherSlice";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 const PendingRequests = () => {
     const dispatch = useDispatch();
@@ -9,6 +10,10 @@ const PendingRequests = () => {
     useEffect(() => {
         dispatch(getPendingRequests());
     }, [dispatch]);
+
+    useAutoRefresh(() => {
+        dispatch(getPendingRequests());
+    });
 
     return (
         <div className="space-y-6">

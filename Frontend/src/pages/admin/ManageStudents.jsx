@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, deleteUser, adminAddStudent, adminUpdateUser } from "../../store/slices/adminSlice";
 import { Users, Trash2, ShieldAlert, Plus, X, Search, Filter, Edit2 } from "lucide-react";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 const ManageStudents = () => {
     const dispatch = useDispatch();
@@ -52,18 +52,9 @@ const ManageStudents = () => {
         dispatch(getAllUsers());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (!authUser?._id) return;
-        const socket = io("http://localhost:4000", {
-            query: { userId: authUser._id }
-        });
-        
-        socket.on("refreshData", () => {
-            dispatch(getAllUsers());
-        });
-
-        return () => socket.disconnect();
-    }, [authUser, dispatch]);
+    useAutoRefresh(() => {
+        dispatch(getAllUsers());
+    });
 
     const students = users?.filter(u => u.role === "Student") || [];
 

@@ -4,7 +4,7 @@ import { axiosInstance } from "../../lib/axios";
 import { updateProjectStatusAdmin, sendFeedbackAdminData, assignTaskAdminData } from "../../store/slices/adminSlice";
 import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X, MessageSquare, Plus, CheckCircle } from "lucide-react";
 import { toast } from "react-toastify";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 import FeedbackModal from "../../components/modal/FeedbackModal";
 
 const ProjectsPage = () => {
@@ -38,21 +38,13 @@ const ProjectsPage = () => {
         fetchProjects();
     }, []);
 
-    useEffect(() => {
-        if (!authUser?._id) return;
-        
-        const socket = io("http://localhost:4000", {
-            query: { userId: authUser._id }
-        });
+    useAutoRefresh(() => {
+        fetchProjects();
+    }, "adminDashboardUpdate");
 
-        socket.on("adminDashboardUpdate", () => {
-            fetchProjects();
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, [authUser]);
+    useAutoRefresh(() => {
+        fetchProjects();
+    });
 
     const fetchProjects = () => {
         axiosInstance.get("/admin/projects")

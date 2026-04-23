@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAvailableSupervisors, requestSupervisor, getStudentDashboard } from "../../store/slices/studentSlice";
 import { toast } from "react-toastify";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { ArrowRight, CheckCircle, User, BookOpen, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -23,28 +23,15 @@ const SupervisorPage = () => {
     }
   }, [dispatch, project]);
 
-  // Real-Time Socket Connection
-  useEffect(() => {
-    if (!authUser?._id) return;
-    
-    const socket = io("http://localhost:4000", {
-        query: { userId: authUser._id }
-    });
-
-    socket.on("requestStatusUpdated", (data) => {
-        if (data.status === "Accepted") {
-            toast.success("Great news! Your supervisor request was accepted.");
-            navigate("/dashboard");
-        } else if (data.status === "Rejected") {
-            toast.error("Your supervisor request was rejected. You can request another supervisor.");
-        }
-        dispatch(getStudentDashboard());
-    });
-
-    return () => {
-        socket.disconnect();
-    };
-  }, [authUser, dispatch, navigate]);
+  useAutoRefresh((data) => {
+      if (data && data.status === "Accepted") {
+          toast.success("Great news! Your supervisor request was accepted.");
+          navigate("/dashboard");
+      } else if (data && data.status === "Rejected") {
+          toast.error("Your supervisor request was rejected. You can request another supervisor.");
+      }
+      dispatch(getStudentDashboard());
+  }, "requestStatusUpdated");
 
   const handleOpenModal = (id) => {
     setSelectedTeacherId(id);

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAssignedStudents } from "../../store/slices/teacherSlice";
 import { FileText, MonitorPlay, Archive, LayoutGrid, List, Search, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
-import { io } from "socket.io-client";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 const TeacherFiles = () => {
     const dispatch = useDispatch();
@@ -22,21 +22,9 @@ const TeacherFiles = () => {
         }
     }, [dispatch, assignedStudents]);
 
-    useEffect(() => {
-        if (!authUser?._id) return;
-        
-        const socket = io("http://localhost:4000", {
-            query: { userId: authUser._id }
-        });
-
-        socket.on("refreshData", () => {
-            dispatch(getAssignedStudents());
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, [authUser, dispatch]);
+    useAutoRefresh(() => {
+        dispatch(getAssignedStudents());
+    });
 
     // Consolidate all files from all students
     const allFiles = useMemo(() => {

@@ -8,6 +8,8 @@ import { Activity } from "../models/activity.js";
 import { Request } from "../models/request.js";
 import { Feedback } from "../models/Feedback.js";
 import { getIo } from "../utils/socket.js";
+import { emitRefresh } from "../utils/socketEvents.js";
+import { sendEmail } from "../services/emailService.js";
 import fs from "fs";
 import path from "path";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
@@ -240,6 +242,22 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
         priority: "high"
     });
 
+    const io = getIo();
+    emitRefresh(io);
+
+    try {
+        const supervisor = await User.findById(supervisorId);
+        if (supervisor && supervisor.email) {
+            await sendEmail({
+                to: supervisor.email,
+                subject: "New Project Assigned",
+                html: `<p>You have been assigned to project: <b>${project.title}</b></p>`
+            });
+        }
+    } catch (err) {
+        console.error("Email failed but system continues:", err.message);
+    }
+
     res.status(200).json({
         success: true,
         message: "Supervisor assigned successfully",
@@ -290,6 +308,9 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
         relatedProject: project._id,
         priority: status === "Rejected" ? "high" : "medium"
     });
+
+    const io = getIo();
+    emitRefresh(io);
 
     res.status(200).json({
         success: true,
@@ -343,6 +364,9 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         priority: "medium"
     });
 
+    const io = getIo();
+    emitRefresh(io);
+
     res.status(200).json({
         success: true,
         message: "Deadline updated successfully",
@@ -375,6 +399,9 @@ export const addStudent = asyncHandler(async (req, res, next) => {
         actionType: "USER_ADDED",
         message: `**Admin** added a new Student: **${name}**`,
     });
+
+    const io = getIo();
+    emitRefresh(io);
 
     res.status(201).json({
         success: true,
@@ -417,6 +444,9 @@ export const addSupervisor = asyncHandler(async (req, res, next) => {
         actionType: "USER_ADDED",
         message: `**Admin** added a new Supervisor: **${name}**`,
     });
+
+    const io = getIo();
+    emitRefresh(io);
 
     res.status(201).json({
         success: true,
@@ -461,6 +491,9 @@ export const updateUserDetails = asyncHandler(async (req, res, next) => {
         message: `**Admin** updated details for user: **${user.name}**`,
     });
 
+    const io = getIo();
+    emitRefresh(io);
+
     res.status(200).json({
         success: true,
         message: "User details updated successfully",
@@ -491,6 +524,9 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
         relatedProject: project._id,
         priority: "high"
     });
+
+    const io = getIo();
+    emitRefresh(io);
 
     res.status(201).json({
         success: true,
