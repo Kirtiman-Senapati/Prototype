@@ -95,14 +95,17 @@ const AssignSupervisor = () => {
         return <File className={`text-slate-500 ${className}`} />;
     };
 
-    // Calculate stats based on ALL projects
-    const totalStudents = projects.length; 
-    const assignedStudents = projects.filter(p => p.status === "Approved" && p.supervisor).length;
-    const unassignedStudents = projects.filter(p => p.status === "Approved" && !p.supervisor).length;
-    const pendingProposals = projects.filter(p => p.status === "Pending").length;
+    // Filter out ghost projects (where student has been deleted)
+    const cleanProjects = projects.filter(p => p.student && typeof p.student === "object");
+
+    // Calculate stats based on valid projects
+    const totalStudents = cleanProjects.length; 
+    const assignedStudents = cleanProjects.filter(p => p.status === "Approved" && p.supervisor).length;
+    const unassignedStudents = cleanProjects.filter(p => p.status === "Approved" && !p.supervisor).length;
+    const pendingProposals = cleanProjects.filter(p => p.status === "Pending").length;
 
     // Filter projects for table
-    const filteredProjects = projects.filter(p => {
+    const filteredProjects = cleanProjects.filter(p => {
         const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                               p.title?.toLowerCase().includes(searchTerm.toLowerCase());
         
