@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAssignedStudents } from "../../store/slices/teacherSlice";
 import { FileText, MonitorPlay, Archive, LayoutGrid, List, Search, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
+import { io } from "socket.io-client";
 
 const TeacherFiles = () => {
     const dispatch = useDispatch();
@@ -12,12 +13,30 @@ const TeacherFiles = () => {
     const [filterType, setFilterType] = useState("All"); // 'All', 'Report', 'Presentation', 'Code'
     const [searchQuery, setSearchQuery] = useState("");
 
+    const { authUser } = useSelector((state) => state.auth);
+
     // Fetch students if missing
     useEffect(() => {
         if (!assignedStudents || assignedStudents.length === 0) {
             dispatch(getAssignedStudents());
         }
     }, [dispatch, assignedStudents]);
+
+    useEffect(() => {
+        if (!authUser?._id) return;
+        
+        const socket = io("http://localhost:4000", {
+            query: { userId: authUser._id }
+        });
+
+        socket.on("refreshData", () => {
+            dispatch(getAssignedStudents());
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [authUser, dispatch]);
 
     // Consolidate all files from all students
     const allFiles = useMemo(() => {

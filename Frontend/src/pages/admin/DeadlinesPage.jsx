@@ -62,7 +62,7 @@ const DeadlinesPage = () => {
 
     // Filter projects for the main table (only Approved or Completed make sense for deadlines usually, but let's show all that aren't rejected to match standard behavior)
     const validProjects = useMemo(() => {
-        return projects.filter(p => p.status !== "Rejected");
+        return projects.filter(p => p.status !== "Rejected" && p.student && typeof p.student === "object" && p.student._id);
     }, [projects]);
 
     const filteredProjects = validProjects.filter(p => {

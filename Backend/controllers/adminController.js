@@ -6,7 +6,10 @@ import { addTaskToProject } from "./teacherController.js";
 import { logActivity } from "../utils/activityLogger.js";
 import { Activity } from "../models/activity.js";
 import { Request } from "../models/request.js";
+import { Feedback } from "../models/Feedback.js";
 import { getIo } from "../utils/socket.js";
+import fs from "fs";
+import path from "path";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
@@ -100,15 +103,43 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("User not found", 404));
     }
     
-    // Cleanup projects
-    if (user.role === "Student") {
-        await Project.deleteMany({ student: user._id });
-    } else if (user.role === "Supervisor") {
-        await Project.updateMany(
-            { supervisor: user._id },
-            { $unset: { supervisor: "" } }
-        );
+    // 1. Get all projects where the user is involved
+    const projects = await Project.find({
+        $or: [{ student: user._id }, { supervisor: user._id }]
+    });
+
+    // 2. Delete all related files from local storage
+    for (const project of projects) {
+        if (project.files && project.files.length > 0) {
+            for (const file of project.files) {
+                const filePath = path.join("public", "uploads", file.filename);
+                if (fs.existsSync(filePath)) {
+                    try {
+                        fs.unlinkSync(filePath);
+                    } catch (err) {
+                        console.error(`Failed to delete file: ${filePath}`, err);
+                    }
+                }
+            }
+        }
     }
+
+    // 3. Cascade Delete related data in DB
+    await Project.deleteMany({
+        $or: [{ student: user._id }, { supervisor: user._id }]
+    });
+
+    await Feedback.deleteMany({
+        $or: [{ student: user._id }, { sender: user._id }]
+    });
+
+    await Activity.deleteMany({
+        $or: [{ actor: user._id }, { targetUsers: user._id }]
+    });
+
+    await Request.deleteMany({
+        $or: [{ fromUser: user._id }, { toUser: user._id }]
+    });
 
     await user.deleteOne();
     
@@ -126,6 +157,7 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
     if (io) {
         io.emit("userDeleted", { userId: user._id, role: user.role });
         io.emit("adminDashboardUpdate");
+        io.emit("refreshData"); // Emit a generic refreshData for other components like Files
     }
 
     res.status(200).json({

@@ -157,7 +157,9 @@ const ProjectsPage = () => {
     };
 
     // Filter Logic
-    const filteredProjects = projects.filter(p => {
+    const cleanProjects = projects.filter(p => p.student && typeof p.student === "object" && p.student._id);
+
+    const filteredProjects = cleanProjects.filter(p => {
         const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                               p.title?.toLowerCase().includes(searchTerm.toLowerCase());
         
@@ -245,11 +247,11 @@ const ProjectsPage = () => {
                                         </td>
                                         <td className="py-4 px-6">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 text-xs">
-                                                    {proj.student?.name?.charAt(0) || "U"}
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 text-xs ${proj.student ? 'bg-blue-100 text-blue-600' : 'bg-red-50 text-red-500'}`}>
+                                                    {proj.student?.name?.charAt(0) || "D"}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-sm font-medium text-slate-700">{proj.student?.name || "Unknown"}</span>
+                                                    <span className="text-sm font-medium text-slate-700">{proj.student?.name || <span className="text-red-500 italic">Deleted User</span>}</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -383,12 +385,12 @@ const ProjectsPage = () => {
                                 <div>
                                     <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Student Information</h3>
                                     <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-blue-200 transition-colors">
-                                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-700 font-bold text-xl shrink-0 border border-blue-200 shadow-sm">
-                                            {selectedProject.student?.name?.charAt(0) || "U"}
+                                        <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-xl shrink-0 border shadow-sm ${selectedProject.student ? 'bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 border-blue-200' : 'bg-red-50 text-red-500 border-red-100'}`}>
+                                            {selectedProject.student?.name?.charAt(0) || "D"}
                                         </div>
                                         <div className="flex flex-col overflow-hidden">
-                                            <span className="text-lg font-bold text-slate-800 truncate">{selectedProject.student?.name || "Unknown"}</span>
-                                            <span className="text-sm font-medium text-slate-500 truncate">{selectedProject.student?.email}</span>
+                                            <span className="text-lg font-bold text-slate-800 truncate">{selectedProject.student?.name || <span className="text-red-500 italic">Deleted User</span>}</span>
+                                            <span className="text-sm font-medium text-slate-500 truncate">{selectedProject.student?.email || "No email available"}</span>
                                         </div>
                                     </div>
                                 </div>
