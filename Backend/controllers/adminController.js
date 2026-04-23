@@ -302,7 +302,7 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
+        targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
         actionType: status === "Approved" ? "PROJECT_APPROVED" : "PROJECT_REJECTED",
         message: `Project proposal "${project.title}" was ${status.toLowerCase()} by **Admin**`,
         relatedProject: project._id,
@@ -357,7 +357,7 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
+        targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
         actionType: "DEADLINE_SET",
         message: `**Admin** updated deadline for project "${project.title}" to ${new Date(deadline).toLocaleDateString()}`,
         relatedProject: project._id,

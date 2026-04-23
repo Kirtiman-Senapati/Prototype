@@ -36,6 +36,7 @@ const TeacherDashboard = () => {
         dispatch(getTeacherDashboard());
         dispatch(getAssignedStudents());
         dispatch(getPendingRequests());
+        dispatch(getActivities());
     });
 
     if (isLoading && !stats) {
