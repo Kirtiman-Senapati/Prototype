@@ -17,6 +17,23 @@ const StudentDashboard = () => {
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [isSupervisorModalOpen, setIsSupervisorModalOpen] = useState(false);
   const [completingTasks, setCompletingTasks] = useState({});
+  const [isCompletingProject, setIsCompletingProject] = useState(false);
+
+  const handleCompleteProject = async () => {
+      try {
+          setIsCompletingProject(true);
+          const { axiosInstance } = await import("../../lib/axios");
+          await axiosInstance.put(`/student/complete-project/${project._id}`);
+          toast.success("Project marked as completed successfully! 🎉");
+          dispatch(getStudentDashboard());
+          dispatch(getActivities());
+      } catch (error) {
+          toast.error(error.response?.data?.message || "Failed to mark project as completed");
+      } finally {
+          setIsCompletingProject(false);
+      }
+  };
+
   useEffect(() => {
     dispatch(getStudentDashboard());
     dispatch(getStudentDashboard());
@@ -244,6 +261,17 @@ const StudentDashboard = () => {
                                      title="Send Message/Update to Supervisor"
                                  >
                                      <MessageSquare size={14} /> Update
+                                 </button>
+                             )}
+                             {project.status === 'Approved' && project.supervisor && (
+                                 <button 
+                                     onClick={handleCompleteProject}
+                                     disabled={isCompletingProject}
+                                     className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 shadow-sm disabled:opacity-50"
+                                     title="Mark your project as completed"
+                                 >
+                                     {isCompletingProject ? <Loader size={14} className="animate-spin" /> : <CheckCircle size={14} />} 
+                                     {isCompletingProject ? "Completing..." : "Mark as Completed"}
                                  </button>
                              )}
                          </div>

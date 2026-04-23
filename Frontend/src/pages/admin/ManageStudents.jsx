@@ -28,7 +28,10 @@ const ManageStudents = () => {
         if (user.proposalStatus === "Pending") {
             return { label: "Pending Approval", color: "bg-yellow-100 text-yellow-800 border-yellow-200", reason: "Waiting" };
         }
-        if (user.proposalStatus === "Approved" || user.proposalStatus === "Completed") {
+        if (user.proposalStatus === "Completed") {
+            return { label: "Completed", color: "bg-emerald-100 text-emerald-800 border-emerald-200", reason: "Project finished" };
+        }
+        if (user.proposalStatus === "Approved") {
             if (user.supervisor) {
                 return { label: "Assigned", color: "bg-green-100 text-green-700 border-green-200", reason: "Done" };
             } else {
@@ -181,6 +184,7 @@ const ManageStudents = () => {
                         <option value="Rejected">Rejected</option>
                         <option value="Waiting Supervisor">Waiting Supervisor</option>
                         <option value="Assigned">Assigned</option>
+                        <option value="Completed">Completed</option>
                     </select>
                 </div>
             </div>

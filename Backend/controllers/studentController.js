@@ -247,3 +247,46 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
     });
 });
 
+export const completeProject = asyncHandler(async (req, res, next) => {
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId).populate("student supervisor");
+    
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    // Security: Only the assigned student can mark it complete
+    if (project.student._id.toString() !== req.user._id.toString()) {
+        return next(new ErrorHandler("Not authorized to complete this project", 403));
+    }
+
+    if (project.status === "Completed") {
+        return next(new ErrorHandler("Project is already marked as completed", 400));
+    }
+
+    project.status = "Completed";
+    await project.save();
+
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [project.supervisor?._id, ...adminIds].filter(Boolean),
+        actionType: "PROJECT_COMPLETED",
+        message: `Project "${project.title}" was marked as completed by **${project.student.name}**`,
+        relatedProject: project._id,
+        priority: "high"
+    });
+
+    const io = req.app.get("io");
+    if (io) {
+        emitRefresh(io);
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Project marked as completed successfully"
+    });
+});
