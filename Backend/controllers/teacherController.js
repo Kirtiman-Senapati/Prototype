@@ -98,7 +98,16 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
     });
 });
 export const getAssignedStudents = asyncHandler(async (req, res, next) => {
-    const students = await User.find({ supervisor: req.user._id }).populate("project");
+    const projects = await Project.find({ supervisor: req.user._id }).populate("student");
+    const students = projects.map(p => {
+        if (p.student) {
+            const studentObj = p.student.toObject ? p.student.toObject() : p.student;
+            studentObj.project = p;
+            return studentObj;
+        }
+        return null;
+    }).filter(Boolean);
+    
     res.status(200).json({
         success: true,
         students
@@ -151,7 +160,7 @@ export const addTask = asyncHandler(async (req, res, next) => {
 });
 export const getTeacherDashboard = asyncHandler(async (req, res, next) => {
     const pendingRequestsCount = await Request.countDocuments({ toUser: req.user._id, status: "Pending" });
-    const assignedStudentsCount = await User.countDocuments({ supervisor: req.user._id, role: "Student" });
+    const assignedStudentsCount = await Project.countDocuments({ supervisor: req.user._id });
     const completedProjectsCount = await Project.countDocuments({ supervisor: req.user._id, status: "Completed" });
     
     // Fetch completed projects details for the modal

@@ -62,6 +62,13 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
         }
     });
 
+    const supervisorProjectCountMap = {};
+    allProjects.forEach(p => {
+        if (p.supervisor) {
+            supervisorProjectCountMap[p.supervisor.toString()] = (supervisorProjectCountMap[p.supervisor.toString()] || 0) + 1;
+        }
+    });
+
     // Populate supervisor and proposal status for students
     const populatedUsers = users.map(u => {
         if (u.role === "Student") {
@@ -72,6 +79,8 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
             } else {
                 u.proposalStatus = null;
             }
+        } else if (u.role === "Supervisor") {
+             u.assignedStudentsCount = supervisorProjectCountMap[u._id.toString()] || 0;
         }
         return u;
     });
@@ -88,15 +97,24 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("User not found", 404));
     }
     
-    // Cleanup projects if user is student
+    // Cleanup projects
     if (user.role === "Student") {
         await Project.findOneAndDelete({ student: user._id });
+    } else if (user.role === "Supervisor") {
+        await Project.updateMany(
+            { supervisor: user._id },
+            { $unset: { supervisor: "" } }
+        );
     }
 
     await user.deleteOne();
     
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
+        targetUsers: [req.user._id, ...adminIds],
         actionType: "USER_DELETED",
         message: `**Admin** deleted user **${user.name}** (${user.role})`,
     });
