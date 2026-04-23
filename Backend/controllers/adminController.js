@@ -51,21 +51,23 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
     // Adding .lean() to allow direct property modification
     const users = await User.find({ role: { $ne: "Admin" } }).select("-password").lean();
     
-    // Fetch all projects to map project details to students
-    const allProjects = await Project.find();
+    // Fetch all projects and populate student to ignore ghost projects (deleted students)
+    const allProjects = await Project.find().populate("student");
     
     // Map student IDs to their project
     const studentProjectMap = {};
-    allProjects.forEach(p => {
-        if (p.student) {
-            studentProjectMap[p.student.toString()] = p;
-        }
-    });
+    const supervisorToStudentsMap = {};
 
-    const supervisorProjectCountMap = {};
     allProjects.forEach(p => {
-        if (p.supervisor) {
-            supervisorProjectCountMap[p.supervisor.toString()] = (supervisorProjectCountMap[p.supervisor.toString()] || 0) + 1;
+        if (p.student && p.student._id) {
+            studentProjectMap[p.student._id.toString()] = p;
+        }
+        if (p.supervisor && p.student && p.student._id) {
+            const supId = p.supervisor.toString();
+            if (!supervisorToStudentsMap[supId]) {
+                supervisorToStudentsMap[supId] = new Set();
+            }
+            supervisorToStudentsMap[supId].add(p.student._id.toString());
         }
     });
 
@@ -80,7 +82,7 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
                 u.proposalStatus = null;
             }
         } else if (u.role === "Supervisor") {
-             u.assignedStudentsCount = supervisorProjectCountMap[u._id.toString()] || 0;
+             u.assignedStudentsCount = supervisorToStudentsMap[u._id.toString()] ? supervisorToStudentsMap[u._id.toString()].size : 0;
         }
         return u;
     });
@@ -99,7 +101,7 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
     
     // Cleanup projects
     if (user.role === "Student") {
-        await Project.findOneAndDelete({ student: user._id });
+        await Project.deleteMany({ student: user._id });
     } else if (user.role === "Supervisor") {
         await Project.updateMany(
             { supervisor: user._id },
@@ -167,9 +169,6 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
 
     // UPDATE the Student's User Document
     await User.findByIdAndUpdate(project.student, { supervisor: supervisorId });
-
-    // UPDATE the Teacher's User Document
-    await User.findByIdAndUpdate(supervisorId, { $addToSet: { assignedStudents: project.student } });
 
     // Clear any pending requests this student made to other supervisors
     await Request.updateMany(
