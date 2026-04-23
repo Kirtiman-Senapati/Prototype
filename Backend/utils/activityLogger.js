@@ -17,6 +17,7 @@ import { generateNotificationEmailTemplate } from "./notificationEmailTemplate.j
 export const logActivity = async ({
   actor,
   targetUsers = [],
+  roles = [],
   actionType,
   message,
   details,
@@ -28,6 +29,7 @@ export const logActivity = async ({
     const newActivity = await Activity.create({
       actor,
       targetUsers,
+      roles,
       actionType,
       message,
       details,

@@ -29,11 +29,11 @@ const ManageStudents = () => {
             return { label: "Pending Approval", color: "bg-yellow-100 text-yellow-800 border-yellow-200", reason: "Waiting" };
         }
         if (user.proposalStatus === "Completed") {
-            return { label: "Completed", color: "bg-emerald-100 text-emerald-800 border-emerald-200", reason: "Project finished" };
+            return { label: "Completed", color: "bg-emerald-100 text-emerald-700 border-emerald-200", reason: "Project finished" };
         }
         if (user.proposalStatus === "Approved") {
             if (user.supervisor) {
-                return { label: "Assigned", color: "bg-green-100 text-green-700 border-green-200", reason: "Done" };
+                return { label: "Assigned", color: "bg-blue-100 text-blue-700 border-blue-200", reason: "Done" };
             } else {
                 return { label: "Waiting Supervisor", color: "bg-orange-100 text-orange-700 border-orange-200", reason: "Supervisor not assigned" };
             }

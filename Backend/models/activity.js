@@ -13,6 +13,12 @@ const activitySchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    roles: [
+      {
+        type: String,
+        enum: ["Admin", "Supervisor", "Student"],
+      },
+    ],
     actionType: {
       type: String,
       enum: [
@@ -29,6 +35,7 @@ const activitySchema = new mongoose.Schema(
         "USER_EDITED",
         "PROJECT_APPROVED",
         "PROJECT_REJECTED",
+        "PROJECT_COMPLETED",
         "SUPERVISOR_ASSIGNED",
         "DEADLINE_SET",
         "NEW_USER_REGISTERED",

@@ -123,6 +123,7 @@ const AssignSupervisor = () => {
         if (filter === "Approved") return p.status === "Approved";
         if (filter === "Assigned") return p.status === "Approved" && !!p.supervisor;
         if (filter === "Unassigned") return p.status === "Approved" && !p.supervisor;
+        if (filter === "Completed") return p.status === "Completed";
         return true; 
     });
 
@@ -216,6 +217,7 @@ const AssignSupervisor = () => {
                         <option value="Approved">All Approved</option>
                         <option value="Unassigned">Unassigned</option>
                         <option value="Assigned">Assigned</option>
+                        <option value="Completed">Completed</option>
                     </select>
                 </div>
             </div>
@@ -262,12 +264,14 @@ const AssignSupervisor = () => {
                                             </td>
                                             <td className="p-4 align-middle text-center">
                                                 <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                                                    p.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200' :
+                                                    p.status === 'Completed' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                                                    p.status === 'Approved' ? 'bg-blue-100 text-blue-700 border-blue-200' :
                                                     p.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200' :
                                                     'bg-amber-100 text-amber-700 border-amber-200'
                                                 }`}>
                                                     {p.status === 'Pending' && <Clock size={12} />}
                                                     {p.status === 'Approved' && <CheckCircle2 size={12} />}
+                                                    {p.status === 'Completed' && <CheckCircle2 size={12} />}
                                                     {p.status === 'Rejected' && <XCircle size={12} />}
                                                     {p.status}
                                                 </span>
@@ -326,6 +330,8 @@ const AssignSupervisor = () => {
                                                             </button>
                                                         </div>
                                                     )
+                                                ) : p.status === "Completed" ? (
+                                                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center justify-center gap-1"><CheckCircle2 size={14}/> Project Completed</span>
                                                 ) : (
                                                     <span className="text-xs font-bold text-slate-500">Proposal Rejected</span>
                                                 )}

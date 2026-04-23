@@ -8,6 +8,7 @@ import multer from "multer";
 import path from "path";
 import { logActivity } from "../utils/activityLogger.js";
 import { emitRefresh } from "../utils/socketEvents.js";
+import { sendEmail } from "../services/emailService.js";
 
 // Set up Multer for file uploads
 const storage = multer.diskStorage({
@@ -271,14 +272,30 @@ export const completeProject = asyncHandler(async (req, res, next) => {
     const admins = await User.find({ role: "Admin" }).select("_id");
     const adminIds = admins.map(a => a._id);
 
+    // Activity for student, supervisor, and admins
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.supervisor?._id, ...adminIds].filter(Boolean),
+        targetUsers: [project.student._id, project.supervisor?._id].filter(Boolean),
+        roles: ["Admin"],
         actionType: "PROJECT_COMPLETED",
-        message: `Project "${project.title}" was marked as completed by **${project.student.name}**`,
+        message: `Assigned project "${project.title}" completed by student "${project.student.name}"`,
         relatedProject: project._id,
-        priority: "high"
+        priority: "medium" // Send manually to guarantee delivery
     });
+
+    // Email to supervisor explicitly as requested
+    if (project.supervisor && project.supervisor.email) {
+        try {
+            await sendEmail({
+                to: project.supervisor.email,
+                subject: "Project Completed",
+                html: `<p>Student <strong>${project.student.name}</strong> has completed project "<strong>${project.title}</strong>"</p>`,
+                role: "System"
+            });
+        } catch (err) {
+            console.log("Email failed", err);
+        }
+    }
 
     const io = req.app.get("io");
     if (io) {

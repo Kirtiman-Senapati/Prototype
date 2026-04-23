@@ -11,12 +11,13 @@ export const getActivities = async (req, res) => {
     const userRole = req.user.role;
     let query = {};
 
-    // FETCH ONLY RELEVANT ACTIVITIES (NO ACTOR NOISE FOR SYSTEM EVENTS)
+    // FETCH ONLY RELEVANT ACTIVITIES
     query = {
       $and: [
          {
             $or: [
                { targetUsers: userId },
+               { roles: userRole },
                // Allow users to see their own direct chat messages
                { actor: userId, actionType: { $in: ['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'] } }
             ]

@@ -248,6 +248,7 @@ const StudentDashboard = () => {
                          <h2 className="font-bold text-slate-800 flex items-center gap-2"><Briefcase size={18} className="text-blue-500"/> Project Overview</h2>
                          <div className="flex items-center gap-2">
                              <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase border shadow-sm ${
+                                 project.status === 'Completed' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
                                  project.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                                  project.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
                                  'bg-red-50 text-red-700 border-red-200'
