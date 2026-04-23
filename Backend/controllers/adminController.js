@@ -6,6 +6,7 @@ import { addTaskToProject } from "./teacherController.js";
 import { logActivity } from "../utils/activityLogger.js";
 import { Activity } from "../models/activity.js";
 import { Request } from "../models/request.js";
+import { getIo } from "../utils/socket.js";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
@@ -120,6 +121,12 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
         actionType: "USER_DELETED",
         message: `**Admin** deleted user **${user.name}** (${user.role})`,
     });
+
+    const io = getIo();
+    if (io) {
+        io.emit("userDeleted", { userId: user._id, role: user.role });
+        io.emit("adminDashboardUpdate");
+    }
 
     res.status(200).json({
         success: true,
