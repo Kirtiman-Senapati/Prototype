@@ -223,9 +223,12 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
         }
     });
 
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student, project.supervisor].filter(Boolean),
+        targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
         actionType: status === "Approved" ? "PROJECT_APPROVED" : "PROJECT_REJECTED",
         message: `Project proposal "${project.title}" was ${status.toLowerCase()} by **Admin**`,
         relatedProject: project._id,
@@ -272,9 +275,12 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         }
     });
 
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student, project.supervisor].filter(Boolean),
+        targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
         actionType: "DEADLINE_SET",
         message: `**Admin** updated deadline for project "${project.title}" to ${new Date(deadline).toLocaleDateString()}`,
         relatedProject: project._id,
