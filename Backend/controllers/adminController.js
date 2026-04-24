@@ -348,7 +348,8 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
     }
 
     project.deadline = deadline;
-    project.reminderSent = false;
+    project.reminder2DaySent = false;
+    project.reminder1DaySent = false;
     project.deadlineMissedNotified = false;
     await project.save();
 

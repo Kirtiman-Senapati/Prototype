@@ -47,7 +47,11 @@ const projectSchema = new mongoose.Schema(
         deadline: {
             type: Date,
         },
-        reminderSent: {
+        reminder2DaySent: {
+            type: Boolean,
+            default: false,
+        },
+        reminder1DaySent: {
             type: Boolean,
             default: false,
         },

@@ -11,46 +11,51 @@ import { logActivity } from "../utils/activityLogger.js";
 export const runDeadlineChecker = async () => {
     console.log("⏰ Running deadline checker...");
 
-    const format = (date) => {
-        return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-            .toISOString()
-            .split("T")[0];
-    };
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
 
-    // Today range
-    const todayStr = format(new Date());
-    const todayStart = new Date(todayStr);
-    const todayEnd = new Date(todayStr);
-    todayEnd.setDate(todayEnd.getDate() + 1);
+    const todayEnd = new Date(todayStart);
+    todayEnd.setHours(23, 59, 59, 999);
 
-    // Tomorrow range
-    const tomorrowDate = new Date();
-    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-    const tomorrowStr = format(tomorrowDate);
-    const tomorrowStart = new Date(tomorrowStr);
-    const tomorrowEnd = new Date(tomorrowStr);
-    tomorrowEnd.setDate(tomorrowEnd.getDate() + 1);
+    const tomorrowStart = new Date(todayStart);
+    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+    
+    const tomorrowEnd = new Date(tomorrowStart);
+    tomorrowEnd.setHours(23, 59, 59, 999);
+
+    const twoDaysBeforeStart = new Date(todayStart);
+    twoDaysBeforeStart.setDate(twoDaysBeforeStart.getDate() + 2);
+
+    const twoDaysBeforeEnd = new Date(twoDaysBeforeStart);
+    twoDaysBeforeEnd.setHours(23, 59, 59, 999);
 
     try {
         // ============================================
-        // 🔔 1 DAY BEFORE DEADLINE (REMINDER)
+        // 🔔 2 DAYS BEFORE DEADLINE (PRIMARY REMINDER)
         // ============================================
-        const now = new Date();
-        const nearDeadlineProjects = await Project.find({
+        const projects2Days = await Project.find({
             deadline: {
-                $gte: new Date(now.getTime() + 18 * 60 * 60 * 1000),
-                $lte: new Date(now.getTime() + 30 * 60 * 60 * 1000)
+                $gte: twoDaysBeforeStart,
+                $lte: twoDaysBeforeEnd
             },
             status: { $ne: "Completed" },
-            reminderSent: false
+            reminder2DaySent: false
         }).populate("student supervisor");
 
-        for (const project of nearDeadlineProjects) {
+        for (const project of projects2Days) {
             try {
+                // RACE CONDITION SAFE
+                const updated = await Project.updateOne(
+                    { _id: project._id, reminder2DaySent: false },
+                    { $set: { reminder2DaySent: true } }
+                );
+
+                if (updated.modifiedCount === 0) continue;
+
                 const template = getEmailTemplate("DEADLINE_REMINDER", {
                     studentName: project.student?.name || "Student",
                     title: project.title,
-                    deadline: format(project.deadline)
+                    deadline: new Date(project.deadline).toLocaleDateString()
                 });
 
                 if (template && project.student?.email) {
@@ -64,20 +69,65 @@ export const runDeadlineChecker = async () => {
 
                 await logActivity({
                     actionType: "DEADLINE_REMINDER",
-                    message: `⏰ Your project "${project.title}" submission deadline is tomorrow (${format(project.deadline)}). Please complete it on time.`,
-                    targetUsers: [project.student?._id].filter(Boolean),
+                    message: `⏰ Your project "${project.title}" submission deadline is in 2 days (${new Date(project.deadline).toLocaleDateString()}). Please complete it on time.`,
+                    targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
                     roles: [],
                     relatedProject: project._id,
                     priority: "medium"
                 });
 
-                await Project.updateOne(
-                    { _id: project._id, reminderSent: false },
-                    { $set: { reminderSent: true } }
+            } catch (err) {
+                console.error("2-Day Reminder failed:", project._id, err);
+            }
+        }
+
+        // ============================================
+        // 🔔 1 DAY BEFORE DEADLINE (FALLBACK REMINDER)
+        // ============================================
+        const projects1Day = await Project.find({
+            deadline: {
+                $gte: tomorrowStart,
+                $lte: tomorrowEnd
+            },
+            status: { $ne: "Completed" },
+            reminder1DaySent: false
+        }).populate("student supervisor");
+
+        for (const project of projects1Day) {
+            try {
+                const updated = await Project.updateOne(
+                    { _id: project._id, reminder1DaySent: false },
+                    { $set: { reminder1DaySent: true } }
                 );
 
+                if (updated.modifiedCount === 0) continue;
+
+                const template = getEmailTemplate("DEADLINE_REMINDER", {
+                    studentName: project.student?.name || "Student",
+                    title: project.title,
+                    deadline: new Date(project.deadline).toLocaleDateString()
+                });
+
+                if (template && project.student?.email) {
+                    await sendEmail({
+                        to: project.student.email,
+                        subject: template.subject,
+                        html: template.html,
+                        role: "System"
+                    });
+                }
+
+                await logActivity({
+                    actionType: "DEADLINE_REMINDER",
+                    message: `⏰ Your project "${project.title}" submission deadline is tomorrow (${new Date(project.deadline).toLocaleDateString()}). Please complete it on time.`,
+                    targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
+                    roles: [],
+                    relatedProject: project._id,
+                    priority: "high"
+                });
+
             } catch (err) {
-                console.error("Reminder failed:", project._id, err);
+                console.error("1-Day Reminder failed:", project._id, err);
             }
         }
 
@@ -85,7 +135,7 @@ export const runDeadlineChecker = async () => {
         // ❌ DEADLINE MISSED
         // ============================================
         const missedProjects = await Project.find({
-            deadline: { $lt: todayEnd },
+            deadline: { $lt: todayStart },
             status: { $ne: "Completed" },
             deadlineMissedNotified: false
         }).populate("student supervisor");
@@ -95,6 +145,13 @@ export const runDeadlineChecker = async () => {
 
         for (const project of missedProjects) {
             try {
+                const updated = await Project.updateOne(
+                    { _id: project._id, deadlineMissedNotified: false },
+                    { $set: { deadlineMissedNotified: true } }
+                );
+
+                if (updated.modifiedCount === 0) continue;
+
                 const template = getEmailTemplate("DEADLINE_MISSED", {
                     studentName: project.student?.name || "Student",
                     title: project.title
@@ -128,11 +185,6 @@ export const runDeadlineChecker = async () => {
                     relatedProject: project._id,
                     priority: "high"
                 });
-
-                await Project.updateOne(
-                    { _id: project._id },
-                    { $set: { deadlineMissedNotified: true } }
-                );
 
             } catch (err) {
                 console.error("Missed deadline error:", project._id, err);
