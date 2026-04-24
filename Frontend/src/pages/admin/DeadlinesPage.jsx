@@ -39,7 +39,7 @@ const DeadlinesPage = () => {
             .unwrap()
             .then((res) => {
                 // Update local state instantly
-                setProjects(projects.map(p => p._id === selectedProjectId ? { ...p, deadline: res.project.deadline } : p));
+                setProjects(prev => prev.map(p => p._id === selectedProjectId ? { ...p, deadline: res.project.deadline } : p));
                 setIsModalOpen(false);
                 setSelectedProjectId("");
                 setDeadlineDate("");
@@ -211,7 +211,9 @@ const DeadlinesPage = () => {
                                             <td className="py-4 px-6 text-right">
                                                 <button 
                                                     onClick={() => openModalForProject(proj)}
-                                                    className="px-4 py-2 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-600 hover:text-white rounded-lg transition-all shadow-sm opacity-0 group-hover:opacity-100"
+                                                    disabled={proj.status === "Completed"}
+                                                    title={proj.status === "Completed" ? "Cannot update deadline for completed projects" : ""}
+                                                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm opacity-0 group-hover:opacity-100 ${proj.status === "Completed" ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed" : "text-blue-600 bg-blue-50 border-blue-200 hover:bg-blue-600 hover:text-white border"}`}
                                                 >
                                                     {proj.deadline ? "Update" : "Set Deadline"}
                                                 </button>

@@ -343,7 +343,13 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Project not found", 404));
     }
 
+    if (project.status === "Completed") {
+        return next(new ErrorHandler("Cannot update deadline. Project is already completed.", 400));
+    }
+
     project.deadline = deadline;
+    project.reminderSent = false;
+    project.deadlineMissedNotified = false;
     await project.save();
 
     // 🚀 Socket.IO: Real-Time Event Emmision to Student
@@ -370,7 +376,7 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
         actionType: "DEADLINE_SET",
-        message: `**Admin** updated deadline for project "${project.title}" to ${new Date(deadline).toLocaleDateString()}`,
+        message: `📅 Admin has set the submission deadline for "${project.title}" to ${new Date(deadline).toLocaleDateString()}`,
         relatedProject: project._id,
         priority: "medium"
     });

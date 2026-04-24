@@ -35,8 +35,12 @@ export const runDeadlineChecker = async () => {
         // ============================================
         // 🔔 1 DAY BEFORE DEADLINE (REMINDER)
         // ============================================
+        const now = new Date();
         const nearDeadlineProjects = await Project.find({
-            deadline: { $gte: tomorrowStart, $lt: tomorrowEnd },
+            deadline: {
+                $gte: new Date(now.getTime() + 18 * 60 * 60 * 1000),
+                $lte: new Date(now.getTime() + 30 * 60 * 60 * 1000)
+            },
             status: { $ne: "Completed" },
             reminderSent: false
         }).populate("student supervisor");
@@ -60,7 +64,7 @@ export const runDeadlineChecker = async () => {
 
                 await logActivity({
                     actionType: "DEADLINE_REMINDER",
-                    message: `Deadline nearing for project "${project.title}"`,
+                    message: `⏰ Your project "${project.title}" submission deadline is tomorrow (${format(project.deadline)}). Please complete it on time.`,
                     targetUsers: [project.student?._id].filter(Boolean),
                     roles: [],
                     relatedProject: project._id,
@@ -68,7 +72,7 @@ export const runDeadlineChecker = async () => {
                 });
 
                 await Project.updateOne(
-                    { _id: project._id },
+                    { _id: project._id, reminderSent: false },
                     { $set: { reminderSent: true } }
                 );
 
