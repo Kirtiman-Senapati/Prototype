@@ -10,6 +10,7 @@ import { Feedback } from "../models/Feedback.js";
 import { getIo } from "../utils/socket.js";
 import { emitRefresh } from "../utils/socketEvents.js";
 import { sendEmail } from "../services/emailService.js";
+import { getEmailTemplate } from "../utils/emailTemplates.js";
 import fs from "fs";
 import path from "path";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
@@ -247,12 +248,22 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
 
     try {
         const supervisor = await User.findById(supervisorId);
+        const student = await User.findById(project.student);
         if (supervisor && supervisor.email) {
-            await sendEmail({
-                to: supervisor.email,
-                subject: "New Project Assigned",
-                html: `<p>You have been assigned to project: <b>${project.title}</b></p>`
+            const template = getEmailTemplate("PROJECT_ASSIGNED", {
+                supervisorName: supervisor.name,
+                studentName: student ? student.name : "Student",
+                title: project.title
             });
+
+            if (template) {
+                await sendEmail({
+                    to: supervisor.email,
+                    subject: template.subject,
+                    html: template.html,
+                    role: "System"
+                });
+            }
         }
     } catch (err) {
         console.error("Email failed but system continues:", err.message);

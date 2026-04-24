@@ -278,13 +278,9 @@ const AssignSupervisor = () => {
                                             </td>
                                             <td className="p-4 align-middle text-center">
                                                 {isAssigned ? (
-                                                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap">
-                                                        <CheckCircle2 size={12} /> Assigned
-                                                    </span>
+                                                    <span className="text-sm font-medium text-slate-700">{p.supervisor?.name}</span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap">
-                                                        Not Assigned
-                                                    </span>
+                                                    <span className="text-xs text-slate-500 italic">Not Assigned</span>
                                                 )}
                                             </td>
                                             <td className="p-4 align-middle">
@@ -295,16 +291,15 @@ const AssignSupervisor = () => {
                                                     >
                                                         <Eye size={14} /> Review Proposal
                                                     </button>
-                                                ) : p.status === "Approved" ? (
+                                                ) : p.status === "Completed" ? (
+                                                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center justify-center gap-1"><CheckCircle2 size={14}/> Project Completed</span>
+                                                ) : p.status === "Rejected" ? (
+                                                    <span className="text-xs font-bold text-slate-500">Proposal Rejected</span>
+                                                ) : (
                                                     isAssigned ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
-                                                                <Briefcase size={14} />
-                                                            </div>
-                                                            <div className="flex flex-col">
-                                                                <span className="text-sm font-medium text-slate-700">{p.supervisor?.name || "Assigned"}</span>
-                                                            </div>
-                                                        </div>
+                                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap">
+                                                            <CheckCircle2 size={12} /> Assigned
+                                                        </span>
                                                     ) : (
                                                         <div className="flex items-center gap-2">
                                                             <select
@@ -330,10 +325,6 @@ const AssignSupervisor = () => {
                                                             </button>
                                                         </div>
                                                     )
-                                                ) : p.status === "Completed" ? (
-                                                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center justify-center gap-1"><CheckCircle2 size={14}/> Project Completed</span>
-                                                ) : (
-                                                    <span className="text-xs font-bold text-slate-500">Proposal Rejected</span>
                                                 )}
                                             </td>
                                         </tr>

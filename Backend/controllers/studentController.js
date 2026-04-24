@@ -9,6 +9,8 @@ import path from "path";
 import { logActivity } from "../utils/activityLogger.js";
 import { emitRefresh } from "../utils/socketEvents.js";
 import { sendEmail } from "../services/emailService.js";
+import { getEmailTemplate } from "../utils/emailTemplates.js";
+import { getIo } from "../utils/socket.js";
 
 // Set up Multer for file uploads
 const storage = multer.diskStorage({
@@ -286,18 +288,25 @@ export const completeProject = asyncHandler(async (req, res, next) => {
     // Email to supervisor explicitly as requested
     if (project.supervisor && project.supervisor.email) {
         try {
-            await sendEmail({
-                to: project.supervisor.email,
-                subject: "Project Completed",
-                html: `<p>Student <strong>${project.student.name}</strong> has completed project "<strong>${project.title}</strong>"</p>`,
-                role: "System"
+            const template = getEmailTemplate("PROJECT_COMPLETED", {
+                studentName: project.student.name,
+                title: project.title
             });
+
+            if (template) {
+                await sendEmail({
+                    to: project.supervisor.email,
+                    subject: template.subject,
+                    html: template.html,
+                    role: "System"
+                });
+            }
         } catch (err) {
             console.log("Email failed", err);
         }
     }
 
-    const io = req.app.get("io");
+    const io = getIo();
     if (io) {
         emitRefresh(io);
     }
