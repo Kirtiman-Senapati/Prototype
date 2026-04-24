@@ -47,6 +47,14 @@ const projectSchema = new mongoose.Schema(
         deadline: {
             type: Date,
         },
+        reminderSent: {
+            type: Boolean,
+            default: false,
+        },
+        deadlineMissedNotified: {
+            type: Boolean,
+            default: false,
+        },
         files: [fileSchema],
         tasks: [taskSchema],
     },

@@ -44,6 +44,36 @@ export const getEmailTemplate = (type, data) => {
         `)
       };
 
+    case "DEADLINE_REMINDER":
+      return {
+        subject: "⏰ Deadline Nearing Notification",
+        html: baseHtml(`
+          <h3 style="color: #b45309; margin-top: 0;">Action Required: Deadline Approaching</h3>
+          <p>Hello <strong>${data.studentName}</strong>,</p>
+          <p>This is an automated reminder that the deadline for your academic project is approaching in 1 day.</p>
+          <div style="background-color: #fffbeb; padding: 15px; border-radius: 6px; border-left: 4px solid #f59e0b; margin: 20px 0;">
+            <p style="margin: 0 0 10px 0;"><strong>Project Title:</strong> ${data.title}</p>
+            <p style="margin: 0;"><strong>Deadline:</strong> ${data.deadline}</p>
+          </div>
+          <p>Please log in to your dashboard and ensure your project is completed and submitted before the deadline to avoid any academic penalties.</p>
+        `)
+      };
+
+    case "DEADLINE_MISSED":
+      return {
+        subject: "❌ Urgent: Project Deadline Missed",
+        html: baseHtml(`
+          <h3 style="color: #dc2626; margin-top: 0;">Notice: Project Deadline Missed</h3>
+          <p>Hello,</p>
+          <p>This is to notify you that the deadline for the following project has passed without the project being marked as completed.</p>
+          <div style="background-color: #fef2f2; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #ef4444;">
+            <p style="margin: 0 0 10px 0;"><strong>Project Title:</strong> ${data.title}</p>
+            <p style="margin: 0;"><strong>Student:</strong> ${data.studentName}</p>
+          </div>
+          <p>This event has been logged in the system. Please review the project status on your dashboard immediately.</p>
+        `)
+      };
+
     default:
       return null;
   }

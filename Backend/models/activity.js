@@ -5,7 +5,7 @@ const activitySchema = new mongoose.Schema(
     actor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
     targetUsers: [
       {
@@ -42,6 +42,8 @@ const activitySchema = new mongoose.Schema(
         "STUDENT_MESSAGE",
         "SUPERVISOR_MESSAGE",
         "ADMIN_MESSAGE",
+        "DEADLINE_REMINDER",
+        "DEADLINE_MISSED",
       ],
       required: true,
     },
