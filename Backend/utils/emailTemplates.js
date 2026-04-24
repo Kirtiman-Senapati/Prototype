@@ -36,7 +36,7 @@ export const getEmailTemplate = (type, data) => {
           <h3 style="color: #059669; margin-top: 0;">Project Completed</h3>
           <p>Hello,</p>
           <p>The following project has been marked as completed:</p>
-          <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0 border-left: 4px solid #10b981;">
+          <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #10b981;">
             <p style="margin: 0 0 10px 0;"><strong>Project Title:</strong> ${data.title}</p>
             <p style="margin: 0;"><strong>Completed by Student:</strong> ${data.studentName}</p>
           </div>

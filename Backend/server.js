@@ -2,10 +2,8 @@ import app from "./app.js";
 import connectDB from "./config/db.js";
 import http from "http";
 import { initSocket } from "./utils/socket.js";
+import "./cron/deadlineChecker.js";
 
-if (process.env.CRON_ENABLED === "true") {
-  import("./cron/deadlineChecker.js");
-}
 // -------------------DATABASE-----------------
 connectDB();
 // -------------------SERVER-------------------
