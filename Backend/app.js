@@ -51,7 +51,9 @@ app.use("/api/v1/feedback", feedbackRouter);
 app.use("/api/v1/activities", activityRouter);
 
 //test route last
-app.use("/api/test", testRoutes);
+if (process.env.NODE_ENV === "development") {
+    app.use("/api/test", testRoutes);
+}
 
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 

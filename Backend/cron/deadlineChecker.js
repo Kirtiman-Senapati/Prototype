@@ -42,8 +42,6 @@ export const runDeadlineChecker = async () => {
         }).populate("student supervisor");
 
         for (const project of nearDeadlineProjects) {
-            if (project.reminderSent) continue;
-
             try {
                 const template = getEmailTemplate("DEADLINE_REMINDER", {
                     studentName: project.student?.name || "Student",
@@ -92,8 +90,6 @@ export const runDeadlineChecker = async () => {
         const adminEmails = admins.map(a => a.email).filter(Boolean);
 
         for (const project of missedProjects) {
-            if (project.deadlineMissedNotified) continue;
-
             try {
                 const template = getEmailTemplate("DEADLINE_MISSED", {
                     studentName: project.student?.name || "Student",
@@ -148,5 +144,5 @@ export const runDeadlineChecker = async () => {
 // ⏰ CRON SCHEDULER
 // ===============================
 if (process.env.CRON_ENABLED === "true") {
-    cron.schedule("0 9 * * *", runDeadlineChecker);
+    cron.schedule("0 * * * *", runDeadlineChecker);
 }
