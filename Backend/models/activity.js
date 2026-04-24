@@ -42,6 +42,9 @@ const activitySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    details: {
+      type: String,
+    },
     tag: {
       type: String,
       enum: ["Progress", "Issue", "Completion", "General", "Blocked", "Resolved"],

@@ -32,6 +32,10 @@ const TeacherDashboard = () => {
         if (!authUser?._id) return;
         const socket = io("http://localhost:4000", { query: { userId: authUser._id } });
         socket.on("newActivity", (activity) => { dispatch(addRealtimeActivity(activity)); });
+        socket.on("userDeleted", () => {
+            dispatch(getTeacherDashboard());
+            dispatch(getAssignedStudents());
+        });
         return () => socket.disconnect();
     }, [authUser, dispatch]);
 

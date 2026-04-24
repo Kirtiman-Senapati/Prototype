@@ -65,16 +65,28 @@ export const sendFeedback = asyncHandler(async (req, res, next) => {
 
     let messageLog = "";
     if (senderRole === "Admin") {
-         messageLog = `**Admin** sent feedback to Student **${student.name}** : "${message}"`;
+         messageLog = `**Admin** sent feedback to Student **${student.name}**`;
     } else {
-         messageLog = `Supervisor **${req.user.name}** sent feedback to student **${student.name}** : "${message}"`;
+         messageLog = `Supervisor **${req.user.name}** sent feedback to student **${student.name}**`;
+    }
+
+    // Get Admin IDs
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
+    let recipients = [studentId, ...adminIds];
+    if (senderRole === "Admin" && student.supervisor) {
+         recipients.push(student.supervisor);
+    } else if (senderRole === "Supervisor") {
+         recipients.push(req.user._id);
     }
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [studentId],
+        targetUsers: recipients,
         actionType: "FEEDBACK_GIVEN",
         message: messageLog,
+        details: message,
         priority: "medium"
     });
 

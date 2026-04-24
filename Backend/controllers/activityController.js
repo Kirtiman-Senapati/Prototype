@@ -11,26 +11,19 @@ export const getActivities = async (req, res) => {
     const userRole = req.user.role;
     let query = {};
 
-    if (userRole === "Admin") {
-      // Admin sees everything not cleared by them
-      query = { clearedBy: { $ne: userId } };
-    } else if (userRole === "Supervisor") {
-      // Supervisor sees activities targeting them or created by them
-      query = {
-        $and: [
-           { $or: [{ targetUsers: userId }, { actor: userId }] },
-           { clearedBy: { $ne: userId } }
-        ]
-      };
-    } else if (userRole === "Student") {
-      // Student sees activities targeting them
-      query = {
-        $and: [
-           { $or: [{ targetUsers: userId }, { actor: userId }] },
-           { clearedBy: { $ne: userId } }
-        ]
-      };
-    }
+    // FETCH ONLY RELEVANT ACTIVITIES (NO ACTOR NOISE FOR SYSTEM EVENTS)
+    query = {
+      $and: [
+         {
+            $or: [
+               { targetUsers: userId },
+               // Allow users to see their own direct chat messages
+               { actor: userId, actionType: { $in: ['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'] } }
+            ]
+         },
+         { clearedBy: { $ne: userId } }
+      ]
+    };
 
     const activities = await Activity.find(query)
       .populate("actor", "name role profilePic")

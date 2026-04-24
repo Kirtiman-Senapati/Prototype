@@ -19,6 +19,7 @@ export const logActivity = async ({
   targetUsers = [],
   actionType,
   message,
+  details,
   relatedProject = null,
   priority = "low",
   tag
@@ -29,6 +30,7 @@ export const logActivity = async ({
       targetUsers,
       actionType,
       message,
+      details,
       relatedProject,
       priority,
       tag
@@ -54,11 +56,14 @@ export const logActivity = async ({
           try {
             const user = await User.findById(userId);
             if (user && user.email) {
-              const emailHtml = generateNotificationEmailTemplate(populatedActivity.message);
+              const emailHtml = generateNotificationEmailTemplate(populatedActivity.message, populatedActivity.details);
+              const actorRole = populatedActivity.actor?.role || "System";
+              
               await sendEmail({
                 to: user.email,
                 subject: "New Update - Academic Project Monitoring System",
-                html: emailHtml
+                html: emailHtml,
+                role: actorRole
               });
             }
           } catch (emailErr) {

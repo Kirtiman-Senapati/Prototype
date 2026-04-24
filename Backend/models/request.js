@@ -34,4 +34,4 @@ const requestSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export const Request = mongoose.model("Request", requestSchema);
+export const Request = mongoose.models.Request || mongoose.model("Request", requestSchema);

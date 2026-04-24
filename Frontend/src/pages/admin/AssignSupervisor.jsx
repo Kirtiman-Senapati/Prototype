@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { axiosInstance } from "../../lib/axios";
 import { Search, CheckCircle2, User, Users, Briefcase, Filter, ShieldAlert, Clock, XCircle, Check, Eye, FolderKanban, X, Calendar, Archive, File, FileText, MonitorPlay, Download } from "lucide-react";
 import { getAdminSupervisors, assignSupervisorAdmin, updateProjectStatusAdmin } from "../../store/slices/adminSlice";
+import { getActivities } from "../../store/slices/activitySlice";
 
 const AssignSupervisor = () => {
     const dispatch = useDispatch();
@@ -44,6 +45,7 @@ const AssignSupervisor = () => {
             .then((res) => {
                 setProjects(projects.map(p => p._id === projectId ? { ...p, supervisor: res.project.supervisor } : p));
                 setSelections(prev => ({ ...prev, [projectId]: "" })); 
+                dispatch(getActivities());
             });
     };
 
@@ -55,6 +57,7 @@ const AssignSupervisor = () => {
                 if (selectedProject && selectedProject._id === projectId) {
                     setSelectedProject(null); // Close modal on approval/rejection
                 }
+                dispatch(getActivities());
             });
     };
 
@@ -92,14 +95,17 @@ const AssignSupervisor = () => {
         return <File className={`text-slate-500 ${className}`} />;
     };
 
-    // Calculate stats based on ALL projects
-    const totalStudents = projects.length; 
-    const assignedStudents = projects.filter(p => p.status === "Approved" && p.supervisor).length;
-    const unassignedStudents = projects.filter(p => p.status === "Approved" && !p.supervisor).length;
-    const pendingProposals = projects.filter(p => p.status === "Pending").length;
+    // Filter out ghost projects (where student has been deleted)
+    const cleanProjects = projects.filter(p => p.student && typeof p.student === "object");
+
+    // Calculate stats based on valid projects
+    const totalStudents = cleanProjects.length; 
+    const assignedStudents = cleanProjects.filter(p => p.status === "Approved" && p.supervisor).length;
+    const unassignedStudents = cleanProjects.filter(p => p.status === "Approved" && !p.supervisor).length;
+    const pendingProposals = cleanProjects.filter(p => p.status === "Pending").length;
 
     // Filter projects for table
-    const filteredProjects = projects.filter(p => {
+    const filteredProjects = cleanProjects.filter(p => {
         const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                               p.title?.toLowerCase().includes(searchTerm.toLowerCase());
         

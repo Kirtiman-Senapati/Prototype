@@ -31,9 +31,13 @@ export const registerUser = asyncHandler(async (req, res, next) =>
     user = new User({ name, email, password, role });
     await user.save();
     
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     // Log activity
     await logActivity({
         actor: user._id,
+        targetUsers: [user._id, ...adminIds],
         actionType: "NEW_USER_REGISTERED",
         message: `New ${role.toLowerCase()} registered: **${name}**`,
         priority: "low"

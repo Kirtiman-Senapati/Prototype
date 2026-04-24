@@ -1,4 +1,4 @@
-export const generateNotificationEmailTemplate = (message) => {
+export const generateNotificationEmailTemplate = (message, details) => {
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -50,6 +50,12 @@ export const generateNotificationEmailTemplate = (message) => {
           margin: 20px 0;
           border-radius: 4px;
         }
+        .details-content {
+          font-size: 15px;
+          color: #4b5563;
+          margin-top: 10px;
+          white-space: pre-wrap;
+        }
         .email-footer {
           background-color: #f9fafb;
           padding: 20px;
@@ -70,7 +76,8 @@ export const generateNotificationEmailTemplate = (message) => {
             <p>Hello,</p>
             <p>You have a new update in your Project Management account:</p>
             <div class="message-content">
-              ${message}
+              <strong>${message}</strong>
+              ${details ? `<div class="details-content">${details}</div>` : ''}
             </div>
             <p>Please log in to your dashboard to view more details.</p>
           </div>

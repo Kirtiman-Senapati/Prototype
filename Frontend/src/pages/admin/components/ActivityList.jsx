@@ -2,14 +2,22 @@ import React, { useState } from 'react';
 import { UserPlus, Briefcase, UserCircle, Clock, CheckCircle, FileText, Trash2, AlertTriangle, Info, ChevronRight, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { clearActivities } from '../../../store/slices/activitySlice';
+import { formatDateTime } from '../../../utils/timeFormat';
 
 const ActivityList = ({ activities }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const dispatch = useDispatch();
 
-    const formatDate = (dateValue) => {
-        const date = new Date(dateValue);
-        return `${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
+    const timeAgo = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+
+        if (diffInSeconds < 60) return "Just now";
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min ago`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hr ago`;
+        if (diffInSeconds < 172800) return "Yesterday";
+        return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
     };
 
     const handleClear = () => {
@@ -67,23 +75,28 @@ const ActivityList = ({ activities }) => {
             </div>
             <div className={`divide-y divide-slate-100 overflow-y-auto custom-scrollbar flex-1 ${isExpanded ? 'max-h-[500px]' : ''}`}>
                 {displayActivities.map((activity, index) => (
-                    <div key={activity._id || index} className="p-5 flex gap-4 items-start hover:bg-slate-50 transition-colors group">
-                        <div className={`p-2.5 rounded-full mt-0.5 border ${getBgColor(activity.priority)}`}>
+                    <div key={activity._id || index} className="flex gap-3 p-4 rounded-xl border border-transparent hover:border-slate-200 hover:shadow-sm transition bg-white mb-2 mx-4 mt-2">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border shadow-sm ${getBgColor(activity.priority)}`}>
                             {getActivityIcon(activity.actionType)}
                         </div>
+
                         <div className="flex-1">
-                            <p className="text-slate-700 font-medium text-[13px] whitespace-pre-wrap leading-relaxed">{renderMessage(activity.message)}</p>
-                            <div className="flex flex-wrap items-center gap-2 mt-2">
-                                <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border shadow-sm ${
-                                    activity.actionType?.includes("ACCEPTED") || activity.actionType?.includes("COMPLETED") || activity.actionType?.includes("APPROVED") ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
-                                    activity.actionType?.includes("REJECTED") || activity.actionType?.includes("DELETED") ? "bg-red-50 text-red-700 border-red-200" :
-                                    "bg-blue-50 text-blue-700 border-blue-200"
-                                }`}>
-                                    {activity.actionType?.split('_').join(' ')}
+                            <p className="text-[13px] text-slate-800 font-medium leading-relaxed">
+                                {renderMessage(activity.message)}
+                            </p>
+
+                            {activity.details && (
+                                <p className="text-[12.5px] text-slate-500 mt-1 border-l-2 border-slate-200 pl-2">
+                                    {activity.details}
+                                </p>
+                            )}
+
+                            <div className="flex items-center gap-2 mt-2 text-xs text-slate-400 font-medium">
+                                <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-bold tracking-wider uppercase text-[10px]">
+                                    {activity.actionType?.replace(/_/g, " ")}
                                 </span>
-                                <span className="text-[11px] font-bold text-slate-400">
-                                    {formatDate(activity.createdAt)}
-                                </span>
+                                <span>•</span>
+                                <span>{formatDateTime(activity.createdAt)}</span>
                             </div>
                         </div>
                     </div>

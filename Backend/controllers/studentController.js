@@ -57,8 +57,12 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
         }
     });
 
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
+        targetUsers: [req.user._id, ...adminIds],
         actionType: "PROPOSAL_SUBMITTED",
         message: `**${req.user.name}** submitted a new project proposal: "${title}"`,
         relatedProject: project._id,
@@ -159,9 +163,12 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
         }
     });
 
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.supervisor].filter(Boolean),
+        targetUsers: [req.user._id, project.supervisor, ...adminIds].filter(Boolean),
         actionType: "FILE_UPLOADED",
         message: `**${req.user.name}** uploaded a new file: ${req.file.originalname}`,
         relatedProject: project._id,
@@ -202,6 +209,10 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Task not found", 404));
     }
 
+    if (task.status === status) {
+        return res.status(200).json({ success: true, project });
+    }
+
     task.status = status;
     if (status === "Completed") {
         task.completedAt = new Date();
@@ -224,9 +235,13 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
     });
 
     if (status === "Completed") {
+        // Fetch Admins for Event Routing (CASE 3)
+        const admins = await User.find({ role: "Admin" }).select("_id");
+        const adminIds = admins.map(a => a._id);
+
         await logActivity({
             actor: req.user._id,
-            targetUsers: [project.supervisor].filter(Boolean),
+            targetUsers: [project.supervisor, ...adminIds].filter(Boolean),
             actionType: "TASK_COMPLETED",
             message: `**${req.user.name}** marked task "${task.title}" as completed`,
             relatedProject: project._id,

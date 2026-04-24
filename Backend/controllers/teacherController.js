@@ -98,7 +98,16 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
     });
 });
 export const getAssignedStudents = asyncHandler(async (req, res, next) => {
-    const students = await User.find({ supervisor: req.user._id }).populate("project");
+    const projects = await Project.find({ supervisor: req.user._id }).populate("student");
+    const students = projects.map(p => {
+        if (p.student) {
+            const studentObj = p.student.toObject ? p.student.toObject() : p.student;
+            studentObj.project = p;
+            return studentObj;
+        }
+        return null;
+    }).filter(Boolean);
+    
     res.status(200).json({
         success: true,
         students
@@ -128,11 +137,17 @@ export const addTask = asyncHandler(async (req, res, next) => {
     const project = await addTaskToProject(projectId, { title, description, deadline }, "supervisor", req.user._id);
 
     await project.populate("student", "name");
+    
+    // Fetch Admins for Event Routing (CASE 2)
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student._id],
+        targetUsers: [req.user._id, project.student._id, ...adminIds],
         actionType: "TASK_ASSIGNED",
         message: `Supervisor **${req.user.name}** assigned a new task "${title}" to **${project.student.name}**`,
+        details: description,
         relatedProject: project._id,
         priority: "high"
     });
@@ -145,7 +160,14 @@ export const addTask = asyncHandler(async (req, res, next) => {
 });
 export const getTeacherDashboard = asyncHandler(async (req, res, next) => {
     const pendingRequestsCount = await Request.countDocuments({ toUser: req.user._id, status: "Pending" });
-    const assignedStudentsCount = await User.countDocuments({ supervisor: req.user._id, role: "Student" });
+    
+    // Fetch all assigned projects and populate student to ignore ghost projects (deleted students)
+    const assignedProjects = await Project.find({ supervisor: req.user._id }).populate("student");
+    const uniqueStudents = new Set();
+    assignedProjects.forEach(p => {
+        if (p.student && p.student._id) uniqueStudents.add(p.student._id.toString());
+    });
+    const assignedStudentsCount = uniqueStudents.size;
     const completedProjectsCount = await Project.countDocuments({ supervisor: req.user._id, status: "Completed" });
     
     // Fetch completed projects details for the modal

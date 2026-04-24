@@ -5,6 +5,11 @@ import { User } from "../models/user.js";
 import { addTaskToProject } from "./teacherController.js";
 import { logActivity } from "../utils/activityLogger.js";
 import { Activity } from "../models/activity.js";
+import { Request } from "../models/request.js";
+import { Feedback } from "../models/Feedback.js";
+import { getIo } from "../utils/socket.js";
+import fs from "fs";
+import path from "path";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
@@ -50,14 +55,23 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
     // Adding .lean() to allow direct property modification
     const users = await User.find({ role: { $ne: "Admin" } }).select("-password").lean();
     
-    // Fetch all projects to map project details to students
-    const allProjects = await Project.find();
+    // Fetch all projects and populate student to ignore ghost projects (deleted students)
+    const allProjects = await Project.find().populate("student");
     
     // Map student IDs to their project
     const studentProjectMap = {};
+    const supervisorToStudentsMap = {};
+
     allProjects.forEach(p => {
-        if (p.student) {
-            studentProjectMap[p.student.toString()] = p;
+        if (p.student && p.student._id) {
+            studentProjectMap[p.student._id.toString()] = p;
+        }
+        if (p.supervisor && p.student && p.student._id) {
+            const supId = p.supervisor.toString();
+            if (!supervisorToStudentsMap[supId]) {
+                supervisorToStudentsMap[supId] = new Set();
+            }
+            supervisorToStudentsMap[supId].add(p.student._id.toString());
         }
     });
 
@@ -71,6 +85,8 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
             } else {
                 u.proposalStatus = null;
             }
+        } else if (u.role === "Supervisor") {
+             u.assignedStudentsCount = supervisorToStudentsMap[u._id.toString()] ? supervisorToStudentsMap[u._id.toString()].size : 0;
         }
         return u;
     });
@@ -87,18 +103,62 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("User not found", 404));
     }
     
-    // Cleanup projects if user is student
-    if (user.role === "Student") {
-        await Project.findOneAndDelete({ student: user._id });
+    // 1. Get all projects where the user is involved
+    const projects = await Project.find({
+        $or: [{ student: user._id }, { supervisor: user._id }]
+    });
+
+    // 2. Delete all related files from local storage
+    for (const project of projects) {
+        if (project.files && project.files.length > 0) {
+            for (const file of project.files) {
+                const filePath = path.join("public", "uploads", file.filename);
+                if (fs.existsSync(filePath)) {
+                    try {
+                        fs.unlinkSync(filePath);
+                    } catch (err) {
+                        console.error(`Failed to delete file: ${filePath}`, err);
+                    }
+                }
+            }
+        }
     }
+
+    // 3. Cascade Delete related data in DB
+    await Project.deleteMany({
+        $or: [{ student: user._id }, { supervisor: user._id }]
+    });
+
+    await Feedback.deleteMany({
+        $or: [{ student: user._id }, { sender: user._id }]
+    });
+
+    await Activity.deleteMany({
+        $or: [{ actor: user._id }, { targetUsers: user._id }]
+    });
+
+    await Request.deleteMany({
+        $or: [{ fromUser: user._id }, { toUser: user._id }]
+    });
 
     await user.deleteOne();
     
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
+        targetUsers: [req.user._id, ...adminIds],
         actionType: "USER_DELETED",
         message: `**Admin** deleted user **${user.name}** (${user.role})`,
     });
+
+    const io = getIo();
+    if (io) {
+        io.emit("userDeleted", { userId: user._id, role: user.role });
+        io.emit("adminDashboardUpdate");
+        io.emit("refreshData"); // Emit a generic refreshData for other components like Files
+    }
 
     res.status(200).json({
         success: true,
@@ -149,16 +209,11 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
     // UPDATE the Student's User Document
     await User.findByIdAndUpdate(project.student, { supervisor: supervisorId });
 
-    // UPDATE the Teacher's User Document
-    await User.findByIdAndUpdate(supervisorId, { $addToSet: { assignedStudents: project.student } });
-
     // Clear any pending requests this student made to other supervisors
-    await import("../models/Request.js").then(async ({ Request }) => {
-         await Request.updateMany(
-            { fromUser: project.student, type: "Supervisor", status: "Pending" },
-             { $set: { status: "Rejected" } }
-         );
-    });
+    await Request.updateMany(
+        { fromUser: project.student, type: "Supervisor", status: "Pending" },
+        { $set: { status: "Rejected" } }
+    );
 
     // 🚀 Socket.IO: Real-Time Event Emmision to Student
     import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
@@ -178,7 +233,7 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student, supervisorId],
+        targetUsers: [project.student, supervisorId, req.user._id],
         actionType: "SUPERVISOR_ASSIGNED",
         message: `**Admin** assigned supervisor for project "${project.title}"`,
         relatedProject: project._id,
@@ -224,9 +279,12 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
         }
     });
 
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student, project.supervisor].filter(Boolean),
+        targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
         actionType: status === "Approved" ? "PROJECT_APPROVED" : "PROJECT_REJECTED",
         message: `Project proposal "${project.title}" was ${status.toLowerCase()} by **Admin**`,
         relatedProject: project._id,
@@ -273,9 +331,12 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         }
     });
 
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student, project.supervisor].filter(Boolean),
+        targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
         actionType: "DEADLINE_SET",
         message: `**Admin** updated deadline for project "${project.title}" to ${new Date(deadline).toLocaleDateString()}`,
         relatedProject: project._id,
@@ -418,11 +479,15 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
     const { projectId, title, description, deadline } = req.body;
     const project = await addTaskToProject(projectId, { title, description, deadline }, "admin", req.user._id);
 
+    const admins = await User.find({ role: "Admin" }).select("_id");
+    const adminIds = admins.map(a => a._id);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student, project.supervisor].filter(Boolean),
+        targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
         actionType: "TASK_ASSIGNED",
         message: `**Admin** assigned a new task "${title}" to project "${project.title}"`,
+        details: description,
         relatedProject: project._id,
         priority: "high"
     });

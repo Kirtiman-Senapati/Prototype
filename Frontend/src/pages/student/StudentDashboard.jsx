@@ -4,6 +4,7 @@ import { getStudentDashboard, getStudentFeedback, updateTaskStatus } from "../..
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { BookOpen, Calendar, MessageSquare, Clock, Bell, Loader, CheckCircle, XCircle, AlertCircle, ArrowRight, Briefcase } from "lucide-react";
 import { io } from "socket.io-client";
+import { formatDateTime } from "../../utils/timeFormat";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import MessageModal from "./components/MessageModal";
@@ -14,6 +15,8 @@ const StudentDashboard = () => {
   const { activities } = useSelector((state) => state.activity);
   const { authUser } = useSelector((state) => state.auth);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+  const [isSupervisorModalOpen, setIsSupervisorModalOpen] = useState(false);
+  const [completingTasks, setCompletingTasks] = useState({});
   useEffect(() => {
     dispatch(getStudentDashboard());
     dispatch(getStudentDashboard());
@@ -309,10 +312,15 @@ const StudentDashboard = () => {
                             <div key={i} className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100 transition hover:bg-slate-100 group">
                               <div className="flex items-center gap-3">
                                 <button 
-                                  onClick={() => task.status !== 'Completed' && dispatch(updateTaskStatus({ taskId: task._id, status: 'Completed' }))}
-                                  className={`shrink-0 flex items-center justify-center transition-colors ${task.status === 'Completed' ? 'text-green-500' : 'text-slate-300 hover:text-green-500 cursor-pointer'}`}
+                                  onClick={async () => {
+                                    if (task.status === 'Completed' || completingTasks[task._id]) return;
+                                    setCompletingTasks(prev => ({ ...prev, [task._id]: true }));
+                                    await dispatch(updateTaskStatus({ taskId: task._id, status: 'Completed' }));
+                                    setCompletingTasks(prev => ({ ...prev, [task._id]: false }));
+                                  }}
+                                  className={`shrink-0 flex items-center justify-center transition-colors ${task.status === 'Completed' ? 'text-green-500' : 'text-slate-300 hover:text-green-500 cursor-pointer'} ${completingTasks[task._id] ? 'opacity-50 pointer-events-none' : ''}`}
                                   title={task.status === 'Completed' ? 'Completed' : 'Mark as Complete'}
-                                  disabled={task.status === 'Completed'}
+                                  disabled={task.status === 'Completed' || completingTasks[task._id]}
                                 >
                                   {task.status === 'Completed' ? <CheckCircle size={22} className="fill-green-50" /> : <div className="w-[20px] h-[20px] rounded-full border-2 border-current group-hover:border-green-500 group-hover:bg-green-50 flex items-center justify-center" />}
                                 </button>
@@ -366,8 +374,13 @@ const StudentDashboard = () => {
                               </div>
                               <div>
                                 <p className="text-sm text-slate-700 font-medium whitespace-pre-wrap">{renderMessage(act.message)}</p>
+                                {act.details && (
+                                    <p className="text-[12.5px] text-slate-500 mt-1 border-l-2 border-slate-200 pl-2">
+                                        {act.details}
+                                    </p>
+                                )}
                                 <p className="text-[10px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">
-                                    {new Date(act.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(act.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                    {formatDateTime(act.createdAt)}
                                 </p>
                               </div>
                             </div>
@@ -399,8 +412,13 @@ const StudentDashboard = () => {
                               </div>
                               <div className="pt-0.5">
                                 <p className="text-sm text-slate-800 font-medium leading-snug">{renderMessage(act.message)}</p>
+                                {act.details && (
+                                    <p className="text-[12.5px] text-slate-500 mt-1 border-l-2 border-slate-200 pl-2">
+                                        {act.details}
+                                    </p>
+                                )}
                                 <p className="text-[10px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">
-                                    {new Date(act.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(act.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                    {formatDateTime(act.createdAt)}
                                 </p>
                               </div>
                             </div>

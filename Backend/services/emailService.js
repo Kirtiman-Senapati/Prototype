@@ -1,7 +1,7 @@
 
 import nodeMailer from 'nodemailer';
 
-export const sendEmail = async ({to, subject, html}) => 
+export const sendEmail = async ({to, subject, html, role}) => 
 {
     try 
     {
@@ -17,9 +17,11 @@ export const sendEmail = async ({to, subject, html}) =>
             service: process.env.SMTP_SERVICE,
         });
 
+        const senderName = role ? `${role} - Academic Project System` : "Academic Project System";
+
         const mailOptions = 
         {
-            from: process.env.SMTP_USER,
+            from: `"${senderName}" <${process.env.SMTP_USER}>`,
             to,
             subject,
             html: html,

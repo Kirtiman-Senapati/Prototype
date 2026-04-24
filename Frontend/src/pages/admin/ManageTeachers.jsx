@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, deleteUser, adminAddSupervisor, adminUpdateUser } from "../../store/slices/adminSlice";
 import { GraduationCap, Trash2, ShieldAlert, Plus, X, Search, Filter, BookOpen, Users as UsersIcon, Edit2 } from "lucide-react";
+import { io } from "socket.io-client";
 
 const ManageTeachers = () => {
     const dispatch = useDispatch();
@@ -26,6 +27,16 @@ const ManageTeachers = () => {
 
     useEffect(() => {
         dispatch(getAllUsers());
+        
+        const socket = io("http://localhost:4000");
+        socket.on("userDeleted", () => {
+            dispatch(getAllUsers()); // Real-time UI update on delete
+        });
+
+        return () => {
+            socket.off("userDeleted");
+            socket.disconnect();
+        };
     }, [dispatch]);
 
     const teachers = users?.filter(u => u.role === "Supervisor") || [];
@@ -201,7 +212,7 @@ const ManageTeachers = () => {
                             <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><UsersIcon size={12} /> Assigned</p>
-                                    <p className="font-semibold text-slate-800 text-lg tabular-nums">{user.assignedStudents?.length || 0}</p>
+                                    <p className="font-semibold text-slate-800 text-lg tabular-nums">{user.assignedStudentsCount !== undefined ? user.assignedStudentsCount : (user.assignedStudents?.length || 0)}</p>
                                 </div>
                                 {/* Capacity / Max Students visual placeholder */}
                                 <div className="text-right">
