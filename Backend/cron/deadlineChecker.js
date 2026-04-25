@@ -61,7 +61,7 @@ export const runDeadlineChecker = async () => {
 
                     await logActivity({
                         actionType: "DEADLINE_REMINDER",
-                        message: `📅 Heads up: Your project "${project.title}" deadline is in 2 days (${new Date(project.deadline).toLocaleDateString()}). Stay on track!`,
+                        message: `📅 Reminder: The submission deadline for your project "${project.title}" is in exactly 2 days (${new Date(project.deadline).toLocaleDateString()}). Please prioritize its completion.`,
                         targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
                         roles: [],
                         relatedProject: project._id,
@@ -101,7 +101,7 @@ export const runDeadlineChecker = async () => {
 
                     await logActivity({
                         actionType: "DEADLINE_REMINDER",
-                        message: `⏰ Reminder: Your project "${project.title}" is due tomorrow (${new Date(project.deadline).toLocaleDateString()}). Please ensure timely submission.`,
+                        message: `⏰ Final Reminder: The submission deadline for your project "${project.title}" is tomorrow (${new Date(project.deadline).toLocaleDateString()}). Please submit your work immediately.`,
                         targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
                         roles: [],
                         relatedProject: project._id,
@@ -158,7 +158,7 @@ export const runDeadlineChecker = async () => {
 
                 await logActivity({
                     actionType: "DEADLINE_MISSED",
-                    message: `❌ Deadline Missed: The project "${project.title}" was not submitted on time by ${project.student?.name}.`,
+                    message: `❌ Deadline Passed: The project "${project.title}" assigned to ${project.student?.name} has crossed its submission deadline.`,
                     targetUsers: [
                         project.student?._id,
                         project.supervisor?._id
