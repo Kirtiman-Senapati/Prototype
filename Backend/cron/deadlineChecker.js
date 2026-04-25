@@ -135,7 +135,7 @@ export const runDeadlineChecker = async () => {
         // ❌ DEADLINE MISSED
         // ============================================
         const missedProjects = await Project.find({
-            deadline: { $lt: todayStart },
+            deadline: { $lte: todayEnd },
             status: { $ne: "Completed" },
             deadlineMissedNotified: false
         }).populate("student supervisor");
@@ -201,4 +201,8 @@ export const runDeadlineChecker = async () => {
 // ===============================
 if (process.env.CRON_ENABLED === "true") {
     cron.schedule("0 * * * *", runDeadlineChecker);
+}
+
+if (process.env.NODE_ENV !== "production") {
+    runDeadlineChecker();
 }
