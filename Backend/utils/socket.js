@@ -15,12 +15,17 @@ export const initSocket = (server) => {
     io.on("connection", (socket) => {
         const userId = socket.handshake.query.userId;
         if (userId) {
-            userSockets[userId] = socket.id;
+            if (!userSockets[userId]) userSockets[userId] = [];
+            userSockets[userId].push(socket.id);
             console.log(`User connected: ${userId} with socket id: ${socket.id}`);
-        }
+            
+            // Only emit online if it's their first connection
+            if (userSockets[userId].length === 1) {
+                io.emit("userStatus", { userId, status: "online" });
+            }
 
-        // User status
-        io.emit("userStatus", { userId, online: true });
+            socket.emit("initialOnlineUsers", Object.keys(userSockets));
+        }
 
         // Chat Rooms & Typing Indicators
         socket.on("joinProject", (projectId) => {
@@ -53,9 +58,12 @@ export const initSocket = (server) => {
         });
 
         socket.on("disconnect", () => {
-            if (userId && userSockets[userId] === socket.id) {
-                delete userSockets[userId];
-                io.emit("userStatus", { userId, online: false });
+            if (userId && userSockets[userId]) {
+                userSockets[userId] = userSockets[userId].filter(id => id !== socket.id);
+                if (userSockets[userId].length === 0) {
+                    delete userSockets[userId];
+                    io.emit("userStatus", { userId, status: "offline", lastSeen: new Date() });
+                }
             }
         });
     });

@@ -17,8 +17,9 @@ const ConversationsPage = () => {
     const [dbProjects, setDbProjects] = useState([]);
     
     // Typing & Seen States
-    const [typingUser, setTypingUser] = useState(null);
-    const [isTyping, setIsTyping] = useState(false);
+    const [userStatus, setUserStatus] = useState({});
+    const [typingUsers, setTypingUsers] = useState({});
+    const [replyTo, setReplyTo] = useState(null);
     const typingTimeoutRef = useRef(null);
     
     const bottomRef = useRef(null);
@@ -51,19 +52,21 @@ const ConversationsPage = () => {
         };
 
         const handleTyping = ({ user, projectId }) => {
-            if (projectId === selectedProjectId) {
-                setTypingUser(user);
-                setIsTyping(true);
-            }
+            if (user?._id === authUser?._id) return;
+            setTypingUsers(prev => ({
+                ...prev,
+                [projectId]: user
+            }));
         };
 
         const handleStopTyping = ({ projectId }) => {
-            if (projectId === selectedProjectId) {
-                setTimeout(() => {
-                    setIsTyping(false);
-                    setTypingUser(null);
-                }, 300); // smoother fade
-            }
+            setTimeout(() => {
+                setTypingUsers(prev => {
+                    const updated = { ...prev };
+                    delete updated[projectId];
+                    return updated;
+                });
+            }, 300); // smoother fade
         };
 
         const handleDelivered = ({ messageId }) => {
@@ -74,27 +77,42 @@ const ConversationsPage = () => {
             dispatch(updateMessageStatus({ messageId, status: 'seen' }));
         };
 
+        const handleUserStatus = ({ userId, status, lastSeen }) => {
+            setUserStatus(prev => ({
+                ...prev,
+                [userId]: { status, lastSeen }
+            }));
+        };
+
+        const handleInitialOnlineUsers = (users) => {
+            const map = {};
+            users.forEach(id => {
+                map[id] = { status: "online" };
+            });
+            setUserStatus(prev => ({ ...prev, ...map }));
+        };
+
+        socket.on("initialOnlineUsers", handleInitialOnlineUsers);
         socket.on("newActivity", handleNewActivity);
         socket.on("typing", handleTyping);
         socket.on("stopTyping", handleStopTyping);
         socket.on("messageDeliveredUpdate", handleDelivered);
         socket.on("messageSeenUpdate", handleSeen);
+        socket.on("userStatus", handleUserStatus);
         
         return () => {
+            socket.off("initialOnlineUsers", handleInitialOnlineUsers);
             socket.off("newActivity", handleNewActivity);
             socket.off("typing", handleTyping);
             socket.off("stopTyping", handleStopTyping);
             socket.off("messageDeliveredUpdate", handleDelivered);
             socket.off("messageSeenUpdate", handleSeen);
+            socket.off("userStatus", handleUserStatus);
         };
     }, [dispatch, selectedProjectId]);
 
-    // Join room when project selected
+    // Handle selected project message statuses
     useEffect(() => {
-        if (selectedProjectId) {
-            socket.emit("joinProject", selectedProjectId);
-        }
-
         if (selectedProjectId && activeProject?.messages) {
             activeProject.messages.forEach(msg => {
                 if (!msg.delivered && msg.actor?._id !== authUser?._id) {
@@ -113,11 +131,7 @@ const ConversationsPage = () => {
             });
         }
         
-        return () => {
-            if (selectedProjectId) {
-                socket.emit("leaveProject", selectedProjectId);
-            }
-        };
+        // No cleanup needed here as rooms are handled by the other useEffect
     }, [selectedProjectId]);
 
     // Format Messages
@@ -156,6 +170,18 @@ const ConversationsPage = () => {
         p.messages.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
     });
 
+    // Join ALL rooms on load (correct placement after projectList init)
+    useEffect(() => {
+        if (!projectList.length) return;
+
+        const ids = projectList.map(p => p._id);
+        ids.forEach(id => socket.emit("joinProject", id));
+
+        return () => {
+            ids.forEach(id => socket.emit("leaveProject", id));
+        };
+    }, [projectList.length]);
+
     // Auto-select first project
     useEffect(() => {
         if (!selectedProjectId && projectList.length > 0) {
@@ -180,7 +206,6 @@ const ConversationsPage = () => {
         // Stop typing indicator on send
         socket.emit("stopTyping", { projectId: selectedProjectId });
         if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-        setIsTyping(false);
 
         setIsSending(true);
         try {
@@ -188,12 +213,14 @@ const ConversationsPage = () => {
                 projectId: selectedProjectId,
                 title: "Direct Reply",
                 message: messageInput,
-                tag
+                tag,
+                replyTo: replyTo?._id
             })).unwrap();
             
             // Instantly refresh messages to show the newly sent one
             await dispatch(getActivities());
             setMessageInput("");
+            setReplyTo(null);
         } catch (error) {
             toast.error("Failed to send message");
         } finally {
@@ -209,7 +236,10 @@ const ConversationsPage = () => {
         // Emit typing
         socket.emit("typing", {
             projectId: selectedProjectId,
-            user: authUser.name
+            user: {
+                _id: authUser._id,
+                name: authUser.name
+            }
         });
 
         // Debounce stop typing
@@ -217,11 +247,12 @@ const ConversationsPage = () => {
             clearTimeout(typingTimeoutRef.current);
         }
 
+        const TYPING_DELAY = 2000;
         typingTimeoutRef.current = setTimeout(() => {
             socket.emit("stopTyping", {
                 projectId: selectedProjectId
             });
-        }, 1200);
+        }, TYPING_DELAY);
     };
 
     const renderMessageBody = (text) => {
@@ -237,14 +268,48 @@ const ConversationsPage = () => {
         return displayStr;
     };
 
-    const showTyping = isTyping && typingUser && typingUser !== authUser?.name;
+    const getReplyMessage = (replyId) => {
+        return activeProject?.messages?.find(m => m._id === replyId);
+    };
+
+    const formatLastSeen = (date) => {
+        if (!date) return "";
+
+        const d = new Date(date);
+        return d.toLocaleString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            day: "numeric",
+            month: "short"
+        });
+    };
+
+    const typingUser = typingUsers[selectedProjectId];
+    const showTyping = !!typingUser;
+
+    const projectUsers = [
+        ...new Map(
+            activeProject?.messages
+                ?.map(m => m.actor)
+                ?.filter(Boolean)
+                .map(u => [u._id, u])
+        ).values()
+    ];
+
+    if (authUser && !projectUsers.find(u => u._id === authUser._id)) {
+        projectUsers.push(authUser);
+    }
+
+    const onlineUsers = projectUsers.filter(
+        u => u._id !== authUser?._id && userStatus[u._id]?.status === "online"
+    );
 
     return (
         <div className="max-w-6xl mx-auto h-[85vh] bg-white border border-slate-200 rounded-xl shadow-sm flex overflow-hidden">
             {/* Sidebar (Projects) - 30% */}
             <div className="w-[30%] bg-slate-50 border-r border-slate-200 flex flex-col">
                 <div className="p-4 border-b border-slate-200 bg-slate-50">
-                    <h2 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
+                    <h2 className="text-sm font-medium text-slate-800 flex items-center gap-2 mb-3">
                         Conversations
                     </h2>
                     {/* Search Input Mock */}
@@ -284,8 +349,14 @@ const ConversationsPage = () => {
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-xs text-slate-500 line-clamp-1">
-                                        {lastMsg ? renderMessageBody(lastMsg.message) : 'No messages yet'}
+                                    <p className="text-xs text-slate-500 line-clamp-1 flex items-center gap-1">
+                                        {lastMsg?.replyTo && (
+                                            <span className="text-slate-400 text-[10px]">↩</span>
+                                        )}
+                                        <span className="truncate">
+                                            {lastMsg?.actor?._id === authUser?._id ? "You: " : ""}
+                                            {lastMsg ? renderMessageBody(lastMsg.message) : 'No messages yet'}
+                                        </span>
                                     </p>
                                 </button>
                             );
@@ -301,28 +372,27 @@ const ConversationsPage = () => {
                         {/* Chat Header */}
                         <div className="h-[70px] border-b border-slate-100 flex flex-col justify-center px-6 bg-white shrink-0 z-10">
                             {/* Project Title */}
-                            <h3 className="font-semibold text-slate-800 text-[15px] leading-tight">
+                            <h3 className="font-medium text-slate-800 text-[15px] leading-tight">
                                 {activeProject.title}
                             </h3>
 
                             {/* User name OR typing */}
-                            <div className="text-[12px] mt-0.5">
+                            <div className="text-[12px] mt-0.5 flex items-center gap-1.5">
                                 {showTyping ? (
-                                    <div className="flex items-center gap-1.5">
-                                        <span className="text-[12px] text-slate-500 font-medium">
-                                            {typingUser}
-                                        </span>
-                                        <div className="flex items-center gap-0.5 ml-1">
-                                            <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                                            <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                                            <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                                        </div>
-                                    </div>
+                                    <span className="text-slate-400 text-[12px]">
+                                        {typingUser?.name} is typing…
+                                    </span>
+                                ) : onlineUsers.length > 0 ? (
+                                    <span className="text-slate-500 font-normal">
+                                        {onlineUsers.length === 1
+                                            ? `${onlineUsers[0].name} online`
+                                            : `${onlineUsers.length} online`}
+                                    </span>
                                 ) : (
                                     <span className="text-slate-400">
-                                        {activeProject.messages?.length > 0
-                                            ? activeProject.messages[activeProject.messages.length - 1]?.actor?.name || "System"
-                                            : "No activity"}
+                                        last seen {formatLastSeen(
+                                            userStatus[projectUsers.find(u => u._id !== authUser?._id)?._id]?.lastSeen
+                                        ) || "recently"}
                                     </span>
                                 )}
                             </div>
@@ -342,11 +412,42 @@ const ConversationsPage = () => {
                                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         </div>
-                                        <div className={`max-w-[70%] px-4 py-2.5 relative ${
+                                        <div 
+                                            onContextMenu={(e) => {
+                                                e.preventDefault();
+                                                setReplyTo(msg);
+                                            }}
+                                            className={`max-w-[70%] px-4 py-2.5 relative cursor-pointer ${
                                             isMe 
-                                            ? 'bg-blue-600 text-white rounded-2xl rounded-tr-sm' 
-                                            : 'bg-slate-100 text-slate-800 rounded-2xl rounded-tl-sm'
+                                            ? 'bg-blue-500 text-white rounded-2xl rounded-tr-sm' 
+                                            : 'bg-slate-50 text-slate-800 rounded-2xl rounded-tl-sm'
                                         }`}>
+                                            {msg.replyTo && (
+                                                (() => {
+                                                    const repliedMsg = getReplyMessage(msg.replyTo);
+                                                    if (!repliedMsg) return null;
+
+                                                    return (
+                                                        <div className={`mb-1 px-2 py-1 rounded-md border-l-4 ${
+                                                            isMe
+                                                            ? "bg-white/10 backdrop-blur-[2px] border-white/30"
+                                                            : "bg-slate-200 backdrop-blur-[2px] border-slate-400"
+                                                        }`}>
+                                                            <p className={`text-[10px] font-semibold ${
+                                                            isMe ? "text-blue-100" : "text-slate-600"
+                                                            }`}>
+                                                            {repliedMsg.actor?._id === authUser._id ? "You" : repliedMsg.actor?.name || "Unknown"}
+                                                            </p>
+
+                                                            <p className={`text-[11px] truncate ${
+                                                            isMe ? "text-blue-200" : "text-slate-500"
+                                                            }`}>
+                                                            {renderMessageBody(repliedMsg.message)}
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                })()
+                                            )}
                                             <p className="text-[13px] leading-relaxed whitespace-pre-wrap">{renderMessageBody(msg.message)}</p>
                                             
                                             {/* Tag Visual Indicator */}
@@ -390,6 +491,21 @@ const ConversationsPage = () => {
 
                         {/* Input Area */}
                         <div className="p-4 bg-white border-t border-slate-100 shrink-0">
+                            {replyTo && (
+                                <div className="bg-slate-50 border-l-4 border-blue-500 px-3 py-2 rounded-md mb-2 flex justify-between items-start">
+                                    <div>
+                                        <p className="text-xs font-semibold text-slate-600">
+                                            Replying to {replyTo.actor?.name}
+                                        </p>
+                                        <p className="text-sm text-slate-500 truncate max-w-sm">
+                                            {renderMessageBody(replyTo.message)}
+                                        </p>
+                                    </div>
+                                    <button onClick={() => setReplyTo(null)} className="text-slate-400 hover:text-slate-600">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                </div>
+                            )}
                             <form onSubmit={handleSendMessage} className="flex items-end gap-2 bg-slate-50 border border-slate-200 p-2 rounded-xl focus-within:border-slate-300 focus-within:bg-white transition-colors">
                                 <div className="flex-1 flex flex-col">
                                     <div className="px-2 pt-1 pb-2">
