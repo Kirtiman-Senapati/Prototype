@@ -59,8 +59,10 @@ const ConversationsPage = () => {
 
         const handleStopTyping = ({ projectId }) => {
             if (projectId === selectedProjectId) {
-                setIsTyping(false);
-                setTypingUser(null);
+                setTimeout(() => {
+                    setIsTyping(false);
+                    setTypingUser(null);
+                }, 300); // smoother fade
             }
         };
 
@@ -297,11 +299,32 @@ const ConversationsPage = () => {
                 {activeProject ? (
                     <>
                         {/* Chat Header */}
-                        <div className="h-[60px] border-b border-slate-100 flex items-center px-6 justify-between shrink-0 z-10 bg-white">
-                            <div>
-                                <h3 className="font-semibold text-slate-800 text-[15px]">
-                                    {activeProject.title}
-                                </h3>
+                        <div className="h-[70px] border-b border-slate-100 flex flex-col justify-center px-6 bg-white shrink-0 z-10">
+                            {/* Project Title */}
+                            <h3 className="font-semibold text-slate-800 text-[15px] leading-tight">
+                                {activeProject.title}
+                            </h3>
+
+                            {/* User name OR typing */}
+                            <div className="text-[12px] mt-0.5">
+                                {showTyping ? (
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-[12px] text-slate-500 font-medium">
+                                            {typingUser}
+                                        </span>
+                                        <div className="flex items-center gap-0.5 ml-1">
+                                            <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                            <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                            <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <span className="text-slate-400">
+                                        {activeProject.messages?.length > 0
+                                            ? activeProject.messages[activeProject.messages.length - 1]?.actor?.name || "System"
+                                            : "No activity"}
+                                    </span>
+                                )}
                             </div>
                         </div>
 
@@ -364,18 +387,6 @@ const ConversationsPage = () => {
                             
                             <div ref={bottomRef} />
                         </div>
-
-                        {/* Typing Indicator UI (Absolute fixed position over input) */}
-                        {showTyping && (
-                            <div className="absolute bottom-[70px] left-0 right-0 px-6 z-10">
-                                <div className="text-xs text-slate-500 italic flex items-center gap-1">
-                                    <span>{typingUser} is typing</span>
-                                    <span className="animate-bounce">.</span>
-                                    <span className="animate-bounce delay-100">.</span>
-                                    <span className="animate-bounce delay-200">.</span>
-                                </div>
-                            </div>
-                        )}
 
                         {/* Input Area */}
                         <div className="p-4 bg-white border-t border-slate-100 shrink-0">
