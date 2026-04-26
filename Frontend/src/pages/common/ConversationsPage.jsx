@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getActivities, sendUnifiedMessage, addRealtimeActivity } from "../../store/slices/activitySlice";
+import { getActivities, sendUnifiedMessage, addRealtimeActivity, updateMessageStatus } from "../../store/slices/activitySlice";
 import { MessageSquare, Send, CheckCircle, Clock, AlertCircle, ChevronRight, Briefcase, Activity } from "lucide-react";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../../lib/axios";
@@ -15,6 +15,12 @@ const ConversationsPage = () => {
     const [tag, setTag] = useState("Progress");
     const [isSending, setIsSending] = useState(false);
     const [dbProjects, setDbProjects] = useState([]);
+    
+    // Typing & Seen States
+    const [typingUser, setTypingUser] = useState(null);
+    const [isTyping, setIsTyping] = useState(false);
+    const typingTimeoutRef = useRef(null);
+    
     const bottomRef = useRef(null);
 
     useEffect(() => {
@@ -35,7 +41,7 @@ const ConversationsPage = () => {
         dispatch(getActivities());
     }, [dispatch]);
 
-    // Real-time listener for incoming messages
+    // Real-time listeners
     useEffect(() => {
         const handleNewActivity = (activity) => {
             if (['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'].includes(activity.actionType)) {
@@ -44,12 +50,73 @@ const ConversationsPage = () => {
             }
         };
 
+        const handleTyping = ({ user, projectId }) => {
+            if (projectId === selectedProjectId) {
+                setTypingUser(user);
+                setIsTyping(true);
+            }
+        };
+
+        const handleStopTyping = ({ projectId }) => {
+            if (projectId === selectedProjectId) {
+                setIsTyping(false);
+                setTypingUser(null);
+            }
+        };
+
+        const handleDelivered = ({ messageId }) => {
+            dispatch(updateMessageStatus({ messageId, status: 'delivered' }));
+        };
+
+        const handleSeen = ({ messageId }) => {
+            dispatch(updateMessageStatus({ messageId, status: 'seen' }));
+        };
+
         socket.on("newActivity", handleNewActivity);
+        socket.on("typing", handleTyping);
+        socket.on("stopTyping", handleStopTyping);
+        socket.on("messageDeliveredUpdate", handleDelivered);
+        socket.on("messageSeenUpdate", handleSeen);
         
         return () => {
             socket.off("newActivity", handleNewActivity);
+            socket.off("typing", handleTyping);
+            socket.off("stopTyping", handleStopTyping);
+            socket.off("messageDeliveredUpdate", handleDelivered);
+            socket.off("messageSeenUpdate", handleSeen);
         };
-    }, [dispatch]);
+    }, [dispatch, selectedProjectId]);
+
+    // Join room when project selected
+    useEffect(() => {
+        if (selectedProjectId) {
+            socket.emit("joinProject", selectedProjectId);
+        }
+
+        if (selectedProjectId && activeProject?.messages) {
+            activeProject.messages.forEach(msg => {
+                if (!msg.delivered && msg.actor?._id !== authUser?._id) {
+                    socket.emit("messageDelivered", {
+                        projectId: selectedProjectId,
+                        messageId: msg._id
+                    });
+                }
+                
+                if (!msg.seen && msg.actor?._id !== authUser?._id) {
+                    socket.emit("markSeen", {
+                        projectId: selectedProjectId,
+                        messageId: msg._id
+                    });
+                }
+            });
+        }
+        
+        return () => {
+            if (selectedProjectId) {
+                socket.emit("leaveProject", selectedProjectId);
+            }
+        };
+    }, [selectedProjectId]);
 
     // Format Messages
     const messageActivities = activities?.filter(a => ['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'].includes(a.actionType)) || [];
@@ -108,6 +175,11 @@ const ConversationsPage = () => {
         e.preventDefault();
         if (!messageInput.trim() || !selectedProjectId) return;
 
+        // Stop typing indicator on send
+        socket.emit("stopTyping", { projectId: selectedProjectId });
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        setIsTyping(false);
+
         setIsSending(true);
         try {
             await dispatch(sendUnifiedMessage({
@@ -127,6 +199,29 @@ const ConversationsPage = () => {
         }
     };
 
+    const handleInputChange = (e) => {
+        setMessageInput(e.target.value);
+
+        if (!selectedProjectId) return;
+
+        // Emit typing
+        socket.emit("typing", {
+            projectId: selectedProjectId,
+            user: authUser.name
+        });
+
+        // Debounce stop typing
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        typingTimeoutRef.current = setTimeout(() => {
+            socket.emit("stopTyping", {
+                projectId: selectedProjectId
+            });
+        }, 1200);
+    };
+
     const renderMessageBody = (text) => {
         if (!text) return null;
         let displayStr = text;
@@ -139,6 +234,8 @@ const ConversationsPage = () => {
 
         return displayStr;
     };
+
+    const showTyping = isTyping && typingUser && typingUser !== authUser?.name;
 
     return (
         <div className="max-w-6xl mx-auto h-[85vh] bg-white border border-slate-200 rounded-xl shadow-sm flex overflow-hidden">
@@ -243,12 +340,42 @@ const ConversationsPage = () => {
                                                     {msg.tag}
                                                 </div>
                                             )}
+                                            
+                                            {/* WhatsApp-style tick for sender */}
+                                            {isMe && (
+                                                <div className="absolute bottom-1 right-2 flex items-center">
+                                                    <span
+                                                        className={`text-[10px] font-bold tracking-tighter ${
+                                                            msg.seen
+                                                                ? "text-blue-400"      // seen (blue)
+                                                                : msg.delivered
+                                                                ? "text-slate-400"     // delivered (gray)
+                                                                : "text-slate-300"     // sent (light gray)
+                                                        }`}
+                                                    >
+                                                        {msg.seen ? "✓✓" : msg.delivered ? "✓✓" : "✓"}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 );
                             })}
+                            
                             <div ref={bottomRef} />
                         </div>
+
+                        {/* Typing Indicator UI (Absolute fixed position over input) */}
+                        {showTyping && (
+                            <div className="absolute bottom-[70px] left-0 right-0 px-6 z-10">
+                                <div className="text-xs text-slate-500 italic flex items-center gap-1">
+                                    <span>{typingUser} is typing</span>
+                                    <span className="animate-bounce">.</span>
+                                    <span className="animate-bounce delay-100">.</span>
+                                    <span className="animate-bounce delay-200">.</span>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Input Area */}
                         <div className="p-4 bg-white border-t border-slate-100 shrink-0">
@@ -267,7 +394,7 @@ const ConversationsPage = () => {
                                     </div>
                                     <textarea
                                         value={messageInput}
-                                        onChange={(e) => setMessageInput(e.target.value)}
+                                        onChange={handleInputChange}
                                         placeholder="Write a message..."
                                         rows={1}
                                         className="w-full bg-transparent px-2 pb-1 text-[13px] focus:outline-none resize-none placeholder-slate-400 text-slate-700"

@@ -62,6 +62,18 @@ const activitySlice = createSlice({
       if (!exists) {
         state.activities.unshift(action.payload);
       }
+    },
+    updateMessageStatus: (state, action) => {
+      const { messageId, status } = action.payload; // status: 'delivered' | 'seen'
+      const message = state.activities.find(a => a._id === messageId);
+      if (message) {
+        if (status === 'seen') {
+          message.seen = true;
+          message.delivered = true;
+        } else if (status === 'delivered') {
+          message.delivered = true;
+        }
+      }
     }
   },
   extraReducers: (builder) => {
@@ -82,5 +94,5 @@ const activitySlice = createSlice({
   },
 });
 
-export const { addRealtimeActivity } = activitySlice.actions;
+export const { addRealtimeActivity, updateMessageStatus } = activitySlice.actions;
 export default activitySlice.reducer;
