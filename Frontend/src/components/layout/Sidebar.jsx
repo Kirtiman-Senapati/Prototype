@@ -14,7 +14,6 @@ const Sidebar = ({ open, setOpen, userRole }) => {
           { name: "Supervisor", path: "/dashboard/supervisor", icon: "user" },
           { name: "Conversations", path: "/dashboard/conversations", icon: "chat" },
           { name: "Feedback", path: "/dashboard/feedback", icon: "chat" },
-          { name: "Notifications", path: "/dashboard/notifications", icon: "bell" },
         ];
       case "Supervisor":
         return [
