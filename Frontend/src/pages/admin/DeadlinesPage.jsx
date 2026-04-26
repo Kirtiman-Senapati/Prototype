@@ -2,12 +2,13 @@ import { useEffect, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
 import { updateProjectDeadlineAdmin } from "../../store/slices/adminSlice";
-import { Calendar as CalendarIcon, Search, Clock, CheckCircle2, User, X, CalendarPlus, Filter, AlertCircle } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Clock, CheckCircle2, User, X, CalendarPlus, Filter, AlertCircle, Send } from "lucide-react";
 
 const DeadlinesPage = () => {
     const dispatch = useDispatch();
     const [projects, setProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isTriggering, setIsTriggering] = useState(false);
     
     // UI States
     const [searchTerm, setSearchTerm] = useState("");
@@ -45,6 +46,19 @@ const DeadlinesPage = () => {
                 setDeadlineDate("");
                 setModalSearchTerm("");
             });
+    };
+
+    const handleTriggerReminders = async () => {
+        setIsTriggering(true);
+        try {
+            await axiosInstance.post("/admin/trigger-reminders");
+            alert("✅ Reminders and notifications triggered successfully!");
+        } catch (error) {
+            console.error("Error triggering reminders", error);
+            alert("❌ Failed to trigger reminders");
+        } finally {
+            setIsTriggering(false);
+        }
     };
 
     const openModalForProject = (proj) => {
@@ -106,17 +120,27 @@ const DeadlinesPage = () => {
                     </div>
                 </div>
 
-                <button 
-                    onClick={() => {
-                        setSelectedProjectId("");
-                        setModalSearchTerm("");
-                        setDeadlineDate("");
-                        setIsModalOpen(true);
-                    }}
-                    className="z-10 w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
-                >
-                    <CalendarPlus size={20} /> Create/Update Deadline
-                </button>
+                <div className="flex flex-col sm:flex-row items-center gap-3 z-10 w-full md:w-auto mt-4 md:mt-0">
+                    <button 
+                        onClick={handleTriggerReminders}
+                        disabled={isTriggering}
+                        className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-2 shrink-0 whitespace-nowrap ${isTriggering ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-900 text-white hover:shadow-lg'}`}
+                    >
+                        {isTriggering ? <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div> : <Send size={20} />}
+                        {isTriggering ? "Sending..." : "Force Send Reminders"}
+                    </button>
+                    <button 
+                        onClick={() => {
+                            setSelectedProjectId("");
+                            setModalSearchTerm("");
+                            setDeadlineDate("");
+                            setIsModalOpen(true);
+                        }}
+                        className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
+                    >
+                        <CalendarPlus size={20} /> Create/Update Deadline
+                    </button>
+                </div>
             </div>
 
             {/* Controls */}

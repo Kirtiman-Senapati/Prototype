@@ -1,6 +1,7 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Project } from "../models/project.js";
+import { runDeadlineChecker } from "../cron/deadlineChecker.js";
 import { User } from "../models/user.js";
 import { addTaskToProject } from "./teacherController.js";
 import { logActivity } from "../utils/activityLogger.js";
@@ -391,6 +392,16 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         project
     });
 });
+
+export const triggerReminders = async (req, res) => {
+    try {
+        await runDeadlineChecker();
+        res.status(200).json({ success: true, message: "Reminders triggered successfully" });
+    } catch (error) {
+        console.error("Manual trigger error:", error);
+        res.status(500).json({ success: false, message: "Error triggering reminders" });
+    }
+};
 
 export const addStudent = asyncHandler(async (req, res, next) => {
     const { name, email, password, department } = req.body;

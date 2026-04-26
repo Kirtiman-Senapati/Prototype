@@ -12,7 +12,8 @@ import {
     addStudent,
     addSupervisor,
     updateUserDetails,
-    addTaskAdmin
+    addTaskAdmin,
+    triggerReminders
 } from "../controllers/adminController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
@@ -33,5 +34,6 @@ router.post("/student", addStudent);
 router.post("/supervisor", addSupervisor);
 router.patch("/user/:id", updateUserDetails);
 router.post("/task", addTaskAdmin);
+router.post("/trigger-reminders", triggerReminders);
 
 export default router;

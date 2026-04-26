@@ -26,16 +26,25 @@ export const runDeadlineChecker = async () => {
             ]
         }).populate("student supervisor");
 
+        console.log(`[CRON] Found ${pendingProjects.length} pending projects to check for reminders.`);
+
         for (const project of pendingProjects) {
             if (!project.deadline) continue;
             
-            // Calculate days difference (100% reliable)
-            const diff = Math.ceil((new Date(project.deadline) - todayStart) / (1000 * 60 * 60 * 24));
+            // Normalize dates to remove time effect
+            const deadlineDate = new Date(project.deadline);
+            deadlineDate.setHours(0, 0, 0, 0);
+            
+            // Calculate pure days difference (100% reliable)
+            const diff = Math.round((deadlineDate - todayStart) / (1000 * 60 * 60 * 24));
+            
+            console.log(`[CRON] 📌 Project: "${project.title}" | Deadline: ${new Date(project.deadline).toLocaleDateString()} | Diff: ${diff} days`);
 
             // -----------------------------
             // 2-DAY REMINDER
             // -----------------------------
             if (diff === 2 && !project.reminder2DaySent) {
+                console.log(`[CRON] 📢 Sending 2-day reminder for "${project.title}"`);
                 try {
                     const updated = await Project.updateOne(
                         { _id: project._id, reminder2DaySent: false },
@@ -76,6 +85,7 @@ export const runDeadlineChecker = async () => {
             // 1-DAY REMINDER (Fallback)
             // -----------------------------
             if (diff === 1 && !project.reminder1DaySent) {
+                console.log(`[CRON] ⏰ Sending 1-day reminder for "${project.title}"`);
                 try {
                     const updated = await Project.updateOne(
                         { _id: project._id, reminder1DaySent: false },
@@ -122,10 +132,13 @@ export const runDeadlineChecker = async () => {
             deadlineMissedNotified: false
         }).populate("student supervisor");
 
+        console.log(`[CRON] Found ${missedProjects.length} projects with missed deadlines.`);
+
         const admins = await User.find({ role: "Admin" });
         const adminEmails = admins.map(a => a.email).filter(Boolean);
 
         for (const project of missedProjects) {
+            console.log(`[CRON] ❌ Deadline missed for "${project.title}"`);
             try {
                 const updated = await Project.updateOne(
                     { _id: project._id, deadlineMissedNotified: false },
