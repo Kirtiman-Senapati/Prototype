@@ -15,7 +15,8 @@ mongoose.connect(process.env.MONGO_URl).then(async () => {
             {
                 $set: {
                     reminder2DaySent: false,
-                    reminder1DaySent: false
+                    reminder1DaySent: false,
+                    deadlineMissedNotified: false
                 },
                 $unset: { reminderSent: "" }
             }
