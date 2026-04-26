@@ -40,8 +40,7 @@ const Sidebar = ({ open, setOpen, userRole }) => {
   };
 
   const getIcon = (iconName, isActive = false) => {
-    const className = `w-5 h-5 ${isActive ? "text-blue-600" : "text-slate-600"
-      }`;
+    const className = `w-[18px] h-[18px]`;
 
     switch (iconName) {
       case "home":
@@ -296,10 +295,10 @@ const Sidebar = ({ open, setOpen, userRole }) => {
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) => `
-                    flex items-center px-4 py-3 rounded-lg transition-all duration-200
+                    flex items-center px-3 py-2.5 rounded-lg transition-colors group
                     ${isActive
-                      ? "bg-blue-50 text-blue-700 border-r-4 border-blue-500"
-                      : "text-slate-700 hover:bg-slate-100 hover:text-blue-600"
+                      ? "bg-slate-100/80 text-slate-900 font-semibold shadow-sm border border-slate-200/50"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
                     }
                   `}
                   onClick={() => {
@@ -309,11 +308,11 @@ const Sidebar = ({ open, setOpen, userRole }) => {
                     }
                   }}
                 >
-                  <div className="flex-shrink-0">
+                  <div className={`flex-shrink-0 transition-colors ${isActive ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`}>
                     {getIcon(item.icon, isActive)}
                   </div>
                   <span
-                    className={`ml-3 font-medium transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 lg:opacity-0"
+                    className={`ml-3 text-sm font-medium transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 lg:opacity-0"
                       } ${open ? "block" : "hidden lg:hidden"}`}
                   >
                     {item.name}

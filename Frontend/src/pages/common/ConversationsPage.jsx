@@ -122,85 +122,105 @@ const ConversationsPage = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto h-[85vh] bg-white border border-slate-200 rounded-3xl shadow-sm flex overflow-hidden">
-            {/* Sidebar (Projects) */}
-            <div className="w-1/3 md:w-1/4 bg-slate-50 border-r border-slate-200 flex flex-col">
-                <div className="p-5 border-b border-slate-200 bg-white">
-                    <h2 className="text-lg font-extrabold text-slate-800 flex items-center gap-2">
-                        <MessageSquare size={20} className="text-blue-600" /> Conversations
+        <div className="max-w-6xl mx-auto h-[85vh] bg-white border border-slate-200 rounded-xl shadow-sm flex overflow-hidden">
+            {/* Sidebar (Projects) - 30% */}
+            <div className="w-[30%] bg-slate-50 border-r border-slate-200 flex flex-col">
+                <div className="p-4 border-b border-slate-200 bg-slate-50">
+                    <h2 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
+                        Conversations
                     </h2>
+                    {/* Search Input Mock */}
+                    <div className="relative">
+                        <input 
+                            type="text" 
+                            placeholder="Search conversations..." 
+                            className="w-full bg-white border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-200 transition-shadow placeholder-slate-400"
+                        />
+                        <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none">
+                            <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-0.5">
                     {projectList.length === 0 ? (
-                        <div className="text-center text-sm font-bold text-slate-400 mt-10">No active conversations.</div>
+                        <div className="text-center text-xs font-medium text-slate-400 mt-10">No active conversations.</div>
                     ) : (
-                        projectList.map(proj => (
-                            <button
-                                key={proj._id}
-                                onClick={() => setSelectedProjectId(proj._id)}
-                                className={`w-full text-left p-4 rounded-xl transition-all border ${
-                                    selectedProjectId === proj._id 
-                                    ? 'bg-blue-600 text-white shadow-md border-blue-600' 
-                                    : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:shadow-sm'
-                                }`}
-                            >
-                                <p className={`text-[10px] font-extrabold uppercase tracking-widest mb-1 ${selectedProjectId === proj._id ? 'text-blue-200' : 'text-slate-400'}`}>Project Thread</p>
-                                <p className="font-bold line-clamp-1 leading-snug">{proj.title}</p>
-                            </button>
-                        ))
+                        projectList.map(proj => {
+                            const lastMsg = proj.messages[proj.messages.length - 1];
+                            const isSelected = selectedProjectId === proj._id;
+                            return (
+                                <button
+                                    key={proj._id}
+                                    onClick={() => setSelectedProjectId(proj._id)}
+                                    className={`w-full text-left p-3 rounded-lg transition-colors flex flex-col gap-1 ${
+                                        isSelected 
+                                        ? 'bg-white shadow-sm border border-slate-200' 
+                                        : 'border border-transparent hover:bg-slate-100/50'
+                                    }`}
+                                >
+                                    <div className="flex justify-between items-start w-full">
+                                        <p className={`text-[13px] font-semibold truncate pr-2 ${isSelected ? 'text-slate-900' : 'text-slate-700'}`}>{proj.title}</p>
+                                        {lastMsg && (
+                                            <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap mt-0.5">
+                                                {new Date(lastMsg.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="text-xs text-slate-500 line-clamp-1">
+                                        {lastMsg ? renderMessageBody(lastMsg.message) : 'No messages yet'}
+                                    </p>
+                                </button>
+                            );
+                        })
                     )}
                 </div>
             </div>
 
-            {/* Chat Area */}
-            <div className="flex-1 flex flex-col bg-slate-50 relative">
+            {/* Chat Area - 70% */}
+            <div className="flex-1 flex flex-col bg-white relative">
                 {activeProject ? (
                     <>
                         {/* Chat Header */}
-                        <div className="h-[72px] bg-white border-b border-slate-200 flex items-center px-6 justify-between shrink-0 shadow-sm z-10">
+                        <div className="h-[60px] border-b border-slate-100 flex items-center px-6 justify-between shrink-0 z-10 bg-white">
                             <div>
-                                <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-                                    <Briefcase size={18} className="text-slate-400" /> {activeProject.title}
+                                <h3 className="font-semibold text-slate-800 text-[15px]">
+                                    {activeProject.title}
                                 </h3>
                             </div>
                         </div>
 
                         {/* Messages Container */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-slate-50/50">
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-white">
                             {activeProject.messages.map((msg, i) => {
                                 const isMe = msg.actor?._id === authUser?._id;
                                 return (
                                     <div key={i} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                                        <div className="flex items-center gap-2 mb-1.5 px-1">
-                                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                                                {isMe ? "You sent update" : `${msg.actor?.name || 'User'} sent update`}
+                                        <div className="flex items-center gap-2 mb-1 px-1">
+                                            <span className="text-[11px] font-medium text-slate-500">
+                                                {isMe ? "You" : (msg.actor?.name || 'System')}
                                             </span>
-                                            <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1 uppercase tracking-widest">
-                                                <Clock size={10} />
+                                            <span className="text-[10px] text-slate-400">
                                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         </div>
-                                        <div className={`max-w-[75%] p-4 shadow-sm relative ${
+                                        <div className={`max-w-[70%] px-4 py-2.5 relative ${
                                             isMe 
                                             ? 'bg-blue-600 text-white rounded-2xl rounded-tr-sm' 
-                                            : 'bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm'
+                                            : 'bg-slate-100 text-slate-800 rounded-2xl rounded-tl-sm'
                                         }`}>
-                                            <p className="text-sm font-medium whitespace-pre-wrap leading-relaxed">{renderMessageBody(msg.message)}</p>
+                                            <p className="text-[13px] leading-relaxed whitespace-pre-wrap">{renderMessageBody(msg.message)}</p>
                                             
                                             {/* Tag Visual Indicator */}
                                             {msg.tag && (
-                                                <div className={`mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase ${
+                                                <div className={`mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${
                                                     msg.tag === 'Completed' ? 'bg-emerald-500/20 text-emerald-100' :
                                                     msg.tag === 'Issue' || msg.tag === 'Blocked' ? 'bg-rose-500/20 text-rose-100' :
                                                     'bg-white/20 text-blue-50'
                                                 } ${!isMe && (
-                                                    msg.tag === 'Completed' ? '!bg-emerald-100 !text-emerald-700' :
-                                                    msg.tag === 'Issue' || msg.tag === 'Blocked' ? '!bg-rose-100 !text-rose-700' :
-                                                    '!bg-slate-100 !text-slate-600'
+                                                    msg.tag === 'Completed' ? '!bg-emerald-200/50 !text-emerald-700' :
+                                                    msg.tag === 'Issue' || msg.tag === 'Blocked' ? '!bg-rose-200/50 !text-rose-700' :
+                                                    '!bg-slate-200 !text-slate-600'
                                                 )}`}>
-                                                    {msg.tag === 'Completed' ? <CheckCircle size={10} /> :
-                                                     msg.tag === 'Issue' || msg.tag === 'Blocked' ? <AlertCircle size={10} /> :
-                                                     <Activity size={10} />}
                                                     {msg.tag}
                                                 </div>
                                             )}
@@ -212,37 +232,48 @@ const ConversationsPage = () => {
                         </div>
 
                         {/* Input Area */}
-                        <div className="bg-white p-4 border-t border-slate-200 shrink-0">
-                            <form onSubmit={handleSendMessage} className="flex gap-3">
-                                <select
-                                    value={tag}
-                                    onChange={(e) => setTag(e.target.value)}
-                                    className="bg-slate-50 border border-slate-200 text-slate-600 text-xs font-bold rounded-xl px-3 outline-none focus:border-blue-500 transition-colors"
-                                >
-                                    <option value="Progress">Progress</option>
-                                    <option value="Issue">Issue / Blocked</option>
-                                    <option value="Completed">Completed</option>
-                                </select>
-                                <input
-                                    value={messageInput}
-                                    onChange={(e) => setMessageInput(e.target.value)}
-                                    placeholder="Type your reply..."
-                                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-5 flex items-center focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm font-medium"
-                                />
+                        <div className="p-4 bg-white border-t border-slate-100 shrink-0">
+                            <form onSubmit={handleSendMessage} className="flex items-end gap-2 bg-slate-50 border border-slate-200 p-2 rounded-xl focus-within:border-slate-300 focus-within:bg-white transition-colors">
+                                <div className="flex-1 flex flex-col">
+                                    <div className="px-2 pt-1 pb-2">
+                                        <select
+                                            value={tag}
+                                            onChange={(e) => setTag(e.target.value)}
+                                            className="bg-transparent text-slate-500 text-xs font-medium outline-none cursor-pointer"
+                                        >
+                                            <option value="Progress">Progress Update</option>
+                                            <option value="Issue">Issue / Blocked</option>
+                                            <option value="Completed">Completed</option>
+                                        </select>
+                                    </div>
+                                    <textarea
+                                        value={messageInput}
+                                        onChange={(e) => setMessageInput(e.target.value)}
+                                        placeholder="Write a message..."
+                                        rows={1}
+                                        className="w-full bg-transparent px-2 pb-1 text-[13px] focus:outline-none resize-none placeholder-slate-400 text-slate-700"
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault();
+                                                handleSendMessage(e);
+                                            }
+                                        }}
+                                    />
+                                </div>
                                 <button
                                     type="submit"
                                     disabled={!messageInput.trim() || isSending}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 font-bold flex items-center justify-center transition-colors disabled:opacity-50 shadow-sm"
+                                    className="p-2 mb-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 flex-shrink-0"
                                 >
-                                    <Send size={18} />
+                                    <Send size={16} strokeWidth={2} />
                                 </button>
                             </form>
                         </div>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
-                        <MessageSquare size={48} className="opacity-20 mb-4" />
-                        <p className="font-bold">Select a project to view conversations</p>
+                    <div className="flex-1 flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
+                        <MessageSquare size={32} strokeWidth={1.5} className="mb-4 text-slate-300" />
+                        <p className="text-[13px] font-medium text-slate-500">Select a conversation to view messages</p>
                     </div>
                 )}
             </div>

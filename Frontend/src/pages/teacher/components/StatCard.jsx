@@ -11,15 +11,15 @@ const StatCard = ({ title, value, icon: Icon, colorTheme = "blue" }) => {
     const iconColorClass = iconColors[colorTheme] || iconColors.blue;
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-4">
-                <h3 className="text-sm font-medium text-slate-500 tracking-wide">{title}</h3>
-                <div className={`p-2.5 rounded-lg ${iconColorClass}`}>
-                    {Icon && <Icon size={20} />}
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5 flex flex-col justify-between hover:shadow-md transition-shadow h-full">
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{title}</h3>
+                <div className={`${iconColorClass} bg-transparent`}>
+                    {Icon && <Icon size={20} strokeWidth={2} />}
                 </div>
             </div>
             <div>
-                <p className="text-3xl font-bold text-slate-800">{value}</p>
+                <p className="text-3xl font-bold text-slate-900">{value}</p>
             </div>
         </div>
     );

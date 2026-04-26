@@ -6,80 +6,64 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
 
     if (!projects || projects.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                    <h2 className="font-bold text-slate-800">{title}</h2>
-                    <a href={viewAllLink} className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline">View All</a>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+                <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
+                    <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
+                    <a href={viewAllLink} className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>
                 </div>
-                <div className="p-6 flex flex-col items-center justify-center text-slate-500 h-[264px]">
-                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
-                        <FolderKanban size={28} className="text-slate-300" />
+                <div className="p-10 flex flex-col items-center justify-center text-slate-500 flex-1">
+                    <div className="mb-3 text-slate-300">
+                        <FolderKanban size={32} strokeWidth={1.5} />
                     </div>
-                    <p className="font-medium">{displayEmptyMessage}</p>
+                    <p className="text-[13px] font-medium">{displayEmptyMessage}</p>
                 </div>
             </div>
         );
     }
 
     const getStatusStyle = (status) => {
-        switch (status) {
-            case 'Approved':
-                return 'bg-green-100 text-green-700 border-green-200';
-            case 'Pending':
-                return 'bg-amber-100 text-amber-700 border-amber-200';
-            case 'Rejected':
-                return 'bg-red-100 text-red-700 border-red-200';
-            case 'Completed':
-                return 'bg-blue-100 text-blue-700 border-blue-200';
-            default:
-                return 'bg-slate-100 text-slate-700 border-slate-200';
-        }
-    };
-
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case 'Approved':
-                return <CheckCircle2 size={14} className="mr-1" />;
-            case 'Pending':
-                return <Clock size={14} className="mr-1" />;
-            case 'Rejected':
-                return <XCircle size={14} className="mr-1" />;
-            case 'Completed':
-                return <CheckCircle2 size={14} className="mr-1" />;
-            default:
-                return null;
-        }
+        // Map native statuses to the requested display colors
+        if (status === 'Completed') return 'bg-emerald-50 text-emerald-700';
+        if (status === 'Pending') return 'bg-amber-50 text-amber-700';
+        if (status === 'Rejected' || status === 'At Risk') return 'bg-rose-50 text-rose-700';
+        return 'bg-blue-50 text-blue-700'; // Default to "In Progress" style
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                <h2 className="font-bold text-slate-800">{title}</h2>
-                <a href={viewAllLink} className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline">View All</a>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
+                <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
+                <a href={viewAllLink} className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>
             </div>
-            <div className="divide-y divide-slate-100">
-                {projects.map((project) => (
-                    <div key={project._id} className="p-4 hover:bg-slate-50 transition-colors">
-                        <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-semibold text-slate-800 truncate pr-4">{project.title}</h3>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusStyle(project.status)}`}>
-                                {getStatusIcon(project.status)}
-                                {project.status}
-                            </span>
-                        </div>
-                        <div className="flex gap-4 text-sm text-slate-500 mt-2">
-                            <div className="flex flex-col">
-                                <span className="text-xs text-slate-400 capitalize">Student</span>
-                                <span className="font-medium text-slate-600">{project.student?.name || 'Unknown'}</span>
-                            </div>
-                            <div className="w-px bg-slate-200"></div>
-                            <div className="flex flex-col">
-                                <span className="text-xs text-slate-400 capitalize">Supervisor</span>
-                                <span className="font-medium text-slate-600">{project.supervisor?.name || 'Pending'}</span>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+            
+            <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                    <thead>
+                        <tr className="border-b border-slate-100">
+                            <th className="px-5 py-3 text-xs font-medium text-slate-500">Project Name</th>
+                            <th className="px-5 py-3 text-xs font-medium text-slate-500">Supervisor</th>
+                            <th className="px-5 py-3 text-xs font-medium text-slate-500">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                        {projects.map((project) => (
+                            <tr key={project._id} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+                                <td className="px-5 py-4">
+                                    <h3 className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-1">{project.title}</h3>
+                                    <p className="text-[11px] font-medium text-slate-500 mt-0.5">Student: {project.student?.name || 'Unknown'}</p>
+                                </td>
+                                <td className="px-5 py-4">
+                                    <span className="text-sm font-normal text-slate-600">{project.supervisor?.name || 'Pending'}</span>
+                                </td>
+                                <td className="px-5 py-4">
+                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusStyle(project.status)}`}>
+                                        {project.status === 'Approved' || project.status === 'In Progress' ? 'In Progress' : project.status}
+                                    </span>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

@@ -44,96 +44,75 @@ const AdminDashboard = () => {
     }
 
     return (
-        <div className="space-y-6 pb-8">
+        <div className="space-y-8 pb-10 bg-[#F9FAFB] min-h-screen">
             {/* Header Section */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-md">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                        <ShieldCheck size={32} className="text-white" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Welcome back, Admin</h1>
-                        <p className="text-blue-100 mt-1">Here's your system overview for today.</p>
-                    </div>
-                </div>
+            <div className="pt-2 pb-4">
+                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Welcome back, Admin</h1>
+                <p className="text-slate-500 mt-2 font-medium">Here is what is happening across the academic portal today.</p>
             </div>
 
             {/* Stats Cards Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard 
                     title="Total Students" 
                     value={stats?.totalStudents || 0} 
                     icon={Users}
-                    colorClass="text-blue-600"
-                    bgColorClass="bg-blue-50"
                 />
                 <StatCard 
                     title="Total Teachers" 
                     value={stats?.totalTeachers || 0} 
                     icon={GraduationCap}
-                    colorClass="text-green-600"
-                    bgColorClass="bg-green-50"
                 />
                 <StatCard 
                     title="Total Projects" 
                     value={stats?.totalProjects || 0} 
                     icon={FolderKanban}
-                    colorClass="text-purple-600"
-                    bgColorClass="bg-purple-50"
                 />
                 <StatCard 
                     title="Pending Proposals" 
                     value={stats?.pendingProposals || 0} 
                     icon={Clock}
-                    colorClass="text-amber-600"
-                    bgColorClass="bg-amber-50"
                 />
             </div>
 
             {/* Quick Actions Section */}
             <div>
-                <h2 className="text-lg font-semibold text-slate-800 mb-4 px-1">Quick Actions</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <h2 className="text-sm font-bold text-slate-800 mb-4 tracking-wide">Quick Management</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     <ActionCard 
                         title="Review Proposals" 
-                        description="Approve and assign supervisors"
                         icon={CheckSquare}
                         to="/dashboard/assign-supervisor"
-                        colorClass="text-amber-600"
-                        bgColorClass="bg-amber-50"
                     />
                     <ActionCard 
                         title="Manage Students" 
-                        description="View, edit, or remove students"
                         icon={Users}
                         to="/dashboard/manage-students"
-                        colorClass="text-blue-600"
-                        bgColorClass="bg-blue-50"
                     />
                     <ActionCard 
                         title="Manage Supervisors" 
-                        description="Assign or remove teacher roles"
                         icon={GraduationCap}
                         to="/dashboard/manage-teachers"
-                        colorClass="text-green-600"
-                        bgColorClass="bg-green-50"
                     />
                     <ActionCard 
                         title="Manage Projects" 
-                        description="Review active and completed projects"
                         icon={FolderKanban}
                         to="/dashboard/projects"
-                        colorClass="text-purple-600"
-                        bgColorClass="bg-purple-50"
                     />
                 </div>
             </div>
 
-            {/* Activity & Projects Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <ActivityList activities={activities || []} />
-                <ProjectList projects={recentProjects} title="Recent Projects" viewAllLink="/dashboard/projects" />
-                <ProjectList projects={pendingProjects} title="Pending Proposals" viewAllLink="/dashboard/assign-supervisor" />
+            {/* Middle Section (2-column grid 60/40) */}
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div className="lg:col-span-3">
+                    <ActivityList activities={activities || []} />
+                </div>
+                <div className="lg:col-span-2 space-y-6">
+                    <ProjectList projects={recentProjects} title="Recent Projects" viewAllLink="/dashboard/projects" />
+                    {pendingProjects?.length > 0 && (
+                        <ProjectList projects={pendingProjects} title="Pending Proposals" viewAllLink="/dashboard/assign-supervisor" />
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -1,14 +1,16 @@
-import React from 'react';
+import { TrendingUp, Minus } from "lucide-react";
 
-const StatCard = ({ title, value, icon: Icon, colorClass, bgColorClass }) => {
+const StatCard = ({ title, value, icon: Icon }) => {
     return (
-        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-slate-100 flex items-center gap-4">
-            <div className={`p-4 rounded-lg ${bgColorClass} ${colorClass}`}>
-                <Icon size={28} />
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{title}</h3>
+                <div className="text-slate-400">
+                    <Icon size={20} strokeWidth={2} />
+                </div>
             </div>
             <div>
-                <h2 className="text-slate-500 font-medium uppercase tracking-wide text-xs mb-1">{title}</h2>
-                <p className={`text-3xl font-bold ${colorClass}`}>{value}</p>
+                <p className="text-3xl font-bold text-slate-900">{value}</p>
             </div>
         </div>
     );
