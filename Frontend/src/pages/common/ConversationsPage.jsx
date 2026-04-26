@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getActivities, sendUnifiedMessage } from "../../store/slices/activitySlice";
+import { getActivities, sendUnifiedMessage, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { MessageSquare, Send, CheckCircle, Clock, AlertCircle, ChevronRight, Briefcase, Activity } from "lucide-react";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../../lib/axios";
+import { socket } from "../../socket/socket";
 
 const ConversationsPage = () => {
     const dispatch = useDispatch();
@@ -32,6 +33,22 @@ const ConversationsPage = () => {
 
     useEffect(() => {
         dispatch(getActivities());
+    }, [dispatch]);
+
+    // Real-time listener for incoming messages
+    useEffect(() => {
+        const handleNewActivity = (activity) => {
+            if (['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'].includes(activity.actionType)) {
+                dispatch(addRealtimeActivity(activity));
+                scrollToBottom();
+            }
+        };
+
+        socket.on("newActivity", handleNewActivity);
+        
+        return () => {
+            socket.off("newActivity", handleNewActivity);
+        };
     }, [dispatch]);
 
     // Format Messages
@@ -100,6 +117,8 @@ const ConversationsPage = () => {
                 tag
             })).unwrap();
             
+            // Instantly refresh messages to show the newly sent one
+            await dispatch(getActivities());
             setMessageInput("");
         } catch (error) {
             toast.error("Failed to send message");
