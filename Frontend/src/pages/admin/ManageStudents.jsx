@@ -189,7 +189,7 @@ const ManageStudents = () => {
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[700px]">
                         <thead>
@@ -203,29 +203,29 @@ const ManageStudents = () => {
                         <tbody className="divide-y divide-slate-100">
                             {filteredStudents.length > 0 ? (
                                 filteredStudents.map((user) => (
-                                    <tr key={user._id} className="hover:bg-slate-50 transition">
-                                        <td className="px-6 py-4">
+                                    <tr key={user._id} className="hover:bg-slate-50 transition even:bg-slate-50/40 hover:shadow-[inset_0_1px_0_0_rgba(0,0,0,0.03)]">
+                                        <td className="px-6 py-5">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm shrink-0">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 text-slate-700 flex items-center justify-center font-semibold shadow-sm shrink-0">
                                                     {user.name?.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <div className="font-semibold text-slate-800">{user.name}</div>
-                                                    <div className="text-sm text-slate-500">{user.email}</div>
+                                                    <div className="font-semibold text-slate-900 tracking-tight">{user.name}</div>
+                                                    <div className="text-sm text-slate-400">{user.email}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600 font-medium">
+                                        <td className="px-6 py-5 text-slate-600 font-medium">
                                             {user.department || "-"}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             {(() => {
                                                 const statusInfo = getStudentStatus(user);
                                                 return (
                                                     <div className="flex flex-col gap-0.5">
                                                         <div className="flex items-center gap-2">
                                                             <span
-                                                                className={`w-1.5 h-1.5 rounded-full ${
+                                                                className={`w-2 h-2 shadow-sm rounded-full ${
                                                                     statusInfo.label === "Completed"
                                                                         ? "bg-emerald-500"
                                                                         : statusInfo.label === "Rejected"
@@ -237,7 +237,7 @@ const ManageStudents = () => {
                                                                         : "bg-slate-400"
                                                                 }`}
                                                             />
-                                                            <span className="text-sm font-medium text-slate-700">
+                                                            <span className="text-sm font-medium text-slate-800">
                                                                 {statusInfo.label}
                                                             </span>
                                                         </div>
@@ -248,17 +248,17 @@ const ManageStudents = () => {
                                                 );
                                             })()}
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-6 py-5 text-right">
                                             <div className="flex justify-end items-center gap-1">
                                                 <button 
-                                                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
+                                                    className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
                                                     onClick={() => openEditModal(user)}
                                                     title="Edit Student"
                                                 >
                                                     <Edit2 size={18} className="group-hover:scale-110 transition-transform" />
                                                 </button>
                                                 <button 
-                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors group"
+                                                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors group"
                                                     onClick={() => {
                                                         if (window.confirm(`Are you sure you want to delete ${user.name}? This action cannot be undone.`)) {
                                                             dispatch(deleteUser(user._id));
