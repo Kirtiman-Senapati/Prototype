@@ -45,7 +45,7 @@ const DashboardLayout = () => {
             sidebarOpen ? "ml-0 lg:ml-64" : "ml-0 lg:ml-20"
           }`}
         >
-          <div className="p-4 lg:p-6">
+          <div className="p-2 lg:p-4">
             <Outlet />
           </div>
         </main>

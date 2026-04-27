@@ -305,9 +305,9 @@ const ConversationsPage = () => {
     );
 
     return (
-        <div className="max-w-6xl mx-auto h-[85vh] bg-white border border-slate-200 rounded-xl shadow-sm flex overflow-hidden">
-            {/* Sidebar (Projects) - 30% */}
-            <div className="w-[30%] bg-slate-50 border-r border-slate-200 flex flex-col">
+        <div className="w-full h-[85vh] bg-white border border-slate-200 rounded-xl shadow-sm flex overflow-hidden">
+            {/* Sidebar (Projects) - 28% */}
+            <div className="w-[28%] bg-slate-50 border-r border-slate-200 flex flex-col">
                 <div className="p-4 border-b border-slate-200 bg-slate-50">
                     <h2 className="text-sm font-medium text-slate-800 flex items-center gap-2 mb-3">
                         Conversations
