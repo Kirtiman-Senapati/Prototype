@@ -10,11 +10,16 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     if (sidebarOpen && window.innerWidth < 1024) {
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto";
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
     }
-    return () => document.body.style.overflow = "auto";
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
   }, [sidebarOpen]);
 
   return (
@@ -26,7 +31,7 @@ const DashboardLayout = () => {
         userRole={authUser?.role}
       />
 
-      <div className="relative min-h-[calc(100vh-66px)] lg:flex">
+      <div className="flex min-h-[calc(100vh-66px)]">
         {/* Sidebar */}
         <Sidebar
           open={sidebarOpen}
@@ -37,13 +42,11 @@ const DashboardLayout = () => {
         {/* Main Content */}
         <main
           className={`flex-1 transition-all duration-300 ease-in-out ${
-            sidebarOpen ? "lg:ml-64" : "lg:ml-20"
+            sidebarOpen ? "ml-0 lg:ml-64" : "ml-0 lg:ml-20"
           }`}
         >
-          <div className="p-6">
-            <div className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm min-h-[300px]">
-              <Outlet />
-            </div>
+          <div className="p-4 lg:p-6">
+            <Outlet />
           </div>
         </main>
       </div>

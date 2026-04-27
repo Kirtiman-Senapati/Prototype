@@ -27,7 +27,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   return (
-    <nav className="bg-white/80 backdrop-blur border-b border-slate-200 fixed w-full top-0 z-30">
+    <nav className="bg-white/80 backdrop-blur border-b border-slate-200 fixed w-full top-0 z-[60]">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Left side */}
