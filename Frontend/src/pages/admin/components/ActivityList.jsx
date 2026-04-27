@@ -32,13 +32,19 @@ const ActivityList = ({ activities }) => {
     }
 
     const getActivityColor = (type) => {
-        if (type?.includes('PROPOSAL') || type?.includes('PROJECT')) return 'bg-blue-500';
-        if (type?.includes('ACCEPTED') || type?.includes('COMPLETED')) return 'bg-emerald-500';
-        if (type?.includes('REJECTED') || type?.includes('DELETED')) return 'bg-rose-500';
-        if (type?.includes('ADDED') || type?.includes('REGISTERED')) return 'bg-purple-500';
-        if (type?.includes('ASSIGNED')) return 'bg-indigo-500';
-        if (type?.includes('UPDATED') || type?.includes('SET')) return 'bg-amber-500';
-        return 'bg-slate-300';
+        if (type?.includes('COMPLETED') || type?.includes('ACCEPTED')) 
+            return 'bg-emerald-500/80';
+    
+        if (type?.includes('ASSIGNED') || type?.includes('ADDED')) 
+            return 'bg-indigo-500/80';
+    
+        if (type?.includes('UPDATED') || type?.includes('SET')) 
+            return 'bg-amber-500/80';
+    
+        if (type?.includes('REJECTED') || type?.includes('DELETED')) 
+            return 'bg-rose-500/80';
+    
+        return 'bg-slate-400';
     };
 
     const displayActivities = isExpanded ? activities : activities.slice(0, 5);
@@ -71,10 +77,10 @@ const ActivityList = ({ activities }) => {
                 </div>
             </div>
             <div className={`p-6 overflow-y-auto custom-scrollbar flex-1 ${isExpanded ? 'max-h-[500px]' : ''}`}>
-                <div className="space-y-6 relative before:absolute before:inset-0 before:ml-[5px] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-100">
+                <div className="space-y-5">
                     {displayActivities.map((activity, index) => (
                         <div key={activity._id || index} className="relative flex items-start gap-4">
-                            <div className={`w-2.5 h-2.5 mt-1.5 rounded-full ring-4 ring-white shrink-0 z-10 ${getActivityColor(activity.actionType)}`} />
+                            <div className={`w-2 h-2 mt-1.5 rounded-full ring-2 ring-white shadow-sm shrink-0 z-10 ${getActivityColor(activity.actionType)}`} />
                             
                             <div className="flex-1 min-w-0">
                                 <p className="text-[13px] text-slate-800 font-medium">

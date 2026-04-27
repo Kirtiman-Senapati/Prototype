@@ -22,11 +22,10 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
     }
 
     const getStatusStyle = (status) => {
-        // Map native statuses to the requested display colors
-        if (status === 'Completed') return 'bg-emerald-50 text-emerald-700';
-        if (status === 'Pending') return 'bg-amber-50 text-amber-700';
-        if (status === 'Rejected' || status === 'At Risk') return 'bg-rose-50 text-rose-700';
-        return 'bg-blue-50 text-blue-700'; // Default to "In Progress" style
+        if (status === 'Completed') return 'text-slate-700';
+        if (status === 'Pending') return 'text-slate-500';
+        if (status === 'Rejected' || status === 'At Risk') return 'text-slate-600';
+        return 'text-slate-600';
     };
 
     return (
@@ -56,9 +55,21 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                     <span className="text-sm font-normal text-slate-600">{project.supervisor?.name || 'Pending'}</span>
                                 </td>
                                 <td className="px-5 py-4">
-                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusStyle(project.status)}`}>
-                                        {project.status === 'Approved' || project.status === 'In Progress' ? 'In Progress' : project.status}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`w-1.5 h-1.5 rounded-full ${
+                                            project.status === 'Completed'
+                                                ? 'bg-emerald-500/80'
+                                                : project.status === 'In Progress' || project.status === 'Approved'
+                                                ? 'bg-indigo-500/80'
+                                                : project.status === 'Pending'
+                                                ? 'bg-amber-500/80'
+                                                : 'bg-slate-400'
+                                        }`} />
+                                        
+                                        <span className={`text-xs font-medium ${getStatusStyle(project.status)}`}>
+                                            {project.status === 'Approved' ? 'In Progress' : project.status}
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
