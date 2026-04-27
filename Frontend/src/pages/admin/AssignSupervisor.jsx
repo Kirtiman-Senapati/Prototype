@@ -299,18 +299,18 @@ const AssignSupervisor = () => {
                                                     </button>
                                                 ) : p.status === "Completed" ? (
                                                     <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                                                        <CheckCircle2 size={14} className="text-emerald-500" />
+                                                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm" />
                                                         Project Completed
                                                     </div>
                                                 ) : p.status === "Rejected" ? (
                                                     <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                                                        <XCircle size={14} className="text-red-500" />
+                                                        <span className="w-2 h-2 rounded-full bg-red-500 shadow-sm" />
                                                         Proposal Rejected
                                                     </div>
                                                 ) : (
                                                     isAssigned ? (
                                                         <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                                                            <CheckCircle2 size={14} className="text-blue-500" />
+                                                            <span className="w-2 h-2 rounded-full bg-blue-500 shadow-sm" />
                                                             Assigned
                                                         </div>
                                                     ) : (
@@ -376,14 +376,22 @@ const AssignSupervisor = () => {
                             {/* BASIC INFO */}
                             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative">
                                 <div className="absolute top-6 right-6">
-                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border shadow-sm ${
-                                            selectedProject.status === 'Approved' ? 'bg-green-50 text-green-700 border-green-200' :
-                                            selectedProject.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                                            selectedProject.status === 'Completed' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                            'bg-red-50 text-red-700 border-red-200'
+                                    <div className="flex items-center justify-end gap-2 text-sm font-medium">
+                                        <span className={`w-2 h-2 rounded-full ${
+                                            selectedProject.status === 'Completed' ? 'bg-emerald-500' :
+                                            selectedProject.status === 'Approved' ? 'bg-blue-500' :
+                                            selectedProject.status === 'Rejected' ? 'bg-red-500' :
+                                            'bg-amber-500'
+                                        }`} />
+                                        <span className={`${
+                                            selectedProject.status === 'Completed' ? 'text-slate-700' :
+                                            selectedProject.status === 'Approved' ? 'text-slate-700' :
+                                            selectedProject.status === 'Rejected' ? 'text-slate-500' :
+                                            'text-slate-600'
                                         }`}>
-                                        {selectedProject.status}
-                                    </span>
+                                            {selectedProject.status}
+                                        </span>
+                                    </div>
                                 </div>
                                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Project Title</h3>
                                 <h4 className="text-2xl font-extrabold text-slate-800 mb-4 pr-24 leading-snug">{selectedProject.title}</h4>
