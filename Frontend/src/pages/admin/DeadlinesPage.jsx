@@ -341,7 +341,7 @@ const DeadlinesPage = () => {
                             <button 
                                 onClick={handleSaveDeadline}
                                 disabled={!selectedProjectId || !deadlineDate}
-                                className={`bg-slate-900 hover:bg-slate-800 text-white rounded-md px-4 py-2 text-sm transition-all flex items-center gap-2 ${(!selectedProjectId || !deadlineDate) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`bg-slate-900 hover:bg-slate-800 text-white rounded-md px-4 py-2 text-sm font-semibold transition-all flex items-center gap-2 ${(!selectedProjectId || !deadlineDate) ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 <CalendarIcon size={16} /> Save Deadline
                             </button>
