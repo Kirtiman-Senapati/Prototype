@@ -20,25 +20,25 @@ const ManageStudents = () => {
 
     const getStudentStatus = (user) => {
         if (!user.proposalStatus) {
-            return { label: "No Proposal", color: "bg-slate-100 text-slate-700 border-slate-200", reason: "Not started" };
+            return { label: "No Proposal", reason: "Not started" };
         }
         if (user.proposalStatus === "Rejected") {
-            return { label: "Rejected", color: "bg-red-100 text-red-700 border-red-200", reason: "Proposal rejected" };
+            return { label: "Rejected", reason: "Proposal rejected" };
         }
         if (user.proposalStatus === "Pending") {
-            return { label: "Pending Approval", color: "bg-yellow-100 text-yellow-800 border-yellow-200", reason: "Waiting" };
+            return { label: "Pending Approval", reason: "Waiting" };
         }
         if (user.proposalStatus === "Completed") {
-            return { label: "Completed", color: "bg-emerald-100 text-emerald-700 border-emerald-200", reason: "Project finished" };
+            return { label: "Completed", reason: "Project finished" };
         }
         if (user.proposalStatus === "Approved") {
             if (user.supervisor) {
-                return { label: "Assigned", color: "bg-blue-100 text-blue-700 border-blue-200", reason: "Done" };
+                return { label: "Assigned", reason: "Done" };
             } else {
-                return { label: "Waiting Supervisor", color: "bg-orange-100 text-orange-700 border-orange-200", reason: "Supervisor not assigned" };
+                return { label: "Waiting Supervisor", reason: "Supervisor not assigned" };
             }
         }
-        return { label: "Unknown", color: "bg-slate-100 text-slate-700 border-slate-200", reason: "Unknown status" };
+        return { label: "Unknown", reason: "Unknown status" };
     };
 
     const departments = [
@@ -203,7 +203,7 @@ const ManageStudents = () => {
                         <tbody className="divide-y divide-slate-100">
                             {filteredStudents.length > 0 ? (
                                 filteredStudents.map((user) => (
-                                    <tr key={user._id} className="hover:bg-slate-50/50 transition-colors">
+                                    <tr key={user._id} className="hover:bg-slate-50 transition">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm shrink-0">
@@ -222,12 +222,27 @@ const ManageStudents = () => {
                                             {(() => {
                                                 const statusInfo = getStudentStatus(user);
                                                 return (
-                                                    <div className="flex flex-col items-start gap-1">
-                                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${statusInfo.color}`}>
-                                                            {statusInfo.label}
-                                                        </span>
-                                                        <span className="text-xs text-slate-500 font-medium whitespace-nowrap">
-                                                            Reason: {statusInfo.reason}
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <div className="flex items-center gap-2">
+                                                            <span
+                                                                className={`w-1.5 h-1.5 rounded-full ${
+                                                                    statusInfo.label === "Completed"
+                                                                        ? "bg-emerald-500"
+                                                                        : statusInfo.label === "Rejected"
+                                                                        ? "bg-red-500"
+                                                                        : statusInfo.label === "Assigned"
+                                                                        ? "bg-blue-500"
+                                                                        : statusInfo.label === "Pending Approval" || statusInfo.label === "Waiting Supervisor"
+                                                                        ? "bg-amber-500"
+                                                                        : "bg-slate-400"
+                                                                }`}
+                                                            />
+                                                            <span className="text-sm font-medium text-slate-700">
+                                                                {statusInfo.label}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-slate-400 pl-3.5">
+                                                            {statusInfo.reason}
                                                         </span>
                                                     </div>
                                                 );
