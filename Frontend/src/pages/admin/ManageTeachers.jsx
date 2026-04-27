@@ -98,7 +98,7 @@ const ManageTeachers = () => {
     }
 
     return (
-        <div className="space-y-6 pb-8">
+        <div className="space-y-8 pb-10">
             {/* Header & Main Actions */}
             <div className="bg-white rounded-xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
@@ -106,13 +106,13 @@ const ManageTeachers = () => {
                         <GraduationCap size={28} />
                     </div>
                     <div>
-                        <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Manage Supervisors</h1>
-                        <p className="text-sm text-slate-500 mt-1">Add, edit, filter, and manage faculty members.</p>
+                        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Manage Supervisors</h1>
+                        <p className="text-sm text-slate-500 mt-1">Organize and control faculty access.</p>
                     </div>
                 </div>
                 <button 
                     onClick={openCreateModal}
-                    className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-md text-sm font-medium transition shadow-sm flex items-center gap-2"
+                    className="bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 active:scale-[0.98] px-5 py-2.5 rounded-md text-sm font-medium transition-all shadow-sm flex items-center gap-2"
                 >
                     <Plus size={18} />
                     Add Teacher
@@ -148,9 +148,11 @@ const ManageTeachers = () => {
 
             {/* Teacher Cards Grid */}
             {filteredTeachers.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                     {filteredTeachers.map((user) => (
-                        <div key={user._id} className="bg-white border border-slate-200 rounded-xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition duration-200 flex flex-col relative group">
+                        <div key={user._id} className="bg-white border border-slate-200 rounded-xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:-translate-y-[1px] transition-all duration-200 flex flex-col relative group overflow-hidden">
+                            <div className="absolute left-0 top-0 h-full w-[2px] bg-slate-200 group-hover:bg-slate-300 transition-colors duration-300"></div>
+                            
                             <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-opacity bg-slate-50/80 rounded-lg p-1 gap-1">
                                 <button 
                                     onClick={() => openEditModal(user)}
@@ -177,8 +179,8 @@ const ManageTeachers = () => {
                                     {user.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="flex flex-col pt-0.5 overflow-hidden pr-8">
-                                    <h3 className="text-base font-semibold text-slate-900 truncate">{user.name}</h3>
-                                    <p className="text-sm text-slate-500 truncate">{user.email}</p>
+                                    <h3 className="text-[15px] font-semibold text-slate-900 truncate">{user.name}</h3>
+                                    <p className="text-[13px] text-slate-500 truncate">{user.email}</p>
                                 </div>
                             </div>
 
@@ -210,9 +212,11 @@ const ManageTeachers = () => {
                                 </div>
                                 {/* Capacity / Max Students visual placeholder */}
                                 <div className="text-right">
-                                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Status</p>
-                                    <span className="inline-block mt-1 w-2 h-2 bg-emerald-500 rounded-full shadow-sm ring-2 ring-emerald-50"></span>
-                                    <span className="text-xs font-medium text-slate-600 ml-1.5">Active</span>
+                                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">Status</p>
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                                        <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                                        Active
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -277,7 +281,7 @@ const ManageTeachers = () => {
                         </div>
                         <div className="p-5 border-t border-slate-100 shrink-0 flex gap-3 bg-slate-50 justify-end">
                             <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-md text-sm font-medium text-slate-600 hover:text-slate-900 bg-transparent transition-colors">Cancel</button>
-                            <button type="submit" form="teacherForm" disabled={isSubmitting} className="px-5 py-2.5 rounded-md text-white text-sm font-medium bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition flex justify-center items-center gap-2">
+                            <button type="submit" form="teacherForm" disabled={isSubmitting} className="px-5 py-2.5 rounded-md text-white text-sm font-medium bg-slate-900 hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex justify-center items-center gap-2">
                                 {isSubmitting ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : (editId ? "Save Changes" : "Add Supervisor")}
                             </button>
                         </div>
