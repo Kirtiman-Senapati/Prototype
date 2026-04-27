@@ -173,7 +173,7 @@ const ProjectsPage = () => {
     return (
         <div className="space-y-6 pb-8">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-center gap-4 mb-6">
-                <div className="p-3 bg-slate-100 text-slate-600 rounded-xl">
+                <div className="p-3 bg-slate-900 text-white rounded-xl shadow-sm">
                     <FolderKanban size={28} />
                 </div>
                 <div>
@@ -189,7 +189,7 @@ const ProjectsPage = () => {
                     <input 
                         type="text" 
                         placeholder="Search by project title or student name..." 
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-400 transition-colors"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -197,7 +197,7 @@ const ProjectsPage = () => {
                 <div className="flex items-center w-full sm:w-auto gap-2">
                     <Filter className="text-slate-400" size={18} />
                     <select 
-                        className="w-full sm:w-48 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer text-sm"
+                        className="w-full sm:w-48 px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-400 cursor-pointer text-sm"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                     >
@@ -216,15 +216,15 @@ const ProjectsPage = () => {
                     <table className="w-full text-left border-collapse min-w-[900px]">
                         <thead>
                             <tr className="bg-slate-50 text-slate-600 text-[11px] tracking-wide uppercase border-b border-slate-200">
-                                <th className="py-4 px-6 font-semibold">Project Title</th>
-                                <th className="py-4 px-6 font-semibold">Student</th>
-                                <th className="py-4 px-6 font-semibold">Supervisor</th>
-                                <th className="py-4 px-6 font-semibold text-center">Status</th>
-                                <th className="py-4 px-6 font-semibold">Deadline</th>
-                                <th className="py-4 px-6 font-semibold text-right">Actions</th>
+                                <th className="py-5 px-6 font-semibold">Project Title</th>
+                                <th className="py-5 px-6 font-semibold">Student</th>
+                                <th className="py-5 px-6 font-semibold">Supervisor</th>
+                                <th className="py-5 px-6 font-semibold text-center">Status</th>
+                                <th className="py-5 px-6 font-semibold">Deadline</th>
+                                <th className="py-5 px-6 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-200">
                             {filteredProjects.length === 0 ? (
                                 <tr>
                                     <td colSpan="6" className="p-12 text-center text-slate-500 bg-slate-50/50">
@@ -234,12 +234,12 @@ const ProjectsPage = () => {
                                 </tr>
                             ) : (
                                 filteredProjects.map(proj => (
-                                    <tr key={proj._id} className="transition hover:bg-slate-50/80 hover:shadow-[inset_0_1px_0_rgba(0,0,0,0.02)]">
-                                        <td className="py-4 px-6 w-1/4">
-                                            <p className="text-[15px] font-semibold text-slate-900 line-clamp-1" title={proj.title}>{proj.title}</p>
-                                            <p className="text-xs text-slate-500 line-clamp-1 mt-1" title={proj.description}>{proj.description}</p>
+                                    <tr key={proj._id} className="group transition hover:bg-slate-50/80 border-l-2 border-transparent hover:border-slate-300">
+                                        <td className="py-5 px-6 w-1/4">
+                                            <p className="text-[15px] font-semibold text-slate-900 group-hover:text-slate-950 line-clamp-1" title={proj.title}>{proj.title}</p>
+                                            <p className="text-xs text-slate-500 line-clamp-1 mt-1 leading-relaxed" title={proj.description}>{proj.description}</p>
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-5 px-6">
                                             <div className="flex items-center gap-2">
                                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 text-xs ${proj.student ? 'bg-slate-100 text-slate-600' : 'bg-red-50 text-red-500'}`}>
                                                     {proj.student?.name?.charAt(0) || "D"}
@@ -249,35 +249,41 @@ const ProjectsPage = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-5 px-6">
                                             <span className="text-sm font-medium text-slate-600">{proj.supervisor?.name || <span className="text-slate-400 italic">Unassigned</span>}</span>
                                         </td>
-                                        <td className="py-4 px-6 text-center align-middle">
+                                        <td className="py-5 px-6 text-center align-middle">
                                             <div className="flex items-center justify-center gap-2 text-sm text-slate-700 font-medium">
                                                 <span className={`w-2 h-2 rounded-full ${
                                                     proj.status === 'Completed' ? 'bg-emerald-500' :
-                                                    proj.status === 'Approved' ? 'bg-slate-400' :
+                                                    proj.status === 'Approved' ? 'bg-slate-700' :
                                                     proj.status === 'Rejected' ? 'bg-red-500' :
                                                     'bg-amber-500'
                                                 }`} />
                                                 {proj.status}
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6">
-                                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                                        <td className="py-5 px-6">
+                                            <div className="flex items-center gap-2">
                                                 <span className={`w-1.5 h-1.5 rounded-full ${
                                                     proj.deadline && new Date(proj.deadline) < new Date()
                                                     ? 'bg-red-500'
                                                     : 'bg-slate-400'
                                                 }`} />
-                                                {proj.deadline ? new Date(proj.deadline).toLocaleDateString() : 'N/A'}
+                                                <span className={`text-sm font-medium ${
+                                                    proj.deadline && new Date(proj.deadline) < new Date()
+                                                        ? 'text-red-600'
+                                                        : 'text-slate-700'
+                                                }`}>
+                                                    {proj.deadline ? new Date(proj.deadline).toLocaleDateString() : 'N/A'}
+                                                </span>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6 text-right">
+                                        <td className="py-5 px-6 text-right">
                                             <div className="flex items-center justify-end gap-2">
                                                 <button 
                                                     onClick={() => setSelectedProject(proj)}
-                                                    className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:border-slate-300 transition"
+                                                    className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition"
                                                     title="View Details"
                                                 >
                                                     View
