@@ -87,9 +87,13 @@ const ActivityList = ({ activities }) => {
                                     </p>
                                 )}
 
-                                <div className="mt-1">
+                                <div className="mt-1 flex items-center gap-1.5">
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                                        {activity.actionType?.replace(/_/g, ' ')}
+                                    </span>
+                                    <span className="text-[10px] text-slate-400">•</span>
                                     <span className="text-[11px] text-slate-400 font-medium tracking-wide">
-                                        {timeAgo(activity.createdAt)}
+                                        {formatDateTime(activity.createdAt)}
                                     </span>
                                 </div>
                             </div>
