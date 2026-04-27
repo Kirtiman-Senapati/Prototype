@@ -319,10 +319,10 @@ const ProjectsPage = () => {
             {/* 🚀 PROJECT DETAILS MODAL */}
             {selectedProject && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
+                    <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
                         
                         {/* Modal Header */}
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white sticky top-0 z-10 rounded-t-2xl">
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white sticky top-0 z-10 rounded-t-xl">
                             <div className="flex items-center gap-4">
                                 <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
                                     <div className="p-2 bg-slate-100 text-slate-600 rounded-lg">
@@ -356,29 +356,29 @@ const ProjectsPage = () => {
                         </div>
                         
                         {/* Modal Body (Scrollable) */}
-                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 space-y-8">
+                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 space-y-10">
                             
                             {/* BASIC INFO */}
-                            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative">
-                                <div className="absolute top-6 right-6">
-                                    <div className="flex items-center justify-center gap-2 text-sm text-slate-700 font-medium px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
-                                        <span className={`w-2 h-2 rounded-full ${
-                                            selectedProject.status === 'Completed' ? 'bg-emerald-500' :
-                                            selectedProject.status === 'Approved' ? 'bg-slate-400' :
-                                            selectedProject.status === 'Rejected' ? 'bg-red-500' :
-                                            'bg-amber-500'
-                                        }`} />
+                            <div className="relative">
+                                <div className="absolute top-0 right-0">
+                                    <div className="px-3 py-1 text-xs font-medium bg-slate-900 text-white rounded-full shadow-sm">
                                         {selectedProject.status}
                                     </div>
                                 </div>
-                                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Project Title</h3>
-                                <h4 className="text-2xl font-extrabold text-slate-800 mb-4 pr-24 leading-snug">{selectedProject.title}</h4>
+                                <h4 className="text-3xl font-semibold text-slate-900 tracking-tight pr-24">{selectedProject.title}</h4>
+                                <div className="mt-2 flex items-center gap-3 text-sm mb-6">
+                                    <span className="text-slate-500">Project</span>
+                                    <span className="h-1 w-1 bg-slate-300 rounded-full"></span>
+                                    <span className="text-slate-600 font-medium">
+                                        {selectedProject.student?.name || "Deleted User"}
+                                    </span>
+                                </div>
                                 
                                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 mt-6">Description</h3>
-                                <p className="text-sm text-slate-600 leading-relaxed mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">{selectedProject.description}</p>
+                                <p className="text-sm text-slate-600 leading-relaxed mb-6">{selectedProject.description}</p>
                                 
-                                <div className="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 inline-flex px-4 py-2 rounded-xl border border-slate-200">
-                                    <Calendar size={16} className="text-indigo-500" />
+                                <div className="flex items-center gap-2 text-sm text-slate-700 inline-flex py-1">
+                                    <Calendar size={16} className="text-slate-400" />
                                     <span className="font-semibold text-slate-500">Deadline:</span>
                                     <span className="font-bold">{selectedProject.deadline ? new Date(selectedProject.deadline).toLocaleDateString() : 'Not Set'}</span>
                                 </div>
@@ -389,8 +389,8 @@ const ProjectsPage = () => {
                                 {/* Student */}
                                 <div>
                                     <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Student Information</h3>
-                                    <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-blue-200 transition-colors">
-                                        <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-xl shrink-0 border shadow-sm ${selectedProject.student ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-red-50 text-red-500 border-red-100'}`}>
+                                    <div className="flex items-center gap-4 pt-1">
+                                        <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-xl shrink-0 ${selectedProject.student ? 'bg-slate-100 text-slate-600' : 'bg-red-50 text-red-500'}`}>
                                             {selectedProject.student?.name?.charAt(0) || "D"}
                                         </div>
                                         <div className="flex flex-col overflow-hidden">
@@ -403,10 +403,10 @@ const ProjectsPage = () => {
                                 {/* Supervisor */}
                                 <div>
                                     <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Supervisor Assignment</h3>
-                                    <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-indigo-200 transition-colors h-[98px]">
+                                    <div className="flex items-center gap-4 pt-1 h-[56px]">
                                         {selectedProject.supervisor ? (
                                             <>
-                                                <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xl shrink-0 border border-slate-200 shadow-sm">
+                                                <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xl shrink-0">
                                                     {selectedProject.supervisor.name.charAt(0)}
                                                 </div>
                                                 <div className="flex flex-col overflow-hidden">
@@ -431,7 +431,7 @@ const ProjectsPage = () => {
                                 <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
                                     <CheckCircle size={14} className="text-blue-500" /> Task Progress
                                 </h3>
-                                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                                <div className="mt-2">
                                     {(() => {
                                         const tasks = selectedProject.tasks || [];
                                         const totalTasks = tasks.length;
@@ -439,19 +439,19 @@ const ProjectsPage = () => {
                                         const taskProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
                                         
                                         return (
-                                            <div className="flex flex-col gap-4">
+                                            <div className="flex flex-col gap-4 bg-slate-50 p-5 rounded-xl">
                                                 <div className="flex justify-between items-end">
                                                     <div>
                                                         <p className="text-sm font-bold text-slate-700">Completion Status</p>
                                                         <p className="text-xs text-slate-500 mt-0.5">{completedTasks} of {totalTasks} tasks completed</p>
                                                     </div>
-                                                    <span className="text-2xl font-extrabold text-blue-600">{taskProgress}%</span>
+                                                    <span className="text-3xl font-semibold text-slate-900">{taskProgress}%</span>
                                                 </div>
                                                 
                                                 {/* Progress Bar (SaaS Feel) */}
-                                                <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200 shadow-inner">
+                                                <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
                                                     <div 
-                                                        className="bg-blue-600 h-3 rounded-full transition-all duration-1000 ease-out" 
+                                                        className="bg-slate-900 h-3 rounded-full transition-all duration-1000 ease-out" 
                                                         style={{ width: `${taskProgress}%` }}
                                                     ></div>
                                                 </div>
@@ -459,14 +459,13 @@ const ProjectsPage = () => {
                                                 {totalTasks > 0 ? (
                                                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
                                                         {[...tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((t, i) => (
-                                                            <div key={i} className="flex flex-col gap-1.5 p-3 rounded-xl border border-slate-100 bg-slate-50">
+                                                            <div key={i} className="flex flex-col gap-1.5 py-3 pl-4 border-l-2 border-slate-200 hover:border-slate-400 hover:bg-slate-50/50 transition-colors bg-white">
                                                                 <div className="flex justify-between items-start gap-2">
                                                                     <p className={`text-sm font-bold line-clamp-1 ${t.status === "Completed" ? "text-slate-500 line-through decoration-slate-300" : "text-slate-800"}`}>{t.title}</p>
                                                                     <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium shrink-0">
                                                                         <span className={`w-1.5 h-1.5 rounded-full ${
                                                                             t.status === 'Completed' ? 'bg-emerald-500' :
-                                                                            t.status === 'In Progress' ? 'bg-blue-500' :
-                                                                            'bg-slate-300'
+                                                                            'bg-slate-400'
                                                                         }`} />
                                                                         {t.status}
                                                                     </div>
@@ -474,7 +473,7 @@ const ProjectsPage = () => {
                                                                 <p className="text-[10px] uppercase font-bold text-slate-400 flex justify-between">
                                                                     <span>By: {t.assignedByRole === "admin" ? "Admin" : "Supervisor"}</span>
                                                                     {t.status === "Completed" && t.completedAt ? (
-                                                                        <span className="text-green-600">Done {new Date(t.completedAt).toLocaleDateString()}</span>
+                                                                        <span className="text-emerald-600">Done {new Date(t.completedAt).toLocaleDateString()}</span>
                                                                     ) : t.deadline ? (
                                                                         <span>Due {new Date(t.deadline).toLocaleDateString()}</span>
                                                                     ) : null}
@@ -483,7 +482,7 @@ const ProjectsPage = () => {
                                                         ))}
                                                     </div>
                                                 ) : (
-                                                    <div className="mt-2 text-center p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-sm font-medium">
+                                                    <div className="mt-2 text-center py-6 text-slate-400 text-sm font-medium">
                                                         No tasks assigned yet.
                                                     </div>
                                                 )}
@@ -500,15 +499,15 @@ const ProjectsPage = () => {
                                 </h3>
                                 
                                 {!selectedProject.files || selectedProject.files.length === 0 ? (
-                                    <div className="bg-white border border-slate-200 border-dashed rounded-2xl p-10 flex flex-col items-center justify-center text-slate-500 shadow-sm">
-                                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
+                                    <div className="py-8 flex flex-col items-center justify-center text-slate-500">
+                                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                                             <File size={28} className="text-slate-300" />
                                         </div>
                                         <p className="text-base font-bold text-slate-700 mb-1">No files uploaded yet</p>
                                         <p className="text-sm font-medium text-slate-400">Student has not attached any project files.</p>
                                     </div>
                                 ) : (
-                                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                                    <div className="overflow-hidden border border-slate-200 rounded-xl">
                                         <div className="overflow-x-auto">
                                             <table className="w-full text-left">
                                                 <thead>
@@ -521,7 +520,7 @@ const ProjectsPage = () => {
                                                 </thead>
                                                 <tbody className="divide-y divide-slate-100">
                                                     {selectedProject.files.map((file, idx) => (
-                                                        <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
+                                                        <tr key={idx} className="hover:bg-slate-50 transition-colors">
                                                             <td className="py-4 px-6">
                                                                 <div className="flex items-center gap-3">
                                                                     {getFileIcon(file.type, "shrink-0 w-8 h-8 p-1.5 bg-white border border-slate-100 rounded-md shadow-sm")}
@@ -537,7 +536,7 @@ const ProjectsPage = () => {
                                                             <td className="py-4 px-6 text-right">
                                                                 <button 
                                                                     onClick={() => handleDownload(file.url, file.filename)}
-                                                                    className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg text-xs font-bold shadow-sm hover:shadow-md"
+                                                                    className="inline-flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors px-4 py-2 rounded-lg text-xs font-medium"
                                                                 >
                                                                     <Download size={14} /> Download
                                                                 </button>
@@ -567,19 +566,19 @@ const ProjectsPage = () => {
                                 ) : studentFeedbacks.length > 0 ? (
                                     <div className="space-y-3">
                                         {studentFeedbacks.map((fb, idx) => (
-                                            <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-4 relative group hover:border-emerald-200 transition-colors">
-                                                <div className="absolute top-4 right-4">
+                                            <div key={idx} className="py-4 border-b border-slate-100 last:border-0 relative group">
+                                                <div className="absolute top-4 right-2">
                                                     <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
                                                         <span className={`w-1.5 h-1.5 rounded-full ${
                                                             fb.type === 'Positive' ? 'bg-emerald-500' :
-                                                            fb.type === 'Needs Revision' ? 'bg-amber-500' :
-                                                            'bg-blue-500'
+                                                            fb.type === 'Needs Revision' ? 'bg-red-500' :
+                                                            'bg-slate-400'
                                                         }`} />
                                                         {fb.type}
                                                     </div>
                                                 </div>
                                                 <h4 className="text-sm font-bold text-slate-800 pr-20">{fb.title}</h4>
-                                                <p className="text-sm text-slate-600 mt-2 mb-3 bg-white p-3 rounded-lg border border-slate-100">{fb.message}</p>
+                                                <p className="text-sm text-slate-600 mt-2 mb-3">{fb.message}</p>
                                                 
                                                 <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-200/60">
                                                     <div className="flex flex-col">
@@ -598,7 +597,7 @@ const ProjectsPage = () => {
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="bg-slate-50 border border-slate-200 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center">
+                                    <div className="py-8 flex flex-col items-center justify-center text-center">
                                         <MessageSquare size={24} className="text-slate-300 mb-2" />
                                         <p className="text-sm font-bold text-slate-600">No Feedback Provided</p>
                                         <p className="text-xs font-medium text-slate-400 mt-1">This student hasn't received any feedback on this project yet.</p>
@@ -610,12 +609,12 @@ const ProjectsPage = () => {
                         
                         {/* Modal Footer (Optional, mostly for actions if pending) */}
                         {selectedProject.status === "Pending" && (
-                            <div className="px-6 py-5 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 rounded-b-2xl">
+                            <div className="px-6 py-5 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 rounded-b-xl">
                                 <button 
                                     onClick={() => {
                                         handleStatusUpdate(selectedProject._id, "Rejected");
                                     }}
-                                    className="px-6 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-xl transition shadow-sm"
+                                    className="px-6 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 bg-transparent transition"
                                 >
                                     Reject Proposal
                                 </button>
@@ -623,7 +622,7 @@ const ProjectsPage = () => {
                                     onClick={() => {
                                         handleStatusUpdate(selectedProject._id, "Approved");
                                     }}
-                                    className="px-6 py-2.5 text-sm font-medium text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition shadow-sm"
+                                    className="px-6 py-2.5 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-md transition shadow-sm"
                                 >
                                     Approve Proposal
                                 </button>
@@ -655,19 +654,19 @@ const ProjectsPage = () => {
                         <form onSubmit={handleAssignTask} className="space-y-4">
                             <div>
                                 <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Task Title</label>
-                                <input required className="input w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 rounded-lg text-sm" placeholder="e.g. Complete Literature Review" value={taskData.title} onChange={e => setTaskData({...taskData, title: e.target.value})} />
+                                <input required className="input w-full p-2.5 bg-white border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 rounded-lg text-sm" placeholder="e.g. Complete Literature Review" value={taskData.title} onChange={e => setTaskData({...taskData, title: e.target.value})} />
                             </div>
                             <div>
                                 <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Description</label>
-                                <textarea required className="input w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 rounded-lg text-sm min-h-[100px]" placeholder="Add details about this task..." value={taskData.description} onChange={e => setTaskData({...taskData, description: e.target.value})} />
+                                <textarea required className="input w-full p-2.5 bg-white border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 rounded-lg text-sm min-h-[100px]" placeholder="Add details about this task..." value={taskData.description} onChange={e => setTaskData({...taskData, description: e.target.value})} />
                             </div>
                             <div>
                                 <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Deadline</label>
-                                <input required type="date" className="input w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 rounded-lg text-sm text-slate-600" value={taskData.deadline} onChange={e => setTaskData({...taskData, deadline: e.target.value})} />
+                                <input required type="date" className="input w-full p-2.5 bg-white border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 rounded-lg text-sm text-slate-600" value={taskData.deadline} onChange={e => setTaskData({...taskData, deadline: e.target.value})} />
                             </div>
                             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
                                 <button type="button" onClick={() => setIsTaskModalOpen(false)} className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
-                                <button type="submit" disabled={isSubmittingTask} className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2">
+                                <button type="submit" disabled={isSubmittingTask} className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2">
                                     {isSubmittingTask && <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>}
                                     Assign Task
                                 </button>
