@@ -35,8 +35,10 @@ const RecentFilesList = ({ files }) => {
             document.body.appendChild(a);
             a.click();
             
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 500);
             
             toast.update(toastId, { render: "Downloaded!", type: "success", isLoading: false, autoClose: 3000 });
         } catch (error) {

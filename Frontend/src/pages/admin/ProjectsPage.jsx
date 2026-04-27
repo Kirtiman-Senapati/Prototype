@@ -90,8 +90,10 @@ const ProjectsPage = () => {
             document.body.appendChild(a);
             a.click();
             
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 500);
             
             toast.update(toastId, { render: "File downloaded successfully!", type: "success", isLoading: false, autoClose: 3000 });
         } catch (error) {
