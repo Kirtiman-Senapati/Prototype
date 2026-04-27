@@ -333,14 +333,14 @@ const ProjectsPage = () => {
                                 <div className="flex gap-2">
                                     <button 
                                         onClick={() => setIsFeedbackModalOpen(true)}
-                                        className="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm transition-all"
+                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                                     >
                                         <MessageSquare size={16} />
                                         Feedback
                                     </button>
                                     <button 
                                         onClick={() => setIsTaskModalOpen(true)}
-                                        className="inline-flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700 px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-all"
+                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                                     >
                                         <Plus size={16} />
                                         Task
@@ -429,7 +429,7 @@ const ProjectsPage = () => {
                             {/* TASK TRACKING & PROGRESS */}
                             <div className="pt-2">
                                 <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
-                                    <CheckCircle size={14} className="text-blue-500" /> Task Progress
+                                    <CheckCircle size={14} className="text-slate-500" /> Task Progress
                                 </h3>
                                 <div className="mt-2">
                                     {(() => {
@@ -495,7 +495,7 @@ const ProjectsPage = () => {
                             {/* FILES SECTION */}
                             <div className="pt-2">
                                 <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
-                                    <Archive size={14} className="text-blue-500" /> Uploaded Files
+                                    <Archive size={14} className="text-slate-500" /> Uploaded Files
                                 </h3>
                                 
                                 {!selectedProject.files || selectedProject.files.length === 0 ? (
@@ -646,7 +646,7 @@ const ProjectsPage = () => {
                     <div className="modal-content bg-white p-6 border border-slate-200 rounded-xl shadow-xl max-w-md w-full animate-in zoom-in-95 duration-200">
                         <div className="mb-6 flex justify-between items-start">
                             <div>
-                                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><Plus className="text-blue-600" /> Assign Task</h2>
+                                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><Plus className="text-slate-600" /> Assign Task</h2>
                                 <p className="text-sm text-slate-500 mt-1">Project: <span className="font-semibold text-slate-700">{selectedProject.title}</span></p>
                             </div>
                             <button onClick={() => setIsTaskModalOpen(false)} className="text-slate-400 hover:text-slate-600 rounded-full p-1"><X size={20}/></button>
