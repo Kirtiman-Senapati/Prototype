@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { useSelector } from "react-redux";
@@ -7,6 +7,15 @@ import { useSelector } from "react-redux";
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { authUser } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (sidebarOpen && window.innerWidth < 1024) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => document.body.classList.remove("overflow-hidden");
+  }, [sidebarOpen]);
 
   return (
     <div className="min-h-screen bg-slate-50 pt-[66px]">
@@ -37,13 +46,6 @@ const DashboardLayout = () => {
         </main>
       </div>
 
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
     </div>
   );
 };

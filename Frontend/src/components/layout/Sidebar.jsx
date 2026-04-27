@@ -294,10 +294,10 @@ const Sidebar = ({ open, setOpen, userRole }) => {
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) => `
-                    flex items-center px-3 py-2.5 rounded-lg transition-colors group
+                    flex items-center px-3 py-2.5 rounded-md transition-all duration-150 group
                     ${isActive
-                      ? "bg-slate-100/80 text-slate-900 font-semibold shadow-sm border border-slate-200/50"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
+                      ? "bg-slate-100 text-slate-900"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }
                   `}
                   onClick={() => {
@@ -307,7 +307,7 @@ const Sidebar = ({ open, setOpen, userRole }) => {
                     }
                   }}
                 >
-                  <div className={`flex-shrink-0 transition-colors ${isActive ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`}>
+                  <div className={`flex-shrink-0 transition-colors ${isActive ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-700'}`}>
                     {getIcon(item.icon, isActive)}
                   </div>
                   <span
@@ -402,15 +402,15 @@ const Sidebar = ({ open, setOpen, userRole }) => {
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) => `
-              flex items-center px-4 py-3 rounded-lg transition-all duration-200
-              ${isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-slate-700 hover:bg-slate-100 hover:text-blue-600"
+                    flex items-center px-3 py-2.5 rounded-md transition-all duration-150 group
+                    ${isActive
+                      ? "bg-slate-100 text-slate-900"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }
-            `}
+                  `}
                   onClick={() => setOpen(false)}
                 >
-                  <div className="flex-shrink-0">
+                  <div className={`flex-shrink-0 transition-colors ${isActive ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-700'}`}>
                     {getIcon(item.icon, isActive)}
                   </div>
                   <span className="ml-3 font-medium">{item.name}</span>
