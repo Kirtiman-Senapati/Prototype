@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAdminDashboard, adminAddStudent, adminAddSupervisor } from "../../store/slices/adminSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare, UserPlus, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { Link } from "react-router-dom";
 

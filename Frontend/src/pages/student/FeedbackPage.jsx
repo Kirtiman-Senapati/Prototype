@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getStudentFeedback } from "../../store/slices/studentSlice";
 import { MessageSquare, CheckCircle, AlertCircle, Calendar } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 
 const FeedbackPage = () => {
   const dispatch = useDispatch();

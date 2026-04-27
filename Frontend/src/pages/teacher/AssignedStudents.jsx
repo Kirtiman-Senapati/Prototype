@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAssignedStudents, sendFeedbackData } from "../../store/slices/teacherSlice";
 import { axiosInstance } from "../../lib/axios";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import StudentCard from "./components/StudentCard";
 import DashboardHeader from "./components/DashboardHeader";

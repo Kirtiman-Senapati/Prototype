@@ -1,5 +1,5 @@
 import { FileText, MonitorPlay, Archive, Download } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "../../../utils/toast";
 import { Link } from "react-router-dom";
 
 const RecentFilesList = ({ files }) => {

@@ -5,7 +5,7 @@ import { getActivities, addRealtimeActivity } from "../../store/slices/activityS
 import { BookOpen, Calendar, MessageSquare, Clock, Bell, Loader, CheckCircle, XCircle, AlertCircle, ArrowRight, Briefcase } from "lucide-react";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { formatDateTime } from "../../utils/timeFormat";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 import { useNavigate } from "react-router-dom";
 import MessageModal from "./components/MessageModal";
 const StudentDashboard = () => {

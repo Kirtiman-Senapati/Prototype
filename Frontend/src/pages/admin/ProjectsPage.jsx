@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
 import { updateProjectStatusAdmin, sendFeedbackAdminData, assignTaskAdminData } from "../../store/slices/adminSlice";
 import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X, MessageSquare, Plus, CheckCircle } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import FeedbackModal from "../../components/modal/FeedbackModal";
 

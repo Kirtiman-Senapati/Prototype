@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 import { axiosInstance } from "../../lib/axios";
 import { Search, CheckCircle2, User, Users, Briefcase, Filter, ShieldAlert, Clock, XCircle, Check, Eye, FolderKanban, X, Calendar, Archive, File, FileText, MonitorPlay, Download } from "lucide-react";
 import { getAdminSupervisors, assignSupervisorAdmin, updateProjectStatusAdmin } from "../../store/slices/adminSlice";

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 
 // 1. Export the missing getProject thunk
 export const getProject = createAsyncThunk(

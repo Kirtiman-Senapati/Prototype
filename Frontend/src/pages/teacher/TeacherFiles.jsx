@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAssignedStudents } from "../../store/slices/teacherSlice";
 import { FileText, MonitorPlay, Archive, LayoutGrid, List, Search, Download, Loader } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 const TeacherFiles = () => {

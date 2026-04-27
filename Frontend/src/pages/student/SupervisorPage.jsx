@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAvailableSupervisors, requestSupervisor, getStudentDashboard } from "../../store/slices/studentSlice";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { ArrowRight, CheckCircle, User, BookOpen, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";

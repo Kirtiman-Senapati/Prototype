@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getActivities, sendUnifiedMessage, addRealtimeActivity, updateMessageStatus } from "../../store/slices/activitySlice";
 import { MessageSquare, Send, CheckCircle, Clock, AlertCircle, ChevronRight, Briefcase, Activity } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 import { axiosInstance } from "../../lib/axios";
 import { socket } from "../../socket/socket";
 

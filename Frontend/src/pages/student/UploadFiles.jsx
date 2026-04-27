@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadProjectFile, getStudentDashboard } from "../../store/slices/studentSlice";
 import { FileText, MonitorPlay, Archive, UploadCloud, Loader } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "../../utils/toast";
 
 const UploadFiles = () => {
     // states for 3 different form files
