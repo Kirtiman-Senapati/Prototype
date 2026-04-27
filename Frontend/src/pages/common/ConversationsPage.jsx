@@ -305,7 +305,7 @@ const ConversationsPage = () => {
     );
 
     return (
-        <div className="w-full h-[85vh] bg-white border border-slate-200 rounded-xl shadow-sm flex overflow-hidden">
+        <div className="w-full h-[calc(100vh-80px)] bg-white border border-slate-200 rounded-xl shadow-sm flex overflow-hidden">
             {/* Sidebar (Projects) - 28% */}
             <div className="w-[28%] bg-slate-50 border-r border-slate-200 flex flex-col">
                 <div className="p-4 border-b border-slate-200 bg-slate-50">

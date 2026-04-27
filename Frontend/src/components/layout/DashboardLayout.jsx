@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
   const { authUser } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const DashboardLayout = () => {
             sidebarOpen ? "ml-0 lg:ml-64" : "ml-0 lg:ml-20"
           }`}
         >
-          <div className="p-2 lg:p-4">
+          <div className={location.pathname.includes("conversations") ? "p-0" : "p-4 lg:p-6"}>
             <Outlet />
           </div>
         </main>
