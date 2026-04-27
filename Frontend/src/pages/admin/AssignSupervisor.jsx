@@ -148,49 +148,49 @@ const AssignSupervisor = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
-                <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
-                        <Users size={24} />
+                <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
+                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                        <Users size={20} />
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 font-medium">Total Projects</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{totalStudents}</h3>
+                        <h3 className="text-2xl font-bold text-slate-900 mt-0.5">{totalStudents}</h3>
                     </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center shrink-0">
-                        <Clock size={24} />
+                <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
+                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                        <Clock size={20} />
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 font-medium">Pending</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{pendingProposals}</h3>
+                        <h3 className="text-2xl font-bold text-slate-900 mt-0.5">{pendingProposals}</h3>
                     </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center shrink-0">
-                        <CheckCircle2 size={24} />
+                <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
+                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                        <CheckCircle2 size={20} />
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 font-medium">Assigned</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{assignedStudents}</h3>
+                        <h3 className="text-2xl font-bold text-slate-900 mt-0.5">{assignedStudents}</h3>
                     </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center shrink-0">
-                        <ShieldAlert size={24} />
+                <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
+                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                        <ShieldAlert size={20} />
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 font-medium">Unassigned</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{unassignedStudents}</h3>
+                        <h3 className="text-2xl font-bold text-slate-900 mt-0.5">{unassignedStudents}</h3>
                     </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center shrink-0">
-                        <Briefcase size={24} />
+                <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
+                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                        <Briefcase size={20} />
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 font-medium">Teachers</p>
-                        <h3 className="text-2xl font-bold text-slate-800">{supervisors.length}</h3>
+                        <h3 className="text-2xl font-bold text-slate-900 mt-0.5">{supervisors.length}</h3>
                     </div>
                 </div>
             </div>
@@ -202,7 +202,7 @@ const AssignSupervisor = () => {
                     <input 
                         type="text" 
                         placeholder="Search by student name or project title..." 
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-colors"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -210,7 +210,7 @@ const AssignSupervisor = () => {
                 <div className="flex items-center w-full sm:w-auto gap-2">
                     <Filter className="text-slate-400" size={18} />
                     <select 
-                        className="w-full sm:w-48 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer"
+                        className="w-full sm:w-48 px-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 cursor-pointer"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                     >
