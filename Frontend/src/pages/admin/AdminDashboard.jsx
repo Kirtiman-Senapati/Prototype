@@ -11,6 +11,7 @@ import StatCard from "./components/StatCard";
 import ActionCard from "./components/ActionCard";
 import ActivityList from "./components/ActivityList";
 import ProjectList from "./components/ProjectList";
+import AddSupervisorModal from "../../components/modal/AddSupervisorModal";
 
 const AdminDashboard = () => {
     const dispatch = useDispatch();
@@ -215,58 +216,15 @@ const AdminDashboard = () => {
             )}
 
             {/* 🔥 ADD SUPERVISOR MODAL */}
-            {isSupervisorModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-                        <div className="flex justify-between items-center p-5 border-b border-slate-100 shrink-0">
-                            <h2 className="text-lg font-bold text-slate-800">Add New Supervisor</h2>
-                            <button onClick={() => setIsSupervisorModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition">
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <div className="overflow-y-auto p-5 shrink">
-                            <form id="teacherFormDashboard" onSubmit={handleSupervisorSubmit} className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Full Name <span className="text-red-500">*</span></label>
-                                        <input type="text" name="name" value={supervisorFormData.name} onChange={handleSupervisorChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none" placeholder="Dr. John Doe" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Department <span className="text-red-500">*</span></label>
-                                        <select name="department" value={supervisorFormData.department} onChange={handleSupervisorChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none bg-white">
-                                            <option value="">Select department...</option>
-                                            {departments.map((dep, index) => (
-                                                <option key={index} value={dep}>{dep}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email Address <span className="text-red-500">*</span></label>
-                                    <input type="email" name="email" value={supervisorFormData.email} onChange={handleSupervisorChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none" placeholder="faculty@university.edu" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5 flex justify-between">
-                                        <span>Temporary Password <span className="text-red-500">*</span></span>
-                                    </label>
-                                    <input type="password" name="password" value={supervisorFormData.password} onChange={handleSupervisorChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none" placeholder="••••••••" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Expertise Topics (Comma Separated)</label>
-                                    <input type="text" name="experties" value={supervisorFormData.experties} onChange={handleSupervisorChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none" placeholder="Machine Learning, IoT, Web Security" />
-                                    <p className="text-xs text-slate-500 mt-1">E.g. Web Development, Artificial Intelligence</p>
-                                </div>
-                            </form>
-                        </div>
-                        <div className="p-5 border-t border-slate-100 shrink-0 flex gap-3 bg-slate-50">
-                            <button type="button" onClick={() => setIsSupervisorModalOpen(false)} className="flex-1 px-4 py-2.5 rounded-xl text-slate-700 font-medium bg-slate-200 hover:bg-slate-300 transition">Cancel</button>
-                            <button type="submit" form="teacherFormDashboard" disabled={isSubmittingSupervisor} className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-green-600 hover:bg-green-700 active:bg-green-800 disabled:opacity-70 transition flex justify-center items-center">
-                                {isSubmittingSupervisor ? <span className="animate-spin h-5 w-5 border-2 border-white/30 border-t-white rounded-full"></span> : "Add Supervisor"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <AddSupervisorModal
+                isOpen={isSupervisorModalOpen}
+                onClose={() => setIsSupervisorModalOpen(false)}
+                onSubmit={handleSupervisorSubmit}
+                formData={supervisorFormData}
+                handleChange={handleSupervisorChange}
+                isSubmitting={isSubmittingSupervisor}
+                editId={null}
+            />
         </div>
     );
 };
