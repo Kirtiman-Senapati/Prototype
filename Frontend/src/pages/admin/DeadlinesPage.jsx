@@ -107,17 +107,21 @@ const DeadlinesPage = () => {
     return (
         <div className="space-y-6 pb-8">
             {/* Header */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Project Deadlines</h1>
                     <p className="text-slate-500 mt-1">Track and manage submission deadlines.</p>
+                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-3">
+                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                        Last updated just now
+                    </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                     <button 
                         onClick={handleTriggerReminders}
                         disabled={isTriggering}
-                        className={`w-full sm:w-auto px-4 py-2 border border-slate-200 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0 whitespace-nowrap ${isTriggering ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-700 hover:bg-slate-50'}`}
+                        className={`w-full sm:w-auto px-4 py-2 border border-slate-200 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0 whitespace-nowrap ${isTriggering ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-[0_1px_0_rgba(0,0,0,0.02)]'}`}
                     >
                         {isTriggering ? <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div> : <Send size={16} />}
                         {isTriggering ? "Sending..." : "Force Reminders"}
@@ -129,7 +133,7 @@ const DeadlinesPage = () => {
                             setDeadlineDate("");
                             setIsModalOpen(true);
                         }}
-                        className="w-full sm:w-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
+                        className="w-full sm:w-auto px-4 py-2 bg-slate-900 shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
                     >
                         <CalendarPlus size={16} /> Create Deadline
                     </button>
@@ -143,7 +147,7 @@ const DeadlinesPage = () => {
                     <input 
                         type="text" 
                         placeholder="Search by project or student..." 
-                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-colors"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -155,7 +159,7 @@ const DeadlinesPage = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[900px]">
                         <thead>
-                            <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-sm uppercase tracking-wider">
+                            <tr className="bg-slate-50 border-b border-slate-100 text-slate-600 text-sm uppercase tracking-wide">
                                 <th className="px-6 py-4 font-medium">Student</th>
                                 <th className="px-6 py-4 font-medium">Project Title</th>
                                 <th className="px-6 py-4 font-medium">Supervisor</th>
@@ -176,7 +180,7 @@ const DeadlinesPage = () => {
                                 filteredProjects.map(proj => {
                                     const isOverdue = isDatePassed(proj.deadline) && proj.status !== "Completed";
                                     return (
-                                        <tr key={proj._id} className="transition hover:bg-slate-50 even:bg-slate-50/40 hover:shadow-[inset_0_1px_0_0_rgba(0,0,0,0.03)] border-b border-slate-100">
+                                        <tr key={proj._id} className="transition hover:bg-slate-50/80 hover:shadow-[inset_0_1px_0_rgba(0,0,0,0.02)] border-b border-slate-100">
                                             <td className="px-6 py-5">
                                                 <div className="flex flex-col">
                                                     <span className="text-slate-900 font-semibold tracking-tight">{proj.student?.name || "Unknown"}</span>
@@ -197,7 +201,7 @@ const DeadlinesPage = () => {
                                             <td className="px-6 py-5 align-middle">
                                                 {proj.deadline ? (
                                                     <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                                                        <span className={`w-1.5 h-1.5 rounded-full shadow-sm ${isOverdue ? 'bg-red-500' : 'bg-blue-500'}`}></span>
+                                                        <span className={`w-1.5 h-1.5 rounded-full shadow-sm ${isOverdue ? 'bg-red-500' : 'bg-slate-400'}`}></span>
                                                         {new Date(proj.deadline).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                                                     </div>
                                                 ) : (
@@ -208,7 +212,7 @@ const DeadlinesPage = () => {
                                                 <div className="flex items-center gap-2 text-sm text-slate-800 font-medium">
                                                     <span className={`w-2 h-2 rounded-full shadow-sm ${
                                                         proj.status === 'Completed' ? 'bg-emerald-500' :
-                                                        proj.status === 'Approved' ? 'bg-blue-500' :
+                                                        proj.status === 'Approved' ? 'bg-slate-400' :
                                                         proj.status === 'Rejected' ? 'bg-red-500' :
                                                         'bg-amber-500'
                                                     }`}></span>
@@ -220,7 +224,7 @@ const DeadlinesPage = () => {
                                                     onClick={() => openModalForProject(proj)}
                                                     disabled={proj.status === "Completed"}
                                                     title={proj.status === "Completed" ? "Cannot update deadline for completed projects" : ""}
-                                                    className={`px-3 py-1.5 text-sm font-medium border border-slate-200 rounded-lg transition-colors ${proj.status === "Completed" ? "text-slate-400 cursor-not-allowed bg-slate-50" : "text-slate-700 hover:bg-slate-50 bg-white"}`}
+                                                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all ${proj.status === "Completed" ? "text-slate-400 cursor-not-allowed bg-slate-50 border border-slate-200" : "text-slate-700 bg-white border border-slate-200 shadow-[0_1px_0_rgba(0,0,0,0.02)] hover:bg-slate-50 hover:border-slate-300"}`}
                                                 >
                                                     {proj.deadline ? "Update" : "Set Deadline"}
                                                 </button>
