@@ -7,7 +7,7 @@ const ActionCard = ({ title, icon: Icon, to }) => {
                 <div className="mb-3 text-slate-400 group-hover:text-slate-600 transition-colors">
                     <Icon size={24} strokeWidth={1.5} />
                 </div>
-                <h3 className="font-semibold text-slate-700 text-sm">{title}</h3>
+                <h3 className="text-sm font-medium text-slate-800">{title}</h3>
             </div>
         </Link>
     );

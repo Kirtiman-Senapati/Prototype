@@ -83,22 +83,22 @@ const ActivityList = ({ activities }) => {
                             <div className={`w-2 h-2 mt-1.5 rounded-full ring-2 ring-white shadow-sm shrink-0 z-10 ${getActivityColor(activity.actionType)}`} />
                             
                             <div className="flex-1 min-w-0">
-                                <p className="text-[13px] text-slate-800 font-medium">
+                                <p className="text-sm font-medium text-slate-800 leading-relaxed">
                                     {renderMessage(activity.message)}
                                 </p>
 
                                 {activity.details && (
-                                    <p className="text-[13px] text-slate-500 mt-0.5 font-normal truncate">
+                                    <p className="text-xs text-slate-500 mt-1 truncate">
                                         {activity.details}
                                     </p>
                                 )}
 
-                                <div className="mt-1 flex items-center gap-1.5">
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                                <div className="mt-1.5 flex items-center gap-2">
+                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
                                         {activity.actionType?.replace(/_/g, ' ')}
                                     </span>
-                                    <span className="text-[10px] text-slate-400">•</span>
-                                    <span className="text-[11px] text-slate-400 font-medium tracking-wide">
+                                    <span className="text-[10px] text-slate-300">•</span>
+                                    <span className="text-[11px] text-slate-400 font-medium">
                                         {formatDateTime(activity.createdAt)}
                                     </span>
                                 </div>

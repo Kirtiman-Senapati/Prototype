@@ -39,20 +39,20 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-slate-100">
-                            <th className="px-5 py-3 text-xs font-medium text-slate-500">Project Name</th>
-                            <th className="px-5 py-3 text-xs font-medium text-slate-500">Supervisor</th>
-                            <th className="px-5 py-3 text-xs font-medium text-slate-500">Status</th>
+                            <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Project Name</th>
+                            <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Supervisor</th>
+                            <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Status</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {projects.map((project) => (
                             <tr key={project._id} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
                                 <td className="px-5 py-4">
-                                    <h3 className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-1">{project.title}</h3>
-                                    <p className="text-[11px] font-medium text-slate-500 mt-0.5">Student: {project.student?.name || 'Unknown'}</p>
+                                    <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">{project.title}</h3>
+                                    <p className="text-xs text-slate-500 mt-1">Student: {project.student?.name || 'Unknown'}</p>
                                 </td>
                                 <td className="px-5 py-4">
-                                    <span className="text-sm font-normal text-slate-600">{project.supervisor?.name || 'Pending'}</span>
+                                    <span className="text-sm font-medium text-slate-800 tracking-tight">{project.supervisor?.name || 'Pending'}</span>
                                 </td>
                                 <td className="px-5 py-4">
                                     <div className="flex items-center gap-2">
