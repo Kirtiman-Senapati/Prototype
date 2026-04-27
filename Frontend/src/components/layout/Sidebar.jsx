@@ -281,8 +281,8 @@ const Sidebar = ({ open, setOpen, userRole }) => {
     <>
       {/* Desktop Sidebar */}
       <div
-        className={`fixed -left-full lg:left-0 top-16 h-[calc(100vh-4rem)] bg-white border-r border-slate-200 transition-all duration-300 z-30 ${open ? "w-64" : "w-20"
-          }`}
+        className={`hidden lg:block fixed left-0 top-16 h-[calc(100vh-4rem)] bg-slate-50 border-r border-slate-200 transition-all duration-300 z-30 overflow-hidden ${open ? "w-64" : "w-20"}
+          `}
       >
         <div className="flex flex-col h-full">
           <nav className="flex-1 px-4 py-6 space-y-2">
@@ -296,7 +296,7 @@ const Sidebar = ({ open, setOpen, userRole }) => {
                   className={({ isActive }) => `
                     flex items-center px-3 py-2.5 rounded-md transition-all duration-150 group
                     ${isActive
-                      ? "bg-slate-100 text-slate-900"
+                      ? "bg-slate-100/70 text-slate-900"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }
                   `}
@@ -381,14 +381,14 @@ const Sidebar = ({ open, setOpen, userRole }) => {
       {/* Mobile Sidebar Overlay */}
       {open && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setOpen(false)} // click backdrop to close
         ></div>
       )}
 
       {/* Mobile Sidebar Drawer */}
       <div
-        className={`fixed inset-y-0 left-0 w-64 bg-white z-50 lg:hidden transform transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 left-0 w-[85%] max-w-xs bg-slate-50 z-50 lg:hidden transform transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"
           }`}
       >
         <div className="flex flex-col h-full pt-16">
@@ -404,7 +404,7 @@ const Sidebar = ({ open, setOpen, userRole }) => {
                   className={({ isActive }) => `
                     flex items-center px-3 py-2.5 rounded-md transition-all duration-150 group
                     ${isActive
-                      ? "bg-slate-100 text-slate-900"
+                      ? "bg-slate-100/70 text-slate-900"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }
                   `}

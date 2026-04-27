@@ -27,7 +27,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-slate-200 fixed w-full top-0 z-30">
+    <nav className="bg-white/80 backdrop-blur border-b border-slate-200 fixed w-full top-0 z-30">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Left side */}
@@ -35,7 +35,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             {/* Sidebar toggle */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg text-slate-400 hover:bg-slate-100 focus:outline-none transition-colors"
+              className="flex items-center p-2.5 rounded-xl border border-slate-200 bg-white shadow-sm hover:bg-slate-50 active:scale-95 transition-all text-slate-600 focus:outline-none"
             >
               <svg
                 className="w-5 h-5"
@@ -59,6 +59,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                   />
                 )}
               </svg>
+              <div className="lg:hidden text-xs font-medium ml-2">
+                Menu
+              </div>
             </button>
 
             {/* Logo and title */}

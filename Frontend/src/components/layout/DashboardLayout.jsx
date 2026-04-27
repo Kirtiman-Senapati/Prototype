@@ -18,7 +18,7 @@ const DashboardLayout = () => {
   }, [sidebarOpen]);
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-[66px]">
+    <div className="min-h-screen bg-slate-50 overflow-x-hidden pt-[66px]">
       {/* Navbar */}
       <Navbar
         sidebarOpen={sidebarOpen}
@@ -26,7 +26,7 @@ const DashboardLayout = () => {
         userRole={authUser?.role}
       />
 
-      <div className="flex">
+      <div className="flex relative min-h-[calc(100vh-66px)]">
         {/* Sidebar */}
         <Sidebar
           open={sidebarOpen}
@@ -41,7 +41,9 @@ const DashboardLayout = () => {
           }`}
         >
           <div className="p-6">
-            <Outlet />
+            <div className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm min-h-[300px]">
+              <Outlet />
+            </div>
           </div>
         </main>
       </div>
