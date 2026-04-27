@@ -107,27 +107,20 @@ const DeadlinesPage = () => {
     return (
         <div className="space-y-6 pb-8">
             {/* Header */}
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-50 opacity-50 rounded-full blur-3xl z-0"></div>
-                
-                <div className="flex items-center gap-5 z-10 w-full">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
-                        <CalendarIcon size={28} />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Manage Deadlines</h1>
-                        <p className="text-slate-500 mt-1 font-medium">Create and monitor project submission deadlines.</p>
-                    </div>
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Project Deadlines</h1>
+                    <p className="text-slate-500 mt-1">Track and manage submission deadlines.</p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-3 z-10 w-full md:w-auto mt-4 md:mt-0">
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                     <button 
                         onClick={handleTriggerReminders}
                         disabled={isTriggering}
-                        className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-2 shrink-0 whitespace-nowrap ${isTriggering ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-900 text-white hover:shadow-lg'}`}
+                        className={`w-full sm:w-auto px-4 py-2 border border-slate-200 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0 whitespace-nowrap ${isTriggering ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-700 hover:bg-slate-50'}`}
                     >
-                        {isTriggering ? <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div> : <Send size={20} />}
-                        {isTriggering ? "Sending..." : "Force Send Reminders"}
+                        {isTriggering ? <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div> : <Send size={16} />}
+                        {isTriggering ? "Sending..." : "Force Reminders"}
                     </button>
                     <button 
                         onClick={() => {
@@ -136,9 +129,9 @@ const DeadlinesPage = () => {
                             setDeadlineDate("");
                             setIsModalOpen(true);
                         }}
-                        className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
+                        className="w-full sm:w-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
                     >
-                        <CalendarPlus size={20} /> Create/Update Deadline
+                        <CalendarPlus size={16} /> Create Deadline
                     </button>
                 </div>
             </div>
@@ -146,11 +139,11 @@ const DeadlinesPage = () => {
             {/* Controls */}
             <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
                 <div className="relative w-full max-w-md">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                     <input 
                         type="text" 
-                        placeholder="Search Deadlines by project or student..." 
-                        className="w-full pl-10 pr-4 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200 focus:border-blue-500 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-700"
+                        placeholder="Search by project or student..." 
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-colors"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -158,21 +151,17 @@ const DeadlinesPage = () => {
             </div>
 
             {/* Main Projects Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
-                    <Clock size={18} className="text-slate-600" />
-                    <h3 className="font-extrabold text-slate-700">Project Deadlines Tracker</h3>
-                </div>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[900px]">
                         <thead>
-                            <tr className="bg-white text-slate-400 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
-                                <th className="py-5 px-6">Student</th>
-                                <th className="py-5 px-6">Project Title</th>
-                                <th className="py-5 px-6">Supervisor</th>
-                                <th className="py-5 px-6 font-semibold">Deadline</th>
-                                <th className="py-5 px-6 text-center">Status</th>
-                                <th className="py-5 px-6 text-right">Actions</th>
+                            <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-sm uppercase tracking-wider">
+                                <th className="px-6 py-4 font-medium">Student</th>
+                                <th className="px-6 py-4 font-medium">Project Title</th>
+                                <th className="px-6 py-4 font-medium">Supervisor</th>
+                                <th className="px-6 py-4 font-medium">Deadline</th>
+                                <th className="px-6 py-4 font-medium">Status</th>
+                                <th className="px-6 py-4 font-medium text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -187,57 +176,51 @@ const DeadlinesPage = () => {
                                 filteredProjects.map(proj => {
                                     const isOverdue = isDatePassed(proj.deadline) && proj.status !== "Completed";
                                     return (
-                                        <tr key={proj._id} className="hover:bg-slate-50/80 transition-colors group">
-                                            <td className="py-4 px-6 w-[20%]">
+                                        <tr key={proj._id} className="transition hover:bg-slate-50 even:bg-slate-50/40 hover:shadow-[inset_0_1px_0_0_rgba(0,0,0,0.03)] border-b border-slate-100">
+                                            <td className="px-6 py-5">
                                                 <div className="flex flex-col">
-                                                    <span className="text-sm font-bold text-slate-800">{proj.student?.name || "Unknown"}</span>
-                                                    <span className="text-[11px] text-slate-500 font-medium truncate max-w-[150px]">{proj.student?.email}</span>
+                                                    <span className="text-slate-900 font-semibold tracking-tight">{proj.student?.name || "Unknown"}</span>
+                                                    <span className="text-xs text-slate-500">{proj.student?.email}</span>
                                                 </div>
                                             </td>
-                                            <td className="py-4 px-6 w-[30%]">
-                                                <p className="text-sm font-bold text-slate-700 line-clamp-1" title={proj.title}>{proj.title}</p>
+                                            <td className="px-6 py-5 align-middle">
+                                                <p className="text-sm font-medium text-slate-700 line-clamp-2 max-w-[250px] transition-colors">{proj.title}</p>
                                             </td>
-                                            <td className="py-4 px-6">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold">
+                                            <td className="px-6 py-5 align-middle">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs text-slate-600 shrink-0">
                                                         {proj.supervisor?.name?.charAt(0) || <User size={12}/>}
                                                     </div>
-                                                    <span className="text-xs font-bold text-slate-600">{proj.supervisor?.name || <span className="text-slate-400 italic">Unassigned</span>}</span>
+                                                    <span className="text-sm font-medium text-slate-700">{proj.supervisor?.name || <span className="text-slate-400 italic">Unassigned</span>}</span>
                                                 </div>
                                             </td>
-                                            <td className="py-4 px-6">
+                                            <td className="px-6 py-5 align-middle">
                                                 {proj.deadline ? (
-                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm border ${
-                                                        isOverdue 
-                                                        ? 'bg-red-50 text-red-700 border-red-200' 
-                                                        : 'bg-white text-slate-700 border-slate-200'
-                                                    }`}>
-                                                        {isOverdue ? <AlertCircle size={14} className="text-red-500" /> : <CalendarIcon size={14} className="text-blue-500" />}
+                                                    <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                                                        <span className={`w-1.5 h-1.5 rounded-full shadow-sm ${isOverdue ? 'bg-red-500' : 'bg-blue-500'}`}></span>
                                                         {new Date(proj.deadline).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                                                    </span>
+                                                    </div>
                                                 ) : (
-                                                    <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 italic shadow-sm">Not set</span>
+                                                    <span className="text-sm text-slate-400 italic">Not set</span>
                                                 )}
                                             </td>
-                                            <td className="py-4 px-6 text-center align-middle">
-                                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border whitespace-nowrap ${
-                                                    proj.status === 'Approved' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                    proj.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                                                    proj.status === 'Completed' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                    'bg-slate-50 text-slate-700 border-slate-200'
-                                                }`}>
-                                                    {proj.status === 'Pending' && <Clock size={12} />}
-                                                    {proj.status === 'Approved' && <CheckCircle2 size={12} />}
-                                                    {proj.status === 'Completed' && <CheckCircle2 size={12} />}
+                                            <td className="px-6 py-5 align-middle">
+                                                <div className="flex items-center gap-2 text-sm text-slate-800 font-medium">
+                                                    <span className={`w-2 h-2 rounded-full shadow-sm ${
+                                                        proj.status === 'Completed' ? 'bg-emerald-500' :
+                                                        proj.status === 'Approved' ? 'bg-blue-500' :
+                                                        proj.status === 'Rejected' ? 'bg-red-500' :
+                                                        'bg-amber-500'
+                                                    }`}></span>
                                                     {proj.status}
-                                                </span>
+                                                </div>
                                             </td>
-                                            <td className="py-4 px-6 text-right">
+                                            <td className="px-6 py-5 align-middle text-right">
                                                 <button 
                                                     onClick={() => openModalForProject(proj)}
                                                     disabled={proj.status === "Completed"}
                                                     title={proj.status === "Completed" ? "Cannot update deadline for completed projects" : ""}
-                                                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm opacity-0 group-hover:opacity-100 ${proj.status === "Completed" ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed" : "text-blue-600 bg-blue-50 border-blue-200 hover:bg-blue-600 hover:text-white border"}`}
+                                                    className={`px-3 py-1.5 text-sm font-medium border border-slate-200 rounded-lg transition-colors ${proj.status === "Completed" ? "text-slate-400 cursor-not-allowed bg-slate-50" : "text-slate-700 hover:bg-slate-50 bg-white"}`}
                                                 >
                                                     {proj.deadline ? "Update" : "Set Deadline"}
                                                 </button>
