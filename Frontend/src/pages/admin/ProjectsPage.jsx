@@ -653,16 +653,16 @@ const ProjectsPage = () => {
                         </div>
                         <form onSubmit={handleAssignTask} className="space-y-4">
                             <div>
-                                <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Task Title</label>
-                                <input required className="input w-full p-2.5 bg-white border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 rounded-lg text-sm" placeholder="e.g. Complete Literature Review" value={taskData.title} onChange={e => setTaskData({...taskData, title: e.target.value})} />
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Task Title</label>
+                                <input required className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none" placeholder="e.g. Complete Literature Review" value={taskData.title} onChange={e => setTaskData({...taskData, title: e.target.value})} />
                             </div>
                             <div>
-                                <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Description</label>
-                                <textarea required className="input w-full p-2.5 bg-white border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 rounded-lg text-sm min-h-[100px]" placeholder="Add details about this task..." value={taskData.description} onChange={e => setTaskData({...taskData, description: e.target.value})} />
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
+                                <textarea required className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none min-h-[100px]" placeholder="Add details about this task..." value={taskData.description} onChange={e => setTaskData({...taskData, description: e.target.value})} />
                             </div>
                             <div>
-                                <label className="label text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Deadline</label>
-                                <input required type="date" className="input w-full p-2.5 bg-white border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 rounded-lg text-sm text-slate-600" value={taskData.deadline} onChange={e => setTaskData({...taskData, deadline: e.target.value})} />
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Deadline</label>
+                                <input required type="date" className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none cursor-pointer text-slate-600" value={taskData.deadline} onChange={e => setTaskData({...taskData, deadline: e.target.value})} />
                             </div>
                             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
                                 <button type="button" onClick={() => setIsTaskModalOpen(false)} className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>

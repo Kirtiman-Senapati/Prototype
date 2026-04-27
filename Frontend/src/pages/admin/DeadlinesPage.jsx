@@ -241,30 +241,30 @@ const DeadlinesPage = () => {
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col">
+                    <div className="bg-white rounded-xl w-full max-w-xl shadow-lg border border-slate-200 animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col">
                         
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
-                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                                 Create or Update Deadline
                             </h2>
                             <button 
                                 onClick={() => setIsModalOpen(false)}
-                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
                             >
-                                <X size={20} />
+                                <X size={18} />
                             </button>
                         </div>
                         
-                        <div className="p-6 md:p-8 space-y-6">
+                        <div className="px-6 py-5 space-y-5">
                             
                             {/* Project Search / Select */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Select Project</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Select Project</label>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-3 text-slate-400" size={18} />
                                     <input 
                                         type="text" 
-                                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700 shadow-sm"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none"
                                         placeholder="Type to search project title..."
                                         value={modalSearchTerm}
                                         onChange={(e) => {
@@ -317,11 +317,11 @@ const DeadlinesPage = () => {
 
                             {/* Date Picker */}
                             <div className="space-y-2 pt-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Submission Deadline Date</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Submission Deadline Date</label>
                                 <div className="relative">
                                     <input 
                                         type="date" 
-                                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700 shadow-sm cursor-pointer"
+                                        className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none cursor-pointer"
                                         value={deadlineDate}
                                         onChange={(e) => setDeadlineDate(e.target.value)}
                                         min={new Date().toISOString().split('T')[0]} // prevent past dates normally
@@ -331,17 +331,17 @@ const DeadlinesPage = () => {
 
                         </div>
                         
-                        <div className="px-6 py-5 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 mt-auto">
+                        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-3 mt-auto">
                             <button 
                                 onClick={() => setIsModalOpen(false)}
-                                className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
+                                className="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-md px-4 py-2 text-sm transition-all"
                             >
                                 Cancel
                             </button>
                             <button 
                                 onClick={handleSaveDeadline}
                                 disabled={!selectedProjectId || !deadlineDate}
-                                className={`px-6 py-2.5 text-sm font-bold text-white rounded-xl transition-all shadow-md flex items-center gap-2 ${(!selectedProjectId || !deadlineDate) ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg'}`}
+                                className={`bg-slate-900 hover:bg-slate-800 text-white rounded-md px-4 py-2 text-sm transition-all flex items-center gap-2 ${(!selectedProjectId || !deadlineDate) ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 <CalendarIcon size={16} /> Save Deadline
                             </button>
