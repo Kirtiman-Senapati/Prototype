@@ -249,7 +249,7 @@ const AssignSupervisor = () => {
                                     const isSelected = !!selections[p._id];
 
                                     return (
-                                        <tr key={p._id} className={`transition-colors hover:bg-slate-50 ${p.status === 'Pending' ? 'bg-amber-50/10' : (!isAssigned && p.status === 'Approved' ? 'bg-yellow-50/30' : '')}`}>
+                                        <tr key={p._id} className={`transition-colors hover:bg-slate-50 even:bg-slate-50/40 ${p.status === 'Pending' ? 'bg-amber-50/10' : (!isAssigned && p.status === 'Approved' ? 'bg-yellow-50/30' : '')}`}>
                                             <td className="p-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0">
@@ -265,18 +265,22 @@ const AssignSupervisor = () => {
                                                 <p className="text-sm font-medium text-slate-700 line-clamp-2 max-w-[250px]">{p.title}</p>
                                             </td>
                                             <td className="p-4 align-middle text-center">
-                                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                                                    p.status === 'Completed' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
-                                                    p.status === 'Approved' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                                                    p.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200' :
-                                                    'bg-amber-100 text-amber-700 border-amber-200'
-                                                }`}>
-                                                    {p.status === 'Pending' && <Clock size={12} />}
-                                                    {p.status === 'Approved' && <CheckCircle2 size={12} />}
-                                                    {p.status === 'Completed' && <CheckCircle2 size={12} />}
-                                                    {p.status === 'Rejected' && <XCircle size={12} />}
-                                                    {p.status}
-                                                </span>
+                                                <div className="flex items-center justify-center gap-2 text-sm font-medium">
+                                                    <span className={`w-2 h-2 rounded-full ${
+                                                        p.status === "Completed" ? "bg-emerald-500" :
+                                                        p.status === "Approved" ? "bg-blue-500" :
+                                                        p.status === "Rejected" ? "bg-red-500" :
+                                                        "bg-amber-500"
+                                                    }`} />
+                                                    <span className={`${
+                                                        p.status === "Completed" ? "text-slate-700" :
+                                                        p.status === "Approved" ? "text-slate-700" :
+                                                        p.status === "Rejected" ? "text-slate-500" :
+                                                        "text-slate-600"
+                                                    }`}>
+                                                        {p.status}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="p-4 align-middle text-center">
                                                 {isAssigned ? (
@@ -289,23 +293,30 @@ const AssignSupervisor = () => {
                                                 {p.status === "Pending" ? (
                                                     <button
                                                         onClick={() => setSelectedProject(p)}
-                                                        className="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors"
+                                                        className="w-full bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition"
                                                     >
                                                         <Eye size={14} /> Review Proposal
                                                     </button>
                                                 ) : p.status === "Completed" ? (
-                                                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex items-center justify-center gap-1"><CheckCircle2 size={14}/> Project Completed</span>
+                                                    <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                                                        <CheckCircle2 size={14} className="text-emerald-500" />
+                                                        Project Completed
+                                                    </div>
                                                 ) : p.status === "Rejected" ? (
-                                                    <span className="text-xs font-bold text-slate-500">Proposal Rejected</span>
+                                                    <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                                                        <XCircle size={14} className="text-red-500" />
+                                                        Proposal Rejected
+                                                    </div>
                                                 ) : (
                                                     isAssigned ? (
-                                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap">
-                                                            <CheckCircle2 size={12} /> Assigned
-                                                        </span>
+                                                        <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                                                            <CheckCircle2 size={14} className="text-blue-500" />
+                                                            Assigned
+                                                        </div>
                                                     ) : (
                                                         <div className="flex items-center gap-2">
                                                             <select
-                                                                className="flex-1 bg-white border border-slate-200 text-sm rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-shadow min-w-[140px]"
+                                                                className="flex-1 bg-white border border-slate-200 text-sm rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 transition"
                                                                 value={selections[p._id] || ""}
                                                                 onChange={(e) => handleSelect(p._id, e.target.value)}
                                                             >
@@ -317,9 +328,9 @@ const AssignSupervisor = () => {
                                                             <button
                                                                 onClick={() => handleAssign(p._id)}
                                                                 disabled={!isSelected}
-                                                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap ${
+                                                                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                                                                     isSelected 
-                                                                        ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                                                                        ? "bg-slate-900 hover:bg-slate-800 text-white" 
                                                                         : "bg-slate-100 text-slate-400 cursor-not-allowed"
                                                                 }`}
                                                             >
