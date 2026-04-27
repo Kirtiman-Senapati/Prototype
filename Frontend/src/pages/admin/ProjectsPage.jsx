@@ -173,7 +173,7 @@ const ProjectsPage = () => {
     return (
         <div className="space-y-6 pb-8">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-center gap-4 mb-6">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                <div className="p-3 bg-slate-100 text-slate-600 rounded-xl">
                     <FolderKanban size={28} />
                 </div>
                 <div>
@@ -215,7 +215,7 @@ const ProjectsPage = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[900px]">
                         <thead>
-                            <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
+                            <tr className="bg-slate-50 text-slate-600 text-[11px] tracking-wide uppercase border-b border-slate-200">
                                 <th className="py-4 px-6 font-semibold">Project Title</th>
                                 <th className="py-4 px-6 font-semibold">Student</th>
                                 <th className="py-4 px-6 font-semibold">Supervisor</th>
@@ -234,14 +234,14 @@ const ProjectsPage = () => {
                                 </tr>
                             ) : (
                                 filteredProjects.map(proj => (
-                                    <tr key={proj._id} className="hover:bg-slate-50/70 transition-colors">
+                                    <tr key={proj._id} className="transition hover:bg-slate-50/80 hover:shadow-[inset_0_1px_0_rgba(0,0,0,0.02)]">
                                         <td className="py-4 px-6 w-1/4">
-                                            <p className="text-sm font-bold text-slate-800 line-clamp-1" title={proj.title}>{proj.title}</p>
+                                            <p className="text-[15px] font-semibold text-slate-900 line-clamp-1" title={proj.title}>{proj.title}</p>
                                             <p className="text-xs text-slate-500 line-clamp-1 mt-1" title={proj.description}>{proj.description}</p>
                                         </td>
                                         <td className="py-4 px-6">
                                             <div className="flex items-center gap-2">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 text-xs ${proj.student ? 'bg-blue-100 text-blue-600' : 'bg-red-50 text-red-500'}`}>
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 text-xs ${proj.student ? 'bg-slate-100 text-slate-600' : 'bg-red-50 text-red-500'}`}>
                                                     {proj.student?.name?.charAt(0) || "D"}
                                                 </div>
                                                 <div className="flex flex-col">
@@ -253,43 +253,47 @@ const ProjectsPage = () => {
                                             <span className="text-sm font-medium text-slate-600">{proj.supervisor?.name || <span className="text-slate-400 italic">Unassigned</span>}</span>
                                         </td>
                                         <td className="py-4 px-6 text-center align-middle">
-                                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border whitespace-nowrap ${
-                                                proj.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200' :
-                                                proj.status === 'Pending' ? 'bg-amber-100 text-amber-700 border-amber-200' :
-                                                proj.status === 'Completed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                                                'bg-red-100 text-red-700 border-red-200'
-                                            }`}>
-                                                {proj.status === 'Pending' && <Clock size={12} />}
-                                                {proj.status === 'Approved' && <CheckCircle2 size={12} />}
-                                                {proj.status === 'Completed' && <CheckCircle2 size={12} />}
-                                                {proj.status === 'Rejected' && <XCircle size={12} />}
+                                            <div className="flex items-center justify-center gap-2 text-sm text-slate-700 font-medium">
+                                                <span className={`w-2 h-2 rounded-full ${
+                                                    proj.status === 'Completed' ? 'bg-emerald-500' :
+                                                    proj.status === 'Approved' ? 'bg-slate-400' :
+                                                    proj.status === 'Rejected' ? 'bg-red-500' :
+                                                    'bg-amber-500'
+                                                }`} />
                                                 {proj.status}
-                                            </span>
+                                            </div>
                                         </td>
-                                        <td className="py-4 px-6 text-sm text-slate-600 font-medium">
-                                            {proj.deadline ? new Date(proj.deadline).toLocaleDateString() : 'N/A'}
+                                        <td className="py-4 px-6">
+                                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                                                <span className={`w-1.5 h-1.5 rounded-full ${
+                                                    proj.deadline && new Date(proj.deadline) < new Date()
+                                                    ? 'bg-red-500'
+                                                    : 'bg-slate-400'
+                                                }`} />
+                                                {proj.deadline ? new Date(proj.deadline).toLocaleDateString() : 'N/A'}
+                                            </div>
                                         </td>
                                         <td className="py-4 px-6 text-right">
                                             <div className="flex items-center justify-end gap-2">
                                                 <button 
                                                     onClick={() => setSelectedProject(proj)}
-                                                    className="px-3 py-1.5 text-xs font-bold text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-100 hover:border-blue-300 rounded-md transition-all flex items-center gap-1.5 shadow-sm"
+                                                    className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:border-slate-300 transition"
                                                     title="View Details"
                                                 >
-                                                    <Eye size={14} /> View
+                                                    View
                                                 </button>
                                                 {proj.status === "Pending" && (
                                                     <>
                                                         <button 
                                                             onClick={() => handleStatusUpdate(proj._id, "Approved")}
-                                                            className="px-3 py-1.5 text-xs font-bold text-green-700 border border-green-200 bg-green-50 hover:bg-green-100 hover:border-green-300 rounded-md transition-all shadow-sm"
+                                                            className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:border-slate-300 transition"
                                                             title="Approve Proposal"
                                                         >
                                                             Approve
                                                         </button>
                                                         <button 
                                                             onClick={() => handleStatusUpdate(proj._id, "Rejected")}
-                                                            className="px-3 py-1.5 text-xs font-bold text-red-700 border border-red-200 bg-red-50 hover:bg-red-100 hover:border-red-300 rounded-md transition-all shadow-sm"
+                                                            className="px-3 py-1.5 text-xs font-medium text-red-600 bg-white border border-slate-200 rounded-md hover:bg-red-50 hover:border-red-200 transition"
                                                             title="Reject Proposal"
                                                         >
                                                             Reject
@@ -315,7 +319,7 @@ const ProjectsPage = () => {
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white sticky top-0 z-10 rounded-t-2xl">
                             <div className="flex items-center gap-4">
                                 <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
-                                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                                    <div className="p-2 bg-slate-100 text-slate-600 rounded-lg">
                                         <FolderKanban size={20} /> 
                                     </div>
                                     Project Details
@@ -323,7 +327,7 @@ const ProjectsPage = () => {
                                 <div className="flex gap-2">
                                     <button 
                                         onClick={() => setIsFeedbackModalOpen(true)}
-                                        className="inline-flex items-center gap-2 bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 hover:border-blue-300 px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-all"
+                                        className="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm transition-all"
                                     >
                                         <MessageSquare size={16} />
                                         Feedback
@@ -351,14 +355,15 @@ const ProjectsPage = () => {
                             {/* BASIC INFO */}
                             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative">
                                 <div className="absolute top-6 right-6">
-                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border shadow-sm ${
-                                            selectedProject.status === 'Approved' ? 'bg-green-50 text-green-700 border-green-200' :
-                                            selectedProject.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                                            selectedProject.status === 'Completed' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                            'bg-red-50 text-red-700 border-red-200'
-                                        }`}>
+                                    <div className="flex items-center justify-center gap-2 text-sm text-slate-700 font-medium px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
+                                        <span className={`w-2 h-2 rounded-full ${
+                                            selectedProject.status === 'Completed' ? 'bg-emerald-500' :
+                                            selectedProject.status === 'Approved' ? 'bg-slate-400' :
+                                            selectedProject.status === 'Rejected' ? 'bg-red-500' :
+                                            'bg-amber-500'
+                                        }`} />
                                         {selectedProject.status}
-                                    </span>
+                                    </div>
                                 </div>
                                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Project Title</h3>
                                 <h4 className="text-2xl font-extrabold text-slate-800 mb-4 pr-24 leading-snug">{selectedProject.title}</h4>
@@ -379,7 +384,7 @@ const ProjectsPage = () => {
                                 <div>
                                     <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Student Information</h3>
                                     <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-blue-200 transition-colors">
-                                        <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-xl shrink-0 border shadow-sm ${selectedProject.student ? 'bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 border-blue-200' : 'bg-red-50 text-red-500 border-red-100'}`}>
+                                        <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-xl shrink-0 border shadow-sm ${selectedProject.student ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-red-50 text-red-500 border-red-100'}`}>
                                             {selectedProject.student?.name?.charAt(0) || "D"}
                                         </div>
                                         <div className="flex flex-col overflow-hidden">
@@ -395,7 +400,7 @@ const ProjectsPage = () => {
                                     <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-indigo-200 transition-colors h-[98px]">
                                         {selectedProject.supervisor ? (
                                             <>
-                                                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-xl shrink-0 border border-indigo-200 shadow-sm">
+                                                <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xl shrink-0 border border-slate-200 shadow-sm">
                                                     {selectedProject.supervisor.name.charAt(0)}
                                                 </div>
                                                 <div className="flex flex-col overflow-hidden">
@@ -451,13 +456,14 @@ const ProjectsPage = () => {
                                                             <div key={i} className="flex flex-col gap-1.5 p-3 rounded-xl border border-slate-100 bg-slate-50">
                                                                 <div className="flex justify-between items-start gap-2">
                                                                     <p className={`text-sm font-bold line-clamp-1 ${t.status === "Completed" ? "text-slate-500 line-through decoration-slate-300" : "text-slate-800"}`}>{t.title}</p>
-                                                                    <span className={`text-[9px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded border shrink-0 ${
-                                                                        t.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                                        t.status === 'In Progress' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                                        'bg-slate-100 text-slate-600 border-slate-200'
-                                                                    }`}>
+                                                                    <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium shrink-0">
+                                                                        <span className={`w-1.5 h-1.5 rounded-full ${
+                                                                            t.status === 'Completed' ? 'bg-emerald-500' :
+                                                                            t.status === 'In Progress' ? 'bg-blue-500' :
+                                                                            'bg-slate-300'
+                                                                        }`} />
                                                                         {t.status}
-                                                                    </span>
+                                                                    </div>
                                                                 </div>
                                                                 <p className="text-[10px] uppercase font-bold text-slate-400 flex justify-between">
                                                                     <span>By: {t.assignedByRole === "admin" ? "Admin" : "Supervisor"}</span>
@@ -557,13 +563,14 @@ const ProjectsPage = () => {
                                         {studentFeedbacks.map((fb, idx) => (
                                             <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-4 relative group hover:border-emerald-200 transition-colors">
                                                 <div className="absolute top-4 right-4">
-                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest border ${
-                                                         fb.type === 'Positive' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                         fb.type === 'Needs Revision' ? 'bg-red-50 text-red-700 border-red-200' :
-                                                         'bg-blue-50 text-blue-700 border-blue-200'
-                                                     }`}>
-                                                         {fb.type}
-                                                     </span>
+                                                    <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${
+                                                            fb.type === 'Positive' ? 'bg-emerald-500' :
+                                                            fb.type === 'Needs Revision' ? 'bg-amber-500' :
+                                                            'bg-blue-500'
+                                                        }`} />
+                                                        {fb.type}
+                                                    </div>
                                                 </div>
                                                 <h4 className="text-sm font-bold text-slate-800 pr-20">{fb.title}</h4>
                                                 <p className="text-sm text-slate-600 mt-2 mb-3 bg-white p-3 rounded-lg border border-slate-100">{fb.message}</p>
@@ -572,9 +579,7 @@ const ProjectsPage = () => {
                                                     <div className="flex flex-col">
                                                         <span className="text-[11px] font-bold text-slate-700 flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
                                                             {fb.sender?.name || "Unknown"}
-                                                            <span className={`text-[9px] px-1.5 py-0.5 rounded-md self-start sm:self-auto ${
-                                                                fb.senderRole === "Admin" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"
-                                                            }`}>
+                                                            <span className="text-[10px] text-slate-500 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md self-start sm:self-auto">
                                                                 {fb.senderRole}
                                                             </span>
                                                         </span>
@@ -604,7 +609,7 @@ const ProjectsPage = () => {
                                     onClick={() => {
                                         handleStatusUpdate(selectedProject._id, "Rejected");
                                     }}
-                                    className="px-6 py-2.5 text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-xl transition-all shadow-sm"
+                                    className="px-6 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-xl transition shadow-sm"
                                 >
                                     Reject Proposal
                                 </button>
@@ -612,7 +617,7 @@ const ProjectsPage = () => {
                                     onClick={() => {
                                         handleStatusUpdate(selectedProject._id, "Approved");
                                     }}
-                                    className="px-6 py-2.5 text-sm font-bold text-white bg-green-500 hover:bg-green-600 rounded-xl transition-all shadow-md hover:shadow-lg"
+                                    className="px-6 py-2.5 text-sm font-medium text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition shadow-sm"
                                 >
                                     Approve Proposal
                                 </button>
