@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, deleteUser, adminAddSupervisor, adminUpdateUser } from "../../store/slices/adminSlice";
-import { GraduationCap, Trash2, ShieldAlert, Plus, X, Search, Filter, BookOpen, Users as UsersIcon, Edit2 } from "lucide-react";
+import { GraduationCap, Trash2, ShieldAlert, Plus, X, Search, Filter, Edit2 } from "lucide-react";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 
 const ManageTeachers = () => {
@@ -92,7 +92,7 @@ const ManageTeachers = () => {
     if (isLoading && teachers.length === 0) {
         return (
             <div className="flex justify-center items-center h-full min-h-[400px]">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
             </div>
         );
     }
@@ -100,19 +100,19 @@ const ManageTeachers = () => {
     return (
         <div className="space-y-6 pb-8">
             {/* Header & Main Actions */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="bg-white rounded-xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-50 text-green-600 rounded-xl">
+                    <div className="p-3 bg-slate-100 text-slate-600 rounded-lg">
                         <GraduationCap size={28} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Manage Supervisors</h1>
-                        <p className="text-slate-500 mt-1">Add, edit, filter, and manage faculty members.</p>
+                        <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Manage Supervisors</h1>
+                        <p className="text-sm text-slate-500 mt-1">Add, edit, filter, and manage faculty members.</p>
                     </div>
                 </div>
                 <button 
                     onClick={openCreateModal}
-                    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-md flex items-center gap-2"
+                    className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-md text-sm font-medium transition shadow-sm flex items-center gap-2"
                 >
                     <Plus size={18} />
                     Add Teacher
@@ -128,7 +128,7 @@ const ManageTeachers = () => {
                         placeholder="Search supervisor by name or email..." 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none"
+                        className="w-full pl-10 pr-4 py-2.5 text-sm rounded-md border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none"
                     />
                 </div>
                 <div className="relative w-full md:w-64">
@@ -136,7 +136,7 @@ const ManageTeachers = () => {
                     <select 
                         value={departmentFilter}
                         onChange={(e) => setDepartmentFilter(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none bg-white appearance-none"
+                        className="w-full pl-10 pr-4 py-2.5 text-sm rounded-md border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none bg-white appearance-none"
                     >
                         <option value="">All Departments</option>
                         {uniqueDepartments.map(dept => (
@@ -150,11 +150,11 @@ const ManageTeachers = () => {
             {filteredTeachers.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredTeachers.map((user) => (
-                        <div key={user._id} className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-200 flex flex-col relative group">
+                        <div key={user._id} className="bg-white border border-slate-200 rounded-xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition duration-200 flex flex-col relative group">
                             <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-opacity bg-slate-50/80 rounded-lg p-1 gap-1">
                                 <button 
                                     onClick={() => openEditModal(user)}
-                                    className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                    className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors"
                                     title="Edit Supervisor"
                                 >
                                     <Edit2 size={16} />
@@ -165,7 +165,7 @@ const ManageTeachers = () => {
                                             dispatch(deleteUser(user._id));
                                         }
                                     }}
-                                    className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                     title="Delete Supervisor"
                                 >
                                     <Trash2 size={16} />
@@ -173,28 +173,28 @@ const ManageTeachers = () => {
                             </div>
                             
                             <div className="flex items-start gap-4">
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-600 text-white flex items-center justify-center text-2xl font-bold shadow-md shrink-0">
+                                <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xl font-medium shrink-0">
                                     {user.name?.charAt(0).toUpperCase()}
                                 </div>
-                                <div className="flex flex-col pt-1 overflow-hidden pr-8">
-                                    <h3 className="text-lg font-bold text-slate-800 truncate">{user.name}</h3>
+                                <div className="flex flex-col pt-0.5 overflow-hidden pr-8">
+                                    <h3 className="text-base font-semibold text-slate-900 truncate">{user.name}</h3>
                                     <p className="text-sm text-slate-500 truncate">{user.email}</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-2 mt-4 mb-5">
-                                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-green-50 text-green-700 border border-green-100">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
                                     {user.department || "No Department"}
                                 </span>
                             </div>
 
                             <div className="space-y-3 flex-1">
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><BookOpen size={12} /> Expertise</p>
+                                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Expertise</p>
                                     <div className="flex flex-wrap gap-1.5">
                                         {user.experties && user.experties.length > 0 ? (
                                             user.experties.map((exp, idx) => (
-                                                <span key={idx} className="bg-slate-50 text-slate-600 text-[11px] px-2 py-0.5 border border-slate-200 rounded shrink-0">{exp}</span>
+                                                <span key={idx} className="bg-white text-slate-600 text-xs px-2.5 py-1 border border-slate-200 rounded-md shrink-0">{exp}</span>
                                             ))
                                         ) : (
                                             <span className="text-slate-400 text-xs italic">Not specified</span>
@@ -205,13 +205,13 @@ const ManageTeachers = () => {
                             
                             <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><UsersIcon size={12} /> Assigned</p>
-                                    <p className="font-semibold text-slate-800 text-lg tabular-nums">{user.assignedStudentsCount !== undefined ? user.assignedStudentsCount : (user.assignedStudents?.length || 0)}</p>
+                                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Assigned</p>
+                                    <p className="font-medium text-slate-800 text-base tabular-nums">{user.assignedStudentsCount !== undefined ? user.assignedStudentsCount : (user.assignedStudents?.length || 0)}</p>
                                 </div>
                                 {/* Capacity / Max Students visual placeholder */}
                                 <div className="text-right">
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</p>
-                                    <span className="inline-block mt-1 w-2.5 h-2.5 bg-green-500 rounded-full shadow-sm ring-2 ring-green-100"></span>
+                                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Status</p>
+                                    <span className="inline-block mt-1 w-2 h-2 bg-emerald-500 rounded-full shadow-sm ring-2 ring-emerald-50"></span>
                                     <span className="text-xs font-medium text-slate-600 ml-1.5">Active</span>
                                 </div>
                             </div>
@@ -219,11 +219,11 @@ const ManageTeachers = () => {
                     ))}
                 </div>
             ) : (
-                <div className="bg-white rounded-2xl border border-slate-100 p-12 flex flex-col items-center justify-center text-slate-500 shadow-sm">
+                <div className="bg-white rounded-xl border border-slate-200 p-12 flex flex-col items-center justify-center text-slate-500 shadow-sm">
                     <ShieldAlert size={48} className="text-slate-300 mb-4" />
                     <p className="text-lg font-medium text-slate-600">No supervisors found matching your criteria.</p>
                     {searchQuery || departmentFilter ? (
-                         <button onClick={() => { setSearchQuery(""); setDepartmentFilter(""); }} className="mt-4 text-green-600 font-medium hover:underline">Clear Filters</button>
+                         <button onClick={() => { setSearchQuery(""); setDepartmentFilter(""); }} className="mt-4 text-slate-900 font-medium hover:underline">Clear Filters</button>
                     ) : (
                          <p className="text-sm mt-1">Click "Add Teacher" above to register faculty members.</p>
                     )}
@@ -232,24 +232,24 @@ const ManageTeachers = () => {
 
             {/* 🔥 ADD/EDIT TEACHER MODAL */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-                        <div className="flex justify-between items-center p-5 border-b border-slate-100 shrink-0">
-                            <h2 className="text-lg font-bold text-slate-800">{editId ? 'Edit Supervisor Details' : 'Add New Supervisor'}</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition">
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+                        <div className="flex justify-between items-center p-6 border-b border-slate-100 shrink-0">
+                            <h2 className="text-lg font-semibold text-slate-900">{editId ? 'Edit Supervisor Details' : 'Add New Supervisor'}</h2>
+                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1 rounded-md transition">
                                 <X size={20} />
                             </button>
                         </div>
-                        <div className="overflow-y-auto p-5 shrink">
-                            <form id="teacherForm" onSubmit={handleSubmit} className="space-y-4">
+                        <div className="overflow-y-auto p-6 shrink custom-scrollbar">
+                            <form id="teacherForm" onSubmit={handleSubmit} className="space-y-5">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Full Name <span className="text-red-500">*</span></label>
-                                        <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none" placeholder="Dr. John Doe" />
+                                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name <span className="text-red-500">*</span></label>
+                                        <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-md border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none text-sm" placeholder="Dr. John Doe" />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Department <span className="text-red-500">*</span></label>
-                                        <select name="department" value={formData.department} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none bg-white">
+                                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Department <span className="text-red-500">*</span></label>
+                                        <select name="department" value={formData.department} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-md border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none bg-white text-sm">
                                             <option value="">Select department...</option>
                                             {departments.map((dep, index) => (
                                                 <option key={index} value={dep}>{dep}</option>
@@ -258,27 +258,27 @@ const ManageTeachers = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email Address <span className="text-red-500">*</span></label>
-                                    <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none" placeholder="faculty@university.edu" />
+                                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address <span className="text-red-500">*</span></label>
+                                    <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-2.5 rounded-md border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none text-sm" placeholder="faculty@university.edu" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5 flex justify-between">
+                                    <label className="block text-sm font-medium text-slate-700 mb-1.5 flex justify-between">
                                         <span>{editId ? 'New Password' : 'Temporary Password'} {editId ? '' : <span className="text-red-500">*</span>}</span>
                                         {editId && <span className="font-normal text-xs text-slate-400">(Leave blank to keep current)</span>}
                                     </label>
-                                    <input type="password" name="password" value={formData.password} onChange={handleChange} required={!editId} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none" placeholder="••••••••" />
+                                    <input type="password" name="password" value={formData.password} onChange={handleChange} required={!editId} className="w-full px-4 py-2.5 rounded-md border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none text-sm" placeholder="••••••••" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Expertise Topics (Comma Separated)</label>
-                                    <input type="text" name="experties" value={formData.experties} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition outline-none" placeholder="Machine Learning, IoT, Web Security" />
-                                    <p className="text-xs text-slate-500 mt-1">E.g. Web Development, Artificial Intelligence</p>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Expertise Topics (Comma Separated)</label>
+                                    <input type="text" name="experties" value={formData.experties} onChange={handleChange} className="w-full px-4 py-2.5 rounded-md border border-slate-200 focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none text-sm" placeholder="Machine Learning, IoT, Web Security" />
+                                    <p className="text-xs text-slate-500 mt-1.5">E.g. Web Development, Artificial Intelligence</p>
                                 </div>
                             </form>
                         </div>
-                        <div className="p-5 border-t border-slate-100 shrink-0 flex gap-3 bg-slate-50">
-                            <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-2.5 rounded-xl text-slate-700 font-medium bg-slate-200 hover:bg-slate-300 transition">Cancel</button>
-                            <button type="submit" form="teacherForm" disabled={isSubmitting} className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-green-600 hover:bg-green-700 active:bg-green-800 disabled:opacity-70 transition flex justify-center items-center">
-                                {isSubmitting ? <span className="animate-spin h-5 w-5 border-2 border-white/30 border-t-white rounded-full"></span> : (editId ? "Save Changes" : "Add Supervisor")}
+                        <div className="p-5 border-t border-slate-100 shrink-0 flex gap-3 bg-slate-50 justify-end">
+                            <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-md text-sm font-medium text-slate-600 hover:text-slate-900 bg-transparent transition-colors">Cancel</button>
+                            <button type="submit" form="teacherForm" disabled={isSubmitting} className="px-5 py-2.5 rounded-md text-white text-sm font-medium bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition flex justify-center items-center gap-2">
+                                {isSubmitting ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : (editId ? "Save Changes" : "Add Supervisor")}
                             </button>
                         </div>
                     </div>
