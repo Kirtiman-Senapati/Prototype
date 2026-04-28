@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { clearActivities } from '../../../store/slices/activitySlice';
 import { formatDateTime } from '../../../utils/timeFormat';
 
-const ActivityList = ({ activities }) => {
+const ActivityList = ({ activities, title = "Recent Activity" }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const dispatch = useDispatch();
 
@@ -63,7 +63,7 @@ const ActivityList = ({ activities }) => {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[600px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">
-                    Recent Activity
+                    {title}
                 </h2>
                 <div className="flex gap-4">
                      <button onClick={handleClear} className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">

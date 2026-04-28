@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getStudentDashboard, getStudentFeedback, updateTaskStatus } from "../../store/slices/studentSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { BookOpen, Clock, Loader, XCircle, AlertCircle, ArrowRight, FolderKanban, GraduationCap, MessageSquare, CheckSquare } from "lucide-react";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
-import { formatDateTime } from "../../utils/timeFormat";
 import { toast } from "../../utils/toast";
 import { useNavigate } from "react-router-dom";
 import MessageModal from "./components/MessageModal";
@@ -167,7 +166,7 @@ const StudentDashboard = () => {
           setIsCompletingProject(true);
           const { axiosInstance } = await import("../../lib/axios");
           await axiosInstance.put(`/student/complete-project/${project._id}`);
-          toast.success("Project marked as completed successfully! 🎉");
+          toast.success("Project marked as completed successfully! ≡ƒÄë");
           dispatch(getStudentDashboard());
           dispatch(getActivities());
       } catch (error) {
@@ -205,7 +204,7 @@ const StudentDashboard = () => {
 
   useAutoRefresh((data) => {
       if (!data || !data.deadline) return;
-      toast.info(<div>A new project deadline has been set.</div>, { icon: "📅" });
+      toast.info(<div>A new project deadline has been set.</div>, { icon: "≡ƒôà" });
       dispatch(getStudentDashboard());
   }, "deadlineUpdated");
 
@@ -225,7 +224,7 @@ const StudentDashboard = () => {
   }, "newActivity");
 
   useAutoRefresh(() => {
-      toast.info("You just received new feedback!", { icon: "💬" });
+      toast.info("You just received new feedback!", { icon: "≡ƒÆ¼" });
       dispatch(getStudentFeedback());
   }, "newFeedback");
 
@@ -287,7 +286,7 @@ const StudentDashboard = () => {
         )}
       </div>
 
-      {/* 🟣 NO PROPOSAL STATE */}
+      {/* ≡ƒƒú NO PROPOSAL STATE */}
       {!project && (
           <div className="bg-white border border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-center gap-5 shadow-sm">
              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
@@ -303,7 +302,7 @@ const StudentDashboard = () => {
           </div>
       )}
 
-      {/* 🟢 PROJECT EXISTS STATE (Main Dashboard) */}
+      {/* ≡ƒƒó PROJECT EXISTS STATE (Main Dashboard) */}
       {project && (
           <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
              
@@ -358,15 +357,15 @@ const StudentDashboard = () => {
                  </div>
              )}
              
-             {/* 🔹 Core 4-Stat Cards Row (Imported from Admin) */}
+             {/* ≡ƒö╣ Core 4-Stat Cards Row (Imported from Admin) */}
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard title="Project Name" value={project.title} icon={FolderKanban} />
                 <StatCard title="Supervisor" value={project.supervisor?.name || "Unassigned"} icon={GraduationCap} />
-                <StatCard title="Submission Deadline" value={project.deadline ? new Date(project.deadline).toLocaleDateString() : 'Not Set'} icon={Clock} />
+                <StatCard title="Deadline" value={project.deadline ? new Date(project.deadline).toLocaleDateString() : 'Not Set'} icon={Clock} />
                 <StatCard title="Feedback Received" value={feedbacks?.length || 0} icon={MessageSquare} />
              </div>
 
-             {/* 🔹 Main Content Grids (Admin Split 60/40) */}
+             {/* ≡ƒö╣ Main Content Grids (Admin Split 60/40) */}
              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                  
                  {/* Left Column (span-3) */}
