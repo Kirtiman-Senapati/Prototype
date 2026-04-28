@@ -16,6 +16,28 @@ const formatTimeAgo = (dateString) => {
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 };
 
+const getIconStyle = (act) => {
+  switch (act.actionType) {
+    case "PROJECT_APPROVED":
+    case "TASK_COMPLETED":
+      return "bg-emerald-50 text-emerald-600 border border-emerald-100";
+
+    case "PROJECT_REJECTED":
+    case "REQUEST_REJECTED":
+      return "bg-rose-50 text-rose-600 border border-rose-100";
+
+    case "SUPERVISOR_ASSIGNED":
+    case "USER_ADDED":
+      return "bg-indigo-50 text-indigo-600 border border-indigo-100";
+
+    case "DEADLINE_SET":
+      return "bg-amber-50 text-amber-600 border border-amber-100";
+
+    default:
+      return "bg-slate-100 text-slate-600 border border-slate-200";
+  }
+};
+
 const getIconForType = (type) => {
   switch (type) {
     case 'PROPOSAL_SUBMITTED':
@@ -93,15 +115,15 @@ const NotificationsPage = () => {
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500 pb-10">
       
       {/* Header section WhatsApp Web style */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-7 border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Notifications</h1>
-          <p className="text-slate-500 mt-1 font-medium text-sm">Stay updated with your project activities.</p>
+          <h1 className="text-3xl font-semibold text-slate-800 tracking-tight">Notifications</h1>
+          <p className="text-slate-500 mt-1 text-sm">Stay updated with your project activities.</p>
         </div>
         {stats.unread > 0 && (
           <button 
             onClick={handleMarkAllAsRead}
-            className="text-sm font-bold bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-2"
+            className="text-sm font-medium bg-white/80 backdrop-blur text-blue-600 border border-blue-200 hover:bg-blue-50 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all duration-200 ease-out flex items-center gap-2"
           >
             <MailOpen size={16} /> Mark all as read
           </button>
@@ -109,109 +131,116 @@ const NotificationsPage = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4 transition hover:-translate-y-1">
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0"><Bell size={20} /></div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
+          <div className="w-11 h-11 bg-blue-50 text-blue-600 border border-blue-100 rounded-xl flex items-center justify-center shadow-sm shrink-0"><Bell size={20} /></div>
           <div>
-            <p className="text-2xl font-black text-slate-800 leading-none">{stats.total}</p>
-            <p className="text-xs font-bold text-slate-400 tracking-wider uppercase mt-1">Total</p>
+            <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.total}</p>
+            <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">Total</p>
           </div>
         </div>
         
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4 transition hover:-translate-y-1">
-          <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center shrink-0 relative">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
+          <div className="w-11 h-11 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
              <MailOpen size={20} />
-             {stats.unread > 0 && <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>}
+             {stats.unread > 0 && <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>}
           </div>
           <div>
-            <p className="text-2xl font-black text-slate-800 leading-none">{stats.unread}</p>
-            <p className="text-xs font-bold text-slate-400 tracking-wider uppercase mt-1">Unread</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4 transition hover:-translate-y-1">
-          <div className="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center shrink-0"><Check size={20} /></div>
-          <div>
-            <p className="text-2xl font-black text-slate-800 leading-none">{stats.read}</p>
-            <p className="text-xs font-bold text-slate-400 tracking-wider uppercase mt-1">Read</p>
+            <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.unread}</p>
+            <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">Unread</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4 transition hover:-translate-y-1">
-          <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center shrink-0"><AlertTriangle size={20} /></div>
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
+          <div className="w-11 h-11 bg-green-50 text-green-600 border border-green-100 rounded-xl flex items-center justify-center shadow-sm shrink-0"><Check size={20} /></div>
           <div>
-            <p className="text-2xl font-black text-slate-800 leading-none">{stats.highPriority}</p>
-            <p className="text-xs font-bold text-slate-400 tracking-wider uppercase mt-1">High Priority</p>
+            <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.read}</p>
+            <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">Read</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
+          <div className="w-11 h-11 bg-red-50 text-red-600 border border-red-100 rounded-xl flex items-center justify-center shadow-sm shrink-0"><AlertTriangle size={20} /></div>
+          <div>
+            <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.highPriority}</p>
+            <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">High Priority</p>
           </div>
         </div>
       </div>
 
       {/* Notifications List */}
-      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+      <div className="bg-transparent mt-4">
         {displayActivities.length > 0 ? (
-          <div className="divide-y divide-slate-100 flex flex-col max-h-[600px] overflow-y-auto custom-scrollbar">
-            {displayActivities.map((act) => {
-              const isUnread = !act.readBy?.includes(authUser?._id);
-              return (
-                <div 
-                  key={act._id} 
-                  className={`p-5 md:p-6 flex flex-col md:flex-row gap-4 md:gap-6 items-start transition duration-300 relative group
-                    ${isUnread ? 'bg-blue-50/40 hover:bg-blue-50/70' : 'bg-white hover:bg-slate-50'}
-                  `}
-                >
-                  {/* Left accent border if unread */}
-                  {isUnread && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>}
-                  
-                  {/* Icon */}
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 mt-1 shadow-sm border
-                    ${act.priority === 'high' ? 'bg-red-50 text-red-500 border-red-100' : 
-                      isUnread ? 'bg-blue-100 text-blue-600 border-blue-200' : 'bg-slate-100 text-slate-500 border-slate-200'}
-                  `}>
-                    {getIconForType(act.actionType)}
-                  </div>
+          <div className="relative flex flex-col max-h-[600px] overflow-y-auto custom-scrollbar pb-6">
+            {/* Timeline Line */}
+            <div className="absolute left-[20px] top-8 bottom-4 w-[2px] bg-slate-200 hidden md:block z-0"></div>
 
-                  {/* Content */}
-                  <div className="flex-1 w-full relative">
-                     <div className="flex justify-between items-start mb-1 gap-2">
-                        <p className={`text-base leading-snug font-medium ${isUnread ? 'text-slate-900 font-bold' : 'text-slate-700'}`}>
-                          {act.message}
-                        </p>
-                        <span className="shrink-0 text-xs font-bold text-slate-400 whitespace-nowrap">
-                          {formatTimeAgo(act.createdAt)}
-                        </span>
-                     </div>
-                     
-                     <div className="flex flex-wrap items-center mt-3 gap-3">
-                        <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wider">
-                          By: {act.actor?.name || "System"}
-                        </span>
-                        
-                        {act.priority === 'high' && (
-                            <span className="text-[10px] font-black px-2.5 py-1 rounded-md bg-red-100 text-red-700 border border-red-200 uppercase tracking-widest flex items-center gap-1">
-                              <AlertTriangle size={12}/> HIGH PRIORITY
-                            </span>
-                        )}
+            <div className="space-y-[18px]">
+              {displayActivities.map((act) => {
+                const isUnread = !act.readBy?.includes(authUser?._id);
+                return (
+                  <div 
+                    key={act._id} 
+                    className="relative md:pl-16 z-10"
+                  >
+                    <div className="absolute left-[19px] top-4 w-2 h-2 bg-slate-300 rounded-full z-0 hidden md:block"></div>
+                    {/* Icon - positioned on timeline on desktop */}
+                    <div className={`hidden md:flex absolute left-0 top-1 w-10 h-10 rounded-lg items-center justify-center shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.04)] ${getIconStyle(act)}`}>
+                      {getIconForType(act.actionType)}
+                    </div>
 
-                        {!isUnread && (
-                            <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
-                               <Check size={14} /> Read
+                    {/* Card Content */}
+                    <div className={`border px-5 py-[18px] rounded-[14px] shadow-sm hover:shadow-md transition-all duration-200 ease-out flex flex-col md:flex-row gap-[14px] items-start relative group
+                      ${isUnread ? 'border-slate-200 bg-white' : 'border-slate-200/70 bg-slate-50/40'}
+                    `}>
+                      {/* Mobile Icon */}
+                      <div className={`md:hidden w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.04)] ${getIconStyle(act)}`}>
+                        {getIconForType(act.actionType)}
+                      </div>
+
+                      <div className="flex-1 w-full">
+                        <div className="flex justify-between items-start mb-2 gap-[14px]">
+                            <p className={`text-[14.5px] leading-[1.5] ${isUnread ? 'font-normal text-slate-800' : 'font-normal text-slate-500'}`}>
+                              {act.message}
+                            </p>
+                            <span className="shrink-0 text-[11px] font-medium text-slate-400 whitespace-nowrap mt-1">
+                              {formatTimeAgo(act.createdAt)}
                             </span>
-                        )}
+                        </div>
                         
-                        {/* Hover Actions */}
-                        {isUnread && (
-                            <button 
-                                onClick={() => handleMarkAsRead(act._id)}
-                                className="ml-auto opacity-0 group-hover:opacity-100 text-xs font-bold text-blue-600 transition-opacity bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 absolute -bottom-1 md:bottom-auto md:top-8 right-2"
-                            >
-                                Mark as read
-                            </button>
-                        )}
-                     </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <span className="text-[10px] font-medium px-2 py-1 rounded bg-slate-100 text-slate-500 uppercase tracking-wide">
+                              By: {act.actor?.name || "System"}
+                            </span>
+                            
+                            {act.priority === 'high' && (
+                                <span className="text-[10px] font-semibold px-2 py-1 rounded bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wide flex items-center gap-1">
+                                  <AlertTriangle size={12}/> HIGH PRIORITY
+                                </span>
+                            )}
+
+                            {!isUnread && (
+                                <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1 uppercase tracking-wide">
+                                  <Check size={12} /> Read
+                                </span>
+                            )}
+                            
+                            {/* Hover Actions */}
+                            {isUnread && (
+                                <button 
+                                    onClick={() => handleMarkAsRead(act._id)}
+                                    className="ml-auto opacity-0 group-hover:opacity-100 text-[11px] font-medium text-blue-600 transition-opacity bg-white hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200"
+                                >
+                                    Mark as read
+                                </button>
+                            )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         ) : (
           <div className="py-20 flex flex-col items-center justify-center text-center px-4">
