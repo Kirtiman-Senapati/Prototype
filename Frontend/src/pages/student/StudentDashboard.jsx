@@ -376,7 +376,7 @@ const StudentDashboard = () => {
                              onMarkDone={handleMarkTaskDone} 
                          />
                      </div>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[280px]">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[300px]">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
