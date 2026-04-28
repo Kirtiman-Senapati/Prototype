@@ -179,7 +179,7 @@ const FeedbackList = ({ feedbacks }) => {
     }
     
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[400px]">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[300px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
             </div>
@@ -427,15 +427,13 @@ const StudentDashboard = () => {
                  
                  {/* Left Column (span-3) */}
                  <div className="lg:col-span-3 space-y-6 flex flex-col">
+                     <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
+                     <FeedbackList feedbacks={feedbacks} />
                      <TasksList 
                          tasks={project.tasks} 
                          completingTasks={completingTasks} 
                          onMarkDone={handleMarkTaskDone} 
                      />
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1">
-                         <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
-                         <FeedbackList feedbacks={feedbacks} />
-                     </div>
                  </div>
 
                  {/* Right Column (span-2) */}
