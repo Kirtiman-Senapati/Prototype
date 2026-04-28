@@ -138,18 +138,13 @@ const StudentDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* 🚀 Welcome Banner - Always visible */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 md:p-10 text-white shadow-lg overflow-hidden relative">
-        <div className="relative z-10 flex justify-between items-center">
-            <div>
-                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Welcome back, {authUser?.name?.split(' ')[0] || "Student"}!</h1>
-                <p className="mt-2 text-blue-100 text-lg font-medium opacity-90">
-                    {project ? "Here's your project overview and recent updates." : "Let's submit your academic project proposal to get started."}
-                </p>
-            </div>
-        </div>
-        {/* Decorative background shapes */}
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-24 right-10 w-48 h-48 bg-white opacity-10 rounded-full blur-2xl"></div>
+      <div className="bg-white border border-slate-200 rounded-xl px-6 py-5">
+        <h1 className="text-lg font-semibold text-slate-800">
+          Welcome back, {authUser?.name?.split(' ')[0] || "Student"}!
+        </h1>
+        <p className="text-sm text-slate-500 mt-1">
+          {project ? "Here's your project overview and recent updates." : "Let's submit your academic project proposal to get started."}
+        </p>
       </div>
 
       {/* 🟣 NO PROPOSAL STATE */}
@@ -220,22 +215,22 @@ const StudentDashboard = () => {
              )}
              
              {/* 🔹 Core 4-Stat Cards Row */}
-             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-center transition-transform hover:-translate-y-1">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Project</p>
-                    <p className="font-bold text-slate-800 line-clamp-1" title={project.title}>{project.title}</p>
+             <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+                <div className="bg-white border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs text-slate-400">Project</p>
+                    <p className="text-sm font-medium text-slate-800 mt-1 line-clamp-1" title={project.title}>{project.title}</p>
                 </div>
-                <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-center transition-transform hover:-translate-y-1">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Supervisor</p>
-                    <p className="font-bold text-slate-800 line-clamp-1">{project.supervisor?.name || "Unassigned"}</p>
+                <div className="bg-white border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs text-slate-400">Supervisor</p>
+                    <p className="text-sm font-medium text-slate-800 mt-1 line-clamp-1">{project.supervisor?.name || "Unassigned"}</p>
                 </div>
-                <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-center transition-transform hover:-translate-y-1">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Submission Deadline</p>
-                    <p className="font-bold text-slate-800 line-clamp-1">{project.deadline ? new Date(project.deadline).toLocaleDateString() : 'Not Set'}</p>
+                <div className="bg-white border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs text-slate-400">Submission Deadline</p>
+                    <p className="text-sm font-medium text-slate-800 mt-1 line-clamp-1">{project.deadline ? new Date(project.deadline).toLocaleDateString() : 'Not Set'}</p>
                 </div>
-                <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-center transition-transform hover:-translate-y-1">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Feedback</p>
-                    <p className="font-bold text-slate-800 line-clamp-1">{feedbacks?.length || 0} Messages</p>
+                <div className="bg-white border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs text-slate-400">Feedback</p>
+                    <p className="text-sm font-medium text-slate-800 mt-1 line-clamp-1">{feedbacks?.length || 0} Messages</p>
                 </div>
              </div>
 
@@ -243,216 +238,169 @@ const StudentDashboard = () => {
              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                  
                  {/* Project Overview */}
-                 <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col hover:shadow-md transition-shadow">
-                     <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                         <h2 className="font-bold text-slate-800 flex items-center gap-2"><Briefcase size={18} className="text-blue-500"/> Project Overview</h2>
-                         <div className="flex items-center gap-2">
-                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase border shadow-sm ${
-                                 project.status === 'Completed' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
-                                 project.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                 project.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                                 'bg-red-50 text-red-700 border-red-200'
-                             }`}>
+                 <div className="bg-white border border-slate-200 rounded-xl p-5">
+                     <div className="flex items-center justify-between mb-4">
+                         <h2 className="text-sm font-medium text-slate-800">Project Overview</h2>
+                         <div className="flex items-center gap-3">
+                             <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                                 <span className={`w-2 h-2 rounded-full ${
+                                    project.status === 'Completed' ? 'bg-emerald-500' :
+                                    project.status === 'Approved' ? 'bg-blue-500' :
+                                    project.status === 'Pending' ? 'bg-amber-500' :
+                                    'bg-red-500'
+                                 }`}></span>
                                  {project.status}
-                             </span>
+                             </div>
                              {project.supervisor && (
                                  <button 
                                      onClick={() => setIsMessageModalOpen(true)}
-                                     className="bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
-                                     title="Send Message/Update to Supervisor"
+                                     className="text-xs border border-slate-200 px-3 py-1 rounded-md text-slate-600 hover:bg-slate-50 transition-colors"
                                  >
-                                     <MessageSquare size={14} /> Update
+                                     Update
                                  </button>
                              )}
                              {project.status === 'Approved' && project.supervisor && (
                                  <button 
                                      onClick={handleCompleteProject}
                                      disabled={isCompletingProject}
-                                     className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 shadow-sm disabled:opacity-50"
-                                     title="Mark your project as completed"
+                                     className="text-xs bg-emerald-600 text-white px-3 py-1 rounded-md hover:bg-emerald-700 transition-colors disabled:opacity-50"
                                  >
-                                     {isCompletingProject ? <Loader size={14} className="animate-spin" /> : <CheckCircle size={14} />} 
-                                     {isCompletingProject ? "Completing..." : "Mark as Completed"}
+                                     {isCompletingProject ? "Completing..." : "Complete"}
                                  </button>
                              )}
                          </div>
                      </div>
-                     <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar max-h-[150px]">
-                         <p className="text-sm text-slate-600 leading-relaxed font-medium">{project.description}</p>
-                     </div>
+                     <p className="text-sm text-slate-600 leading-relaxed max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
+                        {project.description}
+                     </p>
                  </div>
 
                  {/* Latest Feedback */}
-                 <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col hover:shadow-md transition-shadow">
-                     <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                         <h2 className="font-bold text-slate-800 flex items-center gap-2"><MessageSquare size={18} className="text-emerald-500"/> Latest Feedback</h2>
+                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col">
+                     <div className="flex items-center justify-between mb-4">
+                         <h2 className="text-sm font-medium text-slate-800">Latest Feedback</h2>
                      </div>
                      <div className="flex-1">
                         {latestFeedback.length > 0 ? (
-                            <div className="space-y-3 overflow-y-auto pr-2 custom-scrollbar max-h-[150px]">
+                            <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar max-h-[150px]">
                                  {latestFeedback.map((fb, idx) => (
-                                     <div key={idx} className="p-4 bg-slate-50 border border-slate-100 rounded-xl relative group">
-                                         {/* Badge */}
-                                         <div className="absolute top-4 right-4">
-                                             <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest border ${
-                                                 fb.type === 'Positive' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                 fb.type === 'Needs Revision' ? 'bg-red-50 text-red-700 border-red-200' :
-                                                 'bg-blue-50 text-blue-700 border-blue-200'
-                                             }`}>
-                                                 {fb.type}
-                                             </span>
+                                     <div key={idx} className="border-b border-slate-100 pb-3 last:border-0">
+                                         <div className="flex justify-between items-start mb-1 gap-2">
+                                            <h4 className="text-sm text-slate-800 truncate">{fb.title}</h4>
+                                            <span className={`px-2 py-0.5 rounded text-[10px] uppercase tracking-wide border shrink-0 ${
+                                                fb.type === 'Positive' ? 'text-emerald-700 border-emerald-200 bg-emerald-50' :
+                                                fb.type === 'Needs Revision' ? 'text-rose-700 border-rose-200 bg-rose-50' :
+                                                'text-slate-600 border-slate-200 bg-slate-50'
+                                            }`}>
+                                                {fb.type}
+                                            </span>
                                          </div>
-                                         <h4 className="text-sm font-bold text-slate-800 mb-1 pr-16 truncate">{fb.title}</h4>
-                                         <p className="text-xs text-slate-600 font-medium mb-3 line-clamp-2">{fb.message}</p>
-                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-2 flex justify-between">
+                                         <p className="text-xs text-slate-600 mb-2 line-clamp-2">{fb.message}</p>
+                                         <p className="text-[10px] text-slate-400 uppercase tracking-wide flex justify-between">
                                              <span>{fb.sender?.name || "Unknown"}</span>
-                                             <span>{new Date(fb.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                             <span>{new Date(fb.createdAt).toLocaleDateString()}</span>
                                          </p>
                                      </div>
                                  ))}
                              </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center text-slate-400 h-full py-6">
-                               <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                                  <MessageSquare size={24} className="text-slate-400 opacity-50" />
-                               </div>
-                               <p className="text-sm font-medium">No recent feedback.</p>
+                            <div className="text-center text-slate-400 py-6">
+                               <p className="text-sm">No recent feedback.</p>
                             </div>
                         )}
                      </div>
                  </div>
 
                  {/* Assigned Tasks */}
-                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col hover:shadow-md transition-shadow">
-                   <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-                     <h2 className="font-bold text-slate-800 flex items-center gap-2"><Clock size={18} className="text-indigo-500"/> Assigned Tasks</h2>
-                     <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md">{project.tasks?.length || 0} Total</span>
+                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col">
+                   <div className="flex justify-between items-center mb-4">
+                     <h2 className="text-sm font-medium text-slate-800">Assigned Tasks</h2>
                    </div>
                    <div className="flex-1">
                      {project.tasks && project.tasks.length > 0 ? (
-                       <div className="space-y-3 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                       <div className="max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
                          {[...project.tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task, i) => (
-                            <div key={i} className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100 transition hover:bg-slate-100 group">
-                              <div className="flex items-center gap-3">
-                                <button 
-                                  onClick={async () => {
-                                    if (task.status === 'Completed' || completingTasks[task._id]) return;
-                                    setCompletingTasks(prev => ({ ...prev, [task._id]: true }));
-                                    await dispatch(updateTaskStatus({ taskId: task._id, status: 'Completed' }));
-                                    setCompletingTasks(prev => ({ ...prev, [task._id]: false }));
-                                  }}
-                                  className={`shrink-0 flex items-center justify-center transition-colors ${task.status === 'Completed' ? 'text-green-500' : 'text-slate-300 hover:text-green-500 cursor-pointer'} ${completingTasks[task._id] ? 'opacity-50 pointer-events-none' : ''}`}
-                                  title={task.status === 'Completed' ? 'Completed' : 'Mark as Complete'}
-                                  disabled={task.status === 'Completed' || completingTasks[task._id]}
-                                >
-                                  {task.status === 'Completed' ? <CheckCircle size={22} className="fill-green-50" /> : <div className="w-[20px] h-[20px] rounded-full border-2 border-current group-hover:border-green-500 group-hover:bg-green-50 flex items-center justify-center" />}
-                                </button>
-                                <div className="flex-1">
-                                     <div className="flex items-center gap-2 mb-0.5 mt-0.5">
-                                         <p className={`text-sm font-bold leading-tight ${task.status === 'Completed' ? 'text-slate-500 line-through decoration-slate-300' : 'text-slate-800'}`}>{task.title}</p>
-                                         <span className={`text-[8px] font-extrabold uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm border ${task.assignedByRole === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-indigo-50 text-indigo-700 border-indigo-200'}`}>By {task.assignedByRole === 'admin' ? 'Admin' : 'Supervisor'}</span>
-                                     </div>
-                                     {task.deadline && (
-                                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
-                                             {task.status === 'Completed' && task.completedAt ? (
-                                                 <span className="text-green-600">Completed on {new Date(task.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
-                                             ) : (
-                                                 <>Due {new Date(task.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(task.deadline).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</>
-                                             )}
-                                         </p>
-                                     )}
-                                </div>
+                            <div key={i} className="flex items-center justify-between border-b border-slate-100 py-3 last:border-0">
+                              <div>
+                                <p className={`text-sm ${task.status === 'Completed' ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{task.title}</p>
+                                {task.deadline && (
+                                    <p className="text-xs text-slate-400 mt-1">
+                                      Due {new Date(task.deadline).toLocaleDateString()}
+                                    </p>
+                                )}
                               </div>
-                              <span className={`px-2.5 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold shadow-sm ${
-                                  task.status === 'Completed' ? 'bg-green-100 text-green-700 border border-green-200' :
-                                  task.status === 'In Progress' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 
-                                  'bg-slate-100 text-slate-600 border border-slate-200'
-                              }`}>{task.status}</span>
+                              <button
+                                onClick={async () => {
+                                  if (task.status === 'Completed' || completingTasks[task._id]) return;
+                                  setCompletingTasks(prev => ({ ...prev, [task._id]: true }));
+                                  await dispatch(updateTaskStatus({ taskId: task._id, status: 'Completed' }));
+                                  setCompletingTasks(prev => ({ ...prev, [task._id]: false }));
+                                }}
+                                disabled={task.status === 'Completed' || completingTasks[task._id]}
+                                className="text-xs border border-slate-200 px-3 py-1 rounded-md hover:bg-slate-50 text-slate-600 transition-colors disabled:opacity-50"
+                              >
+                                {task.status === 'Completed' ? "Done" : completingTasks[task._id] ? "..." : "Mark Done"}
+                              </button>
                             </div>
                          ))}
                        </div>
                      ) : (
-                       <div className="flex flex-col items-center justify-center text-slate-400 h-full py-6">
-                         <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-3">
-                            <CheckCircle size={24} className="text-green-500" />
-                         </div>
-                         <p className="text-sm font-medium">No assigned tasks. Great job!</p>
+                       <div className="text-center text-slate-400 py-6">
+                         <p className="text-sm">No assigned tasks.</p>
                        </div>
                      )}
                    </div>
                  </div>
 
                  {/* Recent Activity */}
-                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col hover:shadow-md transition-shadow">
-                   <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-                     <h2 className="font-bold text-slate-800 flex items-center gap-2"><Clock size={18} className="text-purple-500"/> Recent Activity</h2>
+                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col">
+                   <div className="flex justify-between items-center mb-4">
+                     <h2 className="text-sm font-medium text-slate-800">Recent Activity</h2>
                    </div>
                    <div className="flex-1">
                      {selfActivities.length > 0 ? (
                        <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
                          {selfActivities.slice(0, 5).map((act, i) => (
-                            <div key={i} className="flex gap-3 items-start pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                              <div className={`p-2 rounded-full shrink-0 shadow-sm mt-0.5 text-white bg-purple-500`}>
-                                <Clock size={14} />
+                            <div key={i} className="flex justify-between text-sm">
+                              <div className="flex-1 pr-4">
+                                <p className="text-slate-700 whitespace-pre-wrap">{renderMessage(act.message)}</p>
                               </div>
-                              <div>
-                                <p className="text-sm text-slate-700 font-medium whitespace-pre-wrap">{renderMessage(act.message)}</p>
-                                {act.details && (
-                                    <p className="text-[12.5px] text-slate-500 mt-1 border-l-2 border-slate-200 pl-2">
-                                        {act.details}
-                                    </p>
-                                )}
-                                <p className="text-[10px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">
-                                    {formatDateTime(act.createdAt)}
-                                </p>
-                              </div>
+                              <span className="text-xs text-slate-400 shrink-0 mt-0.5">
+                                {formatDateTime(act.createdAt)}
+                              </span>
                             </div>
                          ))}
                        </div>
                      ) : (
-                       <div className="flex flex-col items-center justify-center text-slate-400 h-full py-6">
-                         <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                            <Clock size={24} className="text-slate-400 opacity-50" />
-                         </div>
-                         <p className="text-sm font-medium">No recent activities.</p>
+                       <div className="text-center text-slate-400 py-6">
+                         <p className="text-sm">No recent activities.</p>
                        </div>
                      )}
                    </div>
                  </div>
 
                  {/* Recent Notifications */}
-                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col lg:col-span-2 hover:shadow-md transition-shadow">
-                   <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-                     <h2 className="font-bold text-slate-800 flex items-center gap-2"><Bell size={18} className="text-amber-500"/> Recent Notifications</h2>
+                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col lg:col-span-2">
+                   <div className="flex justify-between items-center mb-4">
+                     <h2 className="text-sm font-medium text-slate-800">Recent Notifications</h2>
                    </div>
                    <div className="flex-1">
                      {sysActivities.length > 0 ? (
                        <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
                          {sysActivities.slice(0, 5).map((act, i) => (
-                            <div key={i} className="flex gap-4 items-start pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                              <div className="bg-amber-50 text-amber-600 p-2.5 rounded-full shrink-0 mt-0.5 shadow-sm border border-amber-100">
-                                <Bell size={16} />
+                            <div key={i} className="flex justify-between text-sm">
+                              <div className="flex-1 pr-4">
+                                <p className="text-slate-700 leading-snug">{renderMessage(act.message)}</p>
                               </div>
-                              <div className="pt-0.5">
-                                <p className="text-sm text-slate-800 font-medium leading-snug">{renderMessage(act.message)}</p>
-                                {act.details && (
-                                    <p className="text-[12.5px] text-slate-500 mt-1 border-l-2 border-slate-200 pl-2">
-                                        {act.details}
-                                    </p>
-                                )}
-                                <p className="text-[10px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">
-                                    {formatDateTime(act.createdAt)}
-                                </p>
-                              </div>
+                              <span className="text-xs text-slate-400 shrink-0 mt-0.5">
+                                {formatDateTime(act.createdAt)}
+                              </span>
                             </div>
                          ))}
                        </div>
                      ) : (
-                       <div className="flex flex-col items-center justify-center text-slate-400 h-full py-8">
-                         <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                            <MessageSquare size={24} className="text-slate-400 opacity-50" />
-                         </div>
-                         <p className="text-sm font-medium">No recent notifications.</p>
+                       <div className="text-center text-slate-400 py-6">
+                         <p className="text-sm">No recent notifications.</p>
                        </div>
                      )}
                    </div>
