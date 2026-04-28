@@ -86,7 +86,7 @@ const ProjectOverview = ({ project, onUpdate }) => {
                     </button>
                 )}
             </div>
-            <div className="p-5 flex-1">
+            <div className="p-5 flex-1 overflow-y-auto custom-scrollbar">
                 <div className="flex items-center gap-2 mb-4">
                     <span className={`w-1.5 h-1.5 rounded-full ${
                         project.status === 'Completed' ? 'bg-emerald-500' :
@@ -108,7 +108,7 @@ const ProjectOverview = ({ project, onUpdate }) => {
 const FeedbackList = ({ feedbacks }) => {
     if (!feedbacks || feedbacks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-[200px]">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
                 </div>
@@ -365,27 +365,29 @@ const StudentDashboard = () => {
              </div>
 
              {/* 🔹 Main Content Grids (Admin Split 60/40) */}
-             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
                  
                  {/* Left Column (span-3) */}
-                 <div className="lg:col-span-3 space-y-6 flex flex-col">
-                     <TasksList 
-                         tasks={project.tasks} 
-                         completingTasks={completingTasks} 
-                         onMarkDone={handleMarkTaskDone} 
-                     />
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1">
+                 <div className="lg:col-span-3 flex flex-col gap-6">
+                     <div className="h-[340px]">
+                         <TasksList 
+                             tasks={project.tasks} 
+                             completingTasks={completingTasks} 
+                             onMarkDone={handleMarkTaskDone} 
+                         />
+                     </div>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[280px]">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
                  </div>
 
                  {/* Right Column (span-2) */}
-                 <div className="lg:col-span-2 space-y-6 flex flex-col">
-                     <div className="flex-1 min-h-[300px]">
+                 <div className="lg:col-span-2 flex flex-col gap-6">
+                     <div className="h-[320px]">
                         <ActivityList activities={selfActivities} title="Your Recent Activity" />
                      </div>
-                     <div className="flex-1 min-h-[300px]">
+                     <div className="h-[320px]">
                         <ActivityList activities={sysActivities} title="System Notifications" />
                      </div>
                  </div>
