@@ -384,10 +384,10 @@ const StudentDashboard = () => {
 
                  {/* Right Column (span-2) */}
                  <div className="lg:col-span-2 flex flex-col gap-6">
-                     <div className="h-[320px]">
+                     <div className="h-[280px]">
                         <ActivityList activities={selfActivities} title="Your Recent Activity" />
                      </div>
-                     <div className="h-[320px]">
+                     <div className="h-[360px]">
                         <ActivityList activities={sysActivities} title="System Notifications" />
                      </div>
                  </div>
