@@ -15,7 +15,7 @@ import ActivityList from "../admin/components/ActivityList";
 const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     if (!tasks || tasks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[350px]">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 </div>
@@ -29,14 +29,14 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
-            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
+            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center z-10">
                 <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{tasks.length} Total</span>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-y-auto custom-scrollbar flex-1">
                 <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="border-b border-slate-100">
+                    <thead className="sticky top-0 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10">
+                        <tr>
                             <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Task Name</th>
                             <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Deadline</th>
                             <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide text-right">Action</th>
@@ -368,12 +368,14 @@ const StudentDashboard = () => {
              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
                  
                  {/* Left Column (span-3) */}
-                 <div className="lg:col-span-3 flex flex-col gap-6 h-full">
-                     <TasksList 
-                         tasks={project.tasks} 
-                         completingTasks={completingTasks} 
-                         onMarkDone={handleMarkTaskDone} 
-                     />
+                 <div className="lg:col-span-3 flex flex-col gap-6 h-[624px]">
+                     <div className="h-[380px]">
+                         <TasksList 
+                             tasks={project.tasks} 
+                             completingTasks={completingTasks} 
+                             onMarkDone={handleMarkTaskDone} 
+                         />
+                     </div>
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
                          <FeedbackList feedbacks={feedbacks} />
@@ -381,11 +383,11 @@ const StudentDashboard = () => {
                  </div>
 
                  {/* Right Column (span-2) */}
-                 <div className="lg:col-span-2 flex flex-col gap-6 h-full">
-                     <div className="flex-1 min-h-[350px]">
+                 <div className="lg:col-span-2 flex flex-col gap-6 h-[624px]">
+                     <div className="h-[300px]">
                         <ActivityList activities={selfActivities} title="Your Recent Activity" />
                      </div>
-                     <div className="flex-1 min-h-[350px]">
+                     <div className="h-[300px]">
                         <ActivityList activities={sysActivities} title="System Notifications" />
                      </div>
                  </div>

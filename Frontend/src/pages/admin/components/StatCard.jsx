@@ -10,7 +10,7 @@ const StatCard = ({ title, value, icon: Icon }) => {
                 </div>
             </div>
             <div>
-                <p className="text-sm font-semibold text-slate-900 line-clamp-2">{value}</p>
+                <p className="text-[22px] font-bold text-slate-900 tracking-tight leading-tight line-clamp-2">{value}</p>
             </div>
         </div>
     );
