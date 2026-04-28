@@ -15,15 +15,13 @@ import ActivityList from "../admin/components/ActivityList";
 const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     if (!tasks || tasks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[300px]">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[350px]">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 </div>
-                <div className="p-10 flex flex-col items-center justify-center text-slate-500 flex-1">
-                    <div className="mb-3 text-slate-300">
-                        <CheckSquare size={32} strokeWidth={1.5} />
-                    </div>
-                    <p className="text-[13px] font-medium">No assigned tasks</p>
+                <div className="flex flex-col items-center justify-center h-full text-slate-400 flex-1">
+                   <CheckSquare size={28} />
+                   <p className="mt-2 text-sm font-medium">No tasks yet</p>
                 </div>
             </div>
         );
@@ -76,7 +74,7 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
 // Component: ProjectOverview
 const ProjectOverview = ({ project, onUpdate }) => {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden h-[220px] flex flex-col">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Project Overview</h2>
                 {project.supervisor && (
@@ -110,7 +108,7 @@ const ProjectOverview = ({ project, onUpdate }) => {
 const FeedbackList = ({ feedbacks }) => {
     if (!feedbacks || feedbacks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-[200px]">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden h-[220px] flex flex-col">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
                 </div>
@@ -123,12 +121,12 @@ const FeedbackList = ({ feedbacks }) => {
     }
     
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden h-[220px] flex flex-col">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
             </div>
-            <div className="p-5 space-y-4 overflow-y-auto">
-                {feedbacks.slice(0, 3).map((fb, idx) => (
+            <div className="p-5 overflow-y-auto custom-scrollbar flex-1">
+                {feedbacks.map((fb, idx) => (
                     <div key={idx} className="border-b border-slate-100 pb-4 last:border-0 last:pb-0">
                         <div className="flex justify-between items-start mb-1">
                             <h4 className="text-[13px] font-semibold text-slate-800">{fb.title}</h4>
@@ -367,27 +365,27 @@ const StudentDashboard = () => {
              </div>
 
              {/* 🔹 Main Content Grids (Admin Split 60/40) */}
-             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
                  
                  {/* Left Column (span-3) */}
-                 <div className="lg:col-span-3 space-y-6 flex flex-col">
+                 <div className="lg:col-span-3 flex flex-col gap-6 h-full">
                      <TasksList 
                          tasks={project.tasks} 
                          completingTasks={completingTasks} 
                          onMarkDone={handleMarkTaskDone} 
                      />
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
                  </div>
 
                  {/* Right Column (span-2) */}
-                 <div className="lg:col-span-2 space-y-6 flex flex-col">
-                     <div className="flex-1 min-h-[300px]">
+                 <div className="lg:col-span-2 flex flex-col gap-6 h-full">
+                     <div className="flex-1 min-h-[350px]">
                         <ActivityList activities={selfActivities} title="Your Recent Activity" />
                      </div>
-                     <div className="flex-1 min-h-[300px]">
+                     <div className="flex-1 min-h-[350px]">
                         <ActivityList activities={sysActivities} title="System Notifications" />
                      </div>
                  </div>

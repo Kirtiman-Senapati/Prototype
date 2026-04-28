@@ -2,7 +2,7 @@ import { TrendingUp, Minus } from "lucide-react";
 
 const StatCard = ({ title, value, icon: Icon }) => {
     return (
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5 flex flex-col justify-between hover:shadow-md transition-shadow">
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5 h-[110px] flex flex-col justify-between hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{title}</h3>
                 <div className="text-slate-400">
@@ -10,7 +10,7 @@ const StatCard = ({ title, value, icon: Icon }) => {
                 </div>
             </div>
             <div>
-                <p className="text-2xl font-semibold text-slate-900 tracking-tight">{value}</p>
+                <p className="text-sm font-semibold text-slate-900 line-clamp-2">{value}</p>
             </div>
         </div>
     );
