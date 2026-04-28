@@ -4,6 +4,7 @@ import { getStudentDashboard, getStudentFeedback, updateTaskStatus } from "../..
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { BookOpen, Clock, Loader, XCircle, AlertCircle, ArrowRight, FolderKanban, GraduationCap, MessageSquare, CheckSquare } from "lucide-react";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
+import { formatDateTime } from "../../utils/timeFormat";
 import { toast } from "../../utils/toast";
 import { useNavigate } from "react-router-dom";
 import MessageModal from "./components/MessageModal";
@@ -105,6 +106,62 @@ const ProjectOverview = ({ project, onUpdate }) => {
     );
 };
 
+// Component: NotificationList
+const NotificationList = ({ notifications, title = "System Notifications" }) => {
+    const renderMessage = (text) => {
+        if (!text) return null;
+        const cleanText = text.replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').replace(/^[:\s\-]+/, '').trim();
+        const parts = cleanText.split(/\*\*(.*?)\*\*/g);
+        return parts.map((part, i) => 
+            i % 2 === 1 ? <strong key={i} className="font-bold text-slate-900">{part}</strong> : part
+        );
+    };
+
+    if (!notifications || notifications.length === 0) {
+        return (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[400px]">
+                <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
+                    <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
+                </div>
+                <div className="p-6 flex flex-col items-center justify-center text-slate-500 flex-1">
+                    <p className="text-[13px]">No recent notifications</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[400px]">
+            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
+                <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
+            </div>
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
+                <div className="space-y-5">
+                    {notifications.map((activity, index) => (
+                        <div key={activity._id || index} className="relative flex items-start gap-4">
+                            <div className="w-2 h-2 mt-1.5 rounded-full ring-2 ring-white shadow-sm shrink-0 z-10 bg-indigo-500/80" />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-slate-800 leading-relaxed">
+                                    {renderMessage(activity.message)}
+                                </p>
+                                <div className="mt-1.5 flex items-center gap-2">
+                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                                        {activity.actionType?.replace(/_/g, ' ')}
+                                    </span>
+                                    <span className="text-[10px] text-slate-300">•</span>
+                                    <span className="text-[11px] text-slate-400 font-medium">
+                                        {formatDateTime(activity.createdAt)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 // Component: FeedbackList
 const FeedbackList = ({ feedbacks }) => {
     if (!feedbacks || feedbacks.length === 0) {
@@ -122,12 +179,12 @@ const FeedbackList = ({ feedbacks }) => {
     }
     
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
-            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[400px]">
+            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
             </div>
-            <div className="p-5 space-y-4 overflow-y-auto">
-                {feedbacks.slice(0, 3).map((fb, idx) => (
+            <div className="p-5 space-y-4 overflow-y-auto custom-scrollbar">
+                {feedbacks.map((fb, idx) => (
                     <div key={idx} className="border-b border-slate-100 pb-4 last:border-0 last:pb-0">
                         <div className="flex justify-between items-start mb-1">
                             <h4 className="text-[13px] font-semibold text-slate-800">{fb.title}</h4>
@@ -361,7 +418,7 @@ const StudentDashboard = () => {
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard title="Project Name" value={project.title} icon={FolderKanban} />
                 <StatCard title="Supervisor" value={project.supervisor?.name || "Unassigned"} icon={GraduationCap} />
-                <StatCard title="Deadline" value={project.deadline ? new Date(project.deadline).toLocaleDateString() : 'Not Set'} icon={Clock} />
+                <StatCard title="Submission Deadline" value={project.deadline ? new Date(project.deadline).toLocaleDateString() : 'Not Set'} icon={Clock} />
                 <StatCard title="Feedback Received" value={feedbacks?.length || 0} icon={MessageSquare} />
              </div>
 
@@ -384,10 +441,10 @@ const StudentDashboard = () => {
                  {/* Right Column (span-2) */}
                  <div className="lg:col-span-2 space-y-6 flex flex-col">
                      <div className="flex-1 min-h-[300px]">
-                        <ActivityList activities={selfActivities} title="Your Recent Activity" />
+                        <ActivityList activities={selfActivities} />
                      </div>
                      <div className="flex-1 min-h-[300px]">
-                        <ActivityList activities={sysActivities} title="System Notifications" />
+                        <NotificationList notifications={sysActivities} title="System Notifications" />
                      </div>
                  </div>
                  
