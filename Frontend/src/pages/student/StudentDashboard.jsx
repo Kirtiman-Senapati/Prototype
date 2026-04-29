@@ -15,8 +15,8 @@ import ActivityList from "../admin/components/ActivityList";
 const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     if (!tasks || tasks.length === 0) {
         return (
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[300px] hover:shadow-md transition-all duration-200">
-                <div className="p-5 border-b border-slate-100 bg-white/50 backdrop-blur-md flex justify-between items-center">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[300px]">
+                <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 </div>
                 <div className="flex flex-col items-center justify-center h-full text-slate-400 flex-1">
@@ -28,14 +28,14 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     }
 
     return (
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[380px] hover:shadow-md transition-all duration-200">
-            <div className="p-5 border-b border-slate-100 bg-white/50 backdrop-blur-md flex justify-between items-center z-10">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[380px]">
+            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center z-10">
                 <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{tasks.length} Total</span>
             </div>
             <div className="overflow-y-auto custom-scrollbar flex-1 min-h-0">
                 <table className="w-full text-left border-collapse">
-                    <thead className="sticky top-0 bg-white/90 backdrop-blur-sm shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10">
+                    <thead className="sticky top-0 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10">
                         <tr>
                             <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Task Name</th>
                             <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Deadline</th>
@@ -74,8 +74,8 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
 // Component: ProjectOverview
 const ProjectOverview = ({ project, onUpdate }) => {
     return (
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-md transition-all duration-200">
-            <div className="p-5 border-b border-slate-100 bg-white/50 backdrop-blur-md flex justify-between items-center">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Project Overview</h2>
                 {project.supervisor && (
                     <button 
@@ -108,8 +108,8 @@ const ProjectOverview = ({ project, onUpdate }) => {
 const FeedbackList = ({ feedbacks }) => {
     if (!feedbacks || feedbacks.length === 0) {
         return (
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-md transition-all duration-200">
-                <div className="p-5 border-b border-slate-100 bg-white/50 backdrop-blur-md flex justify-between items-center">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+                <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
                 </div>
                 <div className="p-10 flex flex-col items-center justify-center text-slate-500 flex-1 min-h-0">
@@ -121,8 +121,8 @@ const FeedbackList = ({ feedbacks }) => {
     }
     
     return (
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-md transition-all duration-200">
-            <div className="p-5 border-b border-slate-100 bg-white/50 backdrop-blur-md flex justify-between items-center">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
             </div>
             <div className="p-5 overflow-y-auto custom-scrollbar flex-1 min-h-0">
@@ -365,10 +365,10 @@ const StudentDashboard = () => {
              </div>
 
              {/* 🔹 Main Content Grids (Admin Split 60/40) */}
-             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                  
                  {/* Left Column (span-3) */}
-                 <div className="lg:col-span-3 flex flex-col gap-6">
+                 <div className="lg:col-span-3 space-y-6 flex flex-col">
                      <div className="h-[340px]">
                          <TasksList 
                              tasks={project.tasks} 
@@ -383,7 +383,7 @@ const StudentDashboard = () => {
                  </div>
 
                  {/* Right Column (span-2) */}
-                 <div className="lg:col-span-2 flex flex-col gap-6">
+                 <div className="lg:col-span-2 space-y-6 flex flex-col">
                      <div className="h-[280px]">
                         <ActivityList activities={selfActivities} title="Your Recent Activity" />
                      </div>

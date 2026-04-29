@@ -25,7 +25,7 @@ const ActivityList = ({ activities, title = "Recent Activity" }) => {
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col items-center justify-center text-slate-500 h-full hover:shadow-md transition-all duration-200">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col items-center justify-center text-slate-500 h-full">
                 <p>No recent activity</p>
             </div>
         );
@@ -60,8 +60,8 @@ const ActivityList = ({ activities, title = "Recent Activity" }) => {
     };
 
     return (
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-md transition-all duration-200">
-            <div className="p-5 border-b border-slate-100 bg-white/50 backdrop-blur-md flex justify-between items-center sticky top-0 z-10">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">
                     {title}
                 </h2>
