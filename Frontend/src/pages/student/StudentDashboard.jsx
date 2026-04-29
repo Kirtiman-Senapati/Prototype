@@ -9,13 +9,13 @@ import { toast } from "../../utils/toast";
 import { useNavigate } from "react-router-dom";
 import MessageModal from "./components/MessageModal";
 import StatCard from "../admin/components/StatCard";
-import ActivityList from "../admin/components/ActivityList";
+import StudentActivityList from './components/StudentActivityList';
 
 // Component: TasksList (Mirrors Admin ProjectList)
 const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     if (!tasks || tasks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[300px]">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 </div>
@@ -365,7 +365,7 @@ const StudentDashboard = () => {
              </div>
 
              {/* 🔹 Main Content Grids (Admin Split 60/40) */}
-             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
                  
                  {/* Left Column (span-3) */}
                  <div className="lg:col-span-3 space-y-6 flex flex-col">
@@ -376,7 +376,7 @@ const StudentDashboard = () => {
                              onMarkDone={handleMarkTaskDone} 
                          />
                      </div>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[300px]">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[280px]">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
@@ -384,11 +384,11 @@ const StudentDashboard = () => {
 
                  {/* Right Column (span-2) */}
                  <div className="lg:col-span-2 space-y-6 flex flex-col">
-                     <div className="h-[280px]">
-                        <ActivityList activities={selfActivities} title="Your Recent Activity" />
+                     <div className="h-[260px]">
+                        <StudentActivityList activities={selfActivities} title="Your Recent Activity" />
                      </div>
                      <div className="h-[360px]">
-                        <ActivityList activities={sysActivities} title="System Notifications" />
+                        <StudentActivityList activities={sysActivities} title="System Notifications" />
                      </div>
                  </div>
                  

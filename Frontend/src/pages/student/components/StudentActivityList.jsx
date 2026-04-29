@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { clearActivities } from '../../../store/slices/activitySlice';
 import { formatDateTime } from '../../../utils/timeFormat';
 
-const ActivityList = ({ activities, title = "Recent Activity" }) => {
+const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const dispatch = useDispatch();
 
@@ -25,8 +25,8 @@ const ActivityList = ({ activities, title = "Recent Activity" }) => {
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-64">
-                <p>No recent activity</p>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-full">
+                <p>No {title.toLowerCase() === 'system notifications' ? 'system notifications' : 'recent activity'}</p>
             </div>
         );
     }
@@ -97,7 +97,7 @@ const ActivityList = ({ activities, title = "Recent Activity" }) => {
                                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
                                         {activity.actionType?.replace(/_/g, ' ')}
                                     </span>
-                                    <span className="text-[10px] text-slate-300">•</span>
+                                    <span className="text-[10px] text-slate-300">â€¢</span>
                                     <span className="text-[11px] text-slate-400 font-medium">
                                         {formatDateTime(activity.createdAt)}
                                     </span>
@@ -111,4 +111,4 @@ const ActivityList = ({ activities, title = "Recent Activity" }) => {
     );
 };
 
-export default ActivityList;
+export default StudentActivityList;
