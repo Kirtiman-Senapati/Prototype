@@ -138,7 +138,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                       onClick={() => {
                         dispatch(logout()).then(() => navigate('/login'));
                       }}
-                      className="w-full text-left px-3 py-2 text-[13px] text-red-600 hover:bg-red-50 rounded-md transition mt-2"
+                     className="w-full text-left px-3 py-2 text-[13px] text-slate-600 hover:bg-slate-100 hover:text-red-600 rounded-md transition mt-2"
                     >
                       Sign out
                     </button>
