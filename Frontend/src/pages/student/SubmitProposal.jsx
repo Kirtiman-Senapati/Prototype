@@ -14,58 +14,86 @@ const SubmitProposal = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(submitProposal({ title, description })).then((res) => {
-      if(!res.error) navigate("/dashboard");
+      if (!res.error) navigate("/dashboard");
     });
   };
 
-  const isLocked = project && (project.status === "Pending" || project.status === "Approved" || project.status === "Completed");
+  const isLocked =
+    project &&
+    (project.status === "Pending" ||
+      project.status === "Approved" ||
+      project.status === "Completed");
 
   if (isLocked) {
-      return (
-          <div className="max-w-2xl mx-auto mt-10">
-              <div className="bg-white rounded-2xl p-8 md:p-12 text-center shadow-lg border border-slate-100 flex flex-col items-center animate-in fade-in zoom-in-95 duration-500">
-                  <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 shadow-inner ${
-                      project.status === "Approved" ? "bg-green-50 text-green-600" :
-                      project.status === "Completed" ? "bg-blue-50 text-blue-600" :
-                      "bg-amber-50 text-amber-500"
-                  }`}>
-                      {project.status === "Approved" && <CheckCircle2 size={40} />}
-                      {project.status === "Completed" && <CheckCircle2 size={40} />}
-                      {project.status === "Pending" && <Clock size={40} />}
-                  </div>
-                  
-                  <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight mb-3">Proposal Locked</h1>
-                  <p className="text-slate-500 text-lg max-w-md">
-                      You already have an active proposal marked as <strong className={`${
-                      project.status === "Approved" ? "text-green-600" :
-                      project.status === "Completed" ? "text-blue-600" :
-                      "text-amber-500"
-                  }`}>{project.status}</strong>. 
-                      You can only submit a new project proposal if your current one gets rejected.
-                  </p>
-
-                  <button 
-                      onClick={() => navigate("/dashboard")} 
-                      className="mt-8 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-                  >
-                      <ArrowLeft size={18} /> Return to Dashboard
-                  </button>
-              </div>
+    return (
+      <div className="max-w-2xl mx-auto mt-10">
+        <div className="bg-white rounded-2xl p-8 md:p-12 text-center shadow-lg border border-slate-100 flex flex-col items-center animate-in fade-in zoom-in-95 duration-500">
+          
+          <div className="mb-5">
+            {project.status === "Approved" && (
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            )}
+            {project.status === "Completed" && (
+              <CheckCircle2 className="w-8 h-8 text-blue-600" />
+            )}
+            {project.status === "Pending" && (
+              <Clock className="w-8 h-8 text-amber-500" />
+            )}
           </div>
-      );
+
+          <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight mb-3">
+            Proposal Locked
+          </h1>
+          <p className="text-slate-500 text-lg max-w-md">
+            You already have an active proposal marked as{" "}
+            <strong
+              className={`${
+                project.status === "Approved"
+                  ? "text-green-600"
+                  : project.status === "Completed"
+                    ? "text-blue-600"
+                    : "text-amber-500"
+              }`}
+            >
+              {project.status}
+            </strong>
+            . You can only submit a new project proposal if your current one
+            gets rejected.
+          </p>
+
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="mt-8 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+          >
+            <ArrowLeft size={18} /> Return to Dashboard
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="max-w-2xl mx-auto">
       <div className="card">
         <div className="card-header border-b border-slate-100 pb-5 mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">Submit Project Proposal</h1>
-          <p className="text-slate-500 mt-1">Provide details about your academic project. {project?.status === "Rejected" && <span className="font-bold text-red-500">Your previous proposal was rejected, you may submit a new one.</span>}</p>
+          <h1 className="text-2xl font-bold text-slate-800">
+            Submit Project Proposal
+          </h1>
+          <p className="text-slate-500 mt-1">
+            Provide details about your academic project.{" "}
+            {project?.status === "Rejected" && (
+              <span className="font-bold text-red-500">
+                Your previous proposal was rejected, you may submit a new one.
+              </span>
+            )}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Project Title</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">
+              Project Title
+            </label>
             <input
               type="text"
               className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-blue-500 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-800"
@@ -77,7 +105,9 @@ const SubmitProposal = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Project Description</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">
+              Project Description
+            </label>
             <textarea
               className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-blue-500 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-800 min-h-[200px] resize-y"
               value={description}
@@ -88,10 +118,18 @@ const SubmitProposal = () => {
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-8">
-            <button type="button" onClick={() => navigate("/dashboard")} className="px-6 py-3 font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm">
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard")}
+              className="px-6 py-3 font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
+            >
               Cancel
             </button>
-            <button type="submit" className="px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed" disabled={isLoading}>
+            <button
+              type="submit"
+              className="px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={isLoading}
+            >
               {isLoading ? "Submitting..." : "Submit Proposal"}
             </button>
           </div>
