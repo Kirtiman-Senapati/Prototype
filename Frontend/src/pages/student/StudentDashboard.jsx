@@ -8,7 +8,7 @@ import { formatDateTime } from "../../utils/timeFormat";
 import { toast } from "../../utils/toast";
 import { useNavigate } from "react-router-dom";
 import MessageModal from "./components/MessageModal";
-import StatCard from "../admin/components/StatCard";
+import StatCard from "./components/StatCard";
 import StudentActivityList from './components/StudentActivityList';
 
 // Component: TasksList (Mirrors Admin ProjectList)

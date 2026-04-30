@@ -1,15 +1,4 @@
-const StatCard = ({ title, value, icon: Icon, colorTheme = "blue" }) => {
-    
-    // Determine colors only for the icon to keep the card professional and clean
-    const iconColors = {
-        blue: "text-blue-600",
-        green: "text-emerald-600",
-        orange: "text-orange-600",
-        purple: "text-purple-600"
-    };
-
-    const iconColorClass = iconColors[colorTheme] || iconColors.blue;
-
+const StatCard = ({ title, value, icon: Icon }) => {
     return (
         <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col gap-2 min-h-[90px]">
             
@@ -18,7 +7,7 @@ const StatCard = ({ title, value, icon: Icon, colorTheme = "blue" }) => {
                 <h3 className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">
                     {title}
                 </h3>
-                {Icon && <Icon size={18} className={iconColorClass} />}
+                {Icon && <Icon size={18} className="text-slate-400" />}
             </div>
 
             {/* Value */}
