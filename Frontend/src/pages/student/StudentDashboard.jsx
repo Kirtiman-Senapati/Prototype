@@ -15,11 +15,11 @@ import StudentActivityList from './components/StudentActivityList';
 const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     if (!tasks || tasks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[420px]">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[320px]">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 </div>
-                <div className="flex flex-col items-center justify-center text-slate-400 flex-1">
+                <div className="flex flex-col items-center justify-center h-full text-slate-400">
                    <CheckSquare size={28} />
                    <p className="mt-2 text-sm font-medium">No tasks yet</p>
                 </div>
@@ -28,7 +28,7 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[420px]">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[320px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center z-10">
                 <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{tasks.length} Total</span>
@@ -74,7 +74,7 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
 // Component: ProjectOverview
 const ProjectOverview = ({ project, onUpdate }) => {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[420px]">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[220px] max-h-[260px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Project Overview</h2>
                 {project.supervisor && (
@@ -108,11 +108,11 @@ const ProjectOverview = ({ project, onUpdate }) => {
 const FeedbackList = ({ feedbacks }) => {
     if (!feedbacks || feedbacks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[420px]">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[220px] max-h-[260px]">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
                 </div>
-                <div className="p-10 flex flex-col items-center justify-center text-slate-500 flex-1 min-h-0">
+                <div className="flex flex-col items-center justify-center h-full text-slate-400">
                     <MessageSquare size={24} strokeWidth={1.5} className="mb-2 text-slate-300" />
                     <p className="text-[13px] font-medium">No recent feedback</p>
                 </div>
@@ -121,7 +121,7 @@ const FeedbackList = ({ feedbacks }) => {
     }
     
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[420px]">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[220px] max-h-[260px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
             </div>
@@ -365,25 +365,39 @@ const StudentDashboard = () => {
              </div>
 
              {/* 🔹 Main Content Grids (Admin Split 60/40) */}
-             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
                  
                  {/* Left Column (span-3) */}
-                 <div className="lg:col-span-3 flex flex-col gap-6">
-                     <TasksList 
-                         tasks={project.tasks} 
-                         completingTasks={completingTasks} 
-                         onMarkDone={handleMarkTaskDone} 
-                     />
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                 <div className="lg:col-span-3 flex flex-col gap-6 h-full">
+
+                     {/* TOP CARD */}
+                     <div className="h-[320px]">
+                         <TasksList 
+                             tasks={project.tasks} 
+                             completingTasks={completingTasks} 
+                             onMarkDone={handleMarkTaskDone} 
+                         />
+                     </div>
+
+                     {/* BOTTOM TWO CARDS */}
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[260px]">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
+
                  </div>
 
                  {/* Right Column (span-2) */}
-                 <div className="lg:col-span-2 flex flex-col gap-6">
-                    <StudentActivityList activities={selfActivities} title="Your Recent Activity" />
-                    <StudentActivityList activities={sysActivities} title="System Notifications" />
+                 <div className="lg:col-span-2 flex flex-col gap-6 h-full">
+
+                     <div className="h-[260px]">
+                         <StudentActivityList activities={selfActivities} title="Your Recent Activity" />
+                     </div>
+
+                     <div className="h-[320px]">
+                         <StudentActivityList activities={sysActivities} title="System Notifications" />
+                     </div>
+
                  </div>
                  
              </div>

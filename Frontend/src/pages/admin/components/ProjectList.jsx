@@ -11,7 +11,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                     <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
                     <a href={viewAllLink} className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>
                 </div>
-                <div className="p-10 flex flex-col items-center justify-center text-slate-500 flex-1">
+                <div className="flex flex-col items-center justify-center h-full text-slate-400">
                     <div className="mb-3 text-slate-300">
                         <FolderKanban size={32} strokeWidth={1.5} />
                     </div>

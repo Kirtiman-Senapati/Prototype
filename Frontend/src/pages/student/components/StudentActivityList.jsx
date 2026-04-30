@@ -25,8 +25,13 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-[420px]">
-                <p>No {title.toLowerCase() === 'system notifications' ? 'system notifications' : 'recent activity'}</p>
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm h-full flex flex-col">
+                <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
+                    <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
+                </div>
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+                    <p className="text-[13px] font-medium">No {title.toLowerCase() === 'system notifications' ? 'system notifications' : 'recent activity'}</p>
+                </div>
             </div>
         );
     }
@@ -60,7 +65,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
     };
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-[420px]">
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-full">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">
                     {title}
