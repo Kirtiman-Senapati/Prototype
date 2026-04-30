@@ -60,7 +60,7 @@ const ActivityList = ({ activities }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[600px]">
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-[420px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">
                     Recent Activity
@@ -76,7 +76,7 @@ const ActivityList = ({ activities }) => {
                      )}
                 </div>
             </div>
-            <div className={`p-6 overflow-y-auto custom-scrollbar flex-1 ${isExpanded ? 'max-h-[500px]' : ''}`}>
+            <div className="p-6 overflow-y-auto flex-1 min-h-0 custom-scrollbar">
                 <div className="space-y-5">
                     {displayActivities.map((activity, index) => (
                         <div key={activity._id || index} className="relative flex items-start gap-4">

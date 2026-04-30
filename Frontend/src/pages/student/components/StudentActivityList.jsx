@@ -25,7 +25,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-full">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 min-h-[200px]">
                 <p>No {title.toLowerCase() === 'system notifications' ? 'system notifications' : 'recent activity'}</p>
             </div>
         );
@@ -60,7 +60,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[600px]">
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-[420px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">
                     {title}
@@ -76,7 +76,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
                      )}
                 </div>
             </div>
-            <div className={`p-6 overflow-y-auto custom-scrollbar flex-1 ${isExpanded ? 'max-h-[500px]' : ''}`}>
+            <div className="p-6 overflow-y-auto flex-1 min-h-0 custom-scrollbar">
                 <div className="space-y-5">
                     {displayActivities.map((activity, index) => (
                         <div key={activity._id || index} className="relative flex items-start gap-4">

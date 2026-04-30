@@ -6,7 +6,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
 
     if (!projects || projects.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
                     <a href={viewAllLink} className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>
@@ -29,13 +29,13 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[420px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
                 <a href={viewAllLink} className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>
             </div>
             
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto overflow-y-auto flex-1 min-h-0 custom-scrollbar">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-slate-100">
