@@ -127,7 +127,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                       <p className="text-sm font-medium text-slate-800">
                         {authUser?.name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 truncate max-w-[140px] leading-tight">
                         {authUser?.email}
                       </p>
                       <p className="text-xs text-blue-600 capitalize font-medium mt-1">
@@ -138,7 +138,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                       onClick={() => {
                         dispatch(logout()).then(() => navigate('/login'));
                       }}
-                      className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md mt-2"
+                      className="w-full text-left px-3 py-2 text-[13px] text-red-600 hover:bg-red-50 rounded-md transition mt-2"
                     >
                       Sign out
                     </button>
