@@ -25,7 +25,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white border border-slate-200 rounded-xl shadow-sm h-full flex flex-col">
+            <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full overflow-hidden">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
                 </div>
@@ -65,7 +65,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
     };
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-full">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full overflow-hidden">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">
                     {title}
@@ -102,7 +102,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
                                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
                                         {activity.actionType?.replace(/_/g, ' ')}
                                     </span>
-                                    <span className="text-[10px] text-slate-300">&bull;</span>
+                                   <span className="w-1 h-1 bg-slate-300/70 rounded-full inline-block"></span>
                                     <span className="text-[11px] text-slate-400 font-medium">
                                         {formatDateTime(activity.createdAt)}
                                     </span>

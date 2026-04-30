@@ -15,7 +15,7 @@ import StudentActivityList from './components/StudentActivityList';
 const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     if (!tasks || tasks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[320px]">
+            <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[320px] overflow-hidden">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 </div>
@@ -28,7 +28,7 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[320px]">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[320px] overflow-hidden">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center z-10">
                 <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
                 <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{tasks.length} Total</span>
@@ -74,7 +74,7 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
 // Component: ProjectOverview
 const ProjectOverview = ({ project, onUpdate }) => {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[220px] max-h-[260px]">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Project Overview</h2>
                 {project.supervisor && (
@@ -108,7 +108,7 @@ const ProjectOverview = ({ project, onUpdate }) => {
 const FeedbackList = ({ feedbacks }) => {
     if (!feedbacks || feedbacks.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[220px] max-h-[260px]">
+            <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
                 </div>
@@ -121,7 +121,7 @@ const FeedbackList = ({ feedbacks }) => {
     }
     
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full min-h-[220px] max-h-[260px]">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
             </div>
@@ -368,7 +368,7 @@ const StudentDashboard = () => {
              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
                  
                  {/* Left Column (span-3) */}
-                 <div className="lg:col-span-3 flex flex-col gap-6 h-full">
+                 <div className="lg:col-span-3 flex flex-col gap-6">
 
                      {/* TOP CARD */}
                      <div className="h-[320px]">
@@ -388,7 +388,7 @@ const StudentDashboard = () => {
                  </div>
 
                  {/* Right Column (span-2) */}
-                 <div className="lg:col-span-2 flex flex-col gap-6 h-full">
+                 <div className="lg:col-span-2 flex flex-col gap-6">
 
                      <div className="h-[260px]">
                          <StudentActivityList activities={selfActivities} title="Your Recent Activity" />
