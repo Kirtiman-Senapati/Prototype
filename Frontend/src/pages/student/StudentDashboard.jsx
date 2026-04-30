@@ -262,7 +262,7 @@ const StudentDashboard = () => {
   }) || [];
 
   return (
-    <div className="space-y-8 pb-10 bg-[#F9FAFB] min-h-screen px-4 sm:px-6 lg:px-8">
+    <div className="space-y-4 pb-10 bg-[#F9FAFB] min-h-screen">
       
       {/* Premium Header Section */}
       <div className="pt-2 pb-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
@@ -303,7 +303,7 @@ const StudentDashboard = () => {
 
       {/* 🟢 PROJECT EXISTS STATE (Main Dashboard) */}
       {project && (
-          <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
+          <div className="space-y-8 animate-in fade-in duration-500 max-w-full mx-auto">
              
              {/* Dynamic Alerts */}
              {project.status === "Pending" && (
