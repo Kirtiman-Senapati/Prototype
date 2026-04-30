@@ -6,7 +6,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
 
     if (!projects || projects.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[420px]">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
                     <a href={viewAllLink} className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>

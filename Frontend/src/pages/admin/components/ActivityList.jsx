@@ -25,7 +25,7 @@ const ActivityList = ({ activities }) => {
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-64">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-[420px]">
                 <p>No recent activity</p>
             </div>
         );

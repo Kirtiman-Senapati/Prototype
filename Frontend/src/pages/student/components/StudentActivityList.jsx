@@ -25,7 +25,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 min-h-[200px]">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-[420px]">
                 <p>No {title.toLowerCase() === 'system notifications' ? 'system notifications' : 'recent activity'}</p>
             </div>
         );
