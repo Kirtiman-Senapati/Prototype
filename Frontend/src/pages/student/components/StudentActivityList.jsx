@@ -102,7 +102,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
                                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
                                         {activity.actionType?.replace(/_/g, ' ')}
                                     </span>
-                                    <span className="text-[10px] text-slate-300">â€¢</span>
+                                    <span className="text-[10px] text-slate-300">&bull;</span>
                                     <span className="text-[11px] text-slate-400 font-medium">
                                         {formatDateTime(activity.createdAt)}
                                     </span>
