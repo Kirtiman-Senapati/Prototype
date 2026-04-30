@@ -25,7 +25,7 @@ const ActivityList = ({ activities }) => {
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white border border-slate-200 rounded-xl shadow-sm h-[420px] flex flex-col">
+            <div className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden h-full">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Recent Activity</h2>
                 </div>
@@ -65,7 +65,7 @@ const ActivityList = ({ activities }) => {
     };
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-[420px]">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden h-full">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">
                     Recent Activity
