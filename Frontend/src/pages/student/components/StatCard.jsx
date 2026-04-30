@@ -1,7 +1,7 @@
 const StatCard = ({ title, value, icon: Icon }) => {
     return (
         
-        <div className="bg-white border border-slate-200 rounded-lg p-4 flex flex-col gap-1.5 min-h-[90px] transition-all duration-200 hover:shadow-sm hover:border-slate-300">
+        <div className="bg-white border border-slate-200 rounded-lg p-4 flex flex-col gap-1.2 min-h-[90px] transition-all duration-200 hover:shadow-sm hover:border-slate-300">
             
             {/* Top row */}
             <div className="flex items-center justify-between">
