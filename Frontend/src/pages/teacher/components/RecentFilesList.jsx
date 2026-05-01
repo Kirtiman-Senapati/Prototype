@@ -48,7 +48,7 @@ const RecentFilesList = ({ files }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
             <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                 <h3 className="font-semibold text-slate-800">Recent Files</h3>
                 <Link to="/dashboard/teacher-files" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">View All</Link>

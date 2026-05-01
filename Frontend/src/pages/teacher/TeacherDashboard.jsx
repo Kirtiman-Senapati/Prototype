@@ -57,11 +57,11 @@ const TeacherDashboard = () => {
             />
 
             {/* Metric Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 
                 <div 
                     onClick={() => setIsAssignedModalOpen(true)}
-                    className="cursor-pointer hover:-translate-y-1 transition-transform relative group block outline-none"
+                    className="cursor-pointer hover:border-slate-300 transition-transform relative group block outline-none"
                 >
                     <StatCard 
                         title="Assigned Students" 
@@ -78,7 +78,7 @@ const TeacherDashboard = () => {
 
                 <div 
                     onClick={() => setIsRequestsModalOpen(true)}
-                    className="cursor-pointer hover:-translate-y-1 transition-transform relative group block outline-none"
+                    className="cursor-pointer hover:border-slate-300 transition-transform relative group block outline-none"
                 >
                     <StatCard 
                         title="Pending Requests" 
@@ -95,7 +95,7 @@ const TeacherDashboard = () => {
                 
                 <div 
                     onClick={() => setIsCompletedModalOpen(true)}
-                    className="cursor-pointer hover:-translate-y-1 transition-transform relative group outline-none"
+                    className="cursor-pointer hover:border-slate-300 transition-transform relative group outline-none"
                 >
                     <StatCard 
                         title="Completed Projects" 
@@ -117,9 +117,9 @@ const TeacherDashboard = () => {
                     <h2 className="text-lg font-bold text-slate-800">Quick Actions</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Link to="/dashboard/pending-requests" className="group bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-5 flex items-center justify-between transition-all shadow-sm hover:shadow-md border border-blue-700/50">
+                    <Link to="/dashboard/pending-requests" className="group bg-white border border-slate-200 hover:border-slate-300 text-slate-800 rounded-lg p-4 flex items-center justify-between transition-all duration-200 hover:shadow-sm">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-white/20 rounded-lg">
+                            <div className="p-2 bg-slate-100 rounded-lg text-slate-800 ">
                                 <FileSignature size={20} />
                             </div>
                             <span className="font-medium text-base">View Pending Requests</span>
@@ -127,9 +127,9 @@ const TeacherDashboard = () => {
                         <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
                     </Link>
 
-                    <Link to="/dashboard/assigned-students" className="group bg-white hover:bg-slate-50 text-slate-700 rounded-xl p-5 flex items-center justify-between transition-all shadow-sm hover:shadow-md border border-slate-200 hover:border-slate-300">
+                    <Link to="/dashboard/assigned-students" className="group bg-white hover:bg-slate-50 text-slate-700 rounded-lg p-4 flex items-center justify-between transition-all border border-slate-200 hover:border-slate-300">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
+                            <div className="p-2 bg-slate-100 rounded-lg text-slate-800">
                                 <Users size={20} />
                             </div>
                             <span className="font-medium text-base">Manage Students</span>

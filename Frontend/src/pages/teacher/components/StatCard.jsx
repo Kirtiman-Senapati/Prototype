@@ -11,7 +11,7 @@ const StatCard = ({ title, value, icon: Icon, colorTheme = "blue" }) => {
     const iconColorClass = iconColors[colorTheme] || iconColors.blue;
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col gap-2 min-h-[90px]">
+        <div className="bg-white border border-slate-200 rounded-lg p-4 flex flex-col gap-2 min-h-[90px] transition-all hover:border-slate-300">
             
             {/* Top row */}
             <div className="flex items-center justify-between">
