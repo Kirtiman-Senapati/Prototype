@@ -56,7 +56,7 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                                 const completed = tasks.filter(t => t.status === "Completed").length;
                                 const progress = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
                                 return (
-                                    <span className="text-[10px] font-extrabold text-blue-600">{progress}% Done</span>
+                                    <span className="text-[10px] font-extrabold text-white-600">{progress}% Done</span>
                                 );
                             })()}
                         </div>
@@ -69,7 +69,7 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                             return (
                                 <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200 mb-3">
                                     <div 
-                                        className="bg-blue-600 h-1.5 rounded-full transition-all duration-1000 ease-out" 
+                                        className="bg-slate-600 h-1.5 rounded-full transition-all duration-1000 ease-out" 
                                         style={{ width: `${progress}%` }}
                                     ></div>
                                 </div>
@@ -107,14 +107,14 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                     <div className="mt-auto pt-2 flex gap-3">
                         <button 
                             onClick={onAddFeedback}
-                            className="flex-1 bg-white border border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
+                            className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-200 font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
                         >
                             <MessageSquare size={16} />
                             Feedback
                         </button>
                         <button 
                             onClick={onAddTask}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
+                            className="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
                         >
                             <Plus size={16} strokeWidth={2.5} />
                             Task

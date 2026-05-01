@@ -2,10 +2,10 @@ const StatCard = ({ title, value, icon: Icon, colorTheme = "blue" }) => {
     
     // Determine colors only for the icon to keep the card professional and clean
     const iconColors = {
-        blue: "text-blue-600",
-        green: "text-emerald-600",
-        orange: "text-orange-600",
-        purple: "text-purple-600"
+        blue: "text-slate-400",
+        green: "text-slate-400",
+        orange: "text-slate-400",
+        purple: "text-slate-400"
     };
 
     const iconColorClass = iconColors[colorTheme] || iconColors.blue;

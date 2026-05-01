@@ -70,7 +70,7 @@ const TeacherDashboard = () => {
                         colorTheme="blue"
                     />
                     <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 shadow-sm">
+                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
                             View List &rarr;
                         </span>
                     </div>
@@ -87,7 +87,7 @@ const TeacherDashboard = () => {
                         colorTheme="orange"
                     />
                     <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200 shadow-sm">
+                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 ">
                             View List &rarr;
                         </span>
                     </div>
@@ -104,7 +104,7 @@ const TeacherDashboard = () => {
                         colorTheme="green"
                     />
                     <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 shadow-sm">
+                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
                             View List &rarr;
                         </span>
                     </div>
@@ -158,11 +158,11 @@ const TeacherDashboard = () => {
                     <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <CheckCircle2 className="text-emerald-500" size={24} /> Completed Projects
+                                <CheckCircle2 className="text-slate-500" size={24} /> Completed Projects
                             </h2>
                             <button 
                                 onClick={() => setIsCompletedModalOpen(false)}
-                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                className="p-2 text-slate-400 hover:text-slate-400 hover:text-slate-600 rounded-full transition-colors"
                             >
                                 <XCircle size={20} />
                             </button>
@@ -176,7 +176,7 @@ const TeacherDashboard = () => {
                             ) : (
                                 <div className="space-y-4">
                                     {completedProjectsList.map(p => (
-                                        <div key={p._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-emerald-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div key={p._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                                             <div>
                                                 <h3 className="font-bold text-slate-800 text-lg mb-1">{p.title}</h3>
                                                 <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
@@ -215,11 +215,11 @@ const TeacherDashboard = () => {
                     <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <Users className="text-blue-500" size={24} /> Assigned Students
+                                <Users className="text-slate-500" size={24} /> Assigned Students
                             </h2>
                             <button 
                                 onClick={() => setIsAssignedModalOpen(false)}
-                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                             >
                                 <XCircle size={20} />
                             </button>
@@ -233,7 +233,7 @@ const TeacherDashboard = () => {
                             ) : (
                                 <div className="space-y-4">
                                     {assignedStudents.map(student => (
-                                        <div key={student._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-blue-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div key={student._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                                             <div>
                                                 <h3 className="font-bold text-slate-800 text-lg mb-1">{student.name}</h3>
                                                 <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
@@ -241,7 +241,7 @@ const TeacherDashboard = () => {
                                                 </p>
                                             </div>
                                             <div className="text-left md:text-right">
-                                                <Link to="/dashboard/assigned-students" className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors">
+                                                <Link to="/dashboard/assigned-students" className="text-xs font-bold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-200 hover:text-white transition-colors">
                                                     Manage Project
                                                 </Link>
                                             </div>
@@ -270,11 +270,11 @@ const TeacherDashboard = () => {
                     <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <Clock className="text-orange-500" size={24} /> Pending Requests
+                                <Clock className="text-slate-500" size={24} /> Pending Requests
                             </h2>
                             <button 
                                 onClick={() => setIsRequestsModalOpen(false)}
-                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                             >
                                 <XCircle size={20} />
                             </button>
@@ -288,7 +288,7 @@ const TeacherDashboard = () => {
                             ) : (
                                 <div className="space-y-4">
                                     {requests.map(req => (
-                                        <div key={req._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-orange-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div key={req._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                                             <div>
                                                 <h3 className="font-bold text-slate-800 text-lg mb-1">{req.fromUser?.name || "Student"}</h3>
                                                 <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
