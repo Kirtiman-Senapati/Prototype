@@ -15,7 +15,7 @@ const StatusBadge = ({ status }) => {
     };
 
     return (
-        <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border shadow-sm ${getStatusStyles(status)}`}>
+        <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border${getStatusStyles(status)}`}>
             {status || "Unknown"}
         </span>
     );

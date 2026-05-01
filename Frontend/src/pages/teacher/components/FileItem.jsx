@@ -9,9 +9,9 @@ const FileItem = ({ file }) => {
     };
 
     return (
-        <div className="flex items-center justify-between p-3 border border-slate-100 rounded-lg bg-slate-50 hover:bg-white hover:border-blue-100 transition-all group shadow-sm">
+        <div className="flex items-center justify-between p-3 border border-slate-100 rounded-lg bg-slate-50 hover:bg-slate-50 hover:border-slate-200 transition-all group">
             <div className="flex items-center gap-3 min-w-0 pr-2">
-                <div className="bg-white p-1.5 rounded-md border border-slate-100 shrink-0 shadow-sm">
+                <div className="bg-white p-1.5 rounded-md border border-slate-100 shrink-0">
                     {getFileIcon(file.type)}
                 </div>
                 <div className="min-w-0 flex-1">

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const RecentFilesList = ({ files }) => {
     if (!files || files.length === 0) {
         return (
-            <div className="bg-slate-50/50 rounded-xl border border-slate-100 p-8 text-center text-slate-500">
+            <div className="bg-white rounded-lg border border-slate-100 p-8 text-center text-slate-500">
                 No recent files.
             </div>
         );
@@ -49,7 +49,7 @@ const RecentFilesList = ({ files }) => {
 
     return (
         <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
-            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+            <div className="px-6 py-4 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h3 className="font-semibold text-slate-800">Recent Files</h3>
                 <Link to="/dashboard/teacher-files" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
             </div>

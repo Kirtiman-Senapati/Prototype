@@ -61,7 +61,7 @@ const TeacherDashboard = () => {
                 
                 <div 
                     onClick={() => setIsAssignedModalOpen(true)}
-                    className="cursor-pointer hover:border-slate-300 transition-transform relative group block outline-none"
+                    className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
                 >
                     <StatCard 
                         title="Assigned Students" 
@@ -78,7 +78,7 @@ const TeacherDashboard = () => {
 
                 <div 
                     onClick={() => setIsRequestsModalOpen(true)}
-                    className="cursor-pointer hover:border-slate-300 transition-transform relative group block outline-none"
+                    className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
                 >
                     <StatCard 
                         title="Pending Requests" 
@@ -95,7 +95,7 @@ const TeacherDashboard = () => {
                 
                 <div 
                     onClick={() => setIsCompletedModalOpen(true)}
-                    className="cursor-pointer hover:border-slate-300 transition-transform relative group outline-none"
+                    className="cursor-pointer hover:border-slate-300 transition-colors relative group outline-none"
                 >
                     <StatCard 
                         title="Completed Projects" 
@@ -155,7 +155,7 @@ const TeacherDashboard = () => {
             {/* Completed Projects Modal */}
             {isCompletedModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                 <CheckCircle2 className="text-emerald-500" size={24} /> Completed Projects
@@ -212,7 +212,7 @@ const TeacherDashboard = () => {
             {/* Assigned Students Modal */}
             {isAssignedModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                 <Users className="text-blue-500" size={24} /> Assigned Students
@@ -267,7 +267,7 @@ const TeacherDashboard = () => {
             {/* Pending Requests Modal */}
             {isRequestsModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                 <Clock className="text-orange-500" size={24} /> Pending Requests

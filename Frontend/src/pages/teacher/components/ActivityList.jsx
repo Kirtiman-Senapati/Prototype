@@ -60,7 +60,7 @@ const ActivityList = ({ activities }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full max-h-[600px]">
+        <div className="bg-white rounded-lg  border border-slate-200 overflow-hidden flex flex-col h-full max-h-[600px]">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="text-sm font-semibold text-slate-800">
                     Recent Activity
@@ -80,7 +80,7 @@ const ActivityList = ({ activities }) => {
                 <div className="space-y-4">
                     {displayActivities.map((activity, index) => (
                         <div key={activity._id || index} className="relative flex items-start gap-4">
-                            <div className={`w-2 h-2 mt-1.5 rounded-full ring-2 ring-white shadow-sm shrink-0 z-10 ${getActivityColor(activity.actionType)}`} />
+                            <div className={`w-2 h-2 mt-1.5 rounded-full ring-2 ring-white shrink-0 z-10 ${getActivityColor(activity.actionType)}`} />
                             
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-slate-800 leading-relaxed">

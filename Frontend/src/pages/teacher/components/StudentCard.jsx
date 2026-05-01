@@ -4,7 +4,7 @@ import FileItem from "./FileItem";
 
 const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-slate-300 transition-all flex flex-col h-full overflow-hidden">
+        <div className="bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors flex flex-col h-full overflow-hidden">
             <div className="p-6 flex flex-col h-full">
                 {/* Header Section */}
                 <div className="mb-5 border-b border-slate-100 pb-4">
@@ -77,7 +77,7 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                         })()}
                         <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
                             {[...student.project.tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task, i) => (
-                                <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm flex flex-col gap-1.5 hover:shadow-sm transition-shadow">
+                                <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm flex flex-col gap-1.5">
                                     <div className="flex justify-between items-start gap-2">
                                         <p className={`font-semibold ${task.status === 'Completed' ? 'text-slate-500 line-through decoration-slate-300' : 'text-slate-800'}`}>{task.title}</p>
                                         <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest border shrink-0 ${
@@ -107,14 +107,14 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                     <div className="mt-auto pt-2 flex gap-3">
                         <button 
                             onClick={onAddFeedback}
-                            className="flex-1 bg-white border border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm text-sm"
+                            className="flex-1 bg-white border border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
                         >
                             <MessageSquare size={16} />
                             Feedback
                         </button>
                         <button 
                             onClick={onAddTask}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm text-sm"
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
                         >
                             <Plus size={16} strokeWidth={2.5} />
                             Task
