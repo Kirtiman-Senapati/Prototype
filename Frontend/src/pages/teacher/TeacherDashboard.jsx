@@ -117,17 +117,17 @@ const TeacherDashboard = () => {
                     <h2 className="text-lg font-bold text-slate-800">Quick Actions</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Link to="/dashboard/pending-requests" className="group bg-white border border-slate-200 hover:border-slate-300 text-slate-800 rounded-lg p-4 flex items-center justify-between transition-all duration-200 hover:shadow-sm">
+                    <Link to="/dashboard/pending-requests" className="group bg-white hover:bg-slate-50 text-slate-800 rounded-lg p-4 flex items-center justify-between transition-all border border-slate-200 hover:border-slate-300">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-slate-100 rounded-lg text-slate-800 ">
                                 <FileSignature size={20} />
                             </div>
                             <span className="font-medium text-base">View Pending Requests</span>
                         </div>
-                        <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                        <ArrowRight className="group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-slate-600" size={20} />
                     </Link>
 
-                    <Link to="/dashboard/assigned-students" className="group bg-white hover:bg-slate-50 text-slate-700 rounded-lg p-4 flex items-center justify-between transition-all border border-slate-200 hover:border-slate-300">
+                    <Link to="/dashboard/assigned-students" className="group bg-white hover:bg-slate-50 text-slate-800 rounded-lg p-4 flex items-center justify-between transition-all border border-slate-200 hover:border-slate-300">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-slate-100 rounded-lg text-slate-800">
                                 <Users size={20} />
@@ -154,9 +154,9 @@ const TeacherDashboard = () => {
 
             {/* Completed Projects Modal */}
             {isCompletedModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                 <CheckCircle2 className="text-slate-500" size={24} /> Completed Projects
                             </h2>
@@ -186,7 +186,7 @@ const TeacherDashboard = () => {
                                             <div className="text-left md:text-right">
                                                 <div className="inline-flex flex-col md:items-end">
                                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Completion Date</span>
-                                                    <span className="text-sm font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg">
+                                                    <span className="text-sm font-semibold text-slate-600 bg-slate-50 px-3 py-1 rounded-lg">
                                                         {new Date(p.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                                                     </span>
                                                 </div>
@@ -211,9 +211,9 @@ const TeacherDashboard = () => {
 
             {/* Assigned Students Modal */}
             {isAssignedModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                 <Users className="text-slate-500" size={24} /> Assigned Students
                             </h2>
@@ -241,7 +241,7 @@ const TeacherDashboard = () => {
                                                 </p>
                                             </div>
                                             <div className="text-left md:text-right">
-                                                <Link to="/dashboard/assigned-students" className="text-xs font-bold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-200 hover:text-white transition-colors">
+                                                <Link to="/dashboard/assigned-students" className="text-xs font-bold text-slate-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-200 hover:bg-slate-100 transition-colors">
                                                     Manage Project
                                                 </Link>
                                             </div>
@@ -266,9 +266,9 @@ const TeacherDashboard = () => {
 
             {/* Pending Requests Modal */}
             {isRequestsModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                 <Clock className="text-slate-500" size={24} /> Pending Requests
                             </h2>
@@ -298,7 +298,7 @@ const TeacherDashboard = () => {
                                             <div className="text-left md:text-right">
                                                 <div className="inline-flex flex-col md:items-end">
                                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Requested On</span>
-                                                    <span className="text-sm font-semibold text-orange-700 bg-orange-50 px-3 py-1 rounded-lg">
+                                                    <span className="text-sm font-semibold text-slate-700 bg-slate-50 px-3 py-1 rounded-lg">
                                                         {new Date(req.createdAt).toLocaleDateString('en-GB')}
                                                     </span>
                                                 </div>
@@ -310,7 +310,7 @@ const TeacherDashboard = () => {
                         </div>
                         
                         <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between rounded-b-2xl">
-                            <Link to="/dashboard/pending-requests" className="text-sm font-semibold text-orange-600 hover:text-orange-700">Go to Review &rarr;</Link>
+                            <Link to="/dashboard/pending-requests" className="text-sm font-semibold text-slate-600 hover:text-slate-900">Go to Review &rarr;</Link>
                             <button 
                                 onClick={() => setIsRequestsModalOpen(false)}
                                 className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
