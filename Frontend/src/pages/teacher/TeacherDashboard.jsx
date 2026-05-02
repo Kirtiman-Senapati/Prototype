@@ -326,7 +326,7 @@ const TeacherDashboard = () => {
             <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between rounded-b-2xl">
               <Link
                 to="/dashboard/assigned-students"
-                className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                className="text-sm font-semibold text-slate-600 hover:text-slate-900"
               >
                 Open Full Page &rarr;
               </Link>

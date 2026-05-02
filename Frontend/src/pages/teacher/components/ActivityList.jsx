@@ -66,11 +66,11 @@ const ActivityList = ({ activities }) => {
                     Recent Activity
                 </h2>
                 <div className="flex gap-4">
-                     <button onClick={handleClear} className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
+                     <button onClick={handleClear} className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">
                          Clear
                      </button>
                      {activities.length > 5 && (
-                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">
                              {isExpanded ? 'View Less' : 'View All'}
                          </button>
                      )}

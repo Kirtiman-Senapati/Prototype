@@ -51,7 +51,7 @@ const RecentFilesList = ({ files }) => {
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col h-full">
             <div className="px-5 py-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h3 className="font-semibold text-slate-800">Recent Files</h3>
-                <Link to="/dashboard/teacher-files" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
+                <Link to="/dashboard/teacher-files" className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">View All</Link>
             </div>
             <div className="divide-y divide-slate-100 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
                 {files.map((file, idx) => (
