@@ -28,7 +28,7 @@ const FileItem = ({ file }) => {
                 href={`http://localhost:4000${file.url}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="p-2 rounded-md bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-300 hover:shadow-sm shrink-0 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 flex items-center justify-center focus:opacity-100"
+                className="p-2 rounded-md bg-white border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0 flex items-center justify-center"
                 title="Download"
             >
                 <Download size={14} />

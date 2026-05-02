@@ -122,7 +122,7 @@ const TeacherFiles = () => {
                              <select 
                                 value={filterType} 
                                 onChange={(e) => setFilterType(e.target.value)}
-                                className="w-full appearance-none bg-white border border-slate-200 text-slate-700 py-2.5 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm transition-shadow"
+                                className="w-full appearance-none bg-white border border-slate-200 text-slate-700 py-2.5 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 ring-slate-200 focus:border-slate-300 focus:border-blue-500 text-sm transition-shadow"
                              >
                                  <option value="All">All Files</option>
                                  <option value="Report">Reports</option>
@@ -142,7 +142,7 @@ const TeacherFiles = () => {
                                 placeholder="Search files..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm text-slate-700 transition-shadow"
+                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-300 text-sm text-slate-700 transition-shadow"
                              />
                          </div>
                      </div>
@@ -166,24 +166,29 @@ const TeacherFiles = () => {
                  </div>
 
                  {/* Metric Cards - 4 items natively mapping enum */}
-                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pb-8">
-                     <div className="bg-blue-50/70 border border-blue-100/50 rounded-lg p-5 flex flex-col justify-center">
-                         <span className="text-blue-500 font-medium text-sm mb-1">Total Files</span>
-                         <span className="text-blue-600 text-2xl font-bold">{stats.total}</span>
-                     </div>
-                     <div className="bg-emerald-50/70 border border-emerald-100/50 rounded-lg p-5 flex flex-col justify-center">
-                         <span className="text-emerald-500 font-medium text-sm mb-1">Reports</span>
-                         <span className="text-emerald-600 text-2xl font-bold">{stats.reports}</span>
-                     </div>
-                     <div className="bg-orange-50/70 border border-orange-100/50 rounded-lg p-5 flex flex-col justify-center">
-                         <span className="text-orange-500 font-medium text-sm mb-1">Presentations</span>
-                         <span className="text-orange-600 text-2xl font-bold">{stats.presentations}</span>
-                     </div>
-                     <div className="bg-purple-50/70 border border-purple-100/50 rounded-lg p-5 flex flex-col justify-center">
-                         <span className="text-purple-500 font-medium text-sm mb-1">Code Files</span>
-                         <span className="text-purple-600 text-2xl font-bold">{stats.code}</span>
-                     </div>
-                 </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-6 pb-6">
+
+                    <div className="bg-white border border-slate-200 rounded-lg p-4 flex flex-col gap-1.5 min-h-[90px] transition-all duration-200 hover:border-slate-300 bg-white transition-colors">
+                        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Total Files</span>
+                        <span className="text-lg font-semibold text-slate-900">{stats.total}</span>
+                    </div>
+
+                    <div className="bg-white border border-slate-200 rounded-lg p-4 flex flex-col gap-1.5 min-h-[90px] transition-all duration-200 hover:border-slate-300 bg-white transition-colors">
+                        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Reports</span>
+                        <span className="text-lg font-semibold text-slate-900">{stats.reports}</span>
+                    </div>
+
+                    <div className="bg-white border border-slate-200 rounded-lg p-4 flex flex-col gap-1.5 min-h-[90px] transition-all duration-200 hover:border-slate-300 bg-white transition-colors">
+                        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Presentations</span>
+                        <span className="text-lg font-semibold text-slate-900">{stats.presentations}</span>
+                    </div>
+
+                    <div className="bg-white border border-slate-200 rounded-lg p-4 flex flex-col gap-1.5 min-h-[90px] transition-all duration-200 hover:border-slate-300 bg-white transition-colors">
+                        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Code Files</span>
+                        <span className="text-lg font-semibold text-slate-900">{stats.code}</span>
+                    </div>
+
+                </div>
 
                  <div className="border-t border-slate-100 pt-8 -mx-6 px-6 md:-mx-8 md:px-8 bg-slate-50/30 rounded-b-xl min-h-[400px]">
                  {isLoading && allFiles.length === 0 ? (
@@ -200,7 +205,7 @@ const TeacherFiles = () => {
                       </div>
                  ) : viewMode === "list" ? (
                       /* LIST VIEW EXACT TO MOCKUP */
-                      <div className="overflow-x-auto bg-white rounded-lg border border-slate-100 shadow-sm">
+                      <div className="overflow-x-auto bg-white rounded-xl border border-slate-200">
                           <table className="w-full text-left">
                              <thead>
                                  <tr className="border-b border-slate-100 bg-slate-50/50 uppercase text-[11px] font-bold text-slate-500 tracking-wider">
@@ -213,11 +218,11 @@ const TeacherFiles = () => {
                              </thead>
                              <tbody className="divide-y divide-slate-100">
                                  {filteredFiles.map((file, idx) => (
-                                     <tr key={idx} className="hover:bg-blue-50/20 transition-colors">
+                                     <tr key={idx} className="hover:bg-slate-50/80 transition-all cursor-pointer">
                                          <td className="py-4 px-6">
                                              <div className="flex items-center gap-3">
                                                  {getFileIcon(file.type)}
-                                                 <span className="font-semibold text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs">{file.filename}</span>
+                                                 <span className="font-semibold text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs group-hover:text-slate-900 transition-colors">{file.filename}</span>
                                              </div>
                                          </td>
                                          <td className="py-4 px-6 text-[13px] text-slate-600 font-medium">
@@ -232,7 +237,7 @@ const TeacherFiles = () => {
                                          <td className="py-4 px-6 text-right">
                                              <button 
                                                 onClick={() => handleDownload(file.url, file.filename)}
-                                                className="bg-blue-500 hover:bg-blue-600 text-white text-[12px] font-bold py-2 px-5 rounded-lg transition-colors shadow-sm"
+                                                className="text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 text-[12px] font-semibold py-2 px-4 rounded-md transition-colors"
                                              >
                                                 Download
                                              </button>
@@ -246,8 +251,8 @@ const TeacherFiles = () => {
                      /* GRID VIEW EXACT TO MOCKUP */
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                          {filteredFiles.map((file, idx) => (
-                             <div key={idx} className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col hover:border-blue-200 hover:shadow-md transition-all">
-                                 <div className="flex justify-center mb-5">
+                             <div key={idx} className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col hover:border-slate-300 bg-white transition-all">
+                                 <div className="flex justify-center mb-4">
                                      {getFileIcon(file.type, "w-10 h-10")}
                                  </div>
                                  <h3 className="text-center font-bold text-slate-800 text-[13px] mb-1 truncate px-2" title={file.filename}>
@@ -257,7 +262,7 @@ const TeacherFiles = () => {
                                      {file.studentName}
                                  </p>
                                  
-                                 <div className="flex items-center justify-center gap-3 mb-6 text-[11px] text-slate-400 font-medium">
+                                 <div className="flex items-center justify-center gap-3 mb-5 text-[11px] text-slate-400 font-medium">
                                      <span>-</span>
                                      <span>{new Date(file.uploadedAt).toLocaleDateString('en-GB')}</span>
                                      <span>-</span>
@@ -266,7 +271,7 @@ const TeacherFiles = () => {
                                  <div className="mt-auto">
                                      <button 
                                          onClick={() => handleDownload(file.url, file.filename)}
-                                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm text-sm"
+                                         className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 hover:border-slate-300 transition-all"
                                      >
                                          <Download size={16} />
                                          Download
