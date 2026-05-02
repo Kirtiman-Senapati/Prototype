@@ -56,7 +56,7 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                                 const completed = tasks.filter(t => t.status === "Completed").length;
                                 const progress = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
                                 return (
-                                    <span className="text-[10px] font-extrabold text-white-600">{progress}% Done</span>
+                                    <span className="text-[11px] font-extrabold text-slate-500">{progress}% Done</span>
                                 );
                             })()}
                         </div>
@@ -80,18 +80,20 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
                                 <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm flex flex-col gap-1.5">
                                     <div className="flex justify-between items-start gap-2">
                                         <p className={`font-semibold ${task.status === 'Completed' ? 'text-slate-500 line-through decoration-slate-300' : 'text-slate-800'}`}>{task.title}</p>
-                                        <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest border shrink-0 ${
-                                            task.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
-                                            task.status === 'In Progress' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                            'bg-slate-100 text-slate-600 border-slate-200'
-                                        }`}>
+                                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-medium border shrink-0 ${
+                                        task.status === 'Completed'
+                                            ? 'bg-slate-900 text-white border-slate-900'
+                                            : task.status === 'In Progress'
+                                            ? 'bg-slate-100 text-slate-700 border-slate-200'
+                                            : 'bg-slate-100 text-slate-500 border-slate-200'
+                                    }`}>
                                             {task.status}
                                         </span>
                                     </div>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between">
                                         <span>BY {task.assignedByRole === "admin" ? "ADMIN" : "SUPERVISOR"}</span>
                                         {task.status === 'Completed' && task.completedAt ? (
-                                            <span className="text-green-600 flex items-center gap-1">✔ Completed on {new Date(task.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                            <span className="text-slate-500 flex items-center gap-1">✔ Completed on {new Date(task.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
                                         ) : task.deadline ? (
                                             <span>Due {new Date(task.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
                                         ) : <span>No Deadline</span>}
