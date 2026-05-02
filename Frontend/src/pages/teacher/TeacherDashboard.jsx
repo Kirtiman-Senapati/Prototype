@@ -1,8 +1,24 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTeacherDashboard, getAssignedStudents, getPendingRequests } from "../../store/slices/teacherSlice";
-import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
-import { Loader, Users, FileSignature, ArrowRight, ClipboardList, Clock, CheckCircle2, XCircle } from "lucide-react";
+import {
+  getTeacherDashboard,
+  getAssignedStudents,
+  getPendingRequests,
+} from "../../store/slices/teacherSlice";
+import {
+  getActivities,
+  addRealtimeActivity,
+} from "../../store/slices/activitySlice";
+import {
+  Loader,
+  Users,
+  FileSignature,
+  ArrowRight,
+  ClipboardList,
+  Clock,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import DashboardHeader from "./components/DashboardHeader";
 import StatCard from "./components/StatCard";
@@ -12,317 +28,384 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 
 const TeacherDashboard = () => {
-    const dispatch = useDispatch();
-    const { stats, recentFiles, completedProjectsList, isLoading, assignedStudents, requests } = useSelector((state) => state.teacher);
-    const { authUser } = useSelector((state) => state.auth);
-    const { activities } = useSelector((state) => state.activity);
+  const dispatch = useDispatch();
+  const {
+    stats,
+    recentFiles,
+    completedProjectsList,
+    isLoading,
+    assignedStudents,
+    requests,
+  } = useSelector((state) => state.teacher);
+  const { authUser } = useSelector((state) => state.auth);
+  const { activities } = useSelector((state) => state.activity);
 
-    const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
-    const [isAssignedModalOpen, setIsAssignedModalOpen] = useState(false);
-    const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
+  const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
+  const [isAssignedModalOpen, setIsAssignedModalOpen] = useState(false);
+  const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
 
-    useEffect(() => {
-        dispatch(getTeacherDashboard());
-        dispatch(getAssignedStudents());
-        dispatch(getPendingRequests());
-        dispatch(getActivities());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(getTeacherDashboard());
+    dispatch(getAssignedStudents());
+    dispatch(getPendingRequests());
+    dispatch(getActivities());
+  }, [dispatch]);
 
-    useAutoRefresh((activity) => {
-        dispatch(addRealtimeActivity(activity));
-    }, "newActivity");
+  useAutoRefresh((activity) => {
+    dispatch(addRealtimeActivity(activity));
+  }, "newActivity");
 
-    useAutoRefresh(() => {
-        dispatch(getTeacherDashboard());
-        dispatch(getAssignedStudents());
-        dispatch(getPendingRequests());
-        dispatch(getActivities());
-    });
+  useAutoRefresh(() => {
+    dispatch(getTeacherDashboard());
+    dispatch(getAssignedStudents());
+    dispatch(getPendingRequests());
+    dispatch(getActivities());
+  });
 
-    if (isLoading && !stats) {
-        return (
-            <div className="flex justify-center items-center h-full min-h-[400px]">
-                <Loader className="animate-spin text-blue-500" size={40} />
-            </div>
-        );
-    }
-
+  if (isLoading && !stats) {
     return (
-        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-            {/* Dashboard Header */}
-            <DashboardHeader 
-                title={`Welcome back, ${authUser?.name || "Teacher"}`} 
-                subtitle="Here's your overview and latest updates."
-                icon={ClipboardList}
-            />
-
-            {/* Metric Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                
-                <div 
-                    onClick={() => setIsAssignedModalOpen(true)}
-                    className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
-                >
-                    <StatCard 
-                        title="Assigned Students" 
-                        value={stats?.assignedStudents || 0} 
-                        icon={Users}
-                        colorTheme="blue"
-                    />
-                    <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
-                            View List &rarr;
-                        </span>
-                    </div>
-                </div>
-
-                <div 
-                    onClick={() => setIsRequestsModalOpen(true)}
-                    className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
-                >
-                    <StatCard 
-                        title="Pending Requests" 
-                        value={stats?.pendingRequests || 0} 
-                        icon={Clock}
-                        colorTheme="orange"
-                    />
-                    <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 ">
-                            View List &rarr;
-                        </span>
-                    </div>
-                </div>
-                
-                <div 
-                    onClick={() => setIsCompletedModalOpen(true)}
-                    className="cursor-pointer hover:border-slate-300 transition-colors relative group outline-none"
-                >
-                    <StatCard 
-                        title="Completed Projects" 
-                        value={stats?.completedProjects || 0} 
-                        icon={CheckCircle2}
-                        colorTheme="green"
-                    />
-                    <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
-                            View List &rarr;
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div>
-                <div className="flex items-center gap-4 mb-4">
-                    <h2 className="text-lg font-bold text-slate-800">Quick Actions</h2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Link to="/dashboard/pending-requests" className="group bg-white hover:bg-slate-50 text-slate-800 rounded-lg p-4 flex items-center justify-between transition-all border border-slate-200 hover:border-slate-300">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-slate-100 rounded-lg text-slate-800 ">
-                                <FileSignature size={20} />
-                            </div>
-                            <span className="font-medium text-base">View Pending Requests</span>
-                        </div>
-                        <ArrowRight className="group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-slate-600" size={20} />
-                    </Link>
-
-                    <Link to="/dashboard/assigned-students" className="group bg-white hover:bg-slate-50 text-slate-800 rounded-lg p-4 flex items-center justify-between transition-all border border-slate-200 hover:border-slate-300">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-slate-100 rounded-lg text-slate-800">
-                                <Users size={20} />
-                            </div>
-                            <span className="font-medium text-base">Manage Students</span>
-                        </div>
-                        <ArrowRight className="group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-slate-600" size={20} />
-                    </Link>
-                </div>
-            </div>
-
-            {/* Lower Section Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Recent Activity */}
-                <div>
-                    <ActivityList activities={activities || []} />
-                </div>
-
-                {/* Recent Files */}
-                <div>
-                    <RecentFilesList files={recentFiles} />
-                </div>
-            </div>
-
-            {/* Completed Projects Modal */}
-            {isCompletedModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
-                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <CheckCircle2 className="text-slate-500" size={24} /> Completed Projects
-                            </h2>
-                            <button 
-                                onClick={() => setIsCompletedModalOpen(false)}
-                                className="p-2 text-slate-400 hover:text-slate-400 hover:text-slate-600 rounded-full transition-colors"
-                            >
-                                <XCircle size={20} />
-                            </button>
-                        </div>
-                        
-                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-                            {!completedProjectsList || completedProjectsList.length === 0 ? (
-                                <div className="text-center py-10 bg-slate-50 rounded-xl border border-slate-100">
-                                    <p className="text-slate-500 font-medium">No completed projects yet.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {completedProjectsList.map(p => (
-                                        <div key={p._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                            <div>
-                                                <h3 className="font-bold text-slate-800 text-lg mb-1">{p.title}</h3>
-                                                <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
-                                                    <Users size={14} className="opacity-70" /> {p.student?.name || "Unknown Student"}
-                                                </p>
-                                            </div>
-                                            <div className="text-left md:text-right">
-                                                <div className="inline-flex flex-col md:items-end">
-                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Completion Date</span>
-                                                    <span className="text-sm font-semibold text-slate-600 bg-slate-50 px-3 py-1 rounded-lg">
-                                                        {new Date(p.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        
-                        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-end rounded-b-2xl">
-                            <button 
-                                onClick={() => setIsCompletedModalOpen(false)}
-                                className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Assigned Students Modal */}
-            {isAssignedModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
-                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <Users className="text-slate-500" size={24} /> Assigned Students
-                            </h2>
-                            <button 
-                                onClick={() => setIsAssignedModalOpen(false)}
-                                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
-                            >
-                                <XCircle size={20} />
-                            </button>
-                        </div>
-                        
-                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-                            {!assignedStudents || assignedStudents.length === 0 ? (
-                                <div className="text-center py-10 bg-slate-50 rounded-xl border border-slate-100">
-                                    <p className="text-slate-500 font-medium">No assigned students yet.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {assignedStudents.map(student => (
-                                        <div key={student._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                            <div>
-                                                <h3 className="font-bold text-slate-800 text-lg mb-1">{student.name}</h3>
-                                                <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
-                                                    {student.email}
-                                                </p>
-                                            </div>
-                                            <div className="text-left md:text-right">
-                                                <Link to="/dashboard/assigned-students" className="text-xs font-bold text-slate-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-200 hover:bg-slate-100 transition-colors">
-                                                    Manage Project
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        
-                        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between rounded-b-2xl">
-                            <Link to="/dashboard/assigned-students" className="text-sm font-semibold text-blue-600 hover:text-blue-700">Open Full Page &rarr;</Link>
-                            <button 
-                                onClick={() => setIsAssignedModalOpen(false)}
-                                className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Pending Requests Modal */}
-            {isRequestsModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
-                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <Clock className="text-slate-500" size={24} /> Pending Requests
-                            </h2>
-                            <button 
-                                onClick={() => setIsRequestsModalOpen(false)}
-                                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
-                            >
-                                <XCircle size={20} />
-                            </button>
-                        </div>
-                        
-                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-                            {!requests || requests.length === 0 ? (
-                                <div className="text-center py-10 bg-slate-50 rounded-xl border border-slate-100">
-                                    <p className="text-slate-500 font-medium">No pending requests.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {requests.map(req => (
-                                        <div key={req._id} className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                            <div>
-                                                <h3 className="font-bold text-slate-800 text-lg mb-1">{req.fromUser?.name || "Student"}</h3>
-                                                <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
-                                                    <FileSignature size={14} className="opacity-70" /> {req.type} Request
-                                                </p>
-                                            </div>
-                                            <div className="text-left md:text-right">
-                                                <div className="inline-flex flex-col md:items-end">
-                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Requested On</span>
-                                                    <span className="text-sm font-semibold text-slate-700 bg-slate-50 px-3 py-1 rounded-lg">
-                                                        {new Date(req.createdAt).toLocaleDateString('en-GB')}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        
-                        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between rounded-b-2xl">
-                            <Link to="/dashboard/pending-requests" className="text-sm font-semibold text-slate-600 hover:text-slate-900">Go to Review &rarr;</Link>
-                            <button 
-                                onClick={() => setIsRequestsModalOpen(false)}
-                                className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+      <div className="flex justify-center items-center h-full min-h-[400px]">
+        <Loader className="animate-spin text-blue-500" size={40} />
+      </div>
     );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+      {/* Dashboard Header */}
+      <DashboardHeader
+        title={`Welcome back, ${authUser?.name || "Teacher"}`}
+        subtitle="Here's your overview and latest updates."
+        icon={ClipboardList}
+      />
+
+      {/* Metric Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div
+          onClick={() => setIsAssignedModalOpen(true)}
+          className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
+        >
+          <StatCard
+            title="Assigned Students"
+            value={stats?.assignedStudents || 0}
+            icon={Users}
+            colorTheme="blue"
+          />
+          <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+              View List &rarr;
+            </span>
+          </div>
+        </div>
+
+        <div
+          onClick={() => setIsRequestsModalOpen(true)}
+          className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
+        >
+          <StatCard
+            title="Pending Requests"
+            value={stats?.pendingRequests || 0}
+            icon={Clock}
+            colorTheme="orange"
+          />
+          <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 ">
+              View List &rarr;
+            </span>
+          </div>
+        </div>
+
+        <div
+          onClick={() => setIsCompletedModalOpen(true)}
+          className="cursor-pointer hover:border-slate-300 transition-colors relative group outline-none"
+        >
+          <StatCard
+            title="Completed Projects"
+            value={stats?.completedProjects || 0}
+            icon={CheckCircle2}
+            colorTheme="green"
+          />
+          <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+              View List &rarr;
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div>
+        <div className="flex items-center gap-4 mb-4">
+          <h2 className="text-lg font-bold text-slate-800">Quick Actions</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Link
+            to="/dashboard/pending-requests"
+            className="group bg-white hover:bg-slate-50 text-slate-800 rounded-lg p-4 flex items-center justify-between transition-all border border-slate-200 hover:border-slate-300"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-slate-100 rounded-lg text-slate-800 ">
+                <FileSignature size={20} />
+              </div>
+              <span className="font-medium text-base">
+                View Pending Requests
+              </span>
+            </div>
+            <ArrowRight
+              className="group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-slate-600"
+              size={20}
+            />
+          </Link>
+
+          <Link
+            to="/dashboard/assigned-students"
+            className="group bg-white hover:bg-slate-50 text-slate-800 rounded-lg p-4 flex items-center justify-between transition-all border border-slate-200 hover:border-slate-300"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-slate-100 rounded-lg text-slate-800">
+                <Users size={20} />
+              </div>
+              <span className="font-medium text-base">Manage Students</span>
+            </div>
+            <ArrowRight
+              className="group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-slate-600"
+              size={20}
+            />
+          </Link>
+        </div>
+      </div>
+
+      {/* Lower Section Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+
+        <div className="h-[420px]">
+          <ActivityList activities={activities || []} />
+        </div>
+
+        <div className="h-[420px]">
+          <RecentFilesList files={recentFiles} />
+        </div>
+      </div>
+
+      
+      {/* Completed Projects Modal */}
+      {isCompletedModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white  overflow-hidden rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
+              <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <CheckCircle2 className="text-slate-500" size={24} /> Completed
+                Projects
+              </h2>
+              <button
+                onClick={() => setIsCompletedModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-400 hover:text-slate-600 rounded-full transition-colors"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
+              {!completedProjectsList || completedProjectsList.length === 0 ? (
+                <div className="text-center py-10 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-slate-500 font-medium">
+                    No completed projects yet.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {completedProjectsList.map((p) => (
+                    <div
+                      key={p._id}
+                      className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    >
+                      <div>
+                        <h3 className="font-bold text-slate-800 text-lg mb-1">
+                          {p.title}
+                        </h3>
+                        <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
+                          <Users size={14} className="opacity-70" />{" "}
+                          {p.student?.name || "Unknown Student"}
+                        </p>
+                      </div>
+                      <div className="text-left md:text-right">
+                        <div className="inline-flex flex-col md:items-end">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                            Completion Date
+                          </span>
+                          <span className="text-sm font-semibold text-slate-600 bg-slate-50 px-3 py-1 rounded-lg">
+                            {new Date(p.updatedAt).toLocaleDateString("en-GB", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-end rounded-b-2xl">
+              <button
+                onClick={() => setIsCompletedModalOpen(false)}
+                className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assigned Students Modal */}
+      {isAssignedModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white  overflow-hidden rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
+              <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <Users className="text-slate-500" size={24} /> Assigned Students
+              </h2>
+              <button
+                onClick={() => setIsAssignedModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
+              {!assignedStudents || assignedStudents.length === 0 ? (
+                <div className="text-center py-10 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-slate-500 font-medium">
+                    No assigned students yet.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {assignedStudents.map((student) => (
+                    <div
+                      key={student._id}
+                      className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    >
+                      <div>
+                        <h3 className="font-bold text-slate-800 text-lg mb-1">
+                          {student.name}
+                        </h3>
+                        <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
+                          {student.email}
+                        </p>
+                      </div>
+                      <div className="text-left md:text-right">
+                        <Link
+                          to="/dashboard/assigned-students"
+                          className="text-xs font-bold text-slate-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-200 hover:bg-slate-100 transition-colors"
+                        >
+                          Manage Project
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between rounded-b-2xl">
+              <Link
+                to="/dashboard/assigned-students"
+                className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+              >
+                Open Full Page &rarr;
+              </Link>
+              <button
+                onClick={() => setIsAssignedModalOpen(false)}
+                className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pending Requests Modal */}
+      {isRequestsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white  overflow-hidden rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
+              <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <Clock className="text-slate-500" size={24} /> Pending Requests
+              </h2>
+              <button
+                onClick={() => setIsRequestsModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
+              {!requests || requests.length === 0 ? (
+                <div className="text-center py-10 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-slate-500 font-medium">
+                    No pending requests.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {requests.map((req) => (
+                    <div
+                      key={req._id}
+                      className="p-5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    >
+                      <div>
+                        <h3 className="font-bold text-slate-800 text-lg mb-1">
+                          {req.fromUser?.name || "Student"}
+                        </h3>
+                        <p className="text-sm text-slate-600 font-medium flex items-center gap-2">
+                          <FileSignature size={14} className="opacity-70" />{" "}
+                          {req.type} Request
+                        </p>
+                      </div>
+                      <div className="text-left md:text-right">
+                        <div className="inline-flex flex-col md:items-end">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                            Requested On
+                          </span>
+                          <span className="text-sm font-semibold text-slate-700 bg-slate-50 px-3 py-1 rounded-lg">
+                            {new Date(req.createdAt).toLocaleDateString(
+                              "en-GB",
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between rounded-b-2xl">
+              <Link
+                to="/dashboard/pending-requests"
+                className="text-sm font-semibold text-slate-600 hover:text-slate-900"
+              >
+                Go to Review &rarr;
+              </Link>
+              <button
+                onClick={() => setIsRequestsModalOpen(false)}
+                className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default TeacherDashboard;

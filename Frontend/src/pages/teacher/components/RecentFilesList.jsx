@@ -48,12 +48,12 @@ const RecentFilesList = ({ files }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
-            <div className="px-6 py-4 border-b border-slate-100 bg-white flex justify-between items-center">
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden h-full">
+            <div className="px-5 py-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h3 className="font-semibold text-slate-800">Recent Files</h3>
                 <Link to="/dashboard/teacher-files" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
                 {files.map((file, idx) => (
                     <div key={idx} className="p-4 px-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
                         <div className="flex items-center gap-4 min-w-0">
