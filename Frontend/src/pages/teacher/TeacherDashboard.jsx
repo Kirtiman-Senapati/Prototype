@@ -81,29 +81,33 @@ const TeacherDashboard = () => {
         icon={ClipboardList}
       />
 
+
+        {/* Section Wrapper */}
+        <div className="space-y-5">
+
       {/* Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div
-          onClick={() => setIsAssignedModalOpen(true)}
-          className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
-        >
-          <StatCard
-            title="Assigned Students"
-            value={stats?.assignedStudents || 0}
-            icon={Users}
-            colorTheme="blue"
-          />
-          <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-            <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
-              View List &rarr;
-            </span>
-          </div>
-        </div>
+            <div
+            onClick={() => setIsAssignedModalOpen(true)}
+            className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
+            >
+            <StatCard
+                title="Assigned Students"
+                value={stats?.assignedStudents || 0}
+                icon={Users}
+                colorTheme="blue"
+            />
+            <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                View List &rarr;
+                </span>
+            </div>
+            </div>
 
-        <div
-          onClick={() => setIsRequestsModalOpen(true)}
-          className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
-        >
+            <div
+            onClick={() => setIsRequestsModalOpen(true)}
+            className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
+            >
           <StatCard
             title="Pending Requests"
             value={stats?.pendingRequests || 0}
@@ -116,6 +120,7 @@ const TeacherDashboard = () => {
             </span>
           </div>
         </div>
+        
 
         <div
           onClick={() => setIsCompletedModalOpen(true)}
@@ -136,8 +141,8 @@ const TeacherDashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div>
-        <div className="flex items-center gap-4 mb-4">
+      <div >
+        <div className="flex items-center gap-4 mb-4 px-2">
           <h2 className="text-lg font-bold text-slate-800">Quick Actions</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -409,7 +414,9 @@ const TeacherDashboard = () => {
             </div>
           </div>
         </div>
+        
       )}
+      </div>
     </div>
   );
 };
