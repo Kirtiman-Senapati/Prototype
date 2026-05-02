@@ -71,7 +71,9 @@ const TeacherDashboard = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+    
+    <div className="space-y-5 pb-10 bg-[#F9FAFB] min-h-screen">
+        
       {/* Dashboard Header */}
       <DashboardHeader
         title={`Welcome back, ${authUser?.name || "Teacher"}`}
@@ -178,13 +180,17 @@ const TeacherDashboard = () => {
       {/* Lower Section Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
 
+        {/* Recent Activity */}
+
         <div className="h-[420px]">
           <ActivityList activities={activities || []} />
         </div>
 
+        {/* Recent Files */}
         <div className="h-[420px]">
           <RecentFilesList files={recentFiles} />
         </div>
+
       </div>
 
       

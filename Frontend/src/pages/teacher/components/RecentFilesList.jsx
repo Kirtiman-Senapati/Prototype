@@ -48,7 +48,7 @@ const RecentFilesList = ({ files }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden h-full">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col h-full">
             <div className="px-5 py-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h3 className="font-semibold text-slate-800">Recent Files</h3>
                 <Link to="/dashboard/teacher-files" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
@@ -71,7 +71,7 @@ const RecentFilesList = ({ files }) => {
                         </div>
                         <button 
                             onClick={() => handleDownload(file.url, file.filename)}
-                            className="text-slate-400 hover:text-blue-600 transition-colors shrink-0 ml-4 p-2 bg-white border border-slate-200 rounded-md shadow-sm hover:border-blue-300"
+                            className="text-slate-400 hover:text-slate-600 transition-colors shrink-0 ml-4 p-2 bg-white border border-slate-200 rounded-md hover:bg-slate-100"
                             title="Download"
                         >
                             <Download size={16} />

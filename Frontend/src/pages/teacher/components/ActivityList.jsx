@@ -60,7 +60,7 @@ const ActivityList = ({ activities }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg  border border-slate-200 overflow-hidden flex flex-col h-full max-h-[600px]">
+        <div className="bg-white rounded-lg  border border-slate-200 overflow-hidden flex flex-col h-full">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
                 <h2 className="font-semibold text-slate-800 ">
                     Recent Activity
