@@ -104,7 +104,7 @@ const TeacherFiles = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6">
+        <div className="space-y-8 pb-10">
             <div className="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm">
                 
                 {/* Header Sequence Exactly as Mockup */}
@@ -147,17 +147,20 @@ const TeacherFiles = () => {
                          </div>
                      </div>
 
-                     <div className="flex items-center bg-slate-50 border border-slate-100 rounded-lg p-1 shrink-0 w-full sm:w-auto justify-center sm:justify-start mt-4 xl:mt-0">
+
+                     {/* Grid  and list toggle buttons */}
+
+                     <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-1 shrink-0 w-fit">
                          <button 
                             onClick={() => setViewMode("grid")}
-                            className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`p-2.5 sm:p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400'}`}
                             title="Grid View"
                          >
                              <LayoutGrid size={18} />
                          </button>
                          <button 
                             onClick={() => setViewMode("list")}
-                            className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`p-2.5 sm:p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400'}`}
                             title="List View"
                          >
                              <List size={18} />

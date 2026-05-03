@@ -65,7 +65,7 @@ const AssignedStudents = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-6 pb-10 animate-in fade-in duration-500">
             <DashboardHeader 
                 title="Assigned Students" 
                 subtitle="Manage tasks and review projects across your assigned mentees."
