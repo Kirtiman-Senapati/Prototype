@@ -312,7 +312,7 @@ const StudentDashboard = () => {
              
             {/* Dynamic Alerts */}
              {project.status === "Pending" && (
-                <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm">
+                <div className="bg-white border border-slate-200 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
 
                     {/* LEFT ACCENT */}
                     <div className="w-1.5 h-10 bg-amber-400 rounded-full"/>
@@ -320,8 +320,8 @@ const StudentDashboard = () => {
 
                      {/* TEXT CONTENT */}
                      <div>
-                         <p className="text-[13px] font-bold">Project Proposal Pending</p>
-                         <p className="text-xs mt-0.5 opacity-90 font-medium">Your proposal is reviewing by admins. You can request a supervisor once approved.</p>
+                         <p className="text-sm font-semibold text-slate-800">Project Proposal Pending</p>
+                         <p className="text-xs text-slate-500 mt-0.5">Your proposal is reviewing by admins. You can request a supervisor once approved.</p>
                      </div>
                 </div>
              )}
@@ -336,7 +336,7 @@ const StudentDashboard = () => {
                     <AlertCircle className="text-emerald-500 shrink-0" size={20} />
                     {/* TEXT CONTENT */}
                     <div>
-                        <p className="text-[13px] text-slate-700 font-semibold">Proposal Approved!</p>
+                        <p className="text-sm font-semibold text-slate-800">Proposal Approved </p>
                         <p className="text-xs mt-0.5 text-slate-500 font-medium">Please navigate to the Supervisor page to request a faculty member.</p>
                     </div>
                 </div>
@@ -346,8 +346,10 @@ const StudentDashboard = () => {
             </div>
             )}
 
+            {/* Supervisor request pending */}
+
              {displayStatus === "Pending" && (
-                <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm">
+                <div className="bg-white border border-slate-200 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
                     
                     {/* LEFT ACCENT */}
                     <div className="w-1.5 h-10 bg-amber-400 rounded-full" />
@@ -357,37 +359,46 @@ const StudentDashboard = () => {
 
                     {/* TEXT CONTENT */}
                     <div>
-                        <p className="text-[13px] font-bold">Supervisor Request Pending</p>
-                        <p className="text-xs mt-0.5 opacity-90 font-medium">Your request to {latestRequest?.toUser?.name || "a supervisor"} is currently waiting for a response.</p>
+                        <p className="text-sm font-semibold text-slate-800">Supervisor Request Pending</p>
+                        <p className="text-xs text-slate-500 mt-0.5">Your request to {latestRequest?.toUser?.name || "a supervisor"} is currently waiting for a response.</p>
                     </div>
                 </div>
              )}
              {/* status === Approved but supervisor not assigned */}
 
              {displayStatus === "Rejected" && (
-                <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl flex items-center justify-between gap-4 shadow-sm">
+            <div className="bg-white border border-slate-200 px-6 py-4 rounded-xl flex items-center justify-between gap-4 shadow-sm hover:shadow-md transition-all">
 
+                {/* LEFT SIDE */}
+                <div className="flex items-center gap-4">
 
-                    {/* LEFT ACCENT */}
+                    {/* ACCENT */}
                     <div className="w-1.5 h-10 bg-red-400 rounded-full" />
-                    
-                    <div className="flex items-center gap-4">
 
-                        {/* ICON */}
-                        <XCircle className="text-red-500 shrink-0" size={20} />
+                    {/* ICON */}
+                    <XCircle className="text-red-500 shrink-0" size={20} />
 
-                        {/* TEXT CONTENT */}
-                        <div>
-                            <p className="text-[13px] font-bold">Request Rejected</p>
-                            <p className="text-xs mt-0.5 opacity-90 font-medium">Your previous supervisor request was rejected. Please request a new supervisor.</p>
-                        </div>
-
-                        {/* BUTTON */}
+                    {/* TEXT */}
+                    <div>
+                        <p className="text-sm font-semibold text-slate-800">
+                            Request Rejected
+                        </p>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                            Your previous supervisor request was rejected. Please request a new supervisor.
+                        </p>
                     </div>
-                    <button onClick={() => navigate("/dashboard/supervisor")} className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap">
-                        View Supervisors
-                     </button>
+
                 </div>
+
+                {/* BUTTON */}
+                <button
+                    onClick={() => navigate("/dashboard/supervisor")}
+                    className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap"
+                >
+                    View Supervisors
+                    </button>
+
+            </div>
              )}
              
              {/* 🔹 Core 4-Stat Cards Row (Imported from Admin) */}
