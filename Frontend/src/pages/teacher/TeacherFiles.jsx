@@ -115,8 +115,8 @@ const TeacherFiles = () => {
                     <p className="text-slate-500 text-sm mt-2 md:mt-0">Manage files shared with and received from students</p>
                 </div>
 
-                {/* Filters and View Toggles */}
-                 <div className="flex flex-col xl:flex-row items-center justify-between gap-4 mb-4">
+                {/* Filters and View Toggles changes  for mobile view */}
+                 <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 mb-4">
                      <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto flex-1">
                          <div className="relative w-full sm:w-56">
                              <select 
@@ -148,9 +148,9 @@ const TeacherFiles = () => {
                      </div>
 
 
-                     {/* Grid  and list toggle buttons */}
+                     {/* Grid  and list toggle buttons changes for mobile view */}
 
-                     <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-1 shrink-0 w-fit">
+                     <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-1 shrink-0 w-fit self-start xl:self-auto">
                          <button 
                             onClick={() => setViewMode("grid")}
                             className={`p-2.5 sm:p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-400'}`}
@@ -206,51 +206,100 @@ const TeacherFiles = () => {
                           <h3 className="text-lg font-semibold text-slate-800 mb-2">No files found</h3>
                           <p className="text-slate-500 text-sm">There are no files matching your filters right now.</p>
                       </div>
-                 ) : viewMode === "list" ? (
-                      /* LIST VIEW EXACT TO MOCKUP */
-                      <div className="overflow-x-auto bg-white rounded-xl border border-slate-200">
-                          <table className="w-full text-left">
-                             <thead>
-                                 <tr className="border-b border-slate-100 bg-slate-50/50 uppercase text-[11px] font-bold text-slate-500 tracking-wider">
-                                     <th className="py-4 px-6 w-[35%]">File Name</th>
-                                     <th className="py-4 px-6">Student</th>
-                                     <th className="py-4 px-6">Type</th>
-                                     <th className="py-4 px-6">Upload Date</th>
-                                     <th className="py-4 px-6 text-right">Actions</th>
-                                 </tr>
-                             </thead>
-                             <tbody className="divide-y divide-slate-100">
-                                 {filteredFiles.map((file, idx) => (
-                                     <tr key={idx} className="hover:bg-slate-50/80 transition-all cursor-pointer">
-                                         <td className="py-4 px-6">
-                                             <div className="flex items-center gap-3">
-                                                 {getFileIcon(file.type)}
-                                                 <span className="font-semibold text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs group-hover:text-slate-900 transition-colors">{file.filename}</span>
-                                             </div>
-                                         </td>
-                                         <td className="py-4 px-6 text-[13px] text-slate-600 font-medium">
-                                             {file.studentName}
-                                         </td>
-                                         <td className="py-4 px-6">
-                                             <span className="text-[12px] font-bold text-slate-500 uppercase">{file.type}</span>
-                                         </td>
-                                         <td className="py-4 px-6 text-[13px] text-slate-500 font-medium">
-                                            {new Date(file.uploadedAt).toLocaleDateString('en-GB')}
-                                         </td>
-                                         <td className="py-4 px-6 text-right">
-                                             <button 
-                                                onClick={() => handleDownload(file.url, file.filename)}
-                                                className="text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 text-[12px] font-semibold py-2 px-4 rounded-md transition-colors"
-                                             >
-                                                Download
-                                             </button>
-                                         </td>
-                                     </tr>
-                                 ))}
-                             </tbody>
-                          </table>
-                      </div>
-                 ) : (
+
+                      //* Changes for Mobile Responsive View/
+                ) : viewMode === "list" ? (
+
+                    <>
+                        {/* ✅ MOBILE LIST (CARD VIEW) */}
+                        <div className="md:hidden space-y-3">
+                            {filteredFiles.map((file, idx) => (
+                                <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4">
+
+                                    {/* TOP */}
+                                    <div className="flex items-center gap-3 mb-3">
+                                        {getFileIcon(file.type)}
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-semibold text-slate-800 truncate">
+                                                {file.filename}
+                                            </span>
+                                            <span className="text-xs text-slate-500">
+                                                {file.studentName}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* META */}
+                                    <div className="flex justify-between text-xs text-slate-500 mb-3">
+                                        <span className="uppercase">{file.type}</span>
+                                        <span>{new Date(file.uploadedAt).toLocaleDateString('en-GB')}</span>
+                                    </div>
+
+                                    {/* BUTTON */}
+                                    <button
+                                        onClick={() => handleDownload(file.url, file.filename)}
+                                        className="w-full py-2 text-sm font-semibold text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-100 transition"
+                                    >
+                                        Download
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/*  DESKTOP TABLE */}
+                        <div className="hidden md:block overflow-x-auto bg-white rounded-xl border border-slate-200">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="border-b border-slate-100 bg-slate-50/50 uppercase text-[11px] font-bold text-slate-500 tracking-wider">
+                                        <th className="py-4 px-6 w-[35%]">File Name</th>
+                                        <th className="py-4 px-6">Student</th>
+                                        <th className="py-4 px-6">Type</th>
+                                        <th className="py-4 px-6">Upload Date</th>
+                                        <th className="py-4 px-6 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody className="divide-y divide-slate-100">
+                                    {filteredFiles.map((file, idx) => (
+                                        <tr key={idx} className="hover:bg-slate-50/80 transition-all cursor-pointer">
+                                            <td className="py-4 px-6">
+                                                <div className="flex items-center gap-3">
+                                                    {getFileIcon(file.type)}
+                                                    <span className="font-semibold text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs">
+                                                        {file.filename}
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td className="py-4 px-6 text-[13px] text-slate-600 font-medium">
+                                                {file.studentName}
+                                            </td>
+
+                                            <td className="py-4 px-6">
+                                                <span className="text-[12px] font-bold text-slate-500 uppercase">
+                                                    {file.type}
+                                                </span>
+                                            </td>
+
+                                            <td className="py-4 px-6 text-[13px] text-slate-500 font-medium">
+                                                {new Date(file.uploadedAt).toLocaleDateString('en-GB')}
+                                            </td>
+
+                                            <td className="py-4 px-6 text-right">
+                                                <button
+                                                    onClick={() => handleDownload(file.url, file.filename)}
+                                                    className="text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 text-[12px] font-semibold py-2 px-4 rounded-md transition-colors"
+                                                >
+                                                    Download
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                ) : (
                      /* GRID VIEW EXACT TO MOCKUP */
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                          {filteredFiles.map((file, idx) => (
