@@ -59,19 +59,19 @@ const SupervisorPage = () => {
                    <div className="flex items-center gap-2">
                       <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Current Supervisor</h2>
                    </div>
-                   <span className="bg-green-100 text-green-700 border border-green-200 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                       <CheckCircle size={12} /> Assigned
+                   <span className="px-3 py-1 rounded-full text-xs font-semibold border border-slate-200 bg-slate-100 text-slate-700">
+                        Assigned
                    </span>
                </div>
                
                <div className="flex flex-col sm:flex-row gap-5 items-start">
-                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-2xl font-bold shadow-md shrink-0">
+                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 text-slate-700 flex items-center justify-center text-2xl font-semibold shadow-sm">
                        {project.supervisor.name.charAt(0)}
                    </div>
                    <div className="flex flex-col">
                        <h3 className="text-xl font-bold text-slate-800">{project.supervisor.name}</h3>
                        {project.supervisor.department && (
-                          <span className="mt-1 text-sm text-indigo-600 font-medium inline-block">{project.supervisor.department}</span>
+                          <span className="mt-1 text-sm text-slate-600 font-medium">{project.supervisor.department}</span>
                        )}
                        <div className="mt-4 flex flex-col space-y-2">
                           <div className="flex items-center gap-2 text-sm">
@@ -100,7 +100,7 @@ const SupervisorPage = () => {
                <div className="flex items-center justify-between mb-4">
                    <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Project Details</h2>
                    <span className={`px-3 py-1 rounded-full text-xs font-bold border shadow-sm ${
-                       project.status === 'Approved' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                       project.status === 'Approved' ? 'bg-slate-100 text-slate-700 border-slate-200' :
                        project.status === 'Pending' ? 'bg-amber-100 text-amber-700 border-amber-200' :
                        'bg-red-100 text-red-700 border-red-200'
                    }`}>
@@ -177,11 +177,13 @@ const SupervisorPage = () => {
                         );
 
                         return (
-                            <div key={teacher._id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 -mr-8 -mt-8 rounded-full opacity-50 transition-transform group-hover:scale-150 duration-500"></div>
+                            <div key={teacher._id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm 
+                            hover:bg-slate-50 hover:shadow-md transition-all duration-200 
+                            group flex flex-col h-full relative overflow-hidden">
+                                
                                 
                                 <div className="flex items-start justify-between relative z-10 mb-4">
-                                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                                   <div className="w-12 h-12 rounded-xl bg-slate-200 text-slate-700 text-white flex items-center justify-center text-xl font-bold shadow-sm">
                                        {teacher.name.charAt(0)}
                                    </div>
                                 </div>
