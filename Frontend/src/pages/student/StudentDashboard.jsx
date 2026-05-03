@@ -310,18 +310,19 @@ const StudentDashboard = () => {
       {project && (
           <div className="space-y-8 animate-in fade-in duration-500 max-w-full mx-auto">
              
-             {/* Dynamic Alerts */}
+            {/* Dynamic Alerts */}
              {project.status === "Pending" && (
                 <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm">
 
                     {/* LEFT ACCENT */}
-                    <div className="w-1.5 h-10 bg-amber-400 rounded-full">
+                    <div className="w-1.5 h-10 bg-amber-400 rounded-full"/>
                      <Clock className="text-amber-500 shrink-0" size={20} />
+
+                     {/* TEXT CONTENT */}
                      <div>
                          <p className="text-[13px] font-bold">Project Proposal Pending</p>
                          <p className="text-xs mt-0.5 opacity-90 font-medium">Your proposal is reviewing by admins. You can request a supervisor once approved.</p>
                      </div>
-                    </div>
                 </div>
              )}
 
@@ -330,12 +331,13 @@ const StudentDashboard = () => {
                 <div className="flex items-center gap-4">
                     
                     {/* LEFT ACCENT */}
-                    <div className="w-1.5 h-10 bg-indigo-400  rounded-full">
-                        <AlertCircle className="text-indigo-500 shrink-0" size={20} />
-                        <div>
-                            <p className="text-[13px] font-bold">Proposal Approved!</p>
-                            <p className="text-xs mt-0.5 opacity-90 font-medium">Please navigate to the Supervisor page to request a faculty member.</p>
-                        </div>
+                    <div className="w-1.5 h-10  bg-emerald-400  rounded-full"/>
+                    {/* ICON */}
+                    <AlertCircle className="text-emerald-500 shrink-0" size={20} />
+                    {/* TEXT CONTENT */}
+                    <div>
+                        <p className="text-[13px] text-slate-700 font-semibold">Proposal Approved!</p>
+                        <p className="text-xs mt-0.5 text-slate-500 font-medium">Please navigate to the Supervisor page to request a faculty member.</p>
                     </div>
                 </div>
                 <button onClick={() => navigate("/dashboard/supervisor")} className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap">
@@ -351,7 +353,7 @@ const StudentDashboard = () => {
                     <div className="w-1.5 h-10 bg-amber-400 rounded-full" />
 
                     {/* ICON */}
-                    <Clock className="text-blue-500 shrink-0 animate-pulse" size={20} />
+                    <Clock className="text-amber-500 shrink-0" size={20} />
 
                     {/* TEXT CONTENT */}
                     <div>
@@ -385,7 +387,7 @@ const StudentDashboard = () => {
                     <button onClick={() => navigate("/dashboard/supervisor")} className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap">
                         View Supervisors
                      </button>
-                 </div>
+                </div>
              )}
              
              {/* 🔹 Core 4-Stat Cards Row (Imported from Admin) */}

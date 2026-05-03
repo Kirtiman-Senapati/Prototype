@@ -31,10 +31,10 @@ const SubmitProposal = () => {
           
           <div className="mb-5">
             {project.status === "Approved" && (
-              <CheckCircle2 className="w-8 h-8 text-green-600" />
+              <CheckCircle2 className="w-8 h-8 text-emerald-500" />
             )}
             {project.status === "Completed" && (
-              <CheckCircle2 className="w-8 h-8 text-blue-600" />
+              <CheckCircle2 className="w-8 h-8 text-slate-700" />
             )}
             {project.status === "Pending" && (
               <Clock className="w-8 h-8 text-amber-500" />
@@ -98,7 +98,7 @@ const SubmitProposal = () => {
             {/* input field */}
             <input
               type="text"
-              className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 border-slate-400 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-200 transition-all font-medium text-slate-800"
+              className="w-full px-4 py-3 bg-slate-50 hover:bg-white border-slate-200 border-slate-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-200 transition-all font-medium text-slate-800"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="E.g., Academic Project Management System"
