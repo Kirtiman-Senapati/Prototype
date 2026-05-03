@@ -86,16 +86,21 @@ const ProjectOverview = ({ project, onUpdate }) => {
                     </button>
                 )}
             </div>
+
+            {/* Project Status */}
             <div className="p-5 flex-1 overflow-y-auto custom-scrollbar min-h-0">
                 <div className="flex items-center gap-2 mb-4">
                     <span className={`w-1.5 h-1.5 rounded-full ${
-                        project.status === 'Completed' ? 'bg-emerald-500' :
-                        project.status === 'Approved' ? 'bg-indigo-500' :
-                        project.status === 'Pending' ? 'bg-amber-500' :
-                        'bg-rose-500'
+                        project.status === 'Completed' ? 'bg-slate-400' :
+                        project.status === 'Approved' ? 'bg-slate-600' :
+                        project.status === 'Pending' ? 'bg-slate-700' :
+                        'bg-slate-800'
                     }`} />
+                    {/* TEXT CONTENT */}
                     <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{project.status}</span>
                 </div>
+
+                {/* Description */}
                 <p className="text-[13px] text-slate-600 leading-relaxed font-medium">
                     {project.description}
                 </p>
@@ -230,7 +235,7 @@ const StudentDashboard = () => {
   if (isLoading && !project) {
     return (
       <div className="flex justify-center items-center h-full min-h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-800"></div>
       </div>
     );
   }
@@ -288,14 +293,14 @@ const StudentDashboard = () => {
       {/* 🟣 NO PROPOSAL STATE */}
       {!project && (
           <div className="bg-white border border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-center gap-5 shadow-sm">
-             <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+             <div className="w-16 h-16 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center shrink-0">
                  <BookOpen size={32} />
              </div>
              <div className="max-w-md mx-auto">
                  <h2 className="text-xl font-bold text-slate-900 tracking-tight">Submit Your Proposal</h2>
                  <p className="text-slate-500 mt-2 text-[13px] font-medium leading-relaxed">You must submit your academic project proposal details to gain access to the dashboard features.</p>
              </div>
-             <button onClick={() => navigate("/dashboard/submit-proposal")} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-[13px] font-medium transition shadow-sm mt-2 flex items-center gap-2">
+             <button onClick={() => navigate("/dashboard/submit-proposal")} className="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-lg text-[13px] font-medium transition shadow-sm mt-2 flex items-center gap-2">
                  Get Started <ArrowRight size={16} />
              </button>
           </div>
@@ -307,51 +312,78 @@ const StudentDashboard = () => {
              
              {/* Dynamic Alerts */}
              {project.status === "Pending" && (
-                 <div className="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm">
+                <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm">
+
+                    {/* LEFT ACCENT */}
+                    <div className="w-1.5 h-10 bg-amber-400 rounded-full">
                      <Clock className="text-amber-500 shrink-0" size={20} />
                      <div>
                          <p className="text-[13px] font-bold">Project Proposal Pending</p>
                          <p className="text-xs mt-0.5 opacity-90 font-medium">Your proposal is reviewing by admins. You can request a supervisor once approved.</p>
                      </div>
-                 </div>
+                    </div>
+                </div>
              )}
 
              {project.status === "Approved" && !project.supervisor && displayStatus === "No request" && (
-                 <div className="bg-indigo-50 border border-indigo-200 text-indigo-800 px-6 py-4 rounded-xl flex items-center justify-between gap-4 shadow-sm">
-                     <div className="flex items-center gap-4">
+            <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl flex items-center justify-between gap-4 shadow-sm">
+                <div className="flex items-center gap-4">
+                    
+                    {/* LEFT ACCENT */}
+                    <div className="w-1.5 h-10 bg-indigo-400  rounded-full">
                         <AlertCircle className="text-indigo-500 shrink-0" size={20} />
                         <div>
                             <p className="text-[13px] font-bold">Proposal Approved!</p>
                             <p className="text-xs mt-0.5 opacity-90 font-medium">Please navigate to the Supervisor page to request a faculty member.</p>
                         </div>
-                     </div>
-                     <button onClick={() => navigate("/dashboard/supervisor")} className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap">
-                         Go to Supervisors
-                     </button>
-                 </div>
-             )}
+                    </div>
+                </div>
+                <button onClick={() => navigate("/dashboard/supervisor")} className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap">
+                    Go to Supervisors
+                </button>
+            </div>
+            )}
 
              {displayStatus === "Pending" && (
-                 <div className="bg-blue-50 border border-blue-200 text-blue-800 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm">
-                     <Clock className="text-blue-500 shrink-0 animate-pulse" size={20} />
-                     <div>
-                         <p className="text-[13px] font-bold">Supervisor Request Pending</p>
-                         <p className="text-xs mt-0.5 opacity-90 font-medium">Your request to {latestRequest?.toUser?.name || "a supervisor"} is currently waiting for a response.</p>
-                     </div>
-                 </div>
+                <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl flex items-center gap-4 shadow-sm">
+                    
+                    {/* LEFT ACCENT */}
+                    <div className="w-1.5 h-10 bg-amber-400 rounded-full" />
+
+                    {/* ICON */}
+                    <Clock className="text-blue-500 shrink-0 animate-pulse" size={20} />
+
+                    {/* TEXT CONTENT */}
+                    <div>
+                        <p className="text-[13px] font-bold">Supervisor Request Pending</p>
+                        <p className="text-xs mt-0.5 opacity-90 font-medium">Your request to {latestRequest?.toUser?.name || "a supervisor"} is currently waiting for a response.</p>
+                    </div>
+                </div>
              )}
+             {/* status === Approved but supervisor not assigned */}
 
              {displayStatus === "Rejected" && (
-                 <div className="bg-rose-50 border border-rose-200 text-rose-800 px-6 py-4 rounded-xl flex items-center justify-between gap-4 shadow-sm">
-                     <div className="flex items-center gap-4">
-                        <XCircle className="text-rose-500 shrink-0" size={20} />
+                <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl flex items-center justify-between gap-4 shadow-sm">
+
+
+                    {/* LEFT ACCENT */}
+                    <div className="w-1.5 h-10 bg-red-400 rounded-full" />
+                    
+                    <div className="flex items-center gap-4">
+
+                        {/* ICON */}
+                        <XCircle className="text-red-500 shrink-0" size={20} />
+
+                        {/* TEXT CONTENT */}
                         <div>
                             <p className="text-[13px] font-bold">Request Rejected</p>
                             <p className="text-xs mt-0.5 opacity-90 font-medium">Your previous supervisor request was rejected. Please request a new supervisor.</p>
                         </div>
-                     </div>
-                     <button onClick={() => navigate("/dashboard/supervisor")} className="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap">
-                         View Supervisors
+
+                        {/* BUTTON */}
+                    </div>
+                    <button onClick={() => navigate("/dashboard/supervisor")} className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap">
+                        View Supervisors
                      </button>
                  </div>
              )}
@@ -390,18 +422,18 @@ const StudentDashboard = () => {
                  {/* Right Column (span-2) */}
                  <div className="lg:col-span-2 flex flex-col gap-6">
 
-                     <div className="h-[260px]">
+                    <div className="h-[260px]">
                          <StudentActivityList activities={selfActivities} title="Your Recent Activity" />
-                     </div>
+                    </div>
 
-                     <div className="h-[320px]">
+                    <div className="h-[320px]">
                          <StudentActivityList activities={sysActivities} title="System Notifications" />
-                     </div>
+                    </div>
 
-                 </div>
+                </div>
                  
-             </div>
-          </div>
+            </div>
+        </div>
       )}
 
       <MessageModal 

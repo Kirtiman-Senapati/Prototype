@@ -74,7 +74,7 @@ const SubmitProposal = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="card">
+      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all">
         <div className="card-header border-b border-slate-100 pb-5 mb-6">
           <h1 className="text-2xl font-bold text-slate-800">
             Submit Project Proposal
@@ -94,9 +94,11 @@ const SubmitProposal = () => {
             <label className="block text-sm font-bold text-slate-700 mb-2">
               Project Title
             </label>
+            
+            {/* input field */}
             <input
               type="text"
-              className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-blue-500 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-800"
+              className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 border-slate-400 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-200 transition-all font-medium text-slate-800"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="E.g., Academic Project Management System"
@@ -108,8 +110,10 @@ const SubmitProposal = () => {
             <label className="block text-sm font-bold text-slate-700 mb-2">
               Project Description
             </label>
+
+            {/* text area field */}
             <textarea
-              className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-blue-500 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-800 min-h-[200px] resize-y"
+              className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 border-slate-400 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-200 transition-all font-medium text-slate-800 min-h-[200px] resize-y"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the scope, objectives, and technology stack..."
@@ -127,7 +131,7 @@ const SubmitProposal = () => {
             </button>
             <button
               type="submit"
-              className="px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+              className="px-6 py-3 font-bold text-white bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? "Submitting..." : "Submit Proposal"}
