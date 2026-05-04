@@ -20,7 +20,7 @@ const FeedbackPage = () => {
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500 bg-[#F9FAFB] min-h-screen pb-10">
       
       {/* Header Profile section style */}
-      <div className="bg-white border border-slate-200 p-8 rounded-xl shadow-sm">
+      <div className="bg-white border border-slate-200 p-8 rounded-xl hover:border-slate-300">
         <h1 className="text-2xl font-bold text-slate-800">Feedback Timeline</h1>
         <p className="text-slate-500 mt-1">Track and review all evaluations from your supervisors and administrators.</p>
         
@@ -60,11 +60,10 @@ const FeedbackPage = () => {
         <div className="space-y-4">
           {feedbacks && feedbacks.length > 0 ? (
               feedbacks.map((f, i) => (
-                 <div key={f._id || i} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative 
-                        hover:border-slate-300 hover:shadow-lg hover:-translate-y-[1px] 
-                        hover:bg-slate-50/40
-                        transition-all duration-300 ease-out
-                        group flex flex-col md:flex-row gap-6">
+                 <div key={f._id || i} className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-slate-300 relative 
+                hover:border-slate-300 hover:-translate-y-[2px]
+                transition-all duration-300 ease-out
+                group flex flex-col md:flex-row gap-6">
                     {/* Timestamp Sidebar */}
                     <div className="md:w-[150px] shrink-0 border-b md:border-b-0 md:border-r border-slate-100 
                             group-hover:border-slate-200 
