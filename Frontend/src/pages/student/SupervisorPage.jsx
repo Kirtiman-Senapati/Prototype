@@ -134,14 +134,14 @@ const SupervisorPage = () => {
         </div>
       ) : !project ? (
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[300px]">
-             <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0">
-                 <BookOpen size={40} />
+             <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center shrink-0">
+                 <BookOpen size={38} className="text-slate-600" />
              </div>
              <div className="max-w-md mx-auto">
                  <h2 className="text-2xl font-bold text-slate-800">Submit Your Proposal First</h2>
                  <p className="text-slate-600 mt-2">You must submit your academic project proposal details before you can browse and request a supervisor.</p>
              </div>
-             <button onClick={() => navigate("/dashboard/submit-proposal")} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-medium transition shadow-md mt-2 flex items-center gap-2">
+             <button onClick={() => navigate("/dashboard/submit-proposal")} className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-medium transition shadow-md mt-4 flex items-center gap-2">
                  Submit Project Proposal <ArrowRight size={18} />
              </button>
           </div>
