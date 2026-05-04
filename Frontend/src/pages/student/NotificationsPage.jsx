@@ -140,68 +140,79 @@ const NotificationsPage = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
 
         {/* Total Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
-        hover:-translate-y-[2px] transition-all duration-300 ease-out">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 
+          flex items-center gap-4 
+          transition-all duration-200 
+          hover:border-slate-300 
+          hover:-translate-y-[1px]">
             
           {/* ICON */}
-          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
+          <div className="w-10 h-10 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
 
             <Bell size={20} />
           </div>
           
           {/* VALUE &LABEL */}
           <div className="flex flex-col items-center justify-center text-center leading-tight">
-            <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.total}</p>
-            <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Total</p>
+            <p className="text-2xl font-black text-slate-700 leading-none">{stats.total}</p>
+            <p className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Total</p>
           </div>
         </div>
 
         {/* Unread Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
-          hover:-translate-y-[2px] 
-          transition-all duration-300 ease-out">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 
+          flex items-center gap-4 
+          transition-all duration-200 
+          hover:border-slate-300 
+          hover:-translate-y-[1px]">
 
           {/* ICON */}
-          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
+          <div className="w-10 h-10 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
              <MailOpen size={20} />
              {stats.unread > 0 && <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>}
           </div>
 
           {/* VALUE &LABEL */}
           <div className="flex flex-col items-center justify-center text-center leading-tight">
-            <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.unread}</p>
-            <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Unread</p>
+            <p className="text-2xl font-black text-slate-700 leading-none">{stats.unread}</p>
+            <p className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Unread</p>
           </div>
         </div>
 
         {/* Read Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
-        hover:-translate-y-[2px] transition-all duration-300 ease-out">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 
+          flex items-center gap-4 
+          transition-all duration-200 
+          hover:border-slate-300 
+          hover:-translate-y-[1px]">
           
           {/* ICON */}
-          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
+          <div className="w-10 h-10 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
              <Check size={20} />
           </div>
           
           {/* VALUE &LABEL */}
           <div className="flex flex-col items-center justify-center text-center leading-tight">
-            <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.read}</p>
-            <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Read</p>
+            <p className="text-2xl font-black text-slate-700 leading-none">{stats.read}</p>
+            <p className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Read</p>
           </div>
         </div>
 
         {/* High Priority Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
-        hover:-translate-y-[2px] transition-all duration-300 ease-out">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 
+          flex items-center gap-4 
+          transition-all duration-200 
+          hover:border-slate-300 
+          hover:-translate-y-[1px]">
           {/* ICON */}
-          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
+          <div className="w-10 h-10 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
              <AlertTriangle size={20} />
           </div>
 
           {/* VALUE &LABEL */}
           <div className="flex flex-col items-center justify-center text-center leading-tight">
-            <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.highPriority}</p>
-            <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">High Priority</p>
+            <p className="text-2xl font-black text-slate-700 leading-none">{stats.highPriority}</p>
+            <p className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">High Priority</p>
           </div>
         </div>
       </div>
