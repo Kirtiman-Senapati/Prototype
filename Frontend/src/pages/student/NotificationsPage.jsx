@@ -142,8 +142,15 @@ const NotificationsPage = () => {
         {/* Total Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
         hover:-translate-y-[2px] transition-all duration-300 ease-out">
-          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Bell size={20} /></div>
-          <div>
+            
+          {/* ICON */}
+          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
+
+            <Bell size={20} />
+          </div>
+          
+          {/* VALUE &LABEL */}
+          <div className="flex flex-col items-center justify-center text-center leading-tight">
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.total}</p>
             <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Total</p>
           </div>
@@ -151,23 +158,33 @@ const NotificationsPage = () => {
 
         {/* Unread Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
-        hover:-translate-y-[2px] 
-        transition-all duration-300 ease-out">
+          hover:-translate-y-[2px] 
+          transition-all duration-300 ease-out">
+
+          {/* ICON */}
           <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
              <MailOpen size={20} />
              {stats.unread > 0 && <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>}
           </div>
-          <div>
+
+          {/* VALUE &LABEL */}
+          <div className="flex flex-col items-center justify-center text-center leading-tight">
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.unread}</p>
             <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Unread</p>
           </div>
         </div>
 
         {/* Read Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4           hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
         hover:-translate-y-[2px] transition-all duration-300 ease-out">
-          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Check size={20} /></div>
-          <div>
+          
+          {/* ICON */}
+          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
+             <Check size={20} />
+          </div>
+          
+          {/* VALUE &LABEL */}
+          <div className="flex flex-col items-center justify-center text-center leading-tight">
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.read}</p>
             <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Read</p>
           </div>
@@ -176,8 +193,13 @@ const NotificationsPage = () => {
         {/* High Priority Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
         hover:-translate-y-[2px] transition-all duration-300 ease-out">
-          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><AlertTriangle size={20} /></div>
-          <div>
+          {/* ICON */}
+          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0">
+             <AlertTriangle size={20} />
+          </div>
+
+          {/* VALUE &LABEL */}
+          <div className="flex flex-col items-center justify-center text-center leading-tight">
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.highPriority}</p>
             <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">High Priority</p>
           </div>
@@ -202,7 +224,10 @@ const NotificationsPage = () => {
                   >
                     <div className="absolute left-[19px] top-4 w-2 h-2 bg-slate-300 rounded-full z-0 hidden md:block"></div>
                     {/* Icon - positioned on timeline on desktop */}
-                    <div className={`hidden md:flex absolute left-0 top-1 w-10 h-10 rounded-lg items-center justify-center shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.04)] ${getIconStyle(act)}`}>
+                    <div className={`hidden md:flex absolute left-0 top-1 w-10 h-10 rounded-lg items-center justify-center shrink-0 
+                    shadow-[0_1px_1px_rgba(0,0,0,0.04)] 
+                    group-hover:shadow-md group-hover:-translate-y-[1px]
+                    transition-all duration-300 ${getIconStyle(act)}`}>
                       {getIconForType(act.actionType)}
                     </div>
 
@@ -214,7 +239,7 @@ const NotificationsPage = () => {
                       hover:-translate-y-[2px]
                       hover:border-slate-300
                       transition-all duration-300 ease-out
-                      flex flex-col md:flex-row gap-[14px] items-start relative group
+                      flex flex-col md:flex-row gap-[18px] items-start relative group
                       ${isUnread ? 'border-slate-300 bg-white shadow-md' : 'border-slate-200/60 bg-slate-50/50'}
                     `}>
                       {/* Mobile Icon */}
@@ -238,7 +263,10 @@ const NotificationsPage = () => {
                             </span>
                             
                             {act.priority === 'high' && (
-                                <span className="text-[10px] font-semibold px-2 py-1 rounded bg-rose-50/80 text-rose-600 border border-rose-200/60 backdrop-blur-sm uppercase tracking-wide flex items-center gap-1">
+                                <span className="px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-widest 
+                                border bg-white text-slate-700 border-slate-200 
+                                group-hover:bg-slate-100 group-hover:border-slate-300 group-hover:text-slate-900
+                                transition-all duration-200 flex items-center gap-1 cursor-default">
                                   <AlertTriangle size={12}/> HIGH PRIORITY
                                 </span>
                             )}
