@@ -102,7 +102,7 @@ const SupervisorPage = () => {
                    <span className={`px-3 py-1 rounded-full text-xs font-bold border shadow-sm ${
                        project.status === 'Approved' ? 'bg-slate-100 text-slate-700 border-slate-200' :
                        project.status === 'Pending' ? 'bg-amber-100 text-amber-700 border-amber-200' :
-                       'bg-red-100 text-red-700 border-red-200'
+                       'bg-slate-100 text-slate-700 border-slate-200'
                    }`}>
                        {project.status || "Approved"}
                    </span>
@@ -146,9 +146,9 @@ const SupervisorPage = () => {
              </button>
           </div>
       ) : project.status !== "Approved" ? (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[300px]">
-             <div className="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center shrink-0">
-                 <Clock size={40} />
+          <div className="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[300px]">
+             <div className="mb-3">
+                 <Clock size={40} className="w-8 h-8 text-amber-500"/>
              </div>
              <div className="max-w-md mx-auto">
                  <h2 className="text-2xl font-bold text-slate-800">Proposal Pending Approval</h2>
