@@ -236,25 +236,20 @@ const NotificationsPage = () => {
                     <div className="absolute left-[19px] top-4 w-2 h-2 bg-slate-300 rounded-full z-0 hidden md:block"></div>
                     {/* Icon - positioned on timeline on desktop */}
                     <div className={`hidden md:flex absolute left-0 top-1 w-10 h-10 rounded-lg items-center justify-center shrink-0 
-                    shadow-[0_1px_1px_rgba(0,0,0,0.04)] 
-                    group-hover:shadow-md group-hover:-translate-y-[1px]
-                    transition-all duration-300 ${getIconStyle(act)}`}>
+                      transition-all duration-200 ${getIconStyle(act)}`}>
                       {getIconForType(act.actionType)}
                     </div>
 
                     {/* Card Content */}
-                    <div className={`border border-slate-200/70 bg-white/80 backdrop-blur-md 
+                    <div className={`border border-slate-200 bg-white
                       px-5 py-[18px] rounded-2xl
-                      shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_rgba(0,0,0,0.06)]
-                      hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)]
                       hover:-translate-y-[2px]
                       hover:border-slate-300
-                      transition-all duration-300 ease-out
+                      transition-all duration-200 ease-out
                       flex flex-col md:flex-row gap-[18px] items-start relative group
-                      ${isUnread ? 'border-slate-300 bg-white shadow-md' : 'border-slate-200/60 bg-slate-50/50'}
-                    `}>
+                      ${isUnread ? 'border-slate-300 bg-white' : 'border-slate-200/60 bg-slate-50/50'}`}>
                       {/* Mobile Icon */}
-                      <div className={`md:hidden w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.04)] ${getIconStyle(act)}`}>
+                      <div className={`md:hidden w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${getIconStyle(act)}`}>
                         {getIconForType(act.actionType)}
                       </div>
 
