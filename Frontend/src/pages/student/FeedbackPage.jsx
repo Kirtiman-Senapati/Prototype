@@ -27,19 +27,19 @@ const FeedbackPage = () => {
         {/* Metric Cards Row */}
         <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-slate-100">
             {/* Total Feedback Card */}
-            <div className="flex flex-col p-5 gap-1 bg-white border border-slate-200 rounded-xl">
+            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><MessageSquare size={14}/> Total</span>
                 <span className="text-2xl font-black text-slate-700">{totalFeedback}</span>
             </div>
 
             {/* Positive Feedback Card*/}
-            <div className="flex flex-col p-5 gap-1 bg-white border border-slate-200 rounded-xl">
+            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl">
                 <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><CheckCircle size={14}/> Positive</span>
                 <span className="text-2xl font-black text-slate-900">{positiveCount}</span>
             </div>
 
             {/* Needs Revision Feedback Card*/}
-            <div className="flex flex-col p-5 gap-1 bg-white border border-slate-200 rounded-xl">
+            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl">
                 <span className="text-[11px] font-bold text-rose-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><AlertCircle size={14}/> Revise</span>
                 <span className="text-2xl font-black text-red-700">{revisionCount}</span>
             </div>
@@ -73,9 +73,7 @@ const FeedbackPage = () => {
                     <div className="flex-1">
                         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                             <h3 className="font-bold text-lg text-slate-800">{f.title}</h3>
-                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest border ${ 
-                                'bg-white text-slate-700 border border-slate-200' 
-                            }`}>
+                            <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-widest border bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 transition-all duration-200 cursor-default">
                                 {f.type}
                             </span>
                         </div>
