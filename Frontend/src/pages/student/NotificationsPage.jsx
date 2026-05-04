@@ -142,10 +142,10 @@ const NotificationsPage = () => {
         {/* Total Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
         hover:-translate-y-[2px] transition-all duration-300 ease-out">
-          <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Bell size={20} /></div>
+          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Bell size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.total}</p>
-            <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">Total</p>
+            <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Total</p>
           </div>
         </div>
 
@@ -153,33 +153,33 @@ const NotificationsPage = () => {
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
         hover:-translate-y-[2px] 
         transition-all duration-300 ease-out">
-          <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
+          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
              <MailOpen size={20} />
              {stats.unread > 0 && <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>}
           </div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.unread}</p>
-            <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">Unread</p>
+            <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Unread</p>
           </div>
         </div>
 
         {/* Read Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
-hover:-translate-y-[2px] transition-all duration-300 ease-out">
-          <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Check size={20} /></div>
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4           hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
+        hover:-translate-y-[2px] transition-all duration-300 ease-out">
+          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Check size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.read}</p>
-            <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">Read</p>
+            <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">Read</p>
           </div>
         </div>
 
         {/* High Priority Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
         hover:-translate-y-[2px] transition-all duration-300 ease-out">
-          <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><AlertTriangle size={20} /></div>
+          <div className="w-10 h-10 mb-1 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><AlertTriangle size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.highPriority}</p>
-            <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">High Priority</p>
+            <p className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">High Priority</p>
           </div>
         </div>
       </div>
@@ -208,12 +208,13 @@ hover:-translate-y-[2px] transition-all duration-300 ease-out">
 
                     {/* Card Content */}
                     <div className={`border border-slate-200/70 bg-white/80 backdrop-blur-md 
-                    px-5 py-[18px] rounded-2xl
-                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_rgba(0,0,0,0.06)]
-                    hover:shadow-[0_8px_28px_rgba(0,0,0,0.08)]
-                    hover:-translate-y-[2px]
-                    transition-all duration-300 ease-out
-                    flex flex-col md:flex-row gap-[14px] items-start relative group
+                      px-5 py-[18px] rounded-2xl
+                      shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_rgba(0,0,0,0.06)]
+                      hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)]
+                      hover:-translate-y-[2px]
+                      hover:border-slate-300
+                      transition-all duration-300 ease-out
+                      flex flex-col md:flex-row gap-[14px] items-start relative group
                       ${isUnread ? 'border-slate-300 bg-white shadow-md' : 'border-slate-200/60 bg-slate-50/50'}
                     `}>
                       {/* Mobile Icon */}
@@ -223,7 +224,7 @@ hover:-translate-y-[2px] transition-all duration-300 ease-out">
 
                       <div className="flex-1 w-full">
                         <div className="flex justify-between items-start mb-2 gap-[14px]">
-                            <p className={`text-[14.5px] leading-[1.5] ${isUnread ? 'font-normal text-slate-800' : 'font-normal text-slate-500'}`}>
+                            <p className={`text-[14.5px] leading-[1.5] transition-colors duration-200 ${isUnread ? 'font-normal text-slate-800 group-hover:text-slate-900' :'font-normal text-slate-500 group-hover:text-slate-700'}`}>
                               {act.message}
                             </p>
                             <span className="shrink-0 text-[11px] font-medium text-slate-400 whitespace-nowrap mt-1">
