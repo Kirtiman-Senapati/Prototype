@@ -82,7 +82,7 @@ const UploadFiles = () => {
     const hasSelectedFiles = reportFile || presentationFile || codeFile;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6">
+        <div className="space-y-8 pb-10">
             {/* Upload Top Section */}
             <div className="bg-white rounded-lg border border-slate-200 p-6 md:p-8 shadow-sm">
                 <h1 className="text-lg font-semibold text-slate-900">Upload Project Files</h1>
@@ -168,38 +168,38 @@ const UploadFiles = () => {
                 <p className="text-slate-500 mt-1 text-sm mb-6">Manage your uploaded project files</p>
                 
                 {project?.files && project.files.length > 0 ? (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                    <div className="overflow-x-auto bg-white rounded-xl border border-slate-200">
+                        <table className="w-full text-left">
                             <thead>
-                                <tr className="border-b border-slate-200 text-sm font-medium text-slate-500">
-                                    <th className="pb-3 pl-2 w-1/2">File Name</th>
-                                    <th className="pb-3 w-1/4">Type</th>
-                                    <th className="pb-3 w-1/4">Date Uploaded</th>
-                                    <th className="pb-3 text-right pr-2">Action</th>
+                                <tr className="border-b border-slate-100 bg-slate-50/50 uppercase text-[11px] font-bold text-slate-500 tracking-wider">
+                                    <th className="py-4 px-6 w-[50%]">File Name</th>
+                                    <th className="py-4 px-6">Type</th>
+                                    <th className="py-4 px-6">Date Uploaded</th>
+                                    <th className="py-4 px-6 text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody  className="divide-y divide-slate-100">
                                 {[...project.files].sort((a,b) => new Date(b.uploadedAt) - new Date(a.uploadedAt)).map((f, i) => (
-                                    <tr key={i} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                                        <td className="py-4 pl-2">
+                                    <tr key={i} className="hover:bg-slate-50/80 transition-all cursor-pointer">
+                                        <td className="py-4 px-6">
                                             <div className="flex items-center gap-3">
                                                 {f.type === 'Report' && <FileText size={18} className="text-blue-500 flex-shrink-0" />}
-                                                {f.type === 'Presentation' && <MonitorPlay size={18} className="text-purple-500 flex-shrink-0" />}
-                                                {f.type === 'Code' && <Archive size={18} className="text-amber-500 flex-shrink-0" />}
-                                                <span className="font-medium text-sm text-slate-800 truncate block max-w-xs" title={f.filename}>{f.filename}</span>
+                                                {f.type === 'Presentation' && <MonitorPlay size={18} className="text-amber-500" />}
+                                                {f.type === 'Code' && <Archive size={18} className="text-purple-500 flex-shrink-0" />}
+                                                <span className="font-semibold text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs" title={f.filename}>{f.filename}</span>
                                             </div>
                                         </td>
-                                        <td className="py-4">
-                                            <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-medium">{f.type || 'Report'}</span>
+                                        <td className="py-4 px-6">
+                                            <span className="text-[12px] font-bold text-slate-500 uppercase">{f.type || 'Report'}</span>
                                         </td>
-                                        <td className="py-4 text-sm text-slate-500">
-                                            {new Date(f.uploadedAt).toLocaleDateString()}
+                                        <td className="py-4 px-6 text-[13px] text-slate-500 font-medium">
+                                            {new Date(f.uploadedAt).toLocaleDateString('en-GB')}
                                         </td>
-                                        <td className="py-4 text-right pr-2">
+                                        <td className="py-4 px-6 text-right">
                                             {/* Process fetch to force download name cross-origin */}
                                             <button 
                                                 onClick={() => handleDownload(f.url, f.filename)} 
-                                                className="text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none"
+                                                className="text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 text-[12px] font-semibold py-2 px-4 rounded-md transition-colors"
                                             >
                                                 Download
                                             </button>
