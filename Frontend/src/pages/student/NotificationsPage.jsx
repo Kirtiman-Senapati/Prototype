@@ -20,18 +20,18 @@ const getIconStyle = (act) => {
   switch (act.actionType) {
     case "PROJECT_APPROVED":
     case "TASK_COMPLETED":
-      return "bg-emerald-50 text-emerald-600 border border-emerald-100";
+      return "bg-slate-100 text-slate-600 border border-slate-200";
 
     case "PROJECT_REJECTED":
     case "REQUEST_REJECTED":
-      return "bg-rose-50 text-rose-600 border border-rose-100";
+      return "bg-slate-100 text-slate-600 border border-slate-200";
 
     case "SUPERVISOR_ASSIGNED":
     case "USER_ADDED":
-      return "bg-indigo-50 text-indigo-600 border border-indigo-100";
+      return "bg-slate-100 text-slate-600 border border-slate-200";
 
     case "DEADLINE_SET":
-      return "bg-amber-50 text-amber-600 border border-amber-100";
+      return "bg-slate-100 text-slate-600 border border-slate-200";
 
     default:
       return "bg-slate-100 text-slate-600 border border-slate-200";
@@ -123,8 +123,14 @@ const NotificationsPage = () => {
         {stats.unread > 0 && (
           <button 
             onClick={handleMarkAllAsRead}
-            className="text-sm font-medium bg-white/80 backdrop-blur text-blue-600 border border-blue-200 hover:bg-blue-50 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all duration-200 ease-out flex items-center gap-2"
-          >
+            className="text-sm font-medium 
+            bg-slate-900 text-white 
+            border border-slate-900 
+            hover:bg-slate-800 
+            px-4 py-2 rounded-xl 
+            shadow-sm hover:shadow-md 
+            hover:-translate-y-[1px] 
+            transition-all duration-200 flex items-center gap-2">
             <MailOpen size={16} /> Mark all as read
           </button>
         )}
@@ -134,7 +140,8 @@ const NotificationsPage = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
 
         {/* Total Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
+        hover:-translate-y-[2px] transition-all duration-300 ease-out">
           <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Bell size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.total}</p>
@@ -143,7 +150,9 @@ const NotificationsPage = () => {
         </div>
 
         {/* Unread Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
+        hover:-translate-y-[2px] 
+        transition-all duration-300 ease-out">
           <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
              <MailOpen size={20} />
              {stats.unread > 0 && <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>}
@@ -155,7 +164,8 @@ const NotificationsPage = () => {
         </div>
 
         {/* Read Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
+hover:-translate-y-[2px] transition-all duration-300 ease-out">
           <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Check size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.read}</p>
@@ -164,7 +174,8 @@ const NotificationsPage = () => {
         </div>
 
         {/* High Priority Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] 
+        hover:-translate-y-[2px] transition-all duration-300 ease-out">
           <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><AlertTriangle size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.highPriority}</p>
