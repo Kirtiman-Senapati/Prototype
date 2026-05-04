@@ -17,25 +17,30 @@ const FeedbackPage = () => {
   const revisionCount = feedbacks?.filter(f => f.type === 'Needs Revision').length || 0;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500">
+    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500 bg-[#F9FAFB] min-h-screen pb-10">
       
       {/* Header Profile section style */}
-      <div className="bg-white border text-center md:text-left border-slate-200 p-8 rounded-2xl shadow-sm">
+      <div className="bg-white border border-slate-200 p-8 rounded-xl shadow-sm">
         <h1 className="text-2xl font-bold text-slate-800">Feedback Timeline</h1>
         <p className="text-slate-500 mt-1">Track and review all evaluations from your supervisors and administrators.</p>
         
         {/* Metric Cards Row */}
         <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-slate-100">
-            <div className="flex flex-col items-center md:items-start p-4 bg-slate-50 rounded-xl border border-slate-100">
+            {/* Total Feedback Card */}
+            <div className="flex flex-col p-5 gap-1 bg-white border border-slate-200 rounded-xl">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><MessageSquare size={14}/> Total</span>
                 <span className="text-2xl font-black text-slate-700">{totalFeedback}</span>
             </div>
-            <div className="flex flex-col items-center md:items-start p-4 bg-green-50 rounded-xl border border-green-100">
-                <span className="text-[11px] font-bold text-green-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><CheckCircle size={14}/> Positive</span>
-                <span className="text-2xl font-black text-green-700">{positiveCount}</span>
+
+            {/* Positive Feedback Card*/}
+            <div className="flex flex-col p-5 gap-1 bg-white border border-slate-200 rounded-xl">
+                <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><CheckCircle size={14}/> Positive</span>
+                <span className="text-2xl font-black text-slate-900">{positiveCount}</span>
             </div>
-            <div className="flex flex-col items-center md:items-start p-4 bg-red-50 rounded-xl border border-red-100">
-                <span className="text-[11px] font-bold text-red-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><AlertCircle size={14}/> Revise</span>
+
+            {/* Needs Revision Feedback Card*/}
+            <div className="flex flex-col p-5 gap-1 bg-white border border-slate-200 rounded-xl">
+                <span className="text-[11px] font-bold text-rose-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><AlertCircle size={14}/> Revise</span>
                 <span className="text-2xl font-black text-red-700">{revisionCount}</span>
             </div>
         </div>
@@ -68,10 +73,8 @@ const FeedbackPage = () => {
                     <div className="flex-1">
                         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                             <h3 className="font-bold text-lg text-slate-800">{f.title}</h3>
-                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest border ${
-                                f.type === 'Positive' ? 'bg-green-50 text-green-700 border-green-200' :
-                                f.type === 'Needs Revision' ? 'bg-red-50 text-red-700 border-red-200' :
-                                'bg-blue-50 text-blue-700 border-blue-200'
+                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-widest border ${ 
+                                'bg-white text-slate-700 border border-slate-200' 
                             }`}>
                                 {f.type}
                             </span>
