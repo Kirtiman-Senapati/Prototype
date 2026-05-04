@@ -85,12 +85,14 @@ const UploadFiles = () => {
         <div className="space-y-8 pb-10">
             {/* Upload Top Section */}
             <div className="bg-white rounded-lg border border-slate-200 p-6 md:p-8 shadow-sm">
-                <h1 className="text-lg font-semibold text-slate-900">Upload Project Files</h1>
-                <p className="text-slate-500 mt-1 text-sm mb-8">Upload your project documents including reports, presentations, and code files.</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center mb-10">
+                    <h1 className="text-lg font-semibold text-slate-900">Upload Project Files</h1>
+                    <p className="text-slate-500 mt-1 text-sm mb-8">Upload your project documents including reports, presentations, and code files.</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {/* Report Box */}
-                    <div className="border border-slate-200 bg-white rounded-lg p-6 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
+                    <div className="border border-slate-200 bg-white rounded-lg p-6 sm:p-7 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
                         <FileText size={32} className="text-slate-500 mb-3" />
                         <h3 className="font-semibold text-slate-800">Report</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your project report (PDF, DOC)</p>
@@ -107,7 +109,7 @@ const UploadFiles = () => {
                     </div>
 
                     {/* Presentation Box */}
-                    <div className="border border-slate-200 bg-white rounded-lg p-8 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
+                    <div className="border border-slate-200 bg-white rounded-lg p-6 sm:p-7 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
                         <MonitorPlay size={32} className="text-slate-500 mb-3" />
                         <h3 className="font-semibold text-slate-800">Presentation</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your presentation (PPT, PPTX, PDF)</p>
@@ -124,7 +126,7 @@ const UploadFiles = () => {
                     </div>
 
                     {/* Code Files Box */}
-                    <div className="border border-slate-200 bg-white rounded-lg p-6 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
+                    <div className="border border-slate-200 bg-white rounded-lg p-6 sm:p-7 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
                         <Archive size={32} className="text-slate-500 mb-3" />
                         <h3 className="font-semibold text-slate-800">Code Files</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your source code (ZIP, RAR, TAR)</p>
@@ -141,11 +143,11 @@ const UploadFiles = () => {
                     </div>
                 </div>
 
-                <div className="mt-8 flex justify-end">
+                <div className="mt-8 flex flex-col sm:flex-row justify-center sm:justify-end">
                     <button 
                         onClick={handleUploadAll}
                         disabled={!hasSelectedFiles || uploading} 
-                        className={`bg-slate-900 hover:bg-slate-800 text-white font-medium px-6 py-2.5 rounded-lg flex items-center gap-2 transition-colors ${(!hasSelectedFiles || uploading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`bg-slate-900 hover:bg-slate-800 text-white font-medium px-6 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors w-full sm:w-auto ${(!hasSelectedFiles || uploading) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         {uploading ? (
                             <>
@@ -164,11 +166,43 @@ const UploadFiles = () => {
 
             {/* Uploaded Files Section */}
             <div className="bg-white rounded-lg border border-slate-200 p-6 md:p-8 shadow-sm">
+
+                <div className="text-center mb-8">
                 <h2 className="text-lg font-semibold text-slate-800">Uploaded Files</h2>
                 <p className="text-slate-500 mt-1 text-sm mb-6">Manage your uploaded project files</p>
+                </div>
                 
                 {project?.files && project.files.length > 0 ? (
-                    <div className="overflow-x-auto bg-white rounded-xl border border-slate-200">
+                <>
+                    {/* MOBILE VIEW */}
+                    <div className="md:hidden space-y-3">
+                        {project.files.map((f, i) => (
+                            <div key={i} className="bg-white border border-slate-200 rounded-xl p-4">
+
+                                <div className="flex items-center gap-3 mb-3">
+                                    <FileText size={18} className="text-blue-500" />
+                                    <span className="text-sm font-semibold text-slate-800 truncate">
+                                        {f.filename}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between text-xs text-slate-500 mb-3">
+                                    <span>{f.type}</span>
+                                    <span>{new Date(f.uploadedAt).toLocaleDateString('en-GB')}</span>
+                                </div>
+
+                                <button
+                                    onClick={() => handleDownload(f.url, f.filename)}
+                                    className="w-full py-2 text-sm font-semibold text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-100 transition"
+                                >
+                                    Download
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* DESKTOP TABLE */}
+                    <div className="hidden md:block overflow-x-auto bg-white rounded-xl border border-slate-200">
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="border-b border-slate-100 bg-slate-50/50 uppercase text-[11px] font-bold text-slate-500 tracking-wider">
@@ -209,6 +243,7 @@ const UploadFiles = () => {
                             </tbody>
                         </table>
                     </div>
+                </>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50/50">
                         <div className="bg-white p-3 rounded-lg shadow-sm border border-slate-100 mb-4">
