@@ -84,18 +84,18 @@ const UploadFiles = () => {
     return (
         <div className="max-w-7xl mx-auto space-y-6">
             {/* Upload Top Section */}
-            <div className="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm">
-                <h1 className="text-xl font-bold text-slate-800">Upload Project Files</h1>
+            <div className="bg-white rounded-lg border border-slate-200 p-6 md:p-8 shadow-sm">
+                <h1 className="text-lg font-semibold text-slate-900">Upload Project Files</h1>
                 <p className="text-slate-500 mt-1 text-sm mb-8">Upload your project documents including reports, presentations, and code files.</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Report Box */}
-                    <div className={`border-2 border-dashed ${reportFile ? 'border-blue-400 bg-blue-50/30' : 'border-slate-200 bg-white'} rounded-xl p-8 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50`}>
-                        <FileText size={36} className="text-slate-400 mb-3" />
+                    <div className="border border-slate-200 bg-white rounded-lg p-6 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
+                        <FileText size={32} className="text-slate-500 mb-3" />
                         <h3 className="font-semibold text-slate-800">Report</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your project report (PDF, DOC)</p>
                         
-                        <label className="bg-white border border-slate-200 text-blue-600 font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors text-sm">
+                        <label className="bg-white border border-slate-200 text-slate-700 font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors text-sm">
                             {reportFile ? reportFile.name : "Choose File"}
                             <input 
                                 type="file" 
@@ -107,12 +107,12 @@ const UploadFiles = () => {
                     </div>
 
                     {/* Presentation Box */}
-                    <div className={`border-2 border-dashed ${presentationFile ? 'border-purple-400 bg-purple-50/30' : 'border-slate-200 bg-white'} rounded-xl p-8 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50`}>
-                        <MonitorPlay size={36} className="text-slate-400 mb-3" />
+                    <div className="border border-slate-200 bg-white rounded-lg p-8 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
+                        <MonitorPlay size={32} className="text-slate-500 mb-3" />
                         <h3 className="font-semibold text-slate-800">Presentation</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your presentation (PPT, PPTX, PDF)</p>
                         
-                        <label className="bg-white border border-slate-200 text-blue-600 font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors text-sm">
+                        <label className="bg-white border border-slate-200 text-slate-700 font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors text-sm">
                             {presentationFile ? presentationFile.name : "Choose File"}
                             <input 
                                 type="file" 
@@ -124,12 +124,12 @@ const UploadFiles = () => {
                     </div>
 
                     {/* Code Files Box */}
-                    <div className={`border-2 border-dashed ${codeFile ? 'border-amber-400 bg-amber-50/30' : 'border-slate-200 bg-white'} rounded-xl p-8 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50`}>
-                        <Archive size={36} className="text-slate-400 mb-3" />
+                    <div className="border border-slate-200 bg-white rounded-lg p-6 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
+                        <Archive size={32} className="text-slate-500 mb-3" />
                         <h3 className="font-semibold text-slate-800">Code Files</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your source code (ZIP, RAR, TAR)</p>
                         
-                        <label className="bg-white border border-slate-200 text-blue-600 font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors text-sm">
+                        <label className="bg-white border border-slate-200 text-slate-700 font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors text-sm">
                             {codeFile ? codeFile.name : "Choose File"}
                             <input 
                                 type="file" 
@@ -145,7 +145,7 @@ const UploadFiles = () => {
                     <button 
                         onClick={handleUploadAll}
                         disabled={!hasSelectedFiles || uploading} 
-                        className={`bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg flex items-center gap-2 transition-colors ${(!hasSelectedFiles || uploading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`bg-slate-900 hover:bg-slate-800 text-white font-medium px-6 py-2.5 rounded-lg flex items-center gap-2 transition-colors ${(!hasSelectedFiles || uploading) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         {uploading ? (
                             <>
@@ -163,7 +163,7 @@ const UploadFiles = () => {
             </div>
 
             {/* Uploaded Files Section */}
-            <div className="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm">
+            <div className="bg-white rounded-lg border border-slate-200 p-6 md:p-8 shadow-sm">
                 <h2 className="text-lg font-semibold text-slate-800">Uploaded Files</h2>
                 <p className="text-slate-500 mt-1 text-sm mb-6">Manage your uploaded project files</p>
                 
@@ -210,8 +210,8 @@ const UploadFiles = () => {
                         </table>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                        <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 mb-4">
+                    <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50/50">
+                        <div className="bg-white p-3 rounded-lg shadow-sm border border-slate-100 mb-4">
                             <FileText size={32} className="text-slate-300" />
                         </div>
                         <p className="text-slate-500 text-sm font-medium">No files uploaded yet</p>
