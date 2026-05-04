@@ -27,19 +27,25 @@ const FeedbackPage = () => {
         {/* Metric Cards Row */}
         <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-slate-100">
             {/* Total Feedback Card */}
-            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl">
+            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl 
+                transition-all duration-200 
+                hover:border-slate-300 hover:-translate-y-[1px]">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><MessageSquare size={14}/> Total</span>
                 <span className="text-2xl font-black text-slate-700">{totalFeedback}</span>
             </div>
 
             {/* Positive Feedback Card*/}
-            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl">
+            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl 
+                transition-all duration-200 
+                hover:border-slate-300 hover:-translate-y-[1px]">
                 <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><CheckCircle size={14}/> Positive</span>
                 <span className="text-2xl font-black text-slate-900">{positiveCount}</span>
             </div>
 
             {/* Needs Revision Feedback Card*/}
-            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl">
+            <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl 
+                transition-all duration-200 
+                hover:border-slate-300 hover:-translate-y-[1px]">
                 <span className="text-[11px] font-bold text-rose-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><AlertCircle size={14}/> Revise</span>
                 <span className="text-2xl font-black text-red-700">{revisionCount}</span>
             </div>
@@ -54,7 +60,10 @@ const FeedbackPage = () => {
         <div className="space-y-4">
           {feedbacks && feedbacks.length > 0 ? (
               feedbacks.map((f, i) => (
-                 <div key={f._id || i} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative hover:shadow-md transition-shadow group flex flex-col md:flex-row gap-6">
+                 <div key={f._id || i} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative 
+                    hover:border-slate-300 hover:shadow-md hover:-translate-y-[1px] 
+                    transition-all duration-200 
+                    group flex flex-col md:flex-row gap-6">
                     {/* Timestamp Sidebar */}
                     <div className="md:w-[150px] shrink-0 border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0 md:pr-4 flex flex-row md:flex-col justify-between md:justify-start items-center md:items-start gap-1">
                         <span className="text-sm font-bold text-slate-800 flex items-center gap-2 mt-1">
@@ -77,11 +86,19 @@ const FeedbackPage = () => {
                                 {f.type}
                             </span>
                         </div>
-                        
-                        <p className="text-[15px] leading-relaxed text-slate-600 mb-6 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50">
+
+                        {/* Message Content */}
+                        <p className="text-[15px] leading-relaxed text-slate-600 mb-6 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50 
+                        group-hover:bg-slate-50 group-hover:border-slate-200 
+                        transition-all duration-200">
                             {f.message}
                         </p>
+                        {/* Attachments */}
 
+                        
+                        
+                        {/* TODO */}
+                        
                         <div className="flex items-center gap-2.5 mt-auto">
                             <div className="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs font-bold">
                                 {f.sender?.name ? f.sender.name.substring(0, 2).toUpperCase() : '?'}
