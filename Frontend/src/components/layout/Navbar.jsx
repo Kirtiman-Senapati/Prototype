@@ -80,7 +80,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             <button 
                 onClick={() => navigate('/dashboard/notifications')}
                 className={`p-2 rounded-lg transition-colors relative focus:outline-none ${
-                  isActive ? 'text-blue-600 bg-blue-50' : 'text-slate-400 hover:text-slate-600'
+                  isActive ? 'text-slate-900 bg-slate-100' : 'text-slate-400 hover:text-slate-600'
                 }`}
             >
                 <Bell className="w-5 h-5" />

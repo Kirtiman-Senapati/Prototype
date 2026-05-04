@@ -97,11 +97,18 @@ const TeacherFiles = () => {
     };
 
     const getFileIcon = (type, className = "") => {
-        if (type === "Report") return <FileText className={`text-blue-500 ${className}`} />;
-        if (type === "Presentation") return <MonitorPlay className={`text-amber-500 ${className}`} />;
-        if (type === "Code") return <Archive className={`text-purple-500 ${className}`} />;
-        return <FileText className={`text-slate-500 ${className}`} />;
-    };
+    let Icon = FileText; // default fallback
+
+    if (type === "Report") Icon = FileText;
+    else if (type === "Presentation") Icon = MonitorPlay;
+    else if (type === "Code") Icon = Archive;
+
+    return (
+        <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+            <Icon className={`text-slate-600 ${className}`} />
+        </div>
+    );
+};
 
     return (
         <div className="space-y-8 pb-10">
@@ -196,7 +203,7 @@ const TeacherFiles = () => {
                  <div className="border-t border-slate-100 pt-8 -mx-6 px-6 md:-mx-8 md:px-8 bg-slate-50/30 rounded-b-xl min-h-[400px]">
                  {isLoading && allFiles.length === 0 ? (
                       <div className="flex justify-center py-20 mt-10">
-                          <Loader className="animate-spin text-blue-500" size={36} />
+                          <Loader className="animate-spin text-slate-400" size={36} />
                       </div>
                  ) : filteredFiles.length === 0 ? (
                       <div className="text-center py-24 px-4 bg-white border border-dashed border-slate-200 rounded-xl max-w-2xl mx-auto">
