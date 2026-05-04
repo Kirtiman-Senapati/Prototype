@@ -112,13 +112,13 @@ const NotificationsPage = () => {
   const displayActivities = activities || [];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500 pb-10">
+    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500 pb-10 bg-[#F8FAFC] min-h-screen">
       
       {/* Header section WhatsApp Web style */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-7 border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-3xl font-semibold text-slate-800 tracking-tight">Notifications</h1>
-          <p className="text-slate-500 mt-1 text-sm">Stay updated with your project activities.</p>
+          <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Notifications</h1>
+          <p className="text-slate-500/90 mt-1 text-sm">Stay updated with your project activities.</p>
         </div>
         {stats.unread > 0 && (
           <button 
@@ -132,16 +132,19 @@ const NotificationsPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+
+        {/* Total Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
-          <div className="w-11 h-11 bg-blue-50 text-blue-600 border border-blue-100 rounded-xl flex items-center justify-center shadow-sm shrink-0"><Bell size={20} /></div>
+          <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Bell size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.total}</p>
             <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">Total</p>
           </div>
         </div>
-        
+
+        {/* Unread Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
-          <div className="w-11 h-11 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
+          <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0 relative">
              <MailOpen size={20} />
              {stats.unread > 0 && <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>}
           </div>
@@ -151,16 +154,18 @@ const NotificationsPage = () => {
           </div>
         </div>
 
+        {/* Read Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
-          <div className="w-11 h-11 bg-green-50 text-green-600 border border-green-100 rounded-xl flex items-center justify-center shadow-sm shrink-0"><Check size={20} /></div>
+          <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><Check size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.read}</p>
             <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">Read</p>
           </div>
         </div>
 
+        {/* High Priority Card */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.06)] flex items-center gap-4 hover:shadow-md hover:-translate-y-[2px] transition-all duration-200 ease-out">
-          <div className="w-11 h-11 bg-red-50 text-red-600 border border-red-100 rounded-xl flex items-center justify-center shadow-sm shrink-0"><AlertTriangle size={20} /></div>
+          <div className="w-11 h-11 bg-slate-900 text-white shadow-sm rounded-xl flex items-center justify-center shadow-sm shrink-0"><AlertTriangle size={20} /></div>
           <div>
             <p className="text-2xl font-semibold text-slate-800 leading-none">{stats.highPriority}</p>
             <p className="text-[11px] font-medium text-slate-400 tracking-wider uppercase mt-1">High Priority</p>
@@ -172,8 +177,9 @@ const NotificationsPage = () => {
       <div className="bg-transparent mt-4">
         {displayActivities.length > 0 ? (
           <div className="relative flex flex-col max-h-[600px] overflow-y-auto custom-scrollbar pb-6">
+            
             {/* Timeline Line */}
-            <div className="absolute left-[20px] top-8 bottom-4 w-[2px] bg-slate-200 hidden md:block z-0"></div>
+            <div className="absolute left-[20px] top-8 bottom-4 w-[2px] bg-gradient-to-b from-slate-200 via-slate-300 to-transparent hidden md:block z-0"></div>
 
             <div className="space-y-[18px]">
               {displayActivities.map((act) => {
@@ -190,8 +196,14 @@ const NotificationsPage = () => {
                     </div>
 
                     {/* Card Content */}
-                    <div className={`border px-5 py-[18px] rounded-[14px] shadow-sm hover:shadow-md transition-all duration-200 ease-out flex flex-col md:flex-row gap-[14px] items-start relative group
-                      ${isUnread ? 'border-slate-200 bg-white' : 'border-slate-200/70 bg-slate-50/40'}
+                    <div className={`border border-slate-200/70 bg-white/80 backdrop-blur-md 
+                    px-5 py-[18px] rounded-2xl
+                    shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_rgba(0,0,0,0.06)]
+                    hover:shadow-[0_8px_28px_rgba(0,0,0,0.08)]
+                    hover:-translate-y-[2px]
+                    transition-all duration-300 ease-out
+                    flex flex-col md:flex-row gap-[14px] items-start relative group
+                      ${isUnread ? 'border-slate-300 bg-white shadow-md' : 'border-slate-200/60 bg-slate-50/50'}
                     `}>
                       {/* Mobile Icon */}
                       <div className={`md:hidden w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.04)] ${getIconStyle(act)}`}>
@@ -214,7 +226,7 @@ const NotificationsPage = () => {
                             </span>
                             
                             {act.priority === 'high' && (
-                                <span className="text-[10px] font-semibold px-2 py-1 rounded bg-rose-50 text-rose-600 border border-rose-100 uppercase tracking-wide flex items-center gap-1">
+                                <span className="text-[10px] font-semibold px-2 py-1 rounded bg-rose-50/80 text-rose-600 border border-rose-200/60 backdrop-blur-sm uppercase tracking-wide flex items-center gap-1">
                                   <AlertTriangle size={12}/> HIGH PRIORITY
                                 </span>
                             )}
@@ -229,7 +241,12 @@ const NotificationsPage = () => {
                             {isUnread && (
                                 <button 
                                     onClick={() => handleMarkAsRead(act._id)}
-                                    className="ml-auto opacity-0 group-hover:opacity-100 text-[11px] font-medium text-blue-600 transition-opacity bg-white hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200"
+                                    className="ml-auto opacity-0 group-hover:opacity-100 text-[11px] font-medium 
+                                    bg-slate-900 text-white border border-slate-900 
+                                    hover:bg-slate-800 
+                                    px-3 py-1.5 rounded-lg 
+                                    shadow-sm hover:shadow-md 
+                                    transition-all duration-200"
                                 >
                                     Mark as read
                                 </button>
