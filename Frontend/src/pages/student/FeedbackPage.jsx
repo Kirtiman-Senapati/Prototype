@@ -61,11 +61,14 @@ const FeedbackPage = () => {
           {feedbacks && feedbacks.length > 0 ? (
               feedbacks.map((f, i) => (
                  <div key={f._id || i} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative 
-                    hover:border-slate-300 hover:shadow-md hover:-translate-y-[1px] 
-                    transition-all duration-200 
-                    group flex flex-col md:flex-row gap-6">
+                        hover:border-slate-300 hover:shadow-lg hover:-translate-y-[1px] 
+                        hover:bg-slate-50/40
+                        transition-all duration-300 ease-out
+                        group flex flex-col md:flex-row gap-6">
                     {/* Timestamp Sidebar */}
-                    <div className="md:w-[150px] shrink-0 border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0 md:pr-4 flex flex-row md:flex-col justify-between md:justify-start items-center md:items-start gap-1">
+                    <div className="md:w-[150px] shrink-0 border-b md:border-b-0 md:border-r border-slate-100 
+                            group-hover:border-slate-200 
+                            transition-colors duration-300 pb-4 md:pb-0 md:pr-4 flex flex-row md:flex-col justify-between md:justify-start items-center md:items-start gap-1">
                         <span className="text-sm font-bold text-slate-800 flex items-center gap-2 mt-1">
                             {new Date(f.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                         </span>
@@ -81,7 +84,7 @@ const FeedbackPage = () => {
                     {/* Main Content */}
                     <div className="flex-1">
                         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-                            <h3 className="font-bold text-lg text-slate-800">{f.title}</h3>
+                            <h3 className="font-bold text-lg text-slate-800 group-hover:text-slate-900 transition-colors duration-200">{f.title}</h3>
                             <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-widest border bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 transition-all duration-200 cursor-default">
                                 {f.type}
                             </span>
@@ -89,7 +92,7 @@ const FeedbackPage = () => {
 
                         {/* Message Content */}
                         <p className="text-[15px] leading-relaxed text-slate-600 mb-6 bg-slate-50/50 p-4 rounded-xl border border-slate-100/50 
-                        group-hover:bg-slate-50 group-hover:border-slate-200 
+                        group-hover:bg-slate-100/60 group-hover:border-slate-100 
                         transition-all duration-200">
                             {f.message}
                         </p>
