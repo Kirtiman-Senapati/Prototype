@@ -93,7 +93,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
                                 </p>
 
                                 {activity.details && (
-                                    <p className="text-xs text-slate-500 mt-1 truncate">
+                                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                                         {activity.details}
                                     </p>
                                 )}
