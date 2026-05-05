@@ -252,26 +252,30 @@ const DeadlinesPage = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-5 align-middle text-right">
-                                                <div className="flex items-center justify-end gap-2 w-full">
+                                                <div className="flex items-center justify-end gap-2 w-[210px] ml-auto">
+
+                                                    {/* Reminder */}
                                                     <button 
                                                         onClick={() => openReminderModal(proj)}
-                                                        className="flex-1 min-w-[130px] bg-white border border-slate-200 hover:bg-slate-50 rounded-lg px-3 py-2 text-sm font-medium transition-all flex items-center justify-center gap-2 text-slate-700"
+                                                        className="w-[100px] h-[34px] bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 text-slate-700"
                                                     >
-                                                        <Bell size={16} className="text-slate-600" />
-                                                        Reminder
+                                                        <Bell size={14} className="text-slate-500" />
+                                                        Remind
                                                     </button>
+
+                                                    {/* Deadline */}
                                                     <button 
                                                         onClick={() => openModalForProject(proj)}
                                                         disabled={proj.status === "Completed"}
-                                                        title={proj.status === "Completed" ? "Cannot update deadline for completed projects" : ""}
-                                                        className={`flex-1 min-w-[130px] px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${
+                                                        className={`w-[100px] h-[34px] text-xs font-medium rounded-md transition-all flex items-center justify-center gap-1 ${
                                                             proj.status === "Completed"
                                                                 ? "text-slate-400 cursor-not-allowed bg-slate-50 border border-slate-200"
-                                                                : "text-slate-700 bg-white border border-slate-200 hover:bg-slate-50"
+                                                                : "text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                                                         }`}
                                                     >
                                                         {proj.deadline ? "Update" : "Set"}
                                                     </button>
+
                                                 </div>
                                             </td>
                                         </tr>
