@@ -601,6 +601,7 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
         targetUsers: [studentId],
         actionType: "DEADLINE_REMINDER",
         message: `**Admin** sent a manual reminder to **${project.student.name}** for project "${project.title}"`,
+        details: finalMessage,
         relatedProject: project._id,
         priority: "medium"
     });
