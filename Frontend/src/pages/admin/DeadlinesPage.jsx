@@ -255,15 +255,15 @@ const DeadlinesPage = () => {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button 
                                                         onClick={() => openReminderModal(proj)}
-                                                        className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors flex items-center gap-1.5 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+                                                        className="bg-white border border-slate-200 hover:bg-slate-50 rounded-lg px-4 py-2 text-sm font-medium transition-all flex items-center gap-2 text-slate-700"
                                                     >
-                                                        <Bell size={14} /> Send Reminder
+                                                        <Bell size={16} className="text-slate-600" /> Send Reminder
                                                     </button>
                                                     <button 
                                                         onClick={() => openModalForProject(proj)}
                                                         disabled={proj.status === "Completed"}
                                                         title={proj.status === "Completed" ? "Cannot update deadline for completed projects" : ""}
-                                                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all flex items-center gap-1.5 ${proj.status === "Completed" ? "text-slate-400 cursor-not-allowed bg-slate-50 border border-slate-200" : "text-slate-700 bg-white border border-slate-200 shadow-[0_1px_0_rgba(0,0,0,0.02)] hover:bg-slate-50 hover:border-slate-300"}`}
+                                                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${proj.status === "Completed" ? "text-slate-400 cursor-not-allowed bg-slate-50 border border-slate-200" : "text-slate-700 bg-white border border-slate-200 hover:bg-slate-50"}`}
                                                     >
                                                         {proj.deadline ? "Update" : "Set Deadline"}
                                                     </button>

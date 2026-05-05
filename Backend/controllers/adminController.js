@@ -598,7 +598,7 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
     // 2. Log Activity
     await logActivity({
         actor: req.user._id,
-        targetUsers: [studentId],
+        targetUsers: [studentId, req.user._id],
         actionType: "DEADLINE_REMINDER",
         message: `**Admin** sent a manual reminder to **${project.student.name}** for project "${project.title}"`,
         details: finalMessage,
