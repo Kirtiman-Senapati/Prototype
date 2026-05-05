@@ -13,6 +13,7 @@ import { emitRefresh } from "../utils/socketEvents.js";
 import { sendEmail } from "../services/emailService.js";
 import { getEmailTemplate } from "../utils/emailTemplates.js";
 import { Notification } from "../models/notification.js";
+import { generateNotificationEmailTemplate } from "../utils/notificationEmailTemplate.js";
 import fs from "fs";
 import path from "path";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
@@ -607,29 +608,31 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
     // 3. Socket.IO Update
     const io = getIo();
     if (io) {
+        emitRefresh(io);
         import("../utils/socket.js").then(({ getReceiverSocketId }) => {
-            const studentSocketId = getReceiverSocketId(studentId);
-            if (studentSocketId) {
-                io.to(studentSocketId).emit("newNotification", {
-                    message: finalMessage,
-                    type: "Deadline"
+            const socketIds = getReceiverSocketId(studentId);
+            if (socketIds && socketIds.length > 0) {
+                socketIds.forEach(id => {
+                    io.to(id).emit("newNotification", {
+                        message: finalMessage,
+                        type: "Deadline"
+                    });
                 });
             }
-            emitRefresh(io);
         });
     }
 
     // 4. Send Email (non-blocking)
     if (project.student.email) {
+        const html = generateNotificationEmailTemplate(
+            `Admin sent you a reminder for project "${project.title}"`,
+            finalMessage
+        );
+        
         sendEmail({
             to: project.student.email,
             subject: `Important Reminder: Project ${project.title}`,
-            html: `<div style="font-family: sans-serif; padding: 20px; color: #333;">
-                    <h2>Project Reminder</h2>
-                    <p>Hello ${project.student.name},</p>
-                    <p>${finalMessage}</p>
-                    <p>Please log in to your dashboard to view more details.</p>
-                  </div>`,
+            html: html,
             role: "System"
         }).catch(err => {
             console.error("Manual reminder email failed but process continues:", err.message);
