@@ -9,7 +9,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   
   const { authUser } = useSelector((state) => state.auth);
+  const { activities } = useSelector((state) => state.activity);
   
+  const unreadCount = activities?.filter(act => !act.readBy?.includes(authUser?._id)).length || 0;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,8 +86,11 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 }`}
             >
                 <Bell className="w-5 h-5" />
-                {/* Simulated badge for SaaS feel */}
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-slate-900 text-white text-[10px] px-1.5 py-[1px] rounded-full border-[1.5px] border-white font-medium">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                )}
             </button>
 
             {/* Profile dropdown */}
