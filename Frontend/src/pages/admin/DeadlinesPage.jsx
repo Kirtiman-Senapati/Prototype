@@ -197,7 +197,7 @@ const DeadlinesPage = () => {
                                 <th className="px-6 py-4 font-medium">Supervisor</th>
                                 <th className="px-6 py-4 font-medium">Deadline</th>
                                 <th className="px-6 py-4 font-medium">Status</th>
-                                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                                <th className="px-6 py-4 font-medium text-right w-[220px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -252,20 +252,25 @@ const DeadlinesPage = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-5 align-middle text-right">
-                                                <div className="flex items-center justify-end gap-2">
+                                                <div className="flex items-center justify-end gap-2 w-full">
                                                     <button 
                                                         onClick={() => openReminderModal(proj)}
-                                                        className="bg-white border border-slate-200 hover:bg-slate-50 rounded-lg px-4 py-2 text-sm font-medium transition-all flex items-center gap-2 text-slate-700"
+                                                        className="flex-1 min-w-[130px] bg-white border border-slate-200 hover:bg-slate-50 rounded-lg px-3 py-2 text-sm font-medium transition-all flex items-center justify-center gap-2 text-slate-700"
                                                     >
-                                                        <Bell size={16} className="text-slate-600" /> Send Reminder
+                                                        <Bell size={16} className="text-slate-600" />
+                                                        Reminder
                                                     </button>
                                                     <button 
                                                         onClick={() => openModalForProject(proj)}
                                                         disabled={proj.status === "Completed"}
                                                         title={proj.status === "Completed" ? "Cannot update deadline for completed projects" : ""}
-                                                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${proj.status === "Completed" ? "text-slate-400 cursor-not-allowed bg-slate-50 border border-slate-200" : "text-slate-700 bg-white border border-slate-200 hover:bg-slate-50"}`}
+                                                        className={`flex-1 min-w-[130px] px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${
+                                                            proj.status === "Completed"
+                                                                ? "text-slate-400 cursor-not-allowed bg-slate-50 border border-slate-200"
+                                                                : "text-slate-700 bg-white border border-slate-200 hover:bg-slate-50"
+                                                        }`}
                                                     >
-                                                        {proj.deadline ? "Update" : "Set Deadline"}
+                                                        {proj.deadline ? "Update" : "Set"}
                                                     </button>
                                                 </div>
                                             </td>
