@@ -126,6 +126,17 @@ export const assignTaskAdminData = createAsyncThunk("admin/assignTask", async (t
     }
 });
 
+export const sendManualReminderAdmin = createAsyncThunk("admin/sendManualReminder", async ({ projectId, studentId, message }, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.post(`/admin/project/${projectId}/remind`, { studentId, message });
+        toast.success("Reminder sent successfully");
+        return response.data;
+    } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to send reminder");
+        return rejectWithValue(err.response?.data);
+    }
+});
+
 const adminSlice = createSlice({
     name: "admin",
     initialState: {

@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
-import { updateProjectDeadlineAdmin } from "../../store/slices/adminSlice";
-import { Calendar as CalendarIcon, Search, Clock, CheckCircle2, User, X, CalendarPlus, Filter, AlertCircle, Send } from "lucide-react";
+import { updateProjectDeadlineAdmin, sendManualReminderAdmin } from "../../store/slices/adminSlice";
+import { Calendar as CalendarIcon, Search, Clock, CheckCircle2, User, X, CalendarPlus, Filter, AlertCircle, Send, Bell } from "lucide-react";
 
 const DeadlinesPage = () => {
     const dispatch = useDispatch();
@@ -18,6 +18,13 @@ const DeadlinesPage = () => {
     const [selectedProjectId, setSelectedProjectId] = useState("");
     const [modalSearchTerm, setModalSearchTerm] = useState("");
     const [deadlineDate, setDeadlineDate] = useState("");
+
+    // Reminder Modal States
+    const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
+    const [reminderMessage, setReminderMessage] = useState("");
+    const [reminderStudentId, setReminderStudentId] = useState("");
+    const [reminderProjectId, setReminderProjectId] = useState("");
+    const [isSendingReminder, setIsSendingReminder] = useState(false);
 
     useEffect(() => {
         fetchProjects();
@@ -58,6 +65,31 @@ const DeadlinesPage = () => {
             alert("❌ Failed to trigger reminders");
         } finally {
             setIsTriggering(false);
+        }
+    };
+
+    const openReminderModal = (proj) => {
+        setReminderProjectId(proj._id);
+        setReminderStudentId(proj.student?._id);
+        setReminderMessage("");
+        setIsReminderModalOpen(true);
+    };
+
+    const handleSendReminder = async () => {
+        if (!reminderProjectId || !reminderStudentId) return;
+        setIsSendingReminder(true);
+        try {
+            await dispatch(sendManualReminderAdmin({
+                projectId: reminderProjectId,
+                studentId: reminderStudentId,
+                message: reminderMessage
+            })).unwrap();
+            setIsReminderModalOpen(false);
+            setReminderMessage("");
+        } catch (error) {
+            // Handled by toast
+        } finally {
+            setIsSendingReminder(false);
         }
     };
 
@@ -220,14 +252,22 @@ const DeadlinesPage = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-5 align-middle text-right">
-                                                <button 
-                                                    onClick={() => openModalForProject(proj)}
-                                                    disabled={proj.status === "Completed"}
-                                                    title={proj.status === "Completed" ? "Cannot update deadline for completed projects" : ""}
-                                                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all ${proj.status === "Completed" ? "text-slate-400 cursor-not-allowed bg-slate-50 border border-slate-200" : "text-slate-700 bg-white border border-slate-200 shadow-[0_1px_0_rgba(0,0,0,0.02)] hover:bg-slate-50 hover:border-slate-300"}`}
-                                                >
-                                                    {proj.deadline ? "Update" : "Set Deadline"}
-                                                </button>
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <button 
+                                                        onClick={() => openReminderModal(proj)}
+                                                        className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors flex items-center gap-1.5 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+                                                    >
+                                                        <Bell size={14} /> Send Reminder
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => openModalForProject(proj)}
+                                                        disabled={proj.status === "Completed"}
+                                                        title={proj.status === "Completed" ? "Cannot update deadline for completed projects" : ""}
+                                                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all flex items-center gap-1.5 ${proj.status === "Completed" ? "text-slate-400 cursor-not-allowed bg-slate-50 border border-slate-200" : "text-slate-700 bg-white border border-slate-200 shadow-[0_1px_0_rgba(0,0,0,0.02)] hover:bg-slate-50 hover:border-slate-300"}`}
+                                                    >
+                                                        {proj.deadline ? "Update" : "Set Deadline"}
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     );
@@ -344,6 +384,48 @@ const DeadlinesPage = () => {
                                 className={`bg-slate-900 hover:bg-slate-800 text-white rounded-md px-4 py-2 text-sm font-semibold transition-all flex items-center gap-2 ${(!selectedProjectId || !deadlineDate) ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 <CalendarIcon size={16} /> Save Deadline
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Reminder Modal */}
+            {isReminderModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl w-full max-w-md shadow-lg border border-slate-200 animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col p-5">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-lg font-semibold text-slate-900">Send Reminder</h2>
+                            <button 
+                                onClick={() => setIsReminderModalOpen(false)}
+                                className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <p className="text-sm text-slate-600 mb-4">
+                            Send a manual deadline reminder to this student. The system will automatically notify them via email and in-app notification.
+                        </p>
+                        <textarea
+                            className="w-full p-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-400 resize-y min-h-[100px] mb-6"
+                            placeholder="Optional custom message..."
+                            value={reminderMessage}
+                            onChange={(e) => setReminderMessage(e.target.value)}
+                        />
+                        <div className="flex items-center justify-end gap-3">
+                            <button 
+                                onClick={() => setIsReminderModalOpen(false)}
+                                disabled={isSendingReminder}
+                                className="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                onClick={handleSendReminder}
+                                disabled={isSendingReminder}
+                                className="px-4 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-2"
+                            >
+                                {isSendingReminder ? <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div> : <Bell size={16} />}
+                                {isSendingReminder ? "Sending..." : "Send Reminder"}
                             </button>
                         </div>
                     </div>

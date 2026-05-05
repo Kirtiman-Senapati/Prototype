@@ -12,6 +12,7 @@ import { getIo } from "../utils/socket.js";
 import { emitRefresh } from "../utils/socketEvents.js";
 import { sendEmail } from "../services/emailService.js";
 import { getEmailTemplate } from "../utils/emailTemplates.js";
+import { Notification } from "../models/notification.js";
 import fs from "fs";
 import path from "path";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
@@ -561,5 +562,82 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
         success: true,
         message: "Task added successfully by admin",
         project
+    });
+});
+
+export const sendManualReminder = asyncHandler(async (req, res, next) => {
+    const { id: projectId } = req.params;
+    const { studentId, message } = req.body;
+
+    if (!studentId) {
+        return next(new ErrorHandler("Please provide a student ID", 400));
+    }
+
+    const project = await Project.findById(projectId).populate("student", "name email");
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    if (project.student._id.toString() !== studentId) {
+        return next(new ErrorHandler("Student does not match the project", 400));
+    }
+
+    const defaultMessage = "This is a reminder from the admin regarding your project deadline. Please review your progress and ensure timely completion.";
+    const finalMessage = message && message.trim() ? message : defaultMessage;
+
+    // 1. Create Notification
+    await Notification.create({
+        user: studentId,
+        message: finalMessage,
+        type: "Deadline",
+        relatedId: project._id,
+        read: false
+    });
+
+    // 2. Log Activity
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [studentId],
+        actionType: "DEADLINE_REMINDER",
+        message: `**Admin** sent a manual reminder to **${project.student.name}** for project "${project.title}"`,
+        relatedProject: project._id,
+        priority: "medium"
+    });
+
+    // 3. Socket.IO Update
+    const io = getIo();
+    if (io) {
+        import("../utils/socket.js").then(({ getReceiverSocketId }) => {
+            const studentSocketId = getReceiverSocketId(studentId);
+            if (studentSocketId) {
+                io.to(studentSocketId).emit("newNotification", {
+                    message: finalMessage,
+                    type: "Deadline"
+                });
+            }
+            emitRefresh(io);
+        });
+    }
+
+    // 4. Send Email (non-blocking)
+    if (project.student.email) {
+        sendEmail({
+            to: project.student.email,
+            subject: `Important Reminder: Project ${project.title}`,
+            html: `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+                    <h2>Project Reminder</h2>
+                    <p>Hello ${project.student.name},</p>
+                    <p>${finalMessage}</p>
+                    <p>Please log in to your dashboard to view more details.</p>
+                  </div>`,
+            role: "System"
+        }).catch(err => {
+            console.error("Manual reminder email failed but process continues:", err.message);
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Reminder sent successfully"
     });
 });
