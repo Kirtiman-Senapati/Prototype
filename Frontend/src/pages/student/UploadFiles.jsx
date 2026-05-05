@@ -100,8 +100,8 @@ const UploadFiles = () => {
 
     // ✅ TABLE / MOBILE (WITH BOX)
     return (
-        <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Icon className="text-slate-600" size={24} />
+        <div className="w-10 h-10 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Icon className="text-slate-600" size={22} />
         </div>
     );
     };
@@ -236,7 +236,7 @@ const UploadFiles = () => {
                     <div className="hidden md:block overflow-x-auto bg-white rounded-xl border border-slate-200">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="border-b border-slate-100 bg-slate-50/50 uppercase text-[11px] font-bold text-slate-500 tracking-wider">
+                                <tr className="border-b border-slate-100 bg-slate-50 uppercase text-[11px] font-bold text-slate-500 tracking-wider">
                                     <th className="py-4 px-6 w-[50%]">File Name</th>
                                     <th className="py-4 px-6">Type</th>
                                     <th className="py-4 px-6">Date Uploaded</th>
@@ -245,11 +245,11 @@ const UploadFiles = () => {
                             </thead>
                             <tbody  className="divide-y divide-slate-100">
                                 {[...project.files].sort((a,b) => new Date(b.uploadedAt) - new Date(a.uploadedAt)).map((f, i) => (
-                                    <tr key={i} className="hover:bg-slate-50/80 transition-all cursor-pointer">
+                                    <tr key={i} className="hover:bg-slate-50 transition-colors">
                                         <td className="py-4 px-6">
                                             <div className="flex items-center gap-3">
                                                 {getFileIcon(f.type)}
-                                                <span className="font-semibold text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs" title={f.filename}>{f.filename}</span>
+                                                <span className="font-medium text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs" title={f.filename}>{f.filename}</span>
                                             </div>
                                         </td>
                                         <td className="py-4 px-6">
@@ -276,7 +276,7 @@ const UploadFiles = () => {
                 ) : (
                 <div className="flex flex-col items-center justify-center py-16 rounded-xl">
     
-                    <div className="mb-3 opacity-40">
+                    <div className="mb-3 opacity-30">
                         {getFileIcon("Report", "lg")}
                     </div>
 
