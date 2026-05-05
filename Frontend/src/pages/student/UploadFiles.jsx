@@ -81,6 +81,31 @@ const UploadFiles = () => {
 
     const hasSelectedFiles = reportFile || presentationFile || codeFile;
 
+    {/*get file icon function for manage icon size */}
+   const getFileIcon = (type, size = "sm") => {
+    const normalizedType = (type || "").toLowerCase();
+
+    let Icon = FileText;
+
+    if (normalizedType === "report") Icon = FileText;
+    else if (normalizedType === "presentation") Icon = MonitorPlay;
+    else if (normalizedType === "code") Icon = Archive;
+
+    const isLarge = size === "lg";
+
+    // ✅ TOP SECTION (NO BOX)
+    if (isLarge) {
+        return <Icon className="text-slate-600" size={32} />;
+    }
+
+    // ✅ TABLE / MOBILE (WITH BOX)
+    return (
+        <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Icon className="text-slate-600" size={24} />
+        </div>
+    );
+    };
+
     return (
         <div className="space-y-8 pb-10">
             {/* Upload Top Section */}
@@ -93,7 +118,9 @@ const UploadFiles = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {/* Report Box */}
                     <div className="border border-slate-200 bg-white rounded-lg p-6 sm:p-7 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
-                        <FileText size={32} className="text-slate-500 mb-3" />
+                        <div className="mb-3">
+                            {getFileIcon("Report", "lg")}
+                        </div>
                         <h3 className="font-semibold text-slate-800">Report</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your project report (PDF, DOC)</p>
                         
@@ -110,7 +137,9 @@ const UploadFiles = () => {
 
                     {/* Presentation Box */}
                     <div className="border border-slate-200 bg-white rounded-lg p-6 sm:p-7 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
-                        <MonitorPlay size={32} className="text-slate-500 mb-3" />
+                        <div className="mb-3">
+                            {getFileIcon("Presentation", "lg")}
+                        </div>
                         <h3 className="font-semibold text-slate-800">Presentation</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your presentation (PPT, PPTX, PDF)</p>
                         
@@ -127,7 +156,9 @@ const UploadFiles = () => {
 
                     {/* Code Files Box */}
                     <div className="border border-slate-200 bg-white rounded-lg p-6 sm:p-7 flex flex-col items-center justify-center text-center transition-colors hover:bg-slate-50">
-                        <Archive size={32} className="text-slate-500 mb-3" />
+                       <div className="mb-3">
+                            {getFileIcon("Code", "lg")}
+                        </div>
                         <h3 className="font-semibold text-slate-800">Code Files</h3>
                         <p className="text-xs text-slate-500 mt-1 mb-4">Upload your source code (ZIP, RAR, TAR)</p>
                         
@@ -180,7 +211,7 @@ const UploadFiles = () => {
                             <div key={i} className="bg-white border border-slate-200 rounded-xl p-4">
 
                                 <div className="flex items-center gap-3 mb-3">
-                                    <FileText size={18} className="text-blue-500" />
+                                    {getFileIcon(f.type, "sm")}
                                     <span className="text-sm font-semibold text-slate-800 truncate">
                                         {f.filename}
                                     </span>
@@ -217,9 +248,7 @@ const UploadFiles = () => {
                                     <tr key={i} className="hover:bg-slate-50/80 transition-all cursor-pointer">
                                         <td className="py-4 px-6">
                                             <div className="flex items-center gap-3">
-                                                {f.type === 'Report' && <FileText size={18} className="text-blue-500 flex-shrink-0" />}
-                                                {f.type === 'Presentation' && <MonitorPlay size={18} className="text-amber-500" />}
-                                                {f.type === 'Code' && <Archive size={18} className="text-purple-500 flex-shrink-0" />}
+                                                {getFileIcon(f.type)}
                                                 <span className="font-semibold text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs" title={f.filename}>{f.filename}</span>
                                             </div>
                                         </td>
@@ -245,12 +274,17 @@ const UploadFiles = () => {
                     </div>
                 </>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50/50">
-                        <div className="bg-white p-3 rounded-lg shadow-sm border border-slate-100 mb-4">
-                            <FileText size={32} className="text-slate-300" />
-                        </div>
-                        <p className="text-slate-500 text-sm font-medium">No files uploaded yet</p>
+                <div className="flex flex-col items-center justify-center py-16 rounded-xl">
+    
+                    <div className="mb-3 opacity-40">
+                        {getFileIcon("Report", "lg")}
                     </div>
+
+                    <p className="text-slate-400 text-sm">
+                        No files uploaded yet
+                    </p>
+
+                </div>
                 )}
             </div>
         </div>
