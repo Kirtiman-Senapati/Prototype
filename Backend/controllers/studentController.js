@@ -25,10 +25,27 @@ const storage = multer.diskStorage({
 export const upload = multer({ storage });
 
 export const submitProposal = asyncHandler(async (req, res, next) => {
-    const { title, description } = req.body;
+    const { title, description, forceSubmit } = req.body;
 
     if (!title || !description) {
         return next(new ErrorHandler("Please provide title and description", 400));
+    }
+
+    if (!forceSubmit) {
+        const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const similarProjects = await Project.find({
+            student: { $ne: req.user._id },
+            title: { $regex: new RegExp(`^${escapeRegex(title)}$`, 'i') }
+        });
+
+        if (similarProjects.length > 0) {
+            return res.status(200).json({
+                success: true,
+                status: "warning",
+                message: "Similar project detected. Another student is already working on or has been approved for a project with a similar title. Please review before proceeding.",
+                matches: similarProjects.length
+            });
+        }
     }
 
     // Check if project exists

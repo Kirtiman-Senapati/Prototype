@@ -7,7 +7,9 @@ export const submitProposal = createAsyncThunk(
   async (proposalData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/student/proposal", proposalData);
-      toast.success("Proposal submitted successfully!");
+      if (response.data.status !== "warning") {
+        toast.success("Proposal submitted successfully!");
+      }
       return response.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to submit proposal");
@@ -135,7 +137,9 @@ const studentSlice = createSlice({
         state.supervisors = action.payload.supervisors;
       })
       .addCase(submitProposal.fulfilled, (state, action) => {
-        state.project = action.payload.project;
+        if (action.payload.status !== "warning") {
+            state.project = action.payload.project;
+        }
       })
       .addCase(uploadProjectFile.fulfilled, (state, action) => {
         state.project = action.payload.project;

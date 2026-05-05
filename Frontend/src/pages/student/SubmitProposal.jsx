@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { submitProposal } from "../../store/slices/studentSlice";
 import { useNavigate } from "react-router-dom";
-import { ShieldAlert, Clock, CheckCircle2, ArrowLeft } from "lucide-react";
+import { ShieldAlert, Clock, CheckCircle2, ArrowLeft, AlertTriangle } from "lucide-react";
 
 const SubmitProposal = () => {
   const [title, setTitle] = useState("");
@@ -11,10 +11,26 @@ const SubmitProposal = () => {
   const navigate = useNavigate();
   const { isLoading, project } = useSelector((state) => state.student);
 
+  const [warning, setWarning] = useState(null);
+  const [matches, setMatches] = useState(0);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(submitProposal({ title, description })).then((res) => {
-      if (!res.error) navigate("/dashboard");
+    dispatch(submitProposal({ title, description, forceSubmit: false })).then((res) => {
+      if (res.payload?.status === "warning") {
+        setWarning(res.payload.message);
+        setMatches(res.payload.matches || 0);
+      } else if (!res.error) {
+        navigate("/dashboard");
+      }
+    });
+  };
+
+  const handleForceSubmit = () => {
+    dispatch(submitProposal({ title, description, forceSubmit: true })).then((res) => {
+      if (!res.error) {
+        navigate("/dashboard");
+      }
     });
   };
 
@@ -67,6 +83,39 @@ const SubmitProposal = () => {
           >
             <ArrowLeft size={18} /> Return to Dashboard
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (warning) {
+    return (
+      <div className="max-w-2xl mx-auto mt-10 animate-in fade-in zoom-in-95 duration-300">
+        <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col items-center text-center">
+          <div className="p-3 bg-slate-50 rounded-full mb-4">
+            <AlertTriangle className="w-8 h-8 text-slate-500" strokeWidth={1.5} />
+          </div>
+          <h2 className="text-sm font-semibold text-slate-800 mb-2">
+            {matches > 0 ? `${matches} similar project${matches > 1 ? 's' : ''} found` : "Similar project detected"}
+          </h2>
+          <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed mb-6">
+            {warning}
+          </p>
+          <div className="flex gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => handleForceSubmit()}
+              className="px-4 py-2 font-medium text-sm text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors flex-1 sm:flex-none"
+              disabled={isLoading}
+            >
+              {isLoading ? "Submitting..." : "Continue Anyway"}
+            </button>
+            <button
+              onClick={() => setWarning(null)}
+              className="px-4 py-2 font-medium text-sm text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition-colors shadow-sm flex-1 sm:flex-none"
+            >
+              Edit Title
+            </button>
+          </div>
         </div>
       </div>
     );
