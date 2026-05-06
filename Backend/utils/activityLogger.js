@@ -26,6 +26,13 @@ export const logActivity = async ({
   tag
 }) => {
   try {
+    // Universal Self-Notification Filter
+    if (actor && targetUsers && targetUsers.length > 0) {
+      targetUsers = targetUsers.filter(
+        id => id.toString() !== actor.toString()
+      );
+    }
+
     const newActivity = await Activity.create({
       actor,
       targetUsers,
@@ -35,7 +42,8 @@ export const logActivity = async ({
       details,
       relatedProject,
       priority,
-      tag
+      tag,
+      readBy: actor ? [actor] : [] // Auto-read for the actor
     });
 
     // Populate actor details for the socket payload

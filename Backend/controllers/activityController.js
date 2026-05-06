@@ -18,8 +18,7 @@ export const getActivities = async (req, res) => {
           $or: [
             { targetUsers: userId },
             { roles: userRole },
-            // Allow users to see their own direct chat messages
-            { actor: userId, actionType: { $in: ['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'] } }
+            { actor: userId } // Allow users to see activities they created
           ]
         },
         { clearedBy: { $ne: userId } }
@@ -89,7 +88,7 @@ export const clearActivities = async (req, res) => {
       $or: [
         { targetUsers: userId },
         { roles: userRole },
-        { actor: userId, actionType: { $in: ['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'] } }
+        { actor: userId } // Allow users to clear activities they created
       ]
     };
 
