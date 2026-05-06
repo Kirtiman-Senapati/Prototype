@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { UserPlus, Briefcase, UserCircle, Clock, CheckCircle, FileText, Trash2, AlertTriangle, Info, ChevronRight, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearActivities, markActivitiesRead } from '../../../store/slices/activitySlice';
+import { clearActivities, markActivitiesRead, getActivities } from '../../../store/slices/activitySlice';
 import { formatDateTime } from '../../../utils/timeFormat';
 import { groupActivitiesByDate } from '../../../utils/groupActivities';
 
-const ActivityList = ({ activities }) => {
+const TeacherActivityList = ({ activities }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const dispatch = useDispatch();
     const { authUser } = useSelector(state => state.auth);
@@ -26,24 +26,20 @@ const ActivityList = ({ activities }) => {
         dispatch(clearActivities());
     };
 
-    const handleMarkAllRead = () => {
+    const handleMarkAllRead = async () => {
         const unreadIds = activities
             .filter(act => !act.readBy?.includes(authUser?._id))
             .map(act => act._id);
         
         if (unreadIds.length > 0) {
-            dispatch(markActivitiesRead(unreadIds));
+            await dispatch(markActivitiesRead(unreadIds));
+            dispatch(getActivities());
         }
     };
     if (!activities || activities.length === 0) {
         return (
-            <div className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden h-full">
-                <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
-                    <h2 className="text-sm font-semibold text-slate-800">Recent Activity</h2>
-                </div>
-                <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
-                    <p className="text-[13px] font-medium">No recent activity</p>
-                </div>
+            <div className="bg-white rounded-lg border border-slate-100 p-6 flex flex-col items-center justify-center text-slate-500 h-64">
+                <p>No recent activity</p>
             </div>
         );
     }
@@ -77,28 +73,28 @@ const ActivityList = ({ activities }) => {
     };
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden h-full">
+        <div className="bg-white rounded-lg  border border-slate-200 overflow-hidden flex flex-col h-full">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
-                <h2 className="text-sm font-semibold text-slate-800">
+                <h2 className="font-semibold text-slate-800 ">
                     Recent Activity
                 </h2>
                 <div className="flex gap-4">
                      {activities.some(act => !act.readBy?.includes(authUser?._id)) && (
-                         <button onClick={handleMarkAllRead} className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
+                         <button onClick={handleMarkAllRead} className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">
                              Mark all read
                          </button>
                      )}
-                     <button onClick={handleClear} className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
+                     <button onClick={handleClear} className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">
                          Clear
                      </button>
                      {activities.length > 5 && (
-                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">
                              {isExpanded ? 'View Less' : 'View All'}
                          </button>
                      )}
                 </div>
             </div>
-            <div className="p-6 overflow-y-auto flex-1 min-h-0 custom-scrollbar">
+            <div className={`p-6 overflow-y-auto custom-scrollbar flex-1 ${isExpanded ? 'max-h-[500px]' : ''}`}>
                 {['Today', 'Yesterday', 'Older'].map(groupName => {
                     const groupKey = groupName.toLowerCase();
                     const groupActs = groupActivitiesByDate(displayActivities)[groupKey];
@@ -107,7 +103,7 @@ const ActivityList = ({ activities }) => {
                     return (
                         <div key={groupName} className="mb-6 last:mb-0">
                             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4 px-1">{groupName}</h3>
-                            <div className="space-y-5">
+                            <div className="space-y-4">
                                 {groupActs.map((activity, index) => {
                                     const isUnread = !activity.readBy?.includes(authUser?._id);
                                     
@@ -115,10 +111,14 @@ const ActivityList = ({ activities }) => {
                                         <div 
                                             key={activity._id || index} 
                                             className="relative flex items-start gap-4 group cursor-pointer"
-                                            onClick={() => isUnread && dispatch(markActivitiesRead([activity._id]))}
+                                            onClick={async () => {
+                                                if (isUnread) {
+                                                    await dispatch(markActivitiesRead([activity._id]));
+                                                    dispatch(getActivities());
+                                                }
+                                            }}
                                         >
-                                            <div className={`w-2 h-2 mt-1.5 rounded-full ring-2 ring-white shadow-sm shrink-0 z-10 ${getActivityColor(activity.actionType)}`} />
-                                            {isUnread && <div className="absolute -left-3.5 top-1.5 w-1.5 h-1.5 bg-blue-500 rounded-full" />}
+                                            <div className={`w-2 h-2 mt-1.5 rounded-full ring-2 ring-white shrink-0 z-10 ${getActivityColor(activity.actionType)}`} />
                                             
                                             <div className="flex-1 min-w-0">
                                                 <p className={`text-sm leading-relaxed transition-colors ${isUnread ? 'text-slate-900 font-medium' : 'text-slate-600 font-normal'}`}>
@@ -131,7 +131,7 @@ const ActivityList = ({ activities }) => {
                                                     </p>
                                                 )}
 
-                                                <div className="mt-1.5 flex items-center gap-2">
+                                                <div className="mt-1 flex items-center gap-2">
                                                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
                                                         {activity.actionType?.replace(/_/g, ' ')}
                                                     </span>
@@ -139,6 +139,14 @@ const ActivityList = ({ activities }) => {
                                                     <span className="text-[11px] text-slate-400 font-medium">
                                                         {formatDateTime(activity.createdAt)}
                                                     </span>
+                                                    {isUnread && (
+                                                        <>
+                                                            <span className="text-[10px] text-slate-300">&bull;</span>
+                                                            <span className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide">
+                                                                UNREAD
+                                                            </span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -153,4 +161,4 @@ const ActivityList = ({ activities }) => {
     );
 };
 
-export default ActivityList;
+export default TeacherActivityList;

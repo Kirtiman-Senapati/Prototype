@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserPlus, Briefcase, UserCircle, Clock, CheckCircle, FileText, Trash2, AlertTriangle, Info, ChevronRight, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearActivities, markActivitiesRead } from '../../../store/slices/activitySlice';
+import { clearActivities, markActivitiesRead, getActivities } from '../../../store/slices/activitySlice';
 import { formatDateTime } from '../../../utils/timeFormat';
 import { groupActivitiesByDate } from '../../../utils/groupActivities';
 
@@ -26,13 +26,14 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
         dispatch(clearActivities());
     };
 
-    const handleMarkAllRead = () => {
+    const handleMarkAllRead = async () => {
         const unreadIds = activities
             .filter(act => !act.readBy?.includes(authUser?._id))
             .map(act => act._id);
         
         if (unreadIds.length > 0) {
-            dispatch(markActivitiesRead(unreadIds));
+            await dispatch(markActivitiesRead(unreadIds));
+            dispatch(getActivities());
         }
     };
     if (!activities || activities.length === 0) {
@@ -115,10 +116,15 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
                                         <div 
                                             key={activity._id || index} 
                                             className="relative flex items-start gap-4 group cursor-pointer"
-                                            onClick={() => isUnread && dispatch(markActivitiesRead([activity._id]))}
+                                            onClick={async () => {
+                                                if (isUnread) {
+                                                    await dispatch(markActivitiesRead([activity._id]));
+                                                    dispatch(getActivities());
+                                                }
+                                            }}
                                         >
                                             <div className={`w-2 h-2 mt-1.5 rounded-full ring-2 ring-white shadow-sm shrink-0 z-10 ${getActivityColor(activity.actionType)}`} />
-                                            {isUnread && <div className="absolute -left-3.5 top-1.5 w-1.5 h-1.5 bg-blue-500 rounded-full" />}
+                                            {/* Removed absolute dot */}
                                             
                                             <div className="flex-1 min-w-0">
                                                 <p className={`text-sm leading-relaxed transition-colors ${isUnread ? 'text-slate-900 font-medium' : 'text-slate-600 font-normal'}`}>
@@ -139,6 +145,14 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
                                                     <span className="text-[11px] text-slate-400 font-medium">
                                                         {formatDateTime(activity.createdAt)}
                                                     </span>
+                                                    {isUnread && (
+                                                        <>
+                                                            <span className="text-[10px] text-slate-300">&bull;</span>
+                                                            <span className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide">
+                                                                UNREAD
+                                                            </span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

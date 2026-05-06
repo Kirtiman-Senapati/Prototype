@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 
 import StatCard from "./components/StatCard";
 import ActionCard from "./components/ActionCard";
-import ActivityList from "./components/ActivityList";
+import AdminActivityList from "./components/AdminActivityList";
 import ProjectList from "./components/ProjectList";
 import AddSupervisorModal from "../../components/modal/AddSupervisorModal";
 
@@ -161,7 +161,7 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
                 <div className="lg:col-span-3 flex flex-col gap-6">
                     <div className="h-[420px]">
-                        <ActivityList activities={activities || []} />
+                        <AdminActivityList activities={activities || []} />
                     </div>
                 </div>
                 <div className="lg:col-span-2 flex flex-col gap-6">

@@ -22,7 +22,7 @@ import {
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import DashboardHeader from "./components/DashboardHeader";
 import StatCard from "./components/StatCard";
-import ActivityList from "./components/ActivityList";
+import TeacherActivityList from "./components/TeacherActivityList";
 import RecentFilesList from "./components/RecentFilesList";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -188,7 +188,7 @@ const TeacherDashboard = () => {
         {/* Recent Activity */}
 
         <div className="h-[420px]">
-          <ActivityList activities={activities || []} />
+          <TeacherActivityList activities={activities || []} />
         </div>
 
         {/* Recent Files */}
