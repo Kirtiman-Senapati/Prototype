@@ -66,7 +66,7 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
             actor: req.user._id,
             targetUsers: [studentToAssign._id],
             actionType: "REQUEST_ACCEPTED",
-            message: `Supervisor ${req.user.name} accepted ${studentToAssign.name}'s request`,
+            message: `Supervisor **${req.user.name}** accepted **${studentToAssign.name}**'s request`,
             priority: "high"
         });
 
@@ -87,7 +87,7 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
             actor: req.user._id,
             targetUsers: [request.fromUser],
             actionType: "REQUEST_REJECTED",
-            message: `Supervisor ${req.user.name} rejected ${studentInfo ? studentInfo.name + "'s" : "your"} request`,
+            message: `Supervisor **${req.user.name}** rejected **${studentInfo ? studentInfo.name + "'s" : "your"}** request`,
             priority: "high"
         });
     }
@@ -146,7 +146,7 @@ export const addTask = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student._id, ...adminIds],
         actionType: "TASK_ASSIGNED",
-        message: `Supervisor ${req.user.name} assigned a new task "${title}" to ${project.student.name}`,
+        message: `Supervisor **${req.user.name}** assigned a new task "**${title}**" to **${project.student.name}**`,
         details: description,
         relatedProject: project._id,
         priority: "high"

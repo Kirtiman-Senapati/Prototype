@@ -156,7 +156,7 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, ...adminIds],
         actionType: "USER_DELETED",
-        message: `Admin deleted user ${user.name} (${user.role})`,
+        message: `**Admin** deleted user **${user.name}** (${user.role})`,
     });
 
     const io = getIo();
@@ -241,7 +241,7 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [project.student, supervisorId, req.user._id],
         actionType: "SUPERVISOR_ASSIGNED",
-        message: `Admin assigned supervisor for project "${project.title}"`,
+        message: `**Admin** assigned supervisor for project **"${project.title}"**`,
         relatedProject: project._id,
         priority: "high"
     });
@@ -318,7 +318,7 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
         actionType: status === "Approved" ? "PROJECT_APPROVED" : "PROJECT_REJECTED",
-        message: `Project proposal "${project.title}" was ${status.toLowerCase()} by Admin`,
+        message: `Project proposal **"${project.title}"** was ${status.toLowerCase()} by **Admin**`,
         relatedProject: project._id,
         priority: status === "Rejected" ? "high" : "medium"
     });
@@ -380,7 +380,7 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
         actionType: "DEADLINE_SET",
-        message: `Deadline Updated: Admin has officially scheduled the submission deadline for the project "${project.title}" to ${new Date(deadline).toLocaleDateString()}.`,
+        message: `**Deadline Updated**: Admin has officially scheduled the submission deadline for the project **"${project.title}"** to ${new Date(deadline).toLocaleDateString()}.`,
         relatedProject: project._id,
         priority: "medium"
     });
@@ -428,7 +428,7 @@ export const addStudent = asyncHandler(async (req, res, next) => {
     await logActivity({
         actor: req.user._id,
         actionType: "USER_ADDED",
-        message: `Admin added a new Student: ${name}`,
+        message: `**Admin** added a new Student: **${name}**`,
     });
 
     const io = getIo();
@@ -473,7 +473,7 @@ export const addSupervisor = asyncHandler(async (req, res, next) => {
     await logActivity({
         actor: req.user._id,
         actionType: "USER_ADDED",
-        message: `Admin added a new Supervisor: ${name}`,
+        message: `**Admin** added a new Supervisor: **${name}**`,
     });
 
     const io = getIo();
@@ -519,7 +519,7 @@ export const updateUserDetails = asyncHandler(async (req, res, next) => {
     await logActivity({
         actor: req.user._id,
         actionType: "USER_EDITED",
-        message: `Admin updated details for user: ${user.name}`,
+        message: `**Admin** updated details for user: **${user.name}**`,
     });
 
     const io = getIo();
@@ -550,7 +550,7 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
         actionType: "TASK_ASSIGNED",
-        message: `Admin assigned a new task "${title}" to project "${project.title}"`,
+        message: `**Admin** assigned a new task **"${title}"** to project **"${project.title}"**`,
         details: description,
         relatedProject: project._id,
         priority: "high"
@@ -600,7 +600,7 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [studentId, req.user._id],
         actionType: "DEADLINE_REMINDER",
-        message: `Admin sent a manual reminder to ${project.student.name} for project "${project.title}"`,
+        message: `**Admin** sent a manual reminder to **${project.student.name}** for project **"${project.title}"**`,
         details: finalMessage,
         relatedProject: project._id,
         priority: "medium"

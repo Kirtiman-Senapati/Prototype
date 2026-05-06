@@ -65,9 +65,9 @@ export const sendFeedback = asyncHandler(async (req, res, next) => {
 
     let messageLog = "";
     if (senderRole === "Admin") {
-        messageLog = `Admin sent feedback to student ${student.name}`;
+        messageLog = `**Admin** sent feedback to student **${student.name}**`;
     } else {
-        messageLog = `Supervisor ${req.user.name} sent feedback to student ${student.name}`;
+        messageLog = `Supervisor **${req.user.name}** sent feedback to student **${student.name}**`;
     }
 
     // Get Admin IDs

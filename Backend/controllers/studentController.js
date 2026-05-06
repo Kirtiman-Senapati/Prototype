@@ -83,7 +83,7 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, ...adminIds],
         actionType: "PROPOSAL_SUBMITTED",
-        message: `${req.user.name} submitted a new project proposal: "${title}"`,
+        message: `**${req.user.name}** submitted a new project proposal: "**${title}**"`,
         relatedProject: project._id,
         priority: "medium"
     });
@@ -141,7 +141,7 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [teacherId],
         actionType: "SUPERVISOR_REQUESTED",
-        message: `${req.user.name} requested supervisor ${targetTeacher?.name || "Teacher"} to supervise the project ${projectExists.title}`,
+        message: `**${req.user.name}** requested supervisor **${targetTeacher?.name || "Teacher"}** to supervise the project **${projectExists.title}**`,
         priority: "high"
     });
 
@@ -187,7 +187,7 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.supervisor, ...adminIds].filter(Boolean),
         actionType: "FILE_UPLOADED",
-        message: `${req.user.name} uploaded a new file: ${req.file.originalname}`,
+        message: `**${req.user.name}** uploaded a new file: **${req.file.originalname}**`,
         relatedProject: project._id,
     });
 
@@ -254,7 +254,7 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
             actor: req.user._id,
             targetUsers: [project.supervisor, ...adminIds].filter(Boolean),
             actionType: "TASK_COMPLETED",
-            message: `${req.user.name} marked task "${task.title}" as completed`,
+            message: `**${req.user.name}** marked task **"${task.title}"** as completed`,
             relatedProject: project._id,
             priority: "medium"
         });

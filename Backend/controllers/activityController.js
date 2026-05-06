@@ -149,7 +149,7 @@ export const sendProjectMessage = async (req, res) => {
       actor: req.user._id,
       targetUsers: targetUsers,
       actionType,
-      message: `${req.user.name} : ${title} - ${message}`,
+      message: `**${req.user.name}**: *${title}* - ${message}`,
       relatedProject: project._id,
       priority: "medium" // Or map to 'high' based on urgency
     });
