@@ -14,15 +14,15 @@ export const getActivities = async (req, res) => {
     // FETCH ONLY RELEVANT ACTIVITIES
     query = {
       $and: [
-         {
-            $or: [
-               { targetUsers: userId },
-               { roles: userRole },
-               // Allow users to see their own direct chat messages
-               { actor: userId, actionType: { $in: ['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'] } }
-            ]
-         },
-         { clearedBy: { $ne: userId } }
+        {
+          $or: [
+            { targetUsers: userId },
+            { roles: userRole },
+            // Allow users to see their own direct chat messages
+            { actor: userId, actionType: { $in: ['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'] } }
+          ]
+        },
+        { clearedBy: { $ne: userId } }
       ]
     };
 
@@ -84,7 +84,7 @@ export const clearActivities = async (req, res) => {
   try {
     const userId = req.user._id;
     const userRole = req.user.role;
-    
+
     let filter = {
       $or: [
         { targetUsers: userId },
@@ -124,7 +124,7 @@ export const sendProjectMessage = async (req, res) => {
 
     const project = await Project.findById(projectId);
     if (!project) {
-        return res.status(404).json({ success: false, message: "Project not found" });
+      return res.status(404).json({ success: false, message: "Project not found" });
     }
 
     const admins = await User.find({ role: "Admin" }).select("_id");
@@ -133,12 +133,12 @@ export const sendProjectMessage = async (req, res) => {
     // Build targetUsers (everyone associated minus the sender)
     let targetUsersSet = new Set([...adminIds, project.student.toString()]);
     if (project.supervisor) {
-        targetUsersSet.add(project.supervisor.toString());
+      targetUsersSet.add(project.supervisor.toString());
     }
-    
+
     // Remove the sender from the target list (since they already see it as actor)
     targetUsersSet.delete(req.user._id.toString());
-    
+
     const targetUsers = Array.from(targetUsersSet);
 
     // Determine Action Type
@@ -147,17 +147,17 @@ export const sendProjectMessage = async (req, res) => {
     if (req.user.role === "Admin") actionType = "ADMIN_MESSAGE";
 
     await logActivity({
-        actor: req.user._id,
-        targetUsers: targetUsers,
-        actionType,
-        message: `**${req.user.name}**: *${title}* - ${message}`,
-        relatedProject: project._id,
-        priority: "medium" // Or map to 'high' based on urgency
+      actor: req.user._id,
+      targetUsers: targetUsers,
+      actionType,
+      message: `${req.user.name} : ${title} - ${message}`,
+      relatedProject: project._id,
+      priority: "medium" // Or map to 'high' based on urgency
     });
 
     res.status(200).json({
-        success: true,
-        message: "Message sent successfully"
+      success: true,
+      message: "Message sent successfully"
     });
   } catch (error) {
     console.error("Error sending project message: ", error);

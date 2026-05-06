@@ -6,7 +6,7 @@ import { getEmailTemplate } from "../utils/emailTemplates.js";
 import { logActivity } from "../utils/activityLogger.js";
 
 // ===============================
-// ✅ MAIN FUNCTION (IMPORTANT)
+//  MAIN FUNCTION (IMPORTANT)
 // ===============================
 export const runDeadlineChecker = async () => {
     console.log("⏰ Running deadline checker...");
@@ -16,7 +16,7 @@ export const runDeadlineChecker = async () => {
 
     try {
         // ============================================
-        // 🔔 REMINDERS (Date Difference Logic)
+        //  REMINDERS (Date Difference Logic)
         // ============================================
         const pendingProjects = await Project.find({
             status: { $ne: "Completed" },
@@ -38,13 +38,13 @@ export const runDeadlineChecker = async () => {
             // Calculate pure days difference (100% reliable)
             const diff = Math.round((deadlineDate - todayStart) / (1000 * 60 * 60 * 24));
             
-            console.log(`[CRON] 📌 Project: "${project.title}" | Deadline: ${new Date(project.deadline).toLocaleDateString()} | Diff: ${diff} days`);
+            console.log(`[CRON]  Project: "${project.title}" | Deadline: ${new Date(project.deadline).toLocaleDateString()} | Diff: ${diff} days`);
 
             // -----------------------------
             // 2-DAY REMINDER
             // -----------------------------
             if (diff === 2 && !project.reminder2DaySent) {
-                console.log(`[CRON] 📢 Sending 2-day reminder for "${project.title}"`);
+                console.log(`[CRON]  Sending 2-day reminder for "${project.title}"`);
                 try {
                     const updated = await Project.updateOne(
                         { _id: project._id, reminder2DaySent: false },
@@ -85,7 +85,7 @@ export const runDeadlineChecker = async () => {
             // 1-DAY REMINDER (Fallback)
             // -----------------------------
             if (diff === 1 && !project.reminder1DaySent) {
-                console.log(`[CRON] ⏰ Sending 1-day reminder for "${project.title}"`);
+                console.log(`[CRON]  Sending 1-day reminder for "${project.title}"`);
                 try {
                     const updated = await Project.updateOne(
                         { _id: project._id, reminder1DaySent: false },
@@ -111,7 +111,7 @@ export const runDeadlineChecker = async () => {
 
                     await logActivity({
                         actionType: "DEADLINE_REMINDER",
-                        message: `⏰ Final Reminder: The submission deadline for your project "${project.title}" is tomorrow (${new Date(project.deadline).toLocaleDateString()}). Please submit your work immediately.`,
+                        message: `Final Reminder: The submission deadline for your project "${project.title}" is tomorrow (${new Date(project.deadline).toLocaleDateString()}). Please submit your work immediately.`,
                         targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
                         roles: [],
                         relatedProject: project._id,
@@ -124,7 +124,7 @@ export const runDeadlineChecker = async () => {
         }
 
         // ============================================
-        // ❌ DEADLINE MISSED
+        //  DEADLINE MISSED
         // ============================================
         const missedProjects = await Project.find({
             deadline: { $lt: todayStart },
@@ -138,7 +138,7 @@ export const runDeadlineChecker = async () => {
         const adminEmails = admins.map(a => a.email).filter(Boolean);
 
         for (const project of missedProjects) {
-            console.log(`[CRON] ❌ Deadline missed for "${project.title}"`);
+            console.log(`[CRON] Deadline missed for "${project.title}"`);
             try {
                 const updated = await Project.updateOne(
                     { _id: project._id, deadlineMissedNotified: false },
@@ -171,7 +171,7 @@ export const runDeadlineChecker = async () => {
 
                 await logActivity({
                     actionType: "DEADLINE_MISSED",
-                    message: `❌ Deadline Passed: The project "${project.title}" assigned to ${project.student?.name} has crossed its submission deadline.`,
+                    message: `Deadline Passed: The project "${project.title}" assigned to ${project.student?.name} has crossed its submission deadline.`,
                     targetUsers: [
                         project.student?._id,
                         project.supervisor?._id
@@ -192,7 +192,7 @@ export const runDeadlineChecker = async () => {
 };
 
 // ===============================
-// ⏰ CRON SCHEDULER
+// CRON SCHEDULER
 // ===============================
 if (process.env.CRON_ENABLED === "true") {
     cron.schedule("0 * * * *", runDeadlineChecker);

@@ -52,22 +52,22 @@ export const sendFeedback = asyncHandler(async (req, res, next) => {
         if (studentSocket) {
             io.to(studentSocket).emit("newFeedback", feedback);
         }
-        
+
         // Bonus: if Admin sends, notify the supervisor of this student too (to keep histories synced)
         // If Supervisor sends, notify admin dashboards
         if (senderRole === "Supervisor") {
-             io.emit("adminDashboardUpdate"); 
+            io.emit("adminDashboardUpdate");
         } else if (senderRole === "Admin" && student.supervisor) {
-             const svSocket = getReceiverSocketId(student.supervisor.toString());
-             if (svSocket) io.to(svSocket).emit("teacherDashboardUpdate");
+            const svSocket = getReceiverSocketId(student.supervisor.toString());
+            if (svSocket) io.to(svSocket).emit("teacherDashboardUpdate");
         }
     }
 
     let messageLog = "";
     if (senderRole === "Admin") {
-         messageLog = `**Admin** sent feedback to Student **${student.name}**`;
+        messageLog = `Admin sent feedback to student ${student.name}`;
     } else {
-         messageLog = `Supervisor **${req.user.name}** sent feedback to student **${student.name}**`;
+        messageLog = `Supervisor ${req.user.name} sent feedback to student ${student.name}`;
     }
 
     // Get Admin IDs
@@ -76,9 +76,9 @@ export const sendFeedback = asyncHandler(async (req, res, next) => {
 
     let recipients = [studentId, ...adminIds];
     if (senderRole === "Admin" && student.supervisor) {
-         recipients.push(student.supervisor);
+        recipients.push(student.supervisor);
     } else if (senderRole === "Supervisor") {
-         recipients.push(req.user._id);
+        recipients.push(req.user._id);
     }
 
     await logActivity({
@@ -106,7 +106,7 @@ export const getStudentFeedback = asyncHandler(async (req, res, next) => {
     // Admin can see any.
     // Teacher can see their assigned students.
     if (req.user.role === "Student" && req.user._id.toString() !== studentId.toString()) {
-         return next(new ErrorHandler("Unauthorized", 403));
+        return next(new ErrorHandler("Unauthorized", 403));
     }
 
     const feedbacks = await Feedback.find({ student: studentId })

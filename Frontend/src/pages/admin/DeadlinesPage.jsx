@@ -59,10 +59,10 @@ const DeadlinesPage = () => {
         setIsTriggering(true);
         try {
             await axiosInstance.post("/admin/trigger-reminders");
-            alert("✅ Reminders and notifications triggered successfully!");
+            alert("Reminders and notifications triggered successfully!");
         } catch (error) {
             console.error("Error triggering reminders", error);
-            alert("❌ Failed to trigger reminders");
+            alert("Failed to trigger reminders");
         } finally {
             setIsTriggering(false);
         }

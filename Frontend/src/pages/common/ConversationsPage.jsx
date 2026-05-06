@@ -262,7 +262,7 @@ const ConversationsPage = () => {
         // Remove standard "**Actor**: *Title* - " prefix added by backend logger purely for chat UI aesthetics
         const parts = text.split(" - ");
         if (parts.length > 1 && parts[0].includes("**")) {
-            displayStr = parts.slice(1).join(" - ");
+        displayStr = parts.slice(1).join(" - ");
         }
 
         return displayStr;

@@ -46,7 +46,7 @@ export const getEmailTemplate = (type, data) => {
 
     case "DEADLINE_REMINDER":
       return {
-        subject: "⏰ Deadline Nearing Notification",
+        subject: " Deadline Nearing Notification",
         html: baseHtml(`
           <h3 style="color: #b45309; margin-top: 0;">Action Required: Deadline Approaching</h3>
           <p>Hello <strong>${data.studentName}</strong>,</p>

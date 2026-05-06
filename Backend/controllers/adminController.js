@@ -60,10 +60,10 @@ export const getAdminDashboard = asyncHandler(async (req, res, next) => {
 export const getAllUsers = asyncHandler(async (req, res, next) => {
     // Adding .lean() to allow direct property modification
     const users = await User.find({ role: { $ne: "Admin" } }).select("-password").lean();
-    
+
     // Fetch all projects and populate student to ignore ghost projects (deleted students)
     const allProjects = await Project.find().populate("student");
-    
+
     // Map student IDs to their project
     const studentProjectMap = {};
     const supervisorToStudentsMap = {};
@@ -92,7 +92,7 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
                 u.proposalStatus = null;
             }
         } else if (u.role === "Supervisor") {
-             u.assignedStudentsCount = supervisorToStudentsMap[u._id.toString()] ? supervisorToStudentsMap[u._id.toString()].size : 0;
+            u.assignedStudentsCount = supervisorToStudentsMap[u._id.toString()] ? supervisorToStudentsMap[u._id.toString()].size : 0;
         }
         return u;
     });
@@ -108,7 +108,7 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
     if (!user) {
         return next(new ErrorHandler("User not found", 404));
     }
-    
+
     // 1. Get all projects where the user is involved
     const projects = await Project.find({
         $or: [{ student: user._id }, { supervisor: user._id }]
@@ -148,7 +148,7 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
     });
 
     await user.deleteOne();
-    
+
     const admins = await User.find({ role: "Admin" }).select("_id");
     const adminIds = admins.map(a => a._id);
 
@@ -156,7 +156,7 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, ...adminIds],
         actionType: "USER_DELETED",
-        message: `**Admin** deleted user **${user.name}** (${user.role})`,
+        message: `Admin deleted user ${user.name} (${user.role})`,
     });
 
     const io = getIo();
@@ -241,7 +241,7 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [project.student, supervisorId, req.user._id],
         actionType: "SUPERVISOR_ASSIGNED",
-        message: `**Admin** assigned supervisor for project "${project.title}"`,
+        message: `Admin assigned supervisor for project "${project.title}"`,
         relatedProject: project._id,
         priority: "high"
     });
@@ -318,7 +318,7 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
         actionType: status === "Approved" ? "PROJECT_APPROVED" : "PROJECT_REJECTED",
-        message: `Project proposal "${project.title}" was ${status.toLowerCase()} by **Admin**`,
+        message: `Project proposal "${project.title}" was ${status.toLowerCase()} by Admin`,
         relatedProject: project._id,
         priority: status === "Rejected" ? "high" : "medium"
     });
@@ -356,7 +356,7 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
     project.deadlineMissedNotified = false;
     await project.save();
 
-    // 🚀 Socket.IO: Real-Time Event Emmision to Student
+    //  Socket.IO: Real-Time Event Emmision to Student
     import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
         const io = getIo();
         if (io && project.student) {
@@ -380,7 +380,7 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
         actionType: "DEADLINE_SET",
-        message: `📢 Deadline Updated: Admin has officially scheduled the submission deadline for the project "${project.title}" to ${new Date(deadline).toLocaleDateString()}.`,
+        message: `Deadline Updated: Admin has officially scheduled the submission deadline for the project "${project.title}" to ${new Date(deadline).toLocaleDateString()}.`,
         relatedProject: project._id,
         priority: "medium"
     });
@@ -428,7 +428,7 @@ export const addStudent = asyncHandler(async (req, res, next) => {
     await logActivity({
         actor: req.user._id,
         actionType: "USER_ADDED",
-        message: `**Admin** added a new Student: **${name}**`,
+        message: `Admin added a new Student: ${name}`,
     });
 
     const io = getIo();
@@ -456,8 +456,8 @@ export const addSupervisor = asyncHandler(async (req, res, next) => {
     // Convert comma-separated expertise into an array if it's a string
     let parsedExpertise = [];
     if (experties) {
-        parsedExpertise = Array.isArray(experties) 
-            ? experties 
+        parsedExpertise = Array.isArray(experties)
+            ? experties
             : experties.split(',').map(e => e.trim()).filter(e => e);
     }
 
@@ -473,7 +473,7 @@ export const addSupervisor = asyncHandler(async (req, res, next) => {
     await logActivity({
         actor: req.user._id,
         actionType: "USER_ADDED",
-        message: `**Admin** added a new Supervisor: **${name}**`,
+        message: `Admin added a new Supervisor: ${name}`,
     });
 
     const io = getIo();
@@ -499,7 +499,7 @@ export const updateUserDetails = asyncHandler(async (req, res, next) => {
     if (name) user.name = name;
     if (email) user.email = email;
     if (department) user.department = department;
-    
+
     if (password) {
         user.password = password; // Pre-save hook will hash this
     }
@@ -507,8 +507,8 @@ export const updateUserDetails = asyncHandler(async (req, res, next) => {
     if (user.role === "Supervisor" && experties !== undefined) {
         let parsedExpertise = [];
         if (experties) {
-            parsedExpertise = Array.isArray(experties) 
-                ? experties 
+            parsedExpertise = Array.isArray(experties)
+                ? experties
                 : experties.split(',').map(e => e.trim()).filter(e => e);
         }
         user.experties = parsedExpertise;
@@ -519,7 +519,7 @@ export const updateUserDetails = asyncHandler(async (req, res, next) => {
     await logActivity({
         actor: req.user._id,
         actionType: "USER_EDITED",
-        message: `**Admin** updated details for user: **${user.name}**`,
+        message: `Admin updated details for user: ${user.name}`,
     });
 
     const io = getIo();
@@ -550,7 +550,7 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
         actionType: "TASK_ASSIGNED",
-        message: `**Admin** assigned a new task "${title}" to project "${project.title}"`,
+        message: `Admin assigned a new task "${title}" to project "${project.title}"`,
         details: description,
         relatedProject: project._id,
         priority: "high"
@@ -600,7 +600,7 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [studentId, req.user._id],
         actionType: "DEADLINE_REMINDER",
-        message: `**Admin** sent a manual reminder to **${project.student.name}** for project "${project.title}"`,
+        message: `Admin sent a manual reminder to ${project.student.name} for project "${project.title}"`,
         details: finalMessage,
         relatedProject: project._id,
         priority: "medium"
@@ -629,7 +629,7 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
             `Admin sent you a reminder for project "${project.title}"`,
             finalMessage
         );
-        
+
         sendEmail({
             to: project.student.email,
             subject: `Important Reminder: Project ${project.title}`,
