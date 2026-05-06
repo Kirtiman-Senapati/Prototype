@@ -278,12 +278,22 @@ const StudentDashboard = () => {
                 {project ? "Track your progress, tasks and feedback in one place." : "Let's submit your academic project proposal to get started."}
             </p>
         </div>
-        {project && project.status === 'Approved' && project.supervisor && (
+        {project && (project.status === 'Approved' || project.status === 'Incomplete') && project.supervisor && (
             <div className="flex items-center gap-2 sm:mt-1">
                 <button 
-                    onClick={handleCompleteProject}
+                    onClick={() => {
+                        if (project.status === 'Incomplete') {
+                            toast.error("Project deadline has already passed. You can no longer mark this project as completed. Please contact your administrator for further assistance.");
+                            return;
+                        }
+                        handleCompleteProject();
+                    }}
                     disabled={isCompletingProject}
-                    className="flex items-center justify-center px-4 h-9 text-[13px] font-medium rounded-md bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98] transition-all duration-150 shadow-sm disabled:opacity-50"
+                    className={`flex items-center justify-center px-4 h-9 text-[13px] font-medium rounded-md active:scale-[0.98] transition-all duration-150 shadow-sm disabled:opacity-50 ${
+                        project.status === 'Incomplete' 
+                            ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed hover:bg-slate-50' 
+                            : 'bg-slate-900 text-white hover:bg-slate-800'
+                    }`}
                 >
                     {isCompletingProject ? "Completing..." : "Complete Project"}
                 </button>

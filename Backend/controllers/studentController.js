@@ -285,6 +285,10 @@ export const completeProject = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Project is already marked as completed", 400));
     }
 
+    if (project.status === "Incomplete") {
+        return next(new ErrorHandler("Project deadline has already passed. You can no longer mark this project as completed. Please contact your administrator for further assistance.", 400));
+    }
+
     project.status = "Completed";
     await project.save();
 

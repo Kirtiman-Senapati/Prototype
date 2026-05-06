@@ -128,7 +128,7 @@ export const runDeadlineChecker = async () => {
         // ============================================
         const missedProjects = await Project.find({
             deadline: { $lt: todayStart },
-            status: { $ne: "Completed" },
+            status: { $in: ["Approved"] },
             deadlineMissedNotified: false
         }).populate("student supervisor");
 
@@ -141,7 +141,7 @@ export const runDeadlineChecker = async () => {
             console.log(`[CRON] Deadline missed for "${project.title}"`);
             try {
                 let updateFields = { deadlineMissedNotified: true };
-                if (project.status !== "Completed" && project.status !== "Rejected") {
+                if (project.status === "Approved") {
                     updateFields.status = "Incomplete";
                 }
 
