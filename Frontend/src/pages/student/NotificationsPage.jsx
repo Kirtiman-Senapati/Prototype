@@ -108,7 +108,6 @@ const NotificationsPage = () => {
     if (unreadIds.length === 0) return;
 
     await dispatch(markActivitiesRead(unreadIds));
-    await dispatch(getActivities());
   };
 
   // Safe fallback

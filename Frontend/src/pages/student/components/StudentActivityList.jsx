@@ -33,7 +33,6 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
         
         if (unreadIds.length > 0) {
             await dispatch(markActivitiesRead(unreadIds));
-            await dispatch(getActivities());
         }
     };
     if (!activities || activities.length === 0) {

@@ -60,7 +60,12 @@ const activitySlice = createSlice({
   reducers: {
     addRealtimeActivity: (state, action) => {
       // Avoid duplicates
-      const exists = state.activities.some(a => a._id === action.payload._id);
+      const exists = state.activities.some(
+        a =>
+          a._id === action.payload._id ||
+          (a.message === action.payload.message &&
+            a.createdAt === action.payload.createdAt)
+      );
       if (!exists) {
         state.activities.unshift(action.payload);
       }
