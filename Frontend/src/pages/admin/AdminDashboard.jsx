@@ -77,7 +77,7 @@ const AdminDashboard = () => {
 
     useAutoRefresh((activity) => {
         dispatch(addRealtimeActivity(activity));
-    }, "systemActivity");
+    }, "newActivity");
 
     if (isLoading && !stats) {
         return (
@@ -176,7 +176,7 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* 🔥 ADD STUDENT MODAL */}
+            {/* ADD STUDENT MODAL */}
             {isStudentModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -221,7 +221,7 @@ const AdminDashboard = () => {
                 </div>
             )}
 
-            {/* 🔥 ADD SUPERVISOR MODAL */}
+            {/*  ADD SUPERVISOR MODAL */}
             <AddSupervisorModal
                 isOpen={isSupervisorModalOpen}
                 onClose={() => setIsSupervisorModalOpen(false)}

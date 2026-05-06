@@ -81,13 +81,6 @@ export const logActivity = async ({
           }
         });
       }
-
-      // Always broadcast to admins, or specific 'admin' rooms if we had rooms
-      // For now we broadcast the system activities to all active admins
-      // Since we don't have socket rooms for roles currently, we can emit a global "systemActivity"
-      // that the admin client listens to, or we can fetch all admin IDs from DB and send targeted.
-      // Easiest is global emit and let clients ignore if not admin.
-      io.emit("systemActivity", populatedActivity);
     }
 
     return newActivity;
