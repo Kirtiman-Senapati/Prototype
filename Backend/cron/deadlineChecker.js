@@ -19,7 +19,7 @@ export const runDeadlineChecker = async () => {
         //  REMINDERS (Date Difference Logic)
         // ============================================
         const pendingProjects = await Project.find({
-            status: { $ne: "Completed" },
+            status: { $in: ["Approved"] },
             $or: [
                 { reminder2DaySent: false },
                 { reminder1DaySent: false }
@@ -140,10 +140,10 @@ export const runDeadlineChecker = async () => {
         for (const project of missedProjects) {
             console.log(`[CRON] Deadline missed for "${project.title}"`);
             try {
-                let updateFields = { deadlineMissedNotified: true };
-                if (project.status === "Approved") {
-                    updateFields.status = "Incomplete";
-                }
+                const updateFields = {
+                    deadlineMissedNotified: true,
+                    status: "Incomplete"
+                };
 
                 const updated = await Project.updateOne(
                     { _id: project._id, deadlineMissedNotified: false },
