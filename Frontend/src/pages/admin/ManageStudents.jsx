@@ -31,6 +31,9 @@ const ManageStudents = () => {
         if (user.proposalStatus === "Completed") {
             return { label: "Completed", reason: "Project finished" };
         }
+        if (user.proposalStatus === "Incomplete") {
+            return { label: "Incomplete", reason: "Deadline missed" };
+        }
         if (user.proposalStatus === "Approved") {
             if (user.supervisor) {
                 return { label: "Assigned", reason: "Done" };
@@ -185,6 +188,7 @@ const ManageStudents = () => {
                         <option value="Waiting Supervisor">Waiting Supervisor</option>
                         <option value="Assigned">Assigned</option>
                         <option value="Completed">Completed</option>
+                        <option value="Incomplete">Incomplete</option>
                     </select>
                 </div>
             </div>
@@ -226,12 +230,14 @@ const ManageStudents = () => {
                                                         <div className="flex items-center gap-2">
                                                             <span
                                                                 className={`w-2 h-2 shadow-sm rounded-full ${
-                                                                    statusInfo.label === "Completed"
+                                                                        statusInfo.label === "Completed"
                                                                         ? "bg-emerald-500"
                                                                         : statusInfo.label === "Rejected"
                                                                         ? "bg-red-500"
                                                                         : statusInfo.label === "Assigned"
                                                                         ? "bg-blue-500"
+                                                                        : statusInfo.label === "Incomplete"
+                                                                        ? "bg-slate-500"
                                                                         : statusInfo.label === "Pending Approval" || statusInfo.label === "Waiting Supervisor"
                                                                         ? "bg-amber-500"
                                                                         : "bg-slate-400"

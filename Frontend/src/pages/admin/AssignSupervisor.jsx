@@ -126,6 +126,7 @@ const AssignSupervisor = () => {
         if (filter === "Assigned") return p.status === "Approved" && !!p.supervisor;
         if (filter === "Unassigned") return p.status === "Approved" && !p.supervisor;
         if (filter === "Completed") return p.status === "Completed";
+        if (filter === "Incomplete") return p.status === "Incomplete";
         return true; 
     });
 
@@ -220,6 +221,7 @@ const AssignSupervisor = () => {
                         <option value="Unassigned">Unassigned</option>
                         <option value="Assigned">Assigned</option>
                         <option value="Completed">Completed</option>
+                        <option value="Incomplete">Incomplete</option>
                     </select>
                 </div>
             </div>
@@ -271,6 +273,7 @@ const AssignSupervisor = () => {
                                                             p.status === "Completed" ? "bg-emerald-500" :
                                                             p.status === "Approved" ? "bg-blue-500" :
                                                             p.status === "Rejected" ? "bg-red-500" :
+                                                            p.status === "Incomplete" ? "bg-slate-500" :
                                                             "bg-amber-500"
                                                         }`} />
                                                         <span className="text-sm font-medium text-slate-800">
@@ -281,6 +284,7 @@ const AssignSupervisor = () => {
                                                         {p.status === "Completed" ? "Project Completed" :
                                                          p.status === "Approved" ? "Approved by Admin" :
                                                          p.status === "Rejected" ? "Proposal Rejected" :
+                                                         p.status === "Incomplete" ? "Deadline Missed" :
                                                          "Pending Review"}
                                                     </span>
                                                 </div>
@@ -393,12 +397,14 @@ const AssignSupervisor = () => {
                                             selectedProject.status === 'Completed' ? 'bg-emerald-500' :
                                             selectedProject.status === 'Approved' ? 'bg-blue-500' :
                                             selectedProject.status === 'Rejected' ? 'bg-red-500' :
+                                            selectedProject.status === 'Incomplete' ? 'bg-slate-500' :
                                             'bg-amber-500'
                                         }`} />
                                         <span className={`${
                                             selectedProject.status === 'Completed' ? 'text-slate-700' :
                                             selectedProject.status === 'Approved' ? 'text-slate-700' :
                                             selectedProject.status === 'Rejected' ? 'text-slate-500' :
+                                            selectedProject.status === 'Incomplete' ? 'text-slate-500' :
                                             'text-slate-600'
                                         }`}>
                                             {selectedProject.status}

@@ -12,6 +12,8 @@ const StatusBadge = ({ status }) =>
                 return "bg-slate-100 text-slate-400 border-slate-200";
             case "completed":
                 return "bg-slate-900 text-white border-slate-900";
+            case "incomplete":
+                return "bg-slate-100 text-slate-500 border-slate-300 border-dashed";
             default:
                 return "bg-slate-100 text-slate-600 border-slate-200";
         }

@@ -92,6 +92,7 @@ const ProjectOverview = ({ project, onUpdate }) => {
                 <div className="flex items-center gap-2 mb-4">
                     <span className={`w-1.5 h-1.5 rounded-full ${
                         project.status === 'Completed' ? 'bg-slate-400' :
+                        project.status === 'Incomplete' ? 'bg-slate-500' :
                         project.status === 'Approved' ? 'bg-slate-600' :
                         project.status === 'Pending' ? 'bg-slate-700' :
                         'bg-slate-800'

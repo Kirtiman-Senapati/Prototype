@@ -38,7 +38,8 @@ const SubmitProposal = () => {
     project &&
     (project.status === "Pending" ||
       project.status === "Approved" ||
-      project.status === "Completed");
+      project.status === "Completed" ||
+      project.status === "Incomplete");
 
   if (isLocked) {
     return (
@@ -51,6 +52,9 @@ const SubmitProposal = () => {
             )}
             {project.status === "Completed" && (
               <CheckCircle2 className="w-8 h-8 text-slate-700" />
+            )}
+            {project.status === "Incomplete" && (
+              <AlertTriangle className="w-8 h-8 text-slate-500" />
             )}
             {project.status === "Pending" && (
               <Clock className="w-8 h-8 text-amber-500" />
@@ -68,7 +72,9 @@ const SubmitProposal = () => {
                   ? "text-green-600"
                   : project.status === "Completed"
                     ? "text-blue-600"
-                    : "text-amber-500"
+                    : project.status === "Incomplete"
+                      ? "text-slate-500"
+                      : "text-amber-500"
               }`}
             >
               {project.status}

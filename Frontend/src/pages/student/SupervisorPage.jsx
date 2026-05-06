@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAvailableSupervisors, requestSupervisor, getStudentDashboard } from "../../store/slices/studentSlice";
 import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
-import { ArrowRight, CheckCircle, User, BookOpen, Clock } from "lucide-react";
+import { ArrowRight, CheckCircle, User, BookOpen, Clock, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const SupervisorPage = () => {
@@ -102,6 +102,7 @@ const SupervisorPage = () => {
                    <span className={`px-3 py-1 rounded-full text-xs font-bold border shadow-sm ${
                        project.status === 'Approved' ? 'bg-slate-100 text-slate-700 border-slate-200' :
                        project.status === 'Pending' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                       project.status === 'Incomplete' ? 'bg-slate-100 text-slate-500 border-slate-300 border-dashed' :
                        'bg-slate-100 text-slate-700 border-slate-200'
                    }`}>
                        {project.status || "Approved"}
@@ -144,6 +145,16 @@ const SupervisorPage = () => {
              <button onClick={() => navigate("/dashboard/submit-proposal")} className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-medium transition shadow-md mt-4 flex items-center gap-2">
                  Submit Project Proposal <ArrowRight size={18} />
              </button>
+          </div>
+      ) : project.status === "Incomplete" ? (
+          <div className="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[300px]">
+             <div className="mb-3">
+                 <AlertTriangle size={40} className="w-8 h-8 text-slate-500"/>
+             </div>
+             <div className="max-w-md mx-auto">
+                 <h2 className="text-2xl font-bold text-slate-800">Project Incomplete</h2>
+                 <p className="text-slate-600 mt-2">You missed the submission deadline, and your project has been marked as incomplete. You cannot request a supervisor.</p>
+             </div>
           </div>
       ) : project.status !== "Approved" ? (
           <div className="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[300px]">

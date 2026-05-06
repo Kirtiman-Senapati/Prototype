@@ -206,6 +206,7 @@ const ProjectsPage = () => {
                         <option value="Approved">Approved</option>
                         <option value="Rejected">Rejected</option>
                         <option value="Completed">Completed</option>
+                        <option value="Incomplete">Incomplete</option>
                     </select>
                 </div>
             </div>
@@ -258,6 +259,7 @@ const ProjectsPage = () => {
                                                     proj.status === 'Completed' ? 'bg-emerald-500' :
                                                     proj.status === 'Approved' ? 'bg-slate-700' :
                                                     proj.status === 'Rejected' ? 'bg-red-500' :
+                                                    proj.status === 'Incomplete' ? 'bg-slate-500' :
                                                     'bg-amber-500'
                                                 }`} />
                                                 {proj.status}

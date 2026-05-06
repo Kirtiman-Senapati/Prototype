@@ -63,6 +63,8 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                                 ? 'bg-indigo-500/80'
                                                 : project.status === 'Pending'
                                                 ? 'bg-amber-500/80'
+                                                : project.status === 'Incomplete'
+                                                ? 'bg-slate-500/80'
                                                 : 'bg-slate-400'
                                         }`} />
                                         
