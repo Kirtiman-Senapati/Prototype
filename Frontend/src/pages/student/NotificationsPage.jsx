@@ -113,6 +113,42 @@ const NotificationsPage = () => {
   // Safe fallback
   const displayActivities = activities || [];
 
+  {/* Markdown parser */}
+
+  const renderMessage = (text) => {
+  if (!text) return null;
+
+  const cleanText = text
+    .replace(
+      /[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g,
+      ""
+    )
+    .replace(/^[:\s\-]+/, "")
+    .trim();
+
+  const parts = cleanText.split(/\*\*(.*?)\*\*/g);
+
+  return parts.map((part, i) => {
+    if (!part.trim()) return null;
+
+    return i % 2 === 1 ? (
+      <span
+        key={i}
+        className="font-semibold text-slate-900"
+      >
+        {part}
+      </span>
+    ) : (
+      <span
+        key={i}
+        className="text-slate-600 font-medium"
+      >
+        {part}
+      </span>
+    );
+  });
+};
+
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500 pb-10 bg-[#F8FAFC] min-h-screen">
       
@@ -258,7 +294,7 @@ const NotificationsPage = () => {
                       <div className="flex-1 w-full">
                         <div className="flex justify-between items-start mb-2 gap-[14px]">
                             <p className={`text-[14.5px] leading-[1.5] transition-colors duration-200 ${isUnread ? 'font-normal text-slate-800 group-hover:text-slate-900' :'font-normal text-slate-500 group-hover:text-slate-700'}`}>
-                              {act.message}
+                              {renderMessage(act.message)}
                             </p>
                             <span className="shrink-0 text-[11px] font-medium text-slate-400 whitespace-nowrap mt-1">
                               {formatTimeAgo(act.createdAt)}
