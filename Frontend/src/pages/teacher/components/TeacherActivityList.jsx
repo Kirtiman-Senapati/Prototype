@@ -33,7 +33,7 @@ const TeacherActivityList = ({ activities }) => {
         
         if (unreadIds.length > 0) {
             await dispatch(markActivitiesRead(unreadIds));
-            dispatch(getActivities());
+            await dispatch(getActivities());
         }
     };
     if (!activities || activities.length === 0) {
@@ -75,20 +75,20 @@ const TeacherActivityList = ({ activities }) => {
     return (
         <div className="bg-white rounded-lg  border border-slate-200 overflow-hidden flex flex-col h-full">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
-                <h2 className="font-semibold text-slate-800 ">
+                <h2 className="text-sm font-semibold text-slate-800">
                     Recent Activity
                 </h2>
                 <div className="flex gap-4">
                      {activities.some(act => !act.readBy?.includes(authUser?._id)) && (
-                         <button onClick={handleMarkAllRead} className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">
+                         <button onClick={handleMarkAllRead} className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors">
                              Mark all read
                          </button>
                      )}
-                     <button onClick={handleClear} className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">
+                     <button onClick={handleClear} className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors">
                          Clear
                      </button>
                      {activities.length > 5 && (
-                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors">
+                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors">
                              {isExpanded ? 'View Less' : 'View All'}
                          </button>
                      )}
@@ -111,10 +111,9 @@ const TeacherActivityList = ({ activities }) => {
                                         <div 
                                             key={activity._id || index} 
                                             className="relative flex items-start gap-4 group cursor-pointer"
-                                            onClick={async () => {
+                                            onClick={() => {
                                                 if (isUnread) {
-                                                    await dispatch(markActivitiesRead([activity._id]));
-                                                    dispatch(getActivities());
+                                                    dispatch(markActivitiesRead([activity._id]));
                                                 }
                                             }}
                                         >
@@ -142,7 +141,7 @@ const TeacherActivityList = ({ activities }) => {
                                                     {isUnread && (
                                                         <>
                                                             <span className="text-[10px] text-slate-300">&bull;</span>
-                                                            <span className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide">
+                                                            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
                                                                 UNREAD
                                                             </span>
                                                         </>

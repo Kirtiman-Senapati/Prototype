@@ -9,7 +9,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
             <div className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden h-full">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
-                    <a href={viewAllLink} className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>
+                    <a href={viewAllLink} className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors">View All</a>
                 </div>
                 <div className="flex flex-col items-center justify-center h-full text-slate-400">
                     <div className="mb-3 text-slate-300">
@@ -32,7 +32,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
         <div className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden h-full">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
-                <a href={viewAllLink} className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>
+                <a href={viewAllLink} className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors">View All</a>
             </div>
             
             <div className="overflow-x-auto overflow-y-auto flex-1 min-h-0 custom-scrollbar">

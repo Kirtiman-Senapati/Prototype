@@ -33,7 +33,7 @@ const AdminActivityList = ({ activities }) => {
         
         if (unreadIds.length > 0) {
             await dispatch(markActivitiesRead(unreadIds));
-            dispatch(getActivities());
+            await dispatch(getActivities());
         }
     };
     if (!activities || activities.length === 0) {
@@ -85,15 +85,15 @@ const AdminActivityList = ({ activities }) => {
                 </h2>
                 <div className="flex gap-4">
                      {activities.some(act => !act.readBy?.includes(authUser?._id)) && (
-                         <button onClick={handleMarkAllRead} className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
+                         <button onClick={handleMarkAllRead} className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors">
                              Mark all read
                          </button>
                      )}
-                     <button onClick={handleClear} className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
+                     <button onClick={handleClear} className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors">
                          Clear
                      </button>
                      {activities.length > 5 && (
-                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors">
                              {isExpanded ? 'View Less' : 'View All'}
                          </button>
                      )}
@@ -116,10 +116,9 @@ const AdminActivityList = ({ activities }) => {
                                         <div 
                                             key={activity._id || index} 
                                             className="relative flex items-start gap-4 group cursor-pointer"
-                                            onClick={async () => {
+                                            onClick={() => {
                                                 if (isUnread) {
-                                                    await dispatch(markActivitiesRead([activity._id]));
-                                                    dispatch(getActivities());
+                                                    dispatch(markActivitiesRead([activity._id]));
                                                 }
                                             }}
                                         >
@@ -147,7 +146,7 @@ const AdminActivityList = ({ activities }) => {
                                                     {isUnread && (
                                                         <>
                                                             <span className="text-[10px] text-slate-300">&bull;</span>
-                                                            <span className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide">
+                                                            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
                                                                 UNREAD
                                                             </span>
                                                         </>

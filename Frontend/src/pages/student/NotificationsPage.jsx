@@ -98,14 +98,11 @@ const NotificationsPage = () => {
 
   const handleMarkAsRead = (id) => {
     dispatch(markActivitiesRead([id]));
-    // Optimistically update local UI by re-fetching. In a more advanced implementation, 
-    // you would update the specific item in the redux state directly.
-    setTimeout(() => { dispatch(getActivities()); }, 300);
   };
 
-  const handleMarkAllAsRead = () => {
-    dispatch(markActivitiesRead());
-    setTimeout(() => { dispatch(getActivities()); }, 300);
+  const handleMarkAllAsRead = async () => {
+    await dispatch(markActivitiesRead());
+    await dispatch(getActivities());
   };
 
   // Safe fallback
