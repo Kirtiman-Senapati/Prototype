@@ -101,7 +101,13 @@ const NotificationsPage = () => {
   };
 
   const handleMarkAllAsRead = async () => {
-    await dispatch(markActivitiesRead());
+    const unreadIds = displayActivities
+      .filter(act => !act.readBy?.includes(authUser?._id))
+      .map(act => act._id);
+
+    if (unreadIds.length === 0) return;
+
+    await dispatch(markActivitiesRead(unreadIds));
     await dispatch(getActivities());
   };
 

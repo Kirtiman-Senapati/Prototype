@@ -15,10 +15,12 @@ export const getActivities = createAsyncThunk(
 
 export const markActivitiesRead = createAsyncThunk(
   "activity/markRead",
-  async (activityIds, { rejectWithValue }) => {
+  async (activityIds, { getState, rejectWithValue }) => {
     try {
       const response = await axiosInstance.patch("/activities/read", { activityIds });
-      return { ...response.data, activityIds };
+      const state = getState();
+      const userId = state.auth?.authUser?._id;
+      return { ...response.data, activityIds, userId };
     } catch (error) {
       return rejectWithValue(error.response?.data);
     }
@@ -58,7 +60,7 @@ const activitySlice = createSlice({
   reducers: {
     addRealtimeActivity: (state, action) => {
       // Avoid duplicates
-      const exists = state.activities.find(a => a._id === action.payload._id);
+      const exists = state.activities.some(a => a._id === action.payload._id);
       if (!exists) {
         state.activities.unshift(action.payload);
       }
@@ -85,8 +87,18 @@ const activitySlice = createSlice({
       })
       .addCase(getActivities.rejected, (state) => { state.isLoading = false; })
       .addCase(markActivitiesRead.fulfilled, (state, action) => {
-         // Optionally update local read states if needed, but easier to just let component refetch 
-         // or assume optimistic update
+        const { activityIds, userId } = action.payload;
+        if (userId && activityIds && activityIds.length > 0) {
+          state.activities = state.activities.map(act => {
+            if (activityIds.includes(act._id)) {
+              return {
+                ...act,
+                readBy: act.readBy?.includes(userId) ? act.readBy : [...(act.readBy || []), userId]
+              };
+            }
+            return act;
+          });
+        }
       })
       .addCase(clearActivities.fulfilled, (state) => {
         state.activities = [];
