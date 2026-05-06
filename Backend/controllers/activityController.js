@@ -51,22 +51,22 @@ export const getActivities = async (req, res) => {
 // @body    { activityIds: ['id1', 'id2'] } Optional array. If omitted, marks all relevant as read.
 export const markActivitiesRead = async (req, res) => {
   try {
-    const userId = req.user._id;
     const { activityIds } = req.body;
 
-    let filter = { targetUsers: userId, readBy: { $ne: userId } };
-    
-    if (activityIds && activityIds.length > 0) {
-      filter._id = { $in: activityIds };
-    }
-
-    await Activity.updateMany(filter, {
-      $addToSet: { readBy: userId },
-    });
+    await Activity.updateMany(
+      {
+        _id: { $in: activityIds },
+      },
+      {
+        $addToSet: {
+          readBy: req.user._id,
+        },
+      }
+    );
 
     res.status(200).json({
       success: true,
-      message: "Activities marked as read."
+      activityIds,
     });
   } catch (error) {
     console.error("Mark Activities Read Error:", error);
@@ -85,14 +85,13 @@ export const clearActivities = async (req, res) => {
     const userId = req.user._id;
     const userRole = req.user.role;
     
-    let filter = {};
-    if (userRole === "Admin") {
-      filter = {};
-    } else if (userRole === "Supervisor") {
-      filter = { $or: [{ targetUsers: userId }, { actor: userId }] };
-    } else if (userRole === "Student") {
-      filter = { targetUsers: userId };
-    }
+    let filter = {
+      $or: [
+        { targetUsers: userId },
+        { roles: userRole },
+        { actor: userId, actionType: { $in: ['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'] } }
+      ]
+    };
 
     // Add user to clearedBy array
     await Activity.updateMany(filter, {
