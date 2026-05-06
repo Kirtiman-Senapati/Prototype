@@ -71,9 +71,26 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
         // Strip emojis and leading spaces/punctuation sometimes left by emoji removal
         const cleanText = text.replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').replace(/^[:\s\-]+/, '').trim();
         const parts = cleanText.split(/\*\*(.*?)\*\*/g);
-        return parts.map((part, i) => 
-            i % 2 === 1 ? <strong key={i} className="font-bold text-slate-900">{part}</strong> : part
-        );
+
+        return parts.map((part, i) => {
+            if (!part.trim()) return null;
+
+            return i % 2 === 1 ? (
+                <span
+                    key={i}
+                    className="font-semibold text-slate-900"
+                >
+                    {part}
+                </span>
+            ) : (
+                <span
+                    key={i}
+                    className="text-slate-600 font-medium"
+                >
+                    {part}
+                </span>
+            );
+        });
     };
 
     return (
@@ -125,7 +142,7 @@ const StudentActivityList = ({ activities, title = "Recent Activity" }) => {
                                             {/* Removed absolute dot */}
                                             
                                             <div className="flex-1 min-w-0">
-                                                <p className={`text-sm leading-relaxed transition-colors ${isUnread ? 'text-slate-900 font-medium' : 'text-slate-600 font-normal'}`}>
+                                                <p className="text-sm leading-relaxed">
                                                     {renderMessage(activity.message)}
                                                 </p>
 
