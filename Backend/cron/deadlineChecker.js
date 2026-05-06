@@ -70,7 +70,7 @@ export const runDeadlineChecker = async () => {
 
                     await logActivity({
                         actionType: "DEADLINE_REMINDER",
-                        message: `📅 Reminder: The submission deadline for your project "${project.title}" is in exactly 2 days (${new Date(project.deadline).toLocaleDateString()}). Please prioritize its completion.`,
+                        message: ` Reminder: The submission deadline for your project "${project.title}" is in exactly 2 days (${new Date(project.deadline).toLocaleDateString()}). Please prioritize its completion.`,
                         targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
                         roles: [],
                         relatedProject: project._id,

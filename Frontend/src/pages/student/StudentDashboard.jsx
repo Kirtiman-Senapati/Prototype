@@ -208,7 +208,7 @@ const StudentDashboard = () => {
 
   useAutoRefresh((data) => {
       if (!data || !data.deadline) return;
-      toast.info(<div>A new project deadline has been set.</div>, { icon: "📅" });
+      toast.info(<div>A new project deadline has been set.</div>);
       dispatch(getStudentDashboard());
   }, "deadlineUpdated");
 
