@@ -139,15 +139,20 @@ export const runDeadlineChecker = async () => {
 
         for (const project of missedProjects) {
             console.log(`[CRON] Deadline missed for "${project.title}"`);
-            try {
-                const updateFields = {
-                    deadlineMissedNotified: true,
-                    status: "Incomplete"
-                };
-
+            try 
+            {
                 const updated = await Project.updateOne(
-                    { _id: project._id, deadlineMissedNotified: false },
-                    { $set: updateFields }
+                {
+                    _id: project._id,
+                    status: "Approved",
+                    deadlineMissedNotified: false
+                },
+                {
+                    $set: {
+                        status: "Incomplete",
+                        deadlineMissedNotified: true
+                    }
+                }
                 );
 
                 if (updated.modifiedCount === 0) continue;
