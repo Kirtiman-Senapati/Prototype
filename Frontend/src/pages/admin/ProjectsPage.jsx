@@ -153,17 +153,52 @@ const ProjectsPage = () => {
     // Filter Logic
     const cleanProjects = projects.filter(p => p.student && typeof p.student === "object" && p.student._id);
 
-    const isDatePassed = (dateString) => {
-    if (!dateString) return false;
+    const isDatePassed = (dateString) => 
+    {
+        if (!dateString) return false;
 
-    const today = new Date();
-    today.setHours(0,0,0,0);
+        const today = new Date();
+        today.setHours(0,0,0,0);
 
-    const deadline = new Date(dateString);
-    deadline.setHours(0,0,0,0);
+        const deadline = new Date(dateString);
+        deadline.setHours(0,0,0,0);
 
-    return deadline < today;
-};
+        return deadline < today;
+    };
+
+    const getDeadlineStyle = (project) => 
+    {
+
+        // Completed project = professional green
+        if (project.status === "Completed") {
+            return {
+                dot: "bg-green-600",
+                text: "text-slate-800",
+            };
+        }
+
+        // Incomplete project = neutral gray
+        if (project.status === "Incomplete") {
+            return {
+                dot: "bg-slate-500",
+                text: "text-slate-600",
+            };
+        }
+
+        // Expired deadline = red
+        if (isDatePassed(project.deadline)) {
+            return {
+                dot: "bg-red-500",
+                text: "text-red-600",
+            };
+        }
+
+        // Normal upcoming deadline
+        return {
+            dot: "bg-slate-400",
+            text: "text-slate-700",
+        };
+    };
 
     const filteredProjects = cleanProjects.filter(p => {
         const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || p.title?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -267,7 +302,7 @@ const ProjectsPage = () => {
                                         <td className="py-5 px-6 text-center align-middle">
                                             <div className="flex items-center justify-center gap-2 text-sm text-slate-700 font-medium">
                                                 <span className={`w-2 h-2 rounded-full ${
-                                                    proj.status === 'Completed' ? 'bg-emerald-500' :
+                                                    proj.status === 'Completed' ? 'bg-green-600' :
                                                     proj.status === 'Approved' ? 'bg-slate-700' :
                                                     proj.status === 'Rejected' ? 'bg-red-500' :
                                                     proj.status === 'Incomplete' ? 'bg-slate-500' :
@@ -278,16 +313,11 @@ const ProjectsPage = () => {
                                         </td>
                                         <td className="py-5 px-6">
                                             <div className="flex items-center gap-2">
-                                                <span className={`w-1.5 h-1.5 rounded-full ${
-                                                    isDatePassed(proj.deadline)
-                                                    ? 'bg-red-500'
-                                                    : 'bg-slate-400'
-                                                }`} />
-                                                <span className={`text-sm font-medium ${
-                                                    isDatePassed(proj.deadline)
-                                                        ? 'text-red-600'
-                                                        : 'text-slate-700'
-                                                }`}>
+                                                {/* //TODO: Change color when date is passed  */}
+                                                <span className={`w-1.5 h-1.5 rounded-full ${getDeadlineStyle(proj).dot}`} />
+
+                                                {/* //TODO: Change text color when date is passed  */}
+                                                <span className={`text-sm font-medium ${getDeadlineStyle(proj).text}`}>
                                                     {proj.deadline ? new Date(proj.deadline).toLocaleDateString("en-GB") : 'N/A'}
                                                 </span>
                                             </div>
