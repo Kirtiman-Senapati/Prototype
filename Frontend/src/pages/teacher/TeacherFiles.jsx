@@ -218,7 +218,7 @@ const TeacherFiles = () => {
                 ) : viewMode === "list" ? (
 
                     <>
-                        {/* ✅ MOBILE LIST (CARD VIEW) */}
+                        {/* MOBILE LIST (CARD VIEW) */}
                         <div className="md:hidden space-y-3">
                             {filteredFiles.map((file, idx) => (
                                 <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4">

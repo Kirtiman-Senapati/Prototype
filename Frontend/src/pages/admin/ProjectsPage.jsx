@@ -325,10 +325,10 @@ const ProjectsPage = () => {
                                         <td className="py-5 px-6 text-center align-middle">
                                             <div className="flex items-center justify-center gap-2 text-sm text-slate-700 font-medium">
                                                 <span className={`w-2 h-2 rounded-full ${proj.status === 'Completed' ? 'bg-green-600' :
-                                                        proj.status === 'Approved' ? 'bg-slate-700' :
-                                                            proj.status === 'Rejected' ? 'bg-red-500' :
-                                                                proj.status === 'Incomplete' ? 'bg-slate-500' :
-                                                                    'bg-amber-500'
+                                                    proj.status === 'Approved' ? 'bg-slate-700' :
+                                                        proj.status === 'Rejected' ? 'bg-red-500' :
+                                                            proj.status === 'Incomplete' ? 'bg-slate-500' :
+                                                                'bg-amber-500'
                                                     }`} />
                                                 {proj.status}
                                             </div>
@@ -383,11 +383,11 @@ const ProjectsPage = () => {
 
             {/*  PROJECT DETAILS MODAL */}
             {selectedProject && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-5xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh] shadow-xl">
 
                         {/* Modal Header */}
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white sticky top-0 z-10 rounded-t-xl">
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
                             <div className="flex items-center gap-4">
                                 <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
                                     <div className="p-2 bg-slate-100 text-slate-600 rounded-lg">
@@ -421,7 +421,7 @@ const ProjectsPage = () => {
                         </div>
 
                         {/* Modal Body (Scrollable) */}
-                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 space-y-10">
+                        <div className="p-6 overflow-y-auto custom-scrollbar space-y-8">
 
                             {/* BASIC INFO */}
                             <div className="relative">
@@ -430,7 +430,7 @@ const ProjectsPage = () => {
                                         {selectedProject.status}
                                     </div>
                                 </div>
-                                <h4 className="text-3xl font-semibold text-slate-900 tracking-tight pr-24">{selectedProject.title}</h4>
+                                <h4 className="text-2xl font-bold text-slate-900 tracking-tight pr-24">{selectedProject.title}</h4>
                                 <div className="mt-2 flex items-center gap-3 text-sm mb-6">
                                     <span className="text-slate-500">Project</span>
                                     <span className="h-1 w-1 bg-slate-300 rounded-full"></span>
@@ -522,24 +522,27 @@ const ProjectsPage = () => {
                                                 </div>
 
                                                 {totalTasks > 0 ? (
-                                                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
+                                                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                                         {[...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline)).map((t, i) => (
-                                                            <div key={i} className="flex flex-col gap-1.5 py-3 pl-4 border-l-2 border-slate-200 hover:border-slate-400 hover:bg-slate-50/50 transition-colors bg-white">
+                                                            <div key={i} className="bg-white border border-slate-100 rounded-2xl px-4 py-3 hover:bg-slate-50/80 transition-all">
                                                                 <div className="flex justify-between items-start gap-2">
-                                                                    <p className={`text-sm font-bold line-clamp-1 ${t.status === "Completed" ? "text-slate-500 line-through decoration-slate-300" : "text-slate-800"}`}>{t.title}</p>
-                                                                    <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium shrink-0">
-                                                                        <span className={`w-1.5 h-1.5 rounded-full ${t.status === 'Completed' ? 'bg-emerald-500' :
-                                                                                'bg-slate-400'
-                                                                            }`} />
+                                                                    <p className={`text-[15px] font-semibold line-clamp-1 ${t.status === "Completed" ? "text-slate-600" : "text-slate-800"}`}>{t.title}</p>
+
+                                                                    {/*Status badge */}
+                                                                    <div className="px-3 py-1 rounded-full bg-slate-900 text-white text-[11px] font-semibold shrink-0">
                                                                         {t.status}
                                                                     </div>
                                                                 </div>
-                                                                <p className="text-[10px] uppercase font-bold text-slate-400 flex justify-between">
-                                                                    <span>By: {t.assignedByRole === "admin" ? "Admin" : "Supervisor"}</span>
+
+                                                                {/* task status by student  */}
+                                                                <p className="flex justify-between items-center mt-2">
+                                                                    <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">
+                                                                        By {t.assignedByRole === "admin" ? "Admin" : "Supervisor"}
+                                                                    </span>
                                                                     {t.status === "Completed" && t.completedAt ? (
-                                                                        <span className="text-emerald-600">Done {new Date(t.completedAt).toLocaleDateString("en-GB")}</span>
+                                                                        <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Done {new Date(t.completedAt).toLocaleDateString("en-GB")}</span>
                                                                     ) : t.deadline ? (
-                                                                        <span>Due {new Date(t.deadline).toLocaleDateString("en-GB")}</span>
+                                                                        <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Due {new Date(t.deadline).toLocaleDateString("en-GB")}</span>
                                                                     ) : null}
                                                                 </p>
                                                             </div>
@@ -559,7 +562,7 @@ const ProjectsPage = () => {
                             {/* FILES SECTION */}
                             <div className="pt-2">
                                 <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
-                                    <Archive size={14} className="text-slate-500" /> Uploaded Files
+                                    <Archive size={15} className="text-slate-500" /> Uploaded Files
                                 </h3>
 
                                 {!selectedProject.files || selectedProject.files.length === 0 ? (
@@ -571,11 +574,11 @@ const ProjectsPage = () => {
                                         <p className="text-sm font-medium text-slate-400">Student has not attached any project files.</p>
                                     </div>
                                 ) : (
-                                    <div className="overflow-hidden border border-slate-200 rounded-xl">
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-left">
+
+                                    <div className="overflow-x-auto bg-white rounded-xl border border-slate-200">
+                                            <table className="min-w-[900px] w-full text-left">
                                                 <thead>
-                                                    <tr className="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                                    <tr className="border-b border-slate-100 bg-slate-50/50 uppercase text-[11px] font-medium text-slate-500 tracking-wide">
                                                         <th className="py-4 px-6">File Name</th>
                                                         <th className="py-4 px-6">Type</th>
                                                         <th className="py-4 px-6">Uploaded On</th>
@@ -584,25 +587,27 @@ const ProjectsPage = () => {
                                                 </thead>
                                                 <tbody className="divide-y divide-slate-100">
                                                     {selectedProject.files.map((file, idx) => (
-                                                        <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                                                        <tr key={idx} className="hover:bg-slate-50/80 transition-all">
                                                             <td className="py-4 px-6">
                                                                 <div className="flex items-center gap-3">
-                                                                    {getFileIcon(file.type, "shrink-0 w-8 h-8 p-1.5 bg-white border border-slate-100 rounded-md shadow-sm")}
-                                                                    <span className="text-sm font-bold text-slate-800 truncate max-w-[200px] md:max-w-xs">{file.filename}</span>
+                                                                    <div className="w-10 h-10 bg-white border border-slate-100 rounded-lg flex items-center justify-center shrink-0">
+                                                                        {getFileIcon(file.type, "text-slate-600")}
+                                                                    </div>
+                                                                    <span className="font-semibold text-[13px] text-slate-800 truncate max-w-[200px] md:max-w-xs">{file.filename}</span>
                                                                 </div>
                                                             </td>
                                                             <td className="py-4 px-6">
-                                                                <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">{file.type}</span>
+                                                                <span className="text-[12px] font-bold text-slate-500 uppercase">{file.type}</span>
                                                             </td>
-                                                            <td className="py-4 px-6 text-sm font-medium text-slate-500">
+                                                            <td className="py-4 px-6 text-[13px] text-slate-500 font-medium">
                                                                 {new Date(file.uploadedAt).toLocaleDateString("en-GB")}
                                                             </td>
                                                             <td className="py-4 px-6 text-right">
                                                                 <button
                                                                     onClick={() => handleDownload(file.url, file.filename)}
-                                                                    className="inline-flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors px-4 py-2 rounded-lg text-xs font-medium"
+                                                                    className="text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 text-[12px] font-semibold py-2 px-4 rounded-md transition-colors"
                                                                 >
-                                                                    <Download size={14} /> Download
+                                                                    Download
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -610,7 +615,6 @@ const ProjectsPage = () => {
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div>
                                 )}
                             </div>
 
@@ -634,8 +638,8 @@ const ProjectsPage = () => {
                                                 <div className="absolute top-4 right-2">
                                                     <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
                                                         <span className={`w-1.5 h-1.5 rounded-full ${fb.type === 'Positive' ? 'bg-emerald-500' :
-                                                                fb.type === 'Needs Revision' ? 'bg-red-500' :
-                                                                    'bg-slate-400'
+                                                            fb.type === 'Needs Revision' ? 'bg-red-500' :
+                                                                'bg-slate-400'
                                                             }`} />
                                                         {fb.type}
                                                     </div>
