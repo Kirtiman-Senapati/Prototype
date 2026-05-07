@@ -169,28 +169,30 @@ const DeadlinesPage = () => {
 
 const getDeadlineStyle = (project) => 
 {
+    // Completed project = green
     if (project.status === "Completed") 
     {
         return {
-            dot: "bg-emerald-500",
-            text: "text-emerald-700",
+            dot: "bg-green-600",
+            text: "text-slate-800",
         };
     }
 
+    // Incomplete project = neutral gray
     if (project.status === "Incomplete") {
         return {
             dot: "bg-slate-500",
             text: "text-slate-600",
         };
     }
-
+   // Expired deadline = red
     if (isDatePassed(project.deadline)) {
         return {
-            dot: "bg-red-500",
+            dot: "bg-red-600",
             text: "text-red-600",
         };
     }
-
+// Normal upcoming deadline
     return {
         dot: "bg-slate-400",
         text: "text-slate-700",
@@ -296,7 +298,7 @@ const getDeadlineStyle = (project) =>
                                 </tr>
                             ) : (
                                 filteredProjects.map(proj => {
-                                    const isOverdue = getDeadlineStyle(proj) && proj.status !== "Completed";
+                                    const deadlineStyle = getDeadlineStyle(proj);
                                     return (
                                         <tr key={proj._id} className="transition hover:bg-slate-50/80 hover:shadow-[inset_0_1px_0_rgba(0,0,0,0.02)] border-b border-slate-100">
 
@@ -327,21 +329,9 @@ const getDeadlineStyle = (project) =>
                                             <td className="px-6 py-5 align-middle">
                                                 {proj.deadline ? (
                                                     <div
-                                                        className={`flex items-center gap-2 text-sm font-medium ${
-                                                            proj.status === "Completed"
-                                                                ? "text-slate-800"
-                                                                : isOverdue
-                                                                ? "text-red-600"
-                                                                : "text-slate-700"
-                                                        }`}>
+                                                        className={`flex items-center gap-2 text-sm font-medium ${deadlineStyle.text}`}>
                                                         <span
-                                                            className={`w-1.5 h-1.5 rounded-full ${
-                                                                proj.status === "Completed"
-                                                                    ? "bg-green-600"
-                                                                    : isOverdue
-                                                                    ? "bg-red-600"
-                                                                    : "bg-slate-600"
-                                                            }`}></span>
+                                                            className={`w-1.5 h-1.5 rounded-full ${deadlineStyle.dot}`} />
 
                                                         {new Date(proj.deadline).toLocaleDateString(undefined, {
                                                             year: "numeric",
