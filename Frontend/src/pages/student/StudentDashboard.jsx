@@ -50,7 +50,7 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
                                 </td>
                                 <td className="px-5 py-4">
                                     <span className="text-xs text-slate-500 font-medium">
-                                        {task.deadline ? new Date(task.deadline).toLocaleDateString() : 'No Deadline'}
+                                        {task.deadline ? new Date(task.deadline).toLocaleDateString("en-GB") : 'No Deadline'}
                                     </span>
                                 </td>
                                 <td className="px-5 py-4 text-right">
@@ -147,7 +147,7 @@ const FeedbackList = ({ feedbacks }) => {
                         <p className="text-[13px] text-slate-600 mt-1">{fb.message}</p>
                         <p className="text-[11px] text-slate-400 font-medium mt-2 flex justify-between">
                             <span>{fb.sender?.name || "Unknown"}</span>
-                            <span>{new Date(fb.createdAt).toLocaleDateString()}</span>
+                            <span>{new Date(fb.createdAt).toLocaleDateString("en-GB")}</span>
                         </p>
                     </div>
                 ))}
@@ -416,7 +416,7 @@ const StudentDashboard = () => {
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard title="Project Name" value={project.title} icon={FolderKanban} />
                 <StatCard title="Supervisor" value={project.supervisor?.name || "Unassigned"} icon={GraduationCap} />
-                <StatCard title="Submission Deadline" value={project.deadline ? new Date(project.deadline).toLocaleDateString() : 'Not Set'} icon={Clock} />
+                <StatCard title="Submission Deadline" value={project.deadline ? new Date(project.deadline).toLocaleDateString("en-GB") : 'Not Set'} icon={Clock} />
                 <StatCard title="Feedback Received" value={feedbacks?.length || 0} icon={MessageSquare} />
              </div>
 

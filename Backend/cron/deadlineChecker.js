@@ -38,7 +38,7 @@ export const runDeadlineChecker = async () => {
             // Calculate pure days difference (100% reliable)
             const diff = Math.round((deadlineDate - todayStart) / (1000 * 60 * 60 * 24));
             
-            console.log(`[CRON]  Project: "${project.title}" | Deadline: ${new Date(project.deadline).toLocaleDateString()} | Diff: ${diff} days`);
+            console.log(`[CRON]  Project: "${project.title}" | Deadline: ${new Date(project.deadline).toLocaleDateString("en-GB")} | Diff: ${diff} days`);
 
             // -----------------------------
             // 2-DAY REMINDER
@@ -56,7 +56,7 @@ export const runDeadlineChecker = async () => {
                     const template = getEmailTemplate("DEADLINE_REMINDER", {
                         studentName: project.student?.name || "Student",
                         title: project.title,
-                        deadline: new Date(project.deadline).toLocaleDateString()
+                        deadline: new Date(project.deadline).toLocaleDateString("en-GB")
                     });
 
                     if (template && project.student?.email) {
@@ -70,7 +70,7 @@ export const runDeadlineChecker = async () => {
 
                     await logActivity({
                         actionType: "DEADLINE_REMINDER",
-                        message: ` Reminder: The submission deadline for your project "${project.title}" is in exactly 2 days (${new Date(project.deadline).toLocaleDateString()}). Please prioritize its completion.`,
+                        message: ` Reminder: The submission deadline for your project "${project.title}" is in exactly 2 days (${new Date(project.deadline).toLocaleDateString("en-GB")}). Please prioritize its completion.`,
                         targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
                         roles: [],
                         relatedProject: project._id,
@@ -97,7 +97,7 @@ export const runDeadlineChecker = async () => {
                     const template = getEmailTemplate("DEADLINE_REMINDER", {
                         studentName: project.student?.name || "Student",
                         title: project.title,
-                        deadline: new Date(project.deadline).toLocaleDateString()
+                        deadline: new Date(project.deadline).toLocaleDateString("en-GB")
                     });
 
                     if (template && project.student?.email) {
@@ -111,7 +111,7 @@ export const runDeadlineChecker = async () => {
 
                     await logActivity({
                         actionType: "DEADLINE_REMINDER",
-                        message: `Final Reminder: The submission deadline for your project "${project.title}" is tomorrow (${new Date(project.deadline).toLocaleDateString()}). Please submit your work immediately.`,
+                        message: `Final Reminder: The submission deadline for your project "${project.title}" is tomorrow (${new Date(project.deadline).toLocaleDateString("en-GB")}). Please submit your work immediately.`,
                         targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
                         roles: [],
                         relatedProject: project._id,

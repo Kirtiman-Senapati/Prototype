@@ -277,7 +277,7 @@ const ProjectsPage = () => {
                                                         ? 'text-red-600'
                                                         : 'text-slate-700'
                                                 }`}>
-                                                    {proj.deadline ? new Date(proj.deadline).toLocaleDateString() : 'N/A'}
+                                                    {proj.deadline ? new Date(proj.deadline).toLocaleDateString("en-GB") : 'N/A'}
                                                 </span>
                                             </div>
                                         </td>
@@ -318,7 +318,7 @@ const ProjectsPage = () => {
                 </div>
             </div>
 
-            {/* 🚀 PROJECT DETAILS MODAL */}
+            {/*  PROJECT DETAILS MODAL */}
             {selectedProject && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
@@ -382,7 +382,7 @@ const ProjectsPage = () => {
                                 <div className="flex items-center gap-2 text-sm text-slate-700 inline-flex py-1">
                                     <Calendar size={16} className="text-slate-400" />
                                     <span className="font-semibold text-slate-500">Deadline:</span>
-                                    <span className="font-bold">{selectedProject.deadline ? new Date(selectedProject.deadline).toLocaleDateString() : 'Not Set'}</span>
+                                    <span className="font-bold">{selectedProject.deadline ? new Date(selectedProject.deadline).toLocaleDateString("en-GB") : 'Not Set'}</span>
                                 </div>
                             </div>
 
@@ -475,9 +475,9 @@ const ProjectsPage = () => {
                                                                 <p className="text-[10px] uppercase font-bold text-slate-400 flex justify-between">
                                                                     <span>By: {t.assignedByRole === "admin" ? "Admin" : "Supervisor"}</span>
                                                                     {t.status === "Completed" && t.completedAt ? (
-                                                                        <span className="text-emerald-600">Done {new Date(t.completedAt).toLocaleDateString()}</span>
+                                                                        <span className="text-emerald-600">Done {new Date(t.completedAt).toLocaleDateString("en-GB")}</span>
                                                                     ) : t.deadline ? (
-                                                                        <span>Due {new Date(t.deadline).toLocaleDateString()}</span>
+                                                                        <span>Due {new Date(t.deadline).toLocaleDateString("en-GB")}</span>
                                                                     ) : null}
                                                                 </p>
                                                             </div>
@@ -533,7 +533,7 @@ const ProjectsPage = () => {
                                                                 <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">{file.type}</span>
                                                             </td>
                                                             <td className="py-4 px-6 text-sm font-medium text-slate-500">
-                                                                {new Date(file.uploadedAt).toLocaleDateString()}
+                                                                {new Date(file.uploadedAt).toLocaleDateString("en-GB")}
                                                             </td>
                                                             <td className="py-4 px-6 text-right">
                                                                 <button 

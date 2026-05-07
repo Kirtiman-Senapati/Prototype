@@ -474,7 +474,7 @@ const AssignSupervisor = () => {
                                                                 <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">{file.type}</span>
                                                             </td>
                                                             <td className="py-4 px-6 text-sm font-medium text-slate-500">
-                                                                {new Date(file.uploadedAt).toLocaleDateString()}
+                                                                {new Date(file.uploadedAt).toLocaleDateString("en-GB")}
                                                             </td>
                                                             <td className="py-4 px-6 text-right">
                                                                 <button 

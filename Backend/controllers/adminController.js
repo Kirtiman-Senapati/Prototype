@@ -380,7 +380,7 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
         actor: req.user._id,
         targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
         actionType: "DEADLINE_SET",
-        message: `**Deadline Updated**: Admin has officially scheduled the submission deadline for the project **"${project.title}"** to ${new Date(deadline).toLocaleDateString()}.`,
+        message: `**Deadline Updated**: Admin has officially scheduled the submission deadline for the project **"${project.title}"** to ${new Date(deadline).toLocaleDateString("en-GB")}.`,
         relatedProject: project._id,
         priority: "medium"
     });
