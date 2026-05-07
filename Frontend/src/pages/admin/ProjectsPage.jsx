@@ -348,7 +348,7 @@ const ProjectsPage = () => {
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
                                                     onClick={() => setSelectedProject(proj)}
-                                                    className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition"
+                                                    className="px-3 py-1.5 text-xs font-medium text-slate-900 bg-white border border-slate-200 rounded-md hover:bg-slate-100 transition"
                                                     title="View Details"
                                                 >
                                                     View
@@ -357,14 +357,14 @@ const ProjectsPage = () => {
                                                     <>
                                                         <button
                                                             onClick={() => handleStatusUpdate(proj._id, "Approved")}
-                                                            className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:border-slate-300 transition"
+                                                            className="px-3 py-1.5 text-xs font-medium text-slate-900 bg-white border border-slate-200 rounded-md hover:bg-slate-100 hover:border-slate-300 transition"
                                                             title="Approve Proposal"
                                                         >
                                                             Approve
                                                         </button>
                                                         <button
                                                             onClick={() => handleStatusUpdate(proj._id, "Rejected")}
-                                                            className="px-3 py-1.5 text-xs font-medium text-red-600 bg-white border border-slate-200 rounded-md hover:bg-red-50 hover:border-red-200 transition"
+                                                            className="px-3 py-1.5 text-xs font-medium text-red-600 bg-white border border-slate-200 rounded-md hover:bg-red-50/80 hover:border-red-50/80 transition"
                                                             title="Reject Proposal"
                                                         >
                                                             Reject
