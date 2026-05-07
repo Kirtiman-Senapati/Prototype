@@ -103,7 +103,7 @@ const ManageTeachers = () => {
             {/* Header & Main Actions */}
             <div className="bg-white rounded-xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-slate-100 text-slate-600 rounded-lg">
+                    <div className="p-3 bg-slate-100 text-slate-900 rounded-lg">
                         <GraduationCap size={28} />
                     </div>
                     <div>

@@ -12,10 +12,10 @@ const RecentFilesList = ({ files }) => {
     }
 
     const getFileIcon = (type, className = "") => {
-        if (type === "Report") return <FileText className={`text-blue-500 ${className}`} size={18} />;
-        if (type === "Presentation") return <MonitorPlay className={`text-amber-500 ${className}`} size={18} />;
-        if (type === "Code") return <Archive className={`text-purple-500 ${className}`} size={18} />;
-        return <FileText className={`text-slate-500 ${className}`} size={18} />;
+        if (type === "Report") return <FileText className={`text-slate-600 ${className}`} size={21} />;
+        if (type === "Presentation") return <MonitorPlay className={`text-slate-600 ${className}`} size={21} />;
+        if (type === "Code") return <Archive className={`text-slate-600 ${className}`} size={21} />;
+        return <FileText className={`text-slate-500 ${className}`} size={21} />;
     };
 
     const handleDownload = async (fileUrl, originalFilename) => {

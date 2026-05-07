@@ -133,7 +133,7 @@ const ManageStudents = () => {
             {/* Header & Main Actions */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                    <div className="p-3 bg-slate-100 text-slate-800 rounded-lg">
                         <Users size={28} />
                     </div>
                     <div>
@@ -143,7 +143,7 @@ const ManageStudents = () => {
                 </div>
                 <button 
                     onClick={openCreateModal}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-md flex items-center gap-2"
+                    className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-md flex items-center gap-2"
                 >
                     <Plus size={18} />
                     Add Student

@@ -1,4 +1,4 @@
-import { useEffect, useState,useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
 import { updateProjectStatusAdmin, sendFeedbackAdminData, assignTaskAdminData } from "../../store/slices/adminSlice";
@@ -11,7 +11,7 @@ const ProjectsPage = () => {
     const dispatch = useDispatch();
     const [projects, setProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    
+
     // UI States
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState("All");
@@ -45,36 +45,36 @@ const ProjectsPage = () => {
 
 
     // Auto-refresh when project data updates
-      useAutoRefresh((updatedProject) => {
-    setProjects((prevProjects) =>
-        prevProjects.map((prevProject) =>
-            prevProject._id === updatedProject.projectId
-                ? {
-                      ...prevProject,
-                      status: updatedProject.status ?? prevProject.status,
-                      deadline: updatedProject.deadline ?? prevProject.deadline,
-                      supervisor: updatedProject.supervisor ?? prevProject.supervisor,
-                  }
-                : prevProject
-        )
-    );
+    useAutoRefresh((updatedProject) => {
+        setProjects((prevProjects) =>
+            prevProjects.map((prevProject) =>
+                prevProject._id === updatedProject.projectId
+                    ? {
+                        ...prevProject,
+                        status: updatedProject.status ?? prevProject.status,
+                        deadline: updatedProject.deadline ?? prevProject.deadline,
+                        supervisor: updatedProject.supervisor ?? prevProject.supervisor,
+                    }
+                    : prevProject
+            )
+        );
 
-    // fallback sync
-    setTimeout(() => {
-        fetchProjects();
-    }, 300);
+        // fallback sync
+        setTimeout(() => {
+            fetchProjects();
+        }, 300);
 
-    setSelectedProject((prev) => {
-        if (!prev || prev._id !== updatedProject.projectId) return prev;
+        setSelectedProject((prev) => {
+            if (!prev || prev._id !== updatedProject.projectId) return prev;
 
-        return {
-            ...prev,
-            status: updatedProject.status ?? prev.status,
-            deadline: updatedProject.deadline ?? prev.deadline,
-            supervisor: updatedProject.supervisor ?? prev.supervisor,
-        };
-    });
-}, "projectUpdated");
+            return {
+                ...prev,
+                status: updatedProject.status ?? prev.status,
+                deadline: updatedProject.deadline ?? prev.deadline,
+                supervisor: updatedProject.supervisor ?? prev.supervisor,
+            };
+        });
+    }, "projectUpdated");
 
     const fetchProjects = useCallback(() => {
         setIsLoading(true);
@@ -84,7 +84,7 @@ const ProjectsPage = () => {
                 setIsLoading(false);
             })
             .catch(() => setIsLoading(false));
-}, []);
+    }, []);
 
 
     const handleStatusUpdate = (projectId, status) => {
@@ -103,23 +103,23 @@ const ProjectsPage = () => {
             const toastId = toast.loading("Downloading file...");
             const response = await fetch(`http://localhost:4000${fileUrl}`);
             if (!response.ok) throw new Error("Download failed");
-            
+
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
-            
+
             const a = document.createElement("a");
             a.style.display = "none";
             a.href = url;
-            a.download = originalFilename; 
-            
+            a.download = originalFilename;
+
             document.body.appendChild(a);
             a.click();
-            
+
             setTimeout(() => {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
             }, 500);
-            
+
             toast.update(toastId, { render: "File downloaded successfully!", type: "success", isLoading: false, autoClose: 3000 });
         } catch (error) {
             toast.dismiss();
@@ -128,10 +128,10 @@ const ProjectsPage = () => {
     };
 
     const getFileIcon = (type, className = "") => {
-        if (type === "Report") return <FileText className={`text-blue-500 ${className}`} />;
-        if (type === "Presentation") return <MonitorPlay className={`text-amber-500 ${className}`} />;
-        if (type === "Code") return <Archive className={`text-purple-500 ${className}`} />;
-        return <File className={`text-slate-500 ${className}`} />;
+        if (type === "Report") return <FileText className={`text-slate-800 ${className}`} />;
+        if (type === "Presentation") return <MonitorPlay className={`text-slate-800 ${className}`} />;
+        if (type === "Code") return <Archive className={`text-slate-800 ${className}`} />;
+        return <File className={`text-slate-800 ${className}`} />;
     };
 
     const handleSendFeedback = async ({ title, type, message }) => {
@@ -144,7 +144,7 @@ const ProjectsPage = () => {
                 message
             })).unwrap();
             setIsFeedbackModalOpen(false);
-            
+
             // Refresh local feedback history instantly
             const res = await axiosInstance.get(`/feedback/student/${selectedProject.student._id}`);
             setStudentFeedbacks(res.data.feedbacks || []);
@@ -178,21 +178,19 @@ const ProjectsPage = () => {
     // Filter Logic
     const cleanProjects = projects.filter(p => p.student && typeof p.student === "object" && p.student._id);
 
-    const isDatePassed = (dateString) => 
-    {
+    const isDatePassed = (dateString) => {
         if (!dateString) return false;
 
         const today = new Date();
-        today.setHours(0,0,0,0);
+        today.setHours(0, 0, 0, 0);
 
         const deadline = new Date(dateString);
-        deadline.setHours(0,0,0,0);
+        deadline.setHours(0, 0, 0, 0);
 
         return deadline < today;
     };
 
-    const getDeadlineStyle = (project) => 
-    {
+    const getDeadlineStyle = (project) => {
 
         // Completed project = professional green
         if (project.status === "Completed") {
@@ -227,7 +225,7 @@ const ProjectsPage = () => {
 
     const filteredProjects = cleanProjects.filter(p => {
         const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || p.title?.toLowerCase().includes(searchTerm.toLowerCase());
-        
+
         if (!matchesSearch) return false;
         if (filter === "All") return true;
         return p.status === filter;
@@ -257,9 +255,9 @@ const ProjectsPage = () => {
             <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full md:w-96">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input 
-                        type="text" 
-                        placeholder="Search by project title or student name..." 
+                    <input
+                        type="text"
+                        placeholder="Search by project title or student name..."
                         className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-400 transition-colors"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -267,7 +265,7 @@ const ProjectsPage = () => {
                 </div>
                 <div className="flex items-center w-full sm:w-auto gap-2">
                     <Filter className="text-slate-400" size={18} />
-                    <select 
+                    <select
                         className="w-full sm:w-48 px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-400 cursor-pointer text-sm"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
@@ -326,13 +324,12 @@ const ProjectsPage = () => {
                                         </td>
                                         <td className="py-5 px-6 text-center align-middle">
                                             <div className="flex items-center justify-center gap-2 text-sm text-slate-700 font-medium">
-                                                <span className={`w-2 h-2 rounded-full ${
-                                                    proj.status === 'Completed' ? 'bg-green-600' :
-                                                    proj.status === 'Approved' ? 'bg-slate-700' :
-                                                    proj.status === 'Rejected' ? 'bg-red-500' :
-                                                    proj.status === 'Incomplete' ? 'bg-slate-500' :
-                                                    'bg-amber-500'
-                                                }`} />
+                                                <span className={`w-2 h-2 rounded-full ${proj.status === 'Completed' ? 'bg-green-600' :
+                                                        proj.status === 'Approved' ? 'bg-slate-700' :
+                                                            proj.status === 'Rejected' ? 'bg-red-500' :
+                                                                proj.status === 'Incomplete' ? 'bg-slate-500' :
+                                                                    'bg-amber-500'
+                                                    }`} />
                                                 {proj.status}
                                             </div>
                                         </td>
@@ -349,7 +346,7 @@ const ProjectsPage = () => {
                                         </td>
                                         <td className="py-5 px-6 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button 
+                                                <button
                                                     onClick={() => setSelectedProject(proj)}
                                                     className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition"
                                                     title="View Details"
@@ -358,14 +355,14 @@ const ProjectsPage = () => {
                                                 </button>
                                                 {proj.status === "Pending" && (
                                                     <>
-                                                        <button 
+                                                        <button
                                                             onClick={() => handleStatusUpdate(proj._id, "Approved")}
                                                             className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:border-slate-300 transition"
                                                             title="Approve Proposal"
                                                         >
                                                             Approve
                                                         </button>
-                                                        <button 
+                                                        <button
                                                             onClick={() => handleStatusUpdate(proj._id, "Rejected")}
                                                             className="px-3 py-1.5 text-xs font-medium text-red-600 bg-white border border-slate-200 rounded-md hover:bg-red-50 hover:border-red-200 transition"
                                                             title="Reject Proposal"
@@ -388,25 +385,25 @@ const ProjectsPage = () => {
             {selectedProject && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
-                        
+
                         {/* Modal Header */}
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white sticky top-0 z-10 rounded-t-xl">
                             <div className="flex items-center gap-4">
                                 <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
                                     <div className="p-2 bg-slate-100 text-slate-600 rounded-lg">
-                                        <FolderKanban size={20} /> 
+                                        <FolderKanban size={20} />
                                     </div>
                                     Project Details
                                 </h2>
                                 <div className="flex gap-2">
-                                    <button 
+                                    <button
                                         onClick={() => setIsFeedbackModalOpen(true)}
                                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                                     >
                                         <MessageSquare size={16} />
                                         Feedback
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={() => setIsTaskModalOpen(true)}
                                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                                     >
@@ -415,17 +412,17 @@ const ProjectsPage = () => {
                                     </button>
                                 </div>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => setSelectedProject(null)}
                                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                             >
                                 <X size={20} />
                             </button>
                         </div>
-                        
+
                         {/* Modal Body (Scrollable) */}
                         <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 space-y-10">
-                            
+
                             {/* BASIC INFO */}
                             <div className="relative">
                                 <div className="absolute top-0 right-0">
@@ -441,10 +438,10 @@ const ProjectsPage = () => {
                                         {selectedProject.student?.name || "Deleted User"}
                                     </span>
                                 </div>
-                                
+
                                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 mt-6">Description</h3>
                                 <p className="text-sm text-slate-600 leading-relaxed mb-6">{selectedProject.description}</p>
-                                
+
                                 <div className="flex items-center gap-2 text-sm text-slate-700 inline-flex py-1">
                                     <Calendar size={16} className="text-slate-400" />
                                     <span className="font-semibold text-slate-500">Deadline:</span>
@@ -467,7 +464,7 @@ const ProjectsPage = () => {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 {/* Supervisor */}
                                 <div>
                                     <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Supervisor Assignment</h3>
@@ -505,7 +502,7 @@ const ProjectsPage = () => {
                                         const totalTasks = tasks.length;
                                         const completedTasks = tasks.filter(t => t.status === "Completed").length;
                                         const taskProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-                                        
+
                                         return (
                                             <div className="flex flex-col gap-4 bg-slate-50 p-5 rounded-xl">
                                                 <div className="flex justify-between items-end">
@@ -515,26 +512,25 @@ const ProjectsPage = () => {
                                                     </div>
                                                     <span className="text-3xl font-semibold text-slate-900">{taskProgress}%</span>
                                                 </div>
-                                                
+
                                                 {/* Progress Bar (SaaS Feel) */}
                                                 <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-                                                    <div 
-                                                        className="bg-slate-900 h-3 rounded-full transition-all duration-1000 ease-out" 
+                                                    <div
+                                                        className="bg-slate-900 h-3 rounded-full transition-all duration-1000 ease-out"
                                                         style={{ width: `${taskProgress}%` }}
                                                     ></div>
                                                 </div>
-                                                
+
                                                 {totalTasks > 0 ? (
                                                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
-                                                        {[...tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((t, i) => (
+                                                        {[...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline)).map((t, i) => (
                                                             <div key={i} className="flex flex-col gap-1.5 py-3 pl-4 border-l-2 border-slate-200 hover:border-slate-400 hover:bg-slate-50/50 transition-colors bg-white">
                                                                 <div className="flex justify-between items-start gap-2">
                                                                     <p className={`text-sm font-bold line-clamp-1 ${t.status === "Completed" ? "text-slate-500 line-through decoration-slate-300" : "text-slate-800"}`}>{t.title}</p>
                                                                     <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium shrink-0">
-                                                                        <span className={`w-1.5 h-1.5 rounded-full ${
-                                                                            t.status === 'Completed' ? 'bg-emerald-500' :
-                                                                            'bg-slate-400'
-                                                                        }`} />
+                                                                        <span className={`w-1.5 h-1.5 rounded-full ${t.status === 'Completed' ? 'bg-emerald-500' :
+                                                                                'bg-slate-400'
+                                                                            }`} />
                                                                         {t.status}
                                                                     </div>
                                                                 </div>
@@ -565,7 +561,7 @@ const ProjectsPage = () => {
                                 <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
                                     <Archive size={14} className="text-slate-500" /> Uploaded Files
                                 </h3>
-                                
+
                                 {!selectedProject.files || selectedProject.files.length === 0 ? (
                                     <div className="py-8 flex flex-col items-center justify-center text-slate-500">
                                         <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
@@ -602,7 +598,7 @@ const ProjectsPage = () => {
                                                                 {new Date(file.uploadedAt).toLocaleDateString("en-GB")}
                                                             </td>
                                                             <td className="py-4 px-6 text-right">
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleDownload(file.url, file.filename)}
                                                                     className="inline-flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors px-4 py-2 rounded-lg text-xs font-medium"
                                                                 >
@@ -626,7 +622,7 @@ const ProjectsPage = () => {
                                     </h3>
                                     <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">Total: {studentFeedbacks.length}</span>
                                 </div>
-                                
+
                                 {isLoadingFeedbacks ? (
                                     <div className="flex justify-center p-8">
                                         <div className="w-6 h-6 border-2 border-slate-200 border-t-emerald-500 rounded-full animate-spin"></div>
@@ -637,17 +633,16 @@ const ProjectsPage = () => {
                                             <div key={idx} className="py-4 border-b border-slate-100 last:border-0 relative group">
                                                 <div className="absolute top-4 right-2">
                                                     <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-                                                        <span className={`w-1.5 h-1.5 rounded-full ${
-                                                            fb.type === 'Positive' ? 'bg-emerald-500' :
-                                                            fb.type === 'Needs Revision' ? 'bg-red-500' :
-                                                            'bg-slate-400'
-                                                        }`} />
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${fb.type === 'Positive' ? 'bg-emerald-500' :
+                                                                fb.type === 'Needs Revision' ? 'bg-red-500' :
+                                                                    'bg-slate-400'
+                                                            }`} />
                                                         {fb.type}
                                                     </div>
                                                 </div>
                                                 <h4 className="text-sm font-bold text-slate-800 pr-20">{fb.title}</h4>
                                                 <p className="text-sm text-slate-600 mt-2 mb-3">{fb.message}</p>
-                                                
+
                                                 <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-200/60">
                                                     <div className="flex flex-col">
                                                         <span className="text-[11px] font-bold text-slate-700 flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
@@ -674,11 +669,11 @@ const ProjectsPage = () => {
                             </div>
 
                         </div>
-                        
+
                         {/* Modal Footer (Optional, mostly for actions if pending) */}
                         {selectedProject.status === "Pending" && (
                             <div className="px-6 py-5 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 rounded-b-xl">
-                                <button 
+                                <button
                                     onClick={() => {
                                         handleStatusUpdate(selectedProject._id, "Rejected");
                                     }}
@@ -686,7 +681,7 @@ const ProjectsPage = () => {
                                 >
                                     Reject Proposal
                                 </button>
-                                <button 
+                                <button
                                     onClick={() => {
                                         handleStatusUpdate(selectedProject._id, "Approved");
                                     }}
@@ -700,8 +695,8 @@ const ProjectsPage = () => {
                 </div>
             )}
 
-            <FeedbackModal 
-                isOpen={isFeedbackModalOpen} 
+            <FeedbackModal
+                isOpen={isFeedbackModalOpen}
                 onClose={() => setIsFeedbackModalOpen(false)}
                 onSubmit={handleSendFeedback}
                 isSubmitting={isSubmittingFeedback}
@@ -717,20 +712,20 @@ const ProjectsPage = () => {
                                 <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><Plus className="text-slate-600" /> Assign Task</h2>
                                 <p className="text-sm text-slate-500 mt-1">Project: <span className="font-semibold text-slate-700">{selectedProject.title}</span></p>
                             </div>
-                            <button onClick={() => setIsTaskModalOpen(false)} className="text-slate-400 hover:text-slate-600 rounded-full p-1"><X size={20}/></button>
+                            <button onClick={() => setIsTaskModalOpen(false)} className="text-slate-400 hover:text-slate-600 rounded-full p-1"><X size={20} /></button>
                         </div>
                         <form onSubmit={handleAssignTask} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Task Title</label>
-                                <input required className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none" placeholder="e.g. Complete Literature Review" value={taskData.title} onChange={e => setTaskData({...taskData, title: e.target.value})} />
+                                <input required className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none" placeholder="e.g. Complete Literature Review" value={taskData.title} onChange={e => setTaskData({ ...taskData, title: e.target.value })} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
-                                <textarea required className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none min-h-[100px]" placeholder="Add details about this task..." value={taskData.description} onChange={e => setTaskData({...taskData, description: e.target.value})} />
+                                <textarea required className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none min-h-[100px]" placeholder="Add details about this task..." value={taskData.description} onChange={e => setTaskData({ ...taskData, description: e.target.value })} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Deadline</label>
-                                <input required type="date" className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none cursor-pointer text-slate-600" value={taskData.deadline} onChange={e => setTaskData({...taskData, deadline: e.target.value})} />
+                                <input required type="date" className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none cursor-pointer text-slate-600" value={taskData.deadline} onChange={e => setTaskData({ ...taskData, deadline: e.target.value })} />
                             </div>
                             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
                                 <button type="button" onClick={() => setIsTaskModalOpen(false)} className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>

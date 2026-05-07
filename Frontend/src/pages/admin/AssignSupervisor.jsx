@@ -115,10 +115,10 @@ const AssignSupervisor = () => {
     };
 
     const getFileIcon = (type, className = "") => {
-        if (type === "Report") return <FileText className={`text-blue-500 ${className}`} />;
-        if (type === "Presentation") return <MonitorPlay className={`text-amber-500 ${className}`} />;
-        if (type === "Code") return <Archive className={`text-purple-500 ${className}`} />;
-        return <File className={`text-slate-500 ${className}`} />;
+        if (type === "Report") return <FileText className={`text-slate-800 ${className}`} />;
+        if (type === "Presentation") return <MonitorPlay className={`text-slate-800 ${className}`} />;
+        if (type === "Code") return <Archive className={`text-slate-800 ${className}`} />;
+        return <File className={`text-slate-800 ${className}`} />;
     };
 
     // Filter out ghost projects (where student has been deleted)
@@ -167,7 +167,7 @@ const AssignSupervisor = () => {
             {/* Stats Cards */}
             <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
-                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                    <div className="w-10 h-10 flex items-center rounded-lg bg-slate-100 justify-center text-slate-700 shrink-0">
                         <Users size={20} />
                     </div>
                     <div>
@@ -176,7 +176,7 @@ const AssignSupervisor = () => {
                     </div>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
-                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                    <div className="w-10 h-10 flex items-center rounded-lg bg-slate-100 justify-center text-slate-700 shrink-0">
                         <Clock size={20} />
                     </div>
                     <div>
@@ -185,7 +185,7 @@ const AssignSupervisor = () => {
                     </div>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
-                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                    <div className="w-10 h-10 flex items-center rounded-lg bg-slate-100 justify-center text-slate-700 shrink-0">
                         <CheckCircle2 size={20} />
                     </div>
                     <div>
@@ -194,7 +194,7 @@ const AssignSupervisor = () => {
                     </div>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
-                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                    <div className="w-10 h-10 flex items-center rounded-lg bg-slate-100 justify-center text-slate-700 shrink-0">
                         <ShieldAlert size={20} />
                     </div>
                     <div>
@@ -203,7 +203,7 @@ const AssignSupervisor = () => {
                     </div>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-3">
-                    <div className="w-10 h-10 flex items-center justify-center text-slate-400 shrink-0">
+                    <div className="w-10 h-10 flex items-center rounded-lg bg-slate-100 justify-center text-slate-700 shrink-0">
                         <Briefcase size={20} />
                     </div>
                     <div>
