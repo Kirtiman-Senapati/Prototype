@@ -128,9 +128,9 @@ export const runDeadlineChecker = async () => {
         // ============================================
         const missedProjects = await Project.find({
             deadline: { $lt: todayStart },
-            status: { $in: ["Approved"] },
+            status: "Approved",
             deadlineMissedNotified: false
-        }).populate("student supervisor");
+        }).populate("student supervisor");;
 
         console.log(`[CRON] Found ${missedProjects.length} projects with missed deadlines.`);
 

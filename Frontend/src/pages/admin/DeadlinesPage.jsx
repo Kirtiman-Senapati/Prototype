@@ -124,9 +124,16 @@ const DeadlinesPage = () => {
     );
 
     const isDatePassed = (dateString) => {
-        if (!dateString) return false;
-        return new Date(dateString) < new Date();
-    };
+    if (!dateString) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const deadline = new Date(dateString);
+    deadline.setHours(0, 0, 0, 0);
+
+    return deadline < today;
+};
 
     if (isLoading) {
         return (

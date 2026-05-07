@@ -153,9 +153,20 @@ const ProjectsPage = () => {
     // Filter Logic
     const cleanProjects = projects.filter(p => p.student && typeof p.student === "object" && p.student._id);
 
+    const isDatePassed = (dateString) => {
+    if (!dateString) return false;
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const deadline = new Date(dateString);
+    deadline.setHours(0,0,0,0);
+
+    return deadline < today;
+};
+
     const filteredProjects = cleanProjects.filter(p => {
-        const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              p.title?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || p.title?.toLowerCase().includes(searchTerm.toLowerCase());
         
         if (!matchesSearch) return false;
         if (filter === "All") return true;
@@ -268,12 +279,12 @@ const ProjectsPage = () => {
                                         <td className="py-5 px-6">
                                             <div className="flex items-center gap-2">
                                                 <span className={`w-1.5 h-1.5 rounded-full ${
-                                                    proj.deadline && new Date(proj.deadline) < new Date()
+                                                    isDatePassed(proj.deadline)
                                                     ? 'bg-red-500'
                                                     : 'bg-slate-400'
                                                 }`} />
                                                 <span className={`text-sm font-medium ${
-                                                    proj.deadline && new Date(proj.deadline) < new Date()
+                                                    isDatePassed(proj.deadline)
                                                         ? 'text-red-600'
                                                         : 'text-slate-700'
                                                 }`}>
