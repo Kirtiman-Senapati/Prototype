@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
 import { updateProjectDeadlineAdmin, sendManualReminderAdmin } from "../../store/slices/adminSlice";
-import { Calendar as CalendarIcon, Search, Clock, CheckCircle2, User, X, CalendarPlus, Filter, AlertCircle, Send, Bell } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Clock, Filter, CheckCircle2, User, X, CalendarPlus, AlertCircle, Send, Bell } from "lucide-react";
 
 const DeadlinesPage = () => {
     const dispatch = useDispatch();
@@ -12,6 +12,8 @@ const DeadlinesPage = () => {
     
     // UI States
     const [searchTerm, setSearchTerm] = useState("");
+    // filter
+    const [filter, setFilter] = useState("All");
     const [isModalOpen, setIsModalOpen] = useState(false);
     
     // Modal Form States
@@ -111,10 +113,17 @@ const DeadlinesPage = () => {
         return projects.filter(p => p.status !== "Rejected" && p.student && typeof p.student === "object" && p.student._id);
     }, [projects]);
 
-    const filteredProjects = validProjects.filter(p => {
-        const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              p.title?.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesSearch;
+    const filteredProjects = validProjects.filter((p) =>
+    {
+        const matchesSearch =
+            p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.title?.toLowerCase().includes(searchTerm.toLowerCase());
+
+        if (!matchesSearch) return false;
+
+        if (filter === "All") return true;
+
+        return p.status === filter;
     });
 
     // Options for Modal Dropdown
@@ -133,6 +142,36 @@ const DeadlinesPage = () => {
     deadline.setHours(0, 0, 0, 0);
 
     return deadline < today;
+};
+
+const getDeadlineStyle = (project) => 
+{
+    if (project.status === "Completed") 
+    {
+        return {
+            dot: "bg-emerald-500",
+            text: "text-emerald-700",
+        };
+    }
+
+    if (project.status === "Incomplete") {
+        return {
+            dot: "bg-slate-500",
+            text: "text-slate-600",
+        };
+    }
+
+    if (isDatePassed(project.deadline)) {
+        return {
+            dot: "bg-red-500",
+            text: "text-red-600",
+        };
+    }
+
+    return {
+        dot: "bg-slate-400",
+        text: "text-slate-700",
+    };
 };
 
     if (isLoading) {
@@ -179,20 +218,37 @@ const DeadlinesPage = () => {
                 </div>
             </div>
 
-            {/* Controls */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
-                <div className="relative w-full max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input 
-                        type="text" 
-                        placeholder="Search by project or student..." 
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-colors"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-            </div>
+            {/* Controls add filter  */}
+            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
 
+    <div className="relative w-full md:w-96">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+
+        <input
+            type="text"
+            placeholder="Search by project or student..."
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-colors"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+        />
+    </div>
+
+    <div className="flex items-center w-full sm:w-auto gap-2">
+            <Filter className="text-slate-400" size={18} />
+
+            <select
+                className="w-full sm:w-48 px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-400 cursor-pointer text-sm"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+            >
+                <option value="All">All Projects</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Completed">Completed</option>
+                <option value="Incomplete">Incomplete</option>
+            </select>
+        </div>
+    </div>
             {/* Main Projects Table */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                 <div className="overflow-x-auto">
@@ -217,18 +273,24 @@ const DeadlinesPage = () => {
                                 </tr>
                             ) : (
                                 filteredProjects.map(proj => {
-                                    const isOverdue = isDatePassed(proj.deadline) && proj.status !== "Completed";
+                                    const isOverdue = getDeadlineStyle(proj) && proj.status !== "Completed";
                                     return (
                                         <tr key={proj._id} className="transition hover:bg-slate-50/80 hover:shadow-[inset_0_1px_0_rgba(0,0,0,0.02)] border-b border-slate-100">
+
+                                            {/* Student detail coloum */}
                                             <td className="px-6 py-5">
                                                 <div className="flex flex-col">
                                                     <span className="text-slate-900 font-semibold tracking-tight">{proj.student?.name || "Unknown"}</span>
                                                     <span className="text-xs text-slate-500">{proj.student?.email}</span>
                                                 </div>
                                             </td>
+                                            
+                                            {/* Project title coloum */}
                                             <td className="px-6 py-5 align-middle">
                                                 <p className="text-sm font-medium text-slate-700 line-clamp-2 max-w-[250px] transition-colors">{proj.title}</p>
                                             </td>
+
+                                            {/* Supervisor coloum */}
                                             <td className="px-6 py-5 align-middle">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs text-slate-600 shrink-0">
@@ -237,27 +299,55 @@ const DeadlinesPage = () => {
                                                     <span className="text-sm font-medium text-slate-700">{proj.supervisor?.name || <span className="text-slate-400 italic">Unassigned</span>}</span>
                                                 </div>
                                             </td>
+                                            
+                                            {/* Deadline coloum */}
                                             <td className="px-6 py-5 align-middle">
                                                 {proj.deadline ? (
-                                                    <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                                                        <span className={`w-1.5 h-1.5 rounded-full shadow-sm ${isOverdue ? 'bg-red-500' : 'bg-slate-400'}`}></span>
-                                                        {new Date(proj.deadline).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                    <div
+                                                        className={`flex items-center gap-2 text-sm font-medium ${
+                                                            proj.status === "Completed"
+                                                                ? "text-slate-800"
+                                                                : isOverdue
+                                                                ? "text-red-600"
+                                                                : "text-slate-700"
+                                                        }`}>
+                                                        <span
+                                                            className={`w-1.5 h-1.5 rounded-full ${
+                                                                proj.status === "Completed"
+                                                                    ? "bg-green-600"
+                                                                    : isOverdue
+                                                                    ? "bg-red-600"
+                                                                    : "bg-slate-600"
+                                                            }`}></span>
+
+                                                        {new Date(proj.deadline).toLocaleDateString(undefined, {
+                                                            year: "numeric",
+                                                            month: "short",
+                                                            day: "numeric",
+                                                        })}
                                                     </div>
                                                 ) : (
-                                                    <span className="text-sm text-slate-400 italic">Not set</span>
+                                                    <span className="text-sm text-slate-400 italic">
+                                                        Not set
+                                                    </span>
                                                 )}
                                             </td>
+                                            
+                                            {/* Status coloum */}
                                             <td className="px-6 py-5 align-middle">
                                                 <div className="flex items-center gap-2 text-sm text-slate-800 font-medium">
                                                     <span className={`w-2 h-2 rounded-full shadow-sm ${
-                                                        proj.status === 'Completed' ? 'bg-emerald-500' :
-                                                        proj.status === 'Approved' ? 'bg-slate-400' :
+                                                        proj.status === 'Completed' ? 'bg-green-600' :
+                                                        proj.status === 'Approved' ? 'bg-slate-700' :
                                                         proj.status === 'Rejected' ? 'bg-red-500' :
-                                                        'bg-amber-500'
+                                                        'bg-orange-500'
                                                     }`}></span>
                                                     {proj.status}
                                                 </div>
                                             </td>
+
+                                            {/*here control button and Action sections*/}
+
                                             <td className="px-6 py-5 align-middle text-right">
                                                 <div className="flex items-center justify-end gap-2 w-[210px] ml-auto">
 
