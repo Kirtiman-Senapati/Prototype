@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
 import { updateProjectStatusAdmin, sendFeedbackAdminData, assignTaskAdminData } from "../../store/slices/adminSlice";
@@ -45,19 +45,24 @@ const ProjectsPage = () => {
 
 
     // Auto-refresh when project data updates
-    useAutoRefresh((updatedProject) => {
-    setProjects((prev) =>
-        prev.map((p) =>
-            p._id === updatedProject.projectId
+      useAutoRefresh((updatedProject) => {
+    setProjects((prevProjects) =>
+        prevProjects.map((prevProject) =>
+            prevProject._id === updatedProject.projectId
                 ? {
-                      ...p,
-                      status: updatedProject.status ?? p.status,
-                      deadline: updatedProject.deadline ?? p.deadline,
-                      supervisor: updatedProject.supervisor ?? p.supervisor,
+                      ...prevProject,
+                      status: updatedProject.status ?? prevProject.status,
+                      deadline: updatedProject.deadline ?? prevProject.deadline,
+                      supervisor: updatedProject.supervisor ?? prevProject.supervisor,
                   }
-                : p
+                : prevProject
         )
     );
+
+    // fallback sync
+    setTimeout(() => {
+        fetchProjects();
+    }, 300);
 
     setSelectedProject((prev) => {
         if (!prev || prev._id !== updatedProject.projectId) return prev;
@@ -71,21 +76,16 @@ const ProjectsPage = () => {
     });
 }, "projectUpdated");
 
-    const fetchProjects = () => {
+    const fetchProjects = useCallback(() => {
+        setIsLoading(true);
         axiosInstance.get("/admin/projects")
             .then(res => {
                 setProjects(res.data.projects);
                 setIsLoading(false);
-                
-                // If a project modal is currently open, instantly refresh its inner detailed state
-                setSelectedProject(prev => {
-                    if (!prev) return null;
-                    const updated = res.data.projects.find(p => p._id === prev._id);
-                    return updated || prev;
-                });
             })
             .catch(() => setIsLoading(false));
-    };
+}, []);
+
 
     const handleStatusUpdate = (projectId, status) => {
         dispatch(updateProjectStatusAdmin({ id: projectId, status }))

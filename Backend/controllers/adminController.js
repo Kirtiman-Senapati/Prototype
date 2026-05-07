@@ -249,15 +249,6 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
 
     const io = getIo();
 
-
-    // Add global socket events
-    io.emit(EVENTS.PROJECT_UPDATED, {
-    projectId: project._id,
-    status: project.status,
-    deadline: project.deadline,
-    supervisor: project.supervisor,
-    });
-
     if (io) {
         io.emit(EVENTS.PROJECT_UPDATED, {
             projectId: project._id,
@@ -457,14 +448,23 @@ export const addStudent = asyncHandler(async (req, res, next) => {
         role: "Student",
     });
 
-    await logActivity({
-        actor: req.user._id,
-        actionType: "USER_ADDED",
-        message: `**Admin** added a new Student: **${name}**`,
-    });
+   const activity = await logActivity({
+    actor: req.user._id,
+    actionType: "USER_ADDED",
+    message: `**Admin** added a new Student: **${name}**`,
+});
 
     const io = getIo();
-    emitRefresh(io);
+
+    if (io) {
+        io.emit("newActivity", activity);
+
+        io.emit("adminDashboardUpdate");
+
+        io.emit(EVENTS.USER_UPDATED, {
+            type: "studentAdded",
+        });
+}
 
     res.status(201).json({
         success: true,
@@ -502,14 +502,24 @@ export const addSupervisor = asyncHandler(async (req, res, next) => {
         role: "Supervisor",
     });
 
-    await logActivity({
+    const activity = await logActivity({
         actor: req.user._id,
         actionType: "USER_ADDED",
         message: `**Admin** added a new Supervisor: **${name}**`,
     });
 
     const io = getIo();
-    emitRefresh(io);
+
+    if (io) {
+        io.emit("newActivity", activity);
+
+        io.emit("adminDashboardUpdate");
+
+        io.emit(EVENTS.USER_UPDATED, {
+            type: "supervisorAdded",
+        });
+    }
+
 
     res.status(201).json({
         success: true,

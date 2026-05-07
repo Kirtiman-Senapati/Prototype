@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "../../utils/toast";
 import { axiosInstance } from "../../lib/axios";
@@ -24,22 +24,29 @@ const AssignSupervisor = () => {
     }, [dispatch]);
 
     // Auto-refresh when project data updates
-    useAutoRefresh((updatedProject) => {
-    setProjects((prev) =>
-        prev.map((p) =>
-            p._id === updatedProject.projectId
+     useAutoRefresh((updatedProject) => {
+    setProjects((prevProjects) =>
+        prevProjects.map((prevProject) =>
+            prevProject._id === updatedProject.projectId
                 ? {
-                      ...p,
-                      status: updatedProject.status ?? p.status,
-                      deadline: updatedProject.deadline ?? p.deadline,
-                      supervisor: updatedProject.supervisor ?? p.supervisor,
+                      ...prevProject,
+                      status: updatedProject.status ?? prevProject.status,
+                      deadline: updatedProject.deadline ?? prevProject.deadline,
+                      supervisor: updatedProject.supervisor ?? prevProject.supervisor,
                   }
-                : p
+                : prevProject
         )
     );
+
+    // fallback sync
+    setTimeout(() => {
+        fetchProjects();
+    }, 300);
+    
 }, "projectUpdated");
 
-    const fetchProjects = () => {
+
+    const fetchProjects = useCallback(() => {
         setIsLoading(true);
         axiosInstance.get("/admin/projects")
             .then(res => {
@@ -47,7 +54,7 @@ const AssignSupervisor = () => {
                 setIsLoading(false);
             })
             .catch(() => setIsLoading(false));
-    };
+}, []);
 
     const handleSelect = (projectId, supervisorId) => {
         setSelections(prev => ({ ...prev, [projectId]: supervisorId }));

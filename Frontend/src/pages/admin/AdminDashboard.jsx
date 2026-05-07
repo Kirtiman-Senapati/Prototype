@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminDashboard, adminAddStudent, adminAddSupervisor } from "../../store/slices/adminSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare, UserPlus, X } from "lucide-react";
 import { toast } from "../../utils/toast";
-import useAutoRefresh from "../../hooks/useAutoRefresh";
+
 import { Link } from "react-router-dom";
 
 import StatCard from "./components/StatCard";
@@ -67,13 +68,8 @@ const AdminDashboard = () => {
     }, [dispatch]);
 
     useAutoRefresh(() => {
-        toast.info("A dashboard update occurred!", { autoClose: 4000 });
-        dispatch(getAdminDashboard());
-    }, "adminDashboardUpdate");
-
-    useAutoRefresh(() => {
-        dispatch(getAdminDashboard());
-    });
+    dispatch(getAdminDashboard());
+}, "adminDashboardUpdate");
 
     useAutoRefresh((activity) => {
         dispatch(addRealtimeActivity(activity));
