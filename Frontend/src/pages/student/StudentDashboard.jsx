@@ -288,11 +288,7 @@ const StudentDashboard = () => {
                         }
                         handleCompleteProject();
                     }}
-                    disabled={
-                        isCompletingProject ||
-                        project.status === "Completed" ||
-                        project.status === "Incomplete"
-                    }
+                    disabled={isCompletingProject || project.status === "Completed"}
                     className={`flex items-center justify-center px-4 h-9 text-[13px] font-medium rounded-md active:scale-[0.98] transition-all duration-150 shadow-sm disabled:opacity-50 ${
                         project.status === 'Incomplete' 
                             ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed hover:bg-slate-50' 

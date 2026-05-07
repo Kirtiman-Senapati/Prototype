@@ -46,41 +46,35 @@ const SubmitProposal = () => {
       <div className="max-w-2xl mx-auto mt-10">
         <div className="bg-white rounded-xl p-8 md:p-12 text-center border border-slate-200 flex flex-col items-center">
           
-          <div className="mb-5">
-            {project.status === "Approved" && (
-              <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+        <div className="mb-5">
+          {project.status === "Approved" && (
+            <CheckCircle2 className="w-8 h-8 text-slate-700" />
+          )}
+
+          {project.status === "Completed" && (
+            <CheckCircle2 className="w-8 h-8 text-slate-700" />
             )}
-            {project.status === "Completed" && (
-              <CheckCircle2 className="w-8 h-8 text-slate-700" />
-            )}
+
             {project.status === "Incomplete" && (
-              <AlertTriangle className="w-8 h-8 text-slate-500" />
+              <AlertTriangle className="w-8 h-8 text-slate-700" />
             )}
+
             {project.status === "Pending" && (
-              <Clock className="w-8 h-8 text-amber-500" />
+              <Clock className="w-8 h-8 text-slate-700" />
             )}
           </div>
 
           <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight mb-3">
             Proposal Locked
           </h1>
-          <p className="text-slate-500 text-lg max-w-md">
-            You already have an active proposal marked as{" "}
-            <strong
-              className={`${
-                project.status === "Approved"
-                  ? "text-green-600"
-                  : project.status === "Completed"
-                    ? "text-blue-600"
-                    : project.status === "Incomplete"
-                      ? "text-slate-500"
-                      : "text-amber-500"
-              }`}
-            >
-              {project.status}
-            </strong>
-            . You can only submit a new project proposal if your current one
-            gets rejected.
+          <p className="text-slate-500 text-lg max-w-md leading-relaxed">
+            {project.status === "Incomplete"
+              ? "Your project deadline has already passed and the project is now marked as incomplete. Please contact your administrator if you need a deadline extension."
+              : project.status === "Completed"
+                ? "Your current project has already been completed. You cannot submit another proposal unless your administrator allows a new submission."
+                : project.status === "Approved"
+                  ? "Your project proposal is already approved and currently active in the system."
+                  : "Your proposal is currently under review by the administration team."}
           </p>
 
           <button
