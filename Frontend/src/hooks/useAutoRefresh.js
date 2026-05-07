@@ -1,17 +1,24 @@
 import { useEffect } from "react";
-import { socket } from "../socket/socket.js";
+import { socket } from "../socket/socket";
 
-const useAutoRefresh = (callback, eventName = "refreshData") => {
-  useEffect(() => {
-    // Only register if a valid callback is provided
-    if (typeof callback !== "function") return;
+const useAutoRefresh = (callback, eventName) => {
+    useEffect(() => {
+        if (!socket) return;
 
-    socket.on(eventName, callback);
+        const handler = (data) => {
+            callback(data);
+        };
 
-    return () => {
-      socket.off(eventName, callback);
-    };
-  }, [callback, eventName]);
+        // remove old listeners
+        socket.off(eventName);
+
+        // add new listener
+        socket.on(eventName, handler);
+
+        return () => {
+            socket.off(eventName, handler);
+        };
+    }, [callback, eventName]);
 };
 
 export default useAutoRefresh;

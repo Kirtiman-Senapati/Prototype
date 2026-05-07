@@ -58,9 +58,10 @@ const ManageStudents = () => {
         dispatch(getAllUsers());
     }, [dispatch]);
 
+    // Auto-refresh when project data updates
     useAutoRefresh(() => {
         dispatch(getAllUsers());
-    });
+    }, "projectUpdated");
 
     const students = users?.filter(u => u.role === "Student") || [];
 

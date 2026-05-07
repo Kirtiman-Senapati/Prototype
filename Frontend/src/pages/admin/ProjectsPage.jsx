@@ -38,13 +38,38 @@ const ProjectsPage = () => {
         fetchProjects();
     }, []);
 
+    // Auto-refresh when project data updates
     useAutoRefresh(() => {
         fetchProjects();
     }, "adminDashboardUpdate");
 
-    useAutoRefresh(() => {
-        fetchProjects();
+
+    // Auto-refresh when project data updates
+    useAutoRefresh((updatedProject) => {
+    setProjects((prev) =>
+        prev.map((p) =>
+            p._id === updatedProject.projectId
+                ? {
+                      ...p,
+                      status: updatedProject.status ?? p.status,
+                      deadline: updatedProject.deadline ?? p.deadline,
+                      supervisor: updatedProject.supervisor ?? p.supervisor,
+                  }
+                : p
+        )
+    );
+
+    setSelectedProject((prev) => {
+        if (!prev || prev._id !== updatedProject.projectId) return prev;
+
+        return {
+            ...prev,
+            status: updatedProject.status ?? prev.status,
+            deadline: updatedProject.deadline ?? prev.deadline,
+            supervisor: updatedProject.supervisor ?? prev.supervisor,
+        };
     });
+}, "projectUpdated");
 
     const fetchProjects = () => {
         axiosInstance.get("/admin/projects")

@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { useDispatch } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
 import { updateProjectDeadlineAdmin, sendManualReminderAdmin } from "../../store/slices/adminSlice";
@@ -31,6 +32,22 @@ const DeadlinesPage = () => {
     useEffect(() => {
         fetchProjects();
     }, []);
+
+    // Auto-refresh when project data updates
+    useAutoRefresh((updatedProject) => {
+    setProjects((prev) =>
+        prev.map((p) =>
+            p._id === updatedProject.projectId
+                ? {
+                      ...p,
+                      status: updatedProject.status ?? p.status,
+                      deadline: updatedProject.deadline ?? p.deadline,
+                      supervisor: updatedProject.supervisor ?? p.supervisor,
+                  }
+                : p
+        )
+    );
+}, "projectUpdated");
 
     const fetchProjects = () => {
         setIsLoading(true);

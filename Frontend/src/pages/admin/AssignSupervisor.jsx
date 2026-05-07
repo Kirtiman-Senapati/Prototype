@@ -23,11 +23,21 @@ const AssignSupervisor = () => {
         fetchProjects();
     }, [dispatch]);
 
-    useAutoRefresh(() => {
-        dispatch(getAdminSupervisors());
-        fetchProjects();
-        dispatch(getActivities());
-    });
+    // Auto-refresh when project data updates
+    useAutoRefresh((updatedProject) => {
+    setProjects((prev) =>
+        prev.map((p) =>
+            p._id === updatedProject.projectId
+                ? {
+                      ...p,
+                      status: updatedProject.status ?? p.status,
+                      deadline: updatedProject.deadline ?? p.deadline,
+                      supervisor: updatedProject.supervisor ?? p.supervisor,
+                  }
+                : p
+        )
+    );
+}, "projectUpdated");
 
     const fetchProjects = () => {
         setIsLoading(true);

@@ -9,7 +9,7 @@ import { Activity } from "../models/activity.js";
 import { Request } from "../models/request.js";
 import { Feedback } from "../models/Feedback.js";
 import { getIo } from "../utils/socket.js";
-import { emitRefresh } from "../utils/socketEvents.js";
+import { emitRefresh,EVENTS } from "../utils/socketEvents.js";
 import { sendEmail } from "../services/emailService.js";
 import { getEmailTemplate } from "../utils/emailTemplates.js";
 import { Notification } from "../models/notification.js";
@@ -212,6 +212,7 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
     project.supervisor = supervisorId;
     await project.save();
 
+
     // UPDATE the Student's User Document
     await User.findByIdAndUpdate(project.student, { supervisor: supervisorId });
 
@@ -247,6 +248,25 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
     });
 
     const io = getIo();
+
+
+    // Add global socket events
+    io.emit(EVENTS.PROJECT_UPDATED, {
+    projectId: project._id,
+    status: project.status,
+    deadline: project.deadline,
+    supervisor: project.supervisor,
+    });
+
+    if (io) {
+        io.emit(EVENTS.PROJECT_UPDATED, {
+            projectId: project._id,
+            status: project.status,
+            deadline: project.deadline,
+            supervisor: project.supervisor,
+        });
+    }
+
     emitRefresh(io);
 
     try {
@@ -295,7 +315,7 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
     project.status = status;
     await project.save();
 
-    // 🚀 Socket.IO: Real-Time Event Emmision to Student
+    // Socket.IO: Real-Time Event Emmision to Student
     import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
         const io = getIo();
         if (io && project.student) {
@@ -356,6 +376,17 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
     project.reminder1DaySent = false;
     project.deadlineMissedNotified = false;
     await project.save();
+
+    // Add global socket events
+    const globalIo = getIo();
+    if (globalIo) {
+        globalIo.emit(EVENTS.PROJECT_UPDATED, {
+            projectId: project._id,
+            status: project.status,
+            deadline: project.deadline,
+            supervisor: project.supervisor,
+    });
+}
 
     //  Socket.IO: Real-Time Event Emmision to Student
     import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
