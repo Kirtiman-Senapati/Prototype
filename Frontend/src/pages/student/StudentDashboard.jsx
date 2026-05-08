@@ -48,7 +48,7 @@ const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
                         {[...tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task) => (
                             <tr key={task._id} className="hover:bg-slate-50/50 transition-colors group">
                                 <td className="px-5 py-4">
-                                    <h3 className={`text-sm font-semibold leading-snug line-clamp-1 transition-colors ${task.status === 'Completed' ? 'text-slate-400 line-through' : 'text-slate-900 group-hover:text-blue-600'}`}>{task.title}</h3>
+                                    <h3 className={`text-sm font-semibold leading-snug line-clamp-1 transition-colors ${task.status === 'Completed' ? 'text-slate-400 line-through' : 'text-slate-900 group-hover:text-slate-700'}`}>{task.title}</h3>
                                 </td>
                                 <td className="px-5 py-4">
                                     <span className="text-xs text-slate-500 font-medium">
@@ -82,7 +82,7 @@ const ProjectOverview = ({ project, onUpdate }) => {
                 {project.supervisor && (
                     <button 
                         onClick={onUpdate}
-                        className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-wide"
+                        className="text-[11px] font-semibold text-slate-700 hover:text-slate-900 transition-colors uppercase tracking-wide"
                     >
                         Update Supervisor
                     </button>
@@ -349,7 +349,7 @@ const StudentDashboard = () => {
 
       {/* 🟢 PROJECT EXISTS STATE (Main Dashboard) */}
       {project && (
-          <div className="space-y-8 animate-in fade-in duration-500 max-w-full mx-auto">
+          <div className="space-y-8 max-w-full mx-auto">
              
             {/* Dynamic Alerts */}
              {project.status === "Pending" && (
@@ -466,7 +466,7 @@ const StudentDashboard = () => {
                      </div>
 
                      {/* MILESTONES CARD */}
-                     <div className="h-[400px]">
+                     <div className="min-h-[320px]">
                          <MilestoneTimeline 
                              milestones={project.milestones || []} 
                              role="student" 

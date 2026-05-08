@@ -59,11 +59,11 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                     <div className="flex items-center gap-2">
                                         <span className={`w-1.5 h-1.5 rounded-full ${
                                             project.status === 'Completed'
-                                                ? 'bg-emerald-500/80'
+                                                ? 'bg-slate-600'
                                                 : project.status === 'In Progress' || project.status === 'Approved'
                                                 ? 'bg-indigo-500/80'
                                                 : project.status === 'Pending'
-                                                ? 'bg-amber-500/80'
+                                                ? 'bg-orange-500/80'
                                                 : project.status === 'Incomplete'
                                                 ? 'bg-slate-500/80'
                                                 : 'bg-slate-400'
@@ -82,7 +82,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                         <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
                                             <div 
                                                 className="bg-slate-600 h-1.5 rounded-full transition-all duration-500 ease-out" 
-                                                style={{ width: `${Math.min(proj.progress || 0, 100)}%` }}
+                                                style={{ width: `${Math.min(project.progress || 0, 100)}%` }}
                                             ></div>
                                         </div>
                                     </div>

@@ -19,7 +19,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
                 <div className="flex justify-between items-center p-5 border-b border-slate-100">
                     <div>
                         <h2 className="text-lg font-bold text-slate-800">Submit Milestone</h2>
@@ -29,21 +29,22 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                         <X size={20} />
                     </button>
                 </div>
-                <form onSubmit={handleSubmit} className="p-5 space-y-5">
+                <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     <div>
                         <p className="text-sm text-slate-600 leading-relaxed mb-4">
                             You are submitting work for the <span className="font-semibold text-slate-800">{milestone.title}</span> phase. Once submitted, it will be marked as "In Review" for your supervisor to evaluate.
                         </p>
                         
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Attach File (Optional)</label>
-                        <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:bg-slate-50 hover:border-slate-300 transition cursor-pointer relative">
+                        <div className="border border-slate-200 bg-slate-50 rounded-xl p-6 text-center hover:bg-slate-100 transition cursor-pointer relative">
                             <input 
                                 type="file" 
                                 onChange={handleFileChange} 
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
                             />
                             <div className="flex flex-col items-center justify-center gap-2">
-                                <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center">
+                                
+                                <div className="w-12 h-12 bg-white border border-slate-200 text-slate-600 rounded-xl flex items-center justify-center shadow-sm">
                                     <UploadCloud size={20} />
                                 </div>
                                 <div>

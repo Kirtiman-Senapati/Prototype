@@ -32,23 +32,23 @@ const MilestoneTimeline = ({
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case "Approved": return <CheckCircle2 size={18} className="text-emerald-500" />;
-            case "Rejected": return <XCircle size={18} className="text-rose-500" />;
+            case "Approved": return <CheckCircle2 size={18} className="text-slate-600" />;
+            case "Rejected": return <XCircle size={18} className="text-slate-600" />;
             case "In Review": return <AlertCircle size={18} className="text-slate-500" />;
-            case "In Progress": return <Clock size={18} className="text-amber-500" />;
-            case "Overdue": return <XCircle size={18} className="text-rose-600" />;
+            case "In Progress": return <Clock size={18} className="text-slate-600" />;
+            case "Overdue": return <XCircle size={18} className="text-slate-600" />;
             default: return <Clock size={18} className="text-slate-400" />;
         }
     };
 
     const getStatusBadge = (status) => {
         switch (status) {
-            case "Approved": return "bg-emerald-50 text-emerald-700 border-emerald-200";
-            case "Rejected": return "bg-rose-50 text-rose-700 border-rose-200";
+            case "Approved": return "bg-slate-50 text-slate-700 border-slate-200";
+            case "Rejected": return "bg-slate-50 text-slate-700 border-slate-200";
             case "In Review": return "bg-slate-100 text-slate-700 border-slate-200";
-            case "In Progress": return "bg-amber-50 text-amber-700 border-amber-200";
-            case "Overdue": return "bg-rose-50 text-rose-700 border-rose-200";
-            default: return "bg-slate-50 text-slate-600 border-slate-200";
+            case "In Progress": return "bg-slate-50 text-slate-700 border-slate-200";
+            case "Overdue": return "bg-slate-50 text-slate-700 border-slate-200";
+            default: return "bg-slate-50 text-slate-700 border-slate-200";
         }
     };
 
@@ -79,7 +79,7 @@ const MilestoneTimeline = ({
                             displayStatus = "Overdue";
                         }
                         return (
-                        <div key={m._id || idx} className="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:-translate-y-[1px] transition-all shadow-sm">
+                        <div key={m._id || idx} className="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:-translate-y-[1px] transition-all">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
                                     {getStatusIcon(displayStatus)}
@@ -122,54 +122,80 @@ const MilestoneTimeline = ({
                             {m.files && m.files.length > 0 && (
                                 <div className="mb-3">
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Submitted Files</p>
-                                    <div className="flex flex-col gap-1">
+                                    <div className="flex flex-col gap-2">
                                         {m.files.map((file, i) => (
-                                            <a 
-                                                key={i} 
-                                                href={`http://localhost:4000${file.url}`} 
-                                                target="_blank" 
+                                        <div
+                                            key={i}
+                                            className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-3 py-2"
+                                        >
+                                            <div className="flex items-center gap-2 min-w-0">
+                                                <div className="w-9 h-9 bg-white border border-slate-200 rounded-lg flex items-center justify-center shrink-0">
+                                                    <FileText size={16}  className="text-slate-600" />
+                                                </div>
+
+                                                <div className="min-w-0">
+                                                    <p className="text-[12px] font-medium text-slate-800 truncate">
+                                                        {file.filename}
+                                                    </p>
+                                                    <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                                                        Submitted File
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <a
+                                                href={`http://localhost:4000${file.url}`}
+                                                target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-[12px] text-slate-700 font-medium hover:text-slate-900 hover:underline flex items-center gap-1 truncate max-w-full"
+                                                className="px-3 py-1.5 text-[11px] font-semibold border border-slate-200 rounded-md hover:bg-slate-100 transition text-slate-700 shrink-0"
                                             >
-                                                <FileText size={12} />
-                                                {file.filename}
+                                                View
                                             </a>
+                                        </div>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
                             {/* Action Buttons */}
-                            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100 justify-end">
+                            <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-slate-100">
+    
+                                <p className="text-[11px] text-slate-500 font-medium">
+                                    Awaiting submission
+                                </p>
+
                                 {role === "student" && (m.status === "Pending" || m.status === "In Progress" || m.status === "Rejected") && (
                                     <button 
                                         onClick={() => onSubmitClick(m)}
-                                        className="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-800 transition shadow-sm"
+                                        className="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-800 transition"
                                     >
-                                        <UploadCloud size={14} /> Submit Work
+                                        <UploadCloud size={14} />
+                                        Submit Work
                                     </button>
                                 )}
 
                                 {(role === "supervisor" || role === "admin") && (
-                                    <>
+                                    <div className="flex items-center gap-2 ml-auto">
+            
+                                    <button 
+                                        onClick={() => onEditClick(m)}
+                                        className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 border border-transparent hover:border-slate-200 rounded-lg transition"
+                                    >
+                                        Edit
+                                    </button>
+
+                                    {(m.status === "In Review" || m.status === "Pending" || m.status === "In Progress") && (
                                         <button 
-                                            onClick={() => onEditClick(m)}
-                                            className="text-xs font-medium text-slate-600 hover:text-slate-900 px-2 py-1 transition"
+                                            onClick={() => onReviewClick(m)}
+                                            className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-800 transition"
                                         >
-                                            Edit
+                                            Review
                                         </button>
-                                        {(m.status === "In Review" || m.status === "Pending" || m.status === "In Progress") && (
-                                            <button 
-                                                onClick={() => onReviewClick(m)}
-                                                className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-800 transition shadow-sm"
-                                            >
-                                                Review
-                                            </button>
-                                        )}
-                                    </>
-                                )}
-                            </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
+                    </div>
                     )})}
                 </div>
             </div>

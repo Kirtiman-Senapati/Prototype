@@ -187,11 +187,11 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
 
     if (req.file) {
         milestone.files.push({
-            filename: req.file.originalname,
-            url: `/uploads/${req.file.filename}`,
-            type: "Document",
-            uploadedBy: req.user._id
-        });
+        filename: req.file.originalname,
+        url: `/uploads/${req.file.filename}`,
+        type: "Document",
+        uploadedBy: req.user._id
+    });
     }
 
     milestone.status = "In Review";

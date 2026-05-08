@@ -3,7 +3,11 @@ import mongoose from "mongoose";
 const fileSchema = new mongoose.Schema({
     filename: { type: String, required: true },
     url: { type: String, required: true },
-    type: { type: String, enum: ["Report", "Presentation", "Code"], default: "Report" },
+    type: { 
+        type: String,
+        enum: ["Report", "Presentation", "Code", "Document", "Archive"],
+        default: "Document"
+    },
     uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     uploadedAt: { type: Date, default: Date.now },
 });

@@ -184,12 +184,12 @@ const AssignedStudents = () => {
                                 <h2 className="text-xl font-bold text-slate-800">Project Phases</h2>
                                 <p className="text-xs text-slate-500 font-medium mt-1">{milestoneProject.title}</p>
                             </div>
-                            <button onClick={() => setMilestoneProject(null)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition">
+                            <button onClick={() => setMilestoneProject(null)} className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition">
                                 <Users size={20} className="hidden" /> {/* Placeholder just to use icon import without error if needed, but here we can just use text or simple X */}
-                                Close
+                                ✕
                             </button>
                         </div>
-                        <div className="p-5 overflow-y-auto custom-scrollbar flex-1 bg-slate-50/50">
+                        <div className="p-5 overflow-y-auto custom-scrollbar flex-1 bg-white">
                             <MilestoneTimeline 
                                 milestones={assignedStudents.find(s => s.project?._id === milestoneProject._id)?.project?.milestones || []} 
                                 role="supervisor" 

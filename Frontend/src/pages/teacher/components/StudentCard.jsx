@@ -22,7 +22,7 @@ const StudentCard = ({ student, onAddTask, onAddFeedback, onViewMilestones }) =>
                             <StatusBadge status={student.project.status} />
                         </div>
                     ) : (
-                        <div className="bg-slate-50/50 rounded-lg p-4 border border-slate-100 text-center border-dashed">
+                        <div className="bg-slate-50/50 rounded-lg p-4 border border-slate-100 text-center">
                             <p className="text-[13px] italic text-slate-400">No project submitted yet.</p>
                         </div>
                     )}
@@ -39,7 +39,7 @@ const StudentCard = ({ student, onAddTask, onAddFeedback, onViewMilestones }) =>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-[12px] text-slate-400 italic bg-slate-50/50 border border-slate-100 rounded-lg p-3 text-center border-dashed">
+                            <div className="text-[12px] text-slate-400 italic bg-slate-50/50 border border-slate-100 rounded-lg p-3 text-center">
                                 No files uploaded.
                             </div>
                         )}

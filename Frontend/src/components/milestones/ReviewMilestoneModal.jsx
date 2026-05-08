@@ -13,7 +13,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
                 <div className="flex justify-between items-center p-5 border-b border-slate-100">
                     <div>
                         <h2 className="text-lg font-bold text-slate-800">Review Milestone</h2>
@@ -23,7 +23,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                         <X size={20} />
                     </button>
                 </div>
-                <div className="p-5 space-y-5">
+                <div className="p-6 space-y-6">
                     <div>
                         <p className="text-sm text-slate-600 leading-relaxed">
                             Review the submission for <span className="font-semibold text-slate-800">{milestone.title}</span>. You can either approve this phase to calculate towards overall progress, or reject it for revision.
@@ -45,7 +45,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                             type="button" 
                             onClick={(e) => handleSubmit(e, "Rejected")}
                             disabled={isSubmitting}
-                            className="flex-1 px-4 py-2.5 rounded-xl text-rose-700 font-medium bg-rose-50 hover:bg-rose-100 border border-rose-200 active:scale-[0.98] transition flex justify-center items-center gap-1.5 text-sm disabled:opacity-70"
+                            className="flex-1 px-4 py-2.5 rounded-xl text-slate-700 font-medium bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-[0.98] transition flex justify-center items-center gap-1.5 text-sm disabled:opacity-70"
                         >
                             <XCircle size={16} /> Reject
                         </button>
@@ -53,7 +53,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                             type="button" 
                             onClick={(e) => handleSubmit(e, "Approved")}
                             disabled={isSubmitting}
-                            className="flex-1 px-4 py-2.5 rounded-xl text-emerald-700 font-medium bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 active:scale-[0.98] transition flex justify-center items-center gap-1.5 text-sm disabled:opacity-70"
+                            className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-slate-900 hover:bg-slate-800 border border-slate-900 active:scale-[0.98] transition flex justify-center items-center gap-1.5 text-sm disabled:opacity-70"
                         >
                             <CheckCircle2 size={16} /> Approve
                         </button>
