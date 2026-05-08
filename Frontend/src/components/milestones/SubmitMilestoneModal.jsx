@@ -19,7 +19,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
                 <div className="flex justify-between items-center p-5 border-b border-slate-100">
                     <div>
                         <h2 className="text-lg font-bold text-slate-800">Submit Milestone</h2>
@@ -29,7 +29,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                         <X size={20} />
                     </button>
                 </div>
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
                     <div>
                         <p className="text-sm text-slate-600 leading-relaxed mb-4">
                             You are submitting work for the <span className="font-semibold text-slate-800">{milestone.title}</span> phase. Once submitted, it will be marked as "In Review" for your supervisor to evaluate.

@@ -21,8 +21,8 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit, isSubmitting, studentName })
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-xl w-full max-w-lg shadow-lg border border-slate-200 overflow-hidden flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-5 pt-12 bg-slate-900/60 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl w-full max-w-xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
                     <div className="space-y-1">
@@ -38,8 +38,8 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit, isSubmitting, studentName })
                 </div>
 
                 {/* Body Form */}
-                <form onSubmit={handleSubmit} className="flex flex-col">
-                    <div className="px-6 py-5 space-y-5">
+                <form onSubmit={handleSubmit} className="flex flex-col overflow-hidden">
+                    <div className="px-6 py-4 space-y-5 overflow-y-auto custom-scrollbar">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1.5">Feedback Title</label>
                             <input

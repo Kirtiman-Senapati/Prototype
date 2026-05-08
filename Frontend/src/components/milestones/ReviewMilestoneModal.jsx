@@ -13,7 +13,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
                 <div className="flex justify-between items-center p-5 border-b border-slate-100">
                     <div>
                         <h2 className="text-lg font-bold text-slate-800">Review Milestone</h2>
@@ -23,7 +23,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                         <X size={20} />
                     </button>
                 </div>
-                <div className="p-6 space-y-6">
+                <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
                     <div>
                         <p className="text-sm text-slate-600 leading-relaxed">
                             Review the submission for <span className="font-semibold text-slate-800">{milestone.title}</span>. You can either approve this phase to calculate towards overall progress, or reject it for revision.

@@ -32,8 +32,8 @@ const CreateMilestoneModal = ({ isOpen, onClose, onSubmit, initialData = null })
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-5">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
                 <div className="flex justify-between items-center p-5 border-b border-slate-100">
                     <h2 className="text-lg font-bold text-slate-800">
                         {initialData ? "Edit Milestone" : "Add New Milestone"}
@@ -42,7 +42,7 @@ const CreateMilestoneModal = ({ isOpen, onClose, onSubmit, initialData = null })
                         <X size={20} />
                     </button>
                 </div>
-                <form onSubmit={handleSubmit} className="p-5 space-y-4">
+                <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto custom-scrollbar">
                     <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Milestone Title <span className="text-red-500">*</span></label>
                         <input 

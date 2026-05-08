@@ -53,8 +53,8 @@ const MilestoneTimeline = ({
     };
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col h-full">
-            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
+        <div className="flex flex-col h-full">
+            <div className="pb-5 border-b border-slate-100 flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Project Milestones</h2>
                 {role !== "student" && (
                     <button 
@@ -66,7 +66,7 @@ const MilestoneTimeline = ({
                 )}
             </div>
 
-            <div className="p-5 overflow-y-auto custom-scrollbar flex-1 max-h-[70vh]">
+            <div className="pt-5 overflow-y-auto custom-scrollbar flex-1 min-h-0">
                 <div className="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent hidden">
                     {/* Decorative timeline line (hidden for cleaner stacked cards layout) */}
                 </div>
@@ -90,7 +90,7 @@ const MilestoneTimeline = ({
                                 ? "Waiting for review"
                                 : "Awaiting submission";
                         return (
-                        <div key={m._id || idx} className="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:-translate-y-[1px] transition-all">
+                        <div key={m._id || idx} className="bg-white border border-slate-200 rounded-xl p-3.5 hover:border-slate-300 transition-all">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
                                     {getStatusIcon(displayStatus)}
@@ -101,11 +101,11 @@ const MilestoneTimeline = ({
                                 </span>
                             </div>
 
-                            <p className="text-xs text-slate-600 mb-3 leading-relaxed">
+                            <p className="text-xs text-slate-600 mb-2 leading-relaxed">
                                 {m.description || "No description provided."}
                             </p>
 
-                            <div className="flex flex-wrap gap-4 text-[11px] text-slate-500 font-medium bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-3">
+                            <div className="flex flex-wrap gap-3 text-[11px] text-slate-500 font-medium bg-slate-50 px-2.5 py-2 rounded-lg border border-slate-100 mb-2.5">
                                 <div>
                                     <span className="text-slate-400 uppercase tracking-wide mr-1">Due:</span>
                                     <span className="text-slate-700">{m.deadline ? new Date(m.deadline).toLocaleDateString() : 'N/A'}</span>
@@ -120,7 +120,7 @@ const MilestoneTimeline = ({
 
                             {/* Remarks Section */}
                             {(m.reviewRemarks || m.rejectionReason) && (
-                                <div className="flex items-start gap-2 bg-slate-50 p-3 rounded-lg border border-slate-100 mb-3">
+                                <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-2.5">
                                     <MessageSquare size={14} className="text-slate-400 mt-0.5 shrink-0" />
                                     <div>
                                         <p className="text-[11px] font-bold text-slate-700 mb-0.5">Review Remarks</p>
@@ -131,7 +131,7 @@ const MilestoneTimeline = ({
 
                             {/* Attached Files */}
                             {m.files && m.files.length > 0 && (
-                                <div className="mb-3">
+                                <div className="mb-2.5">
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Submitted Files</p>
                                     <div className="flex flex-col gap-2">
                                         {m.files.map((file, i) => (
@@ -169,7 +169,7 @@ const MilestoneTimeline = ({
                             )}
 
                             {/* Action Buttons */}
-                            <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-slate-100">
+                            <div className="flex items-center justify-between gap-3 mt-2.5 pt-2.5 border-t border-slate-100">
     
                                 <p className="text-[11px] text-slate-500 font-medium">
                                     {footerText}

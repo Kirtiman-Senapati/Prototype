@@ -139,13 +139,13 @@ const AssignedStudents = () => {
 
             {/* Task Add Modal */}
             {selectedProject && (
-                <div className="fixed inset-0 z-50 flex items-start justify-center pt-10 pb-10 overflow-y-auto bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto p-6 border border-slate-200">
-                        <div className="mb-6">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-2xl shadow-xl max-w-md w-full border border-slate-200 overflow-hidden">
+                        <div className="px-6 pt-6 pb-5 border-b border-slate-100">
                             <h2 className="text-xl font-bold text-slate-800">Assign Task</h2>
                             <p className="text-sm text-slate-500 mt-1">Project: <span className="font-semibold text-slate-700">{selectedProject.title}</span></p>
                         </div>
-                        <form onSubmit={handleAddTask} className="space-y-4">
+                        <form onSubmit={handleAddTask} className="p-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Task Title</label>
                                 <input required className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none" placeholder="e.g. Complete Literature Review" value={taskData.title} onChange={e => setTaskData({...taskData, title: e.target.value})} />
@@ -188,8 +188,8 @@ const AssignedStudents = () => {
                 }
                 
                 return (
-                <div className="fixed inset-0 z-[40] flex items-start justify-center pt-10 pb-10 overflow-y-auto p-4 bg-slate-900/40 backdrop-blur-sm">
-                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-2xl border border-slate-200 flex flex-col max-h-[90vh]">
+                <div className="fixed inset-0 z-[40] flex items-start justify-center overflow-y-auto pt-24 pb-6 px-5 bg-slate-900/40 backdrop-blur-sm">
+                    <div className="bg-white overflow-hidden rounded-2xl w-full max-w-4xl border border-slate-200 flex flex-col shadow-xl h-[78vh]">
                         <div className="flex justify-between items-center p-5 border-b border-slate-100">
                             <div>
                                 <h2 className="text-xl font-bold text-slate-800">Project Phases</h2>
@@ -200,7 +200,7 @@ const AssignedStudents = () => {
                                 ✕
                             </button>
                         </div>
-                        <div className="p-5 overflow-y-auto custom-scrollbar flex-1 bg-white">
+                        <div className="p-5 overflow-y-auto custom-scrollbar flex-1 bg-white min-h-0">
                             <MilestoneTimeline 
                                 milestones={unifiedWorkspaceItems} 
                                 role="supervisor" 
