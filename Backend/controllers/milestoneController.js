@@ -123,6 +123,7 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
 // @access  Teacher/Admin
 export const updateMilestone = asyncHandler(async (req, res, next) => {
     const { projectId, milestoneId } = req.params;
+    const { remarks } = req.body;
     const { title, description, deadline } = req.body;
 
     const project = await Project.findById(projectId);
@@ -210,6 +211,8 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("This milestone is already approved.", 400));
     }
 
+    const { remarks } = req.body;
+
     if (req.file) {
         const fileData = {
             filename: req.file.originalname,
@@ -222,10 +225,17 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
         const workspaceItem = project.workspaceItems.id(milestoneId);
         if (workspaceItem) workspaceItem.files.push(fileData);
     }
-
+    
     milestone.status = "In Review";
+    milestone.submittedAt = new Date();
+    milestone.studentRemarks = remarks || "";
     const workspaceItem = project.workspaceItems.id(milestoneId);
-    if (workspaceItem) workspaceItem.status = "In Review";
+    if (workspaceItem) 
+    {
+        workspaceItem.status = "In Review";
+        workspaceItem.studentRemarks = remarks || "";
+        workspaceItem.submittedAt = new Date();
+    }
 
     await project.save();
 
@@ -296,13 +306,16 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
     const workspaceItem = project.workspaceItems.id(milestoneId);
     if (workspaceItem) {
         workspaceItem.status = status;
-        if (status === "Approved") {
+       if (status === "Approved") 
+        {
             workspaceItem.completedAt = completedAt;
             workspaceItem.approvedBy = approvedBy;
-            workspaceItem.remarks = reviewRemarks;
-        } else {
-            workspaceItem.remarks = reviewRemarks;
-        }
+            workspaceItem.remarks = remarks || reviewRemarks || "";
+        } 
+       else 
+       {
+            workspaceItem.remarks = remarks || reviewRemarks || "";
+       }
     }
 
     project.progress = recalculateProgress(project);

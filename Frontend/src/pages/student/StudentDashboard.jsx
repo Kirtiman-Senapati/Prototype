@@ -131,12 +131,14 @@ const StudentDashboard = () => {
       }
   };
 
-  const handleMilestoneSubmit = async (milestoneId, file) => {
+  const handleMilestoneSubmit = async (milestoneId, file,remarks) => {
       try {
           setIsSubmittingMilestone(true);
           const { axiosInstance } = await import("../../lib/axios");
           const formData = new FormData();
+
           if (file) formData.append("file", file);
+          formData.append("remarks", remarks || "");
           
           await axiosInstance.post(`/student/project/${project._id}/milestone/${milestoneId}/submit`, formData, {
               headers: { "Content-Type": "multipart/form-data" }

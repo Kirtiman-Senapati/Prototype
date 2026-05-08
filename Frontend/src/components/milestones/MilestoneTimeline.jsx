@@ -118,6 +118,19 @@ const MilestoneTimeline = ({
                                 )}
                             </div>
 
+                            {/* Student Submission Remarks */}
+                            {(m.studentRemarks||m.remarks)&& (
+                                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-2.5">
+                                        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
+                                            Student Update
+                                        </p>
+
+                                        <p className="text-sm text-slate-700 leading-relaxed">
+                                            {m.studentRemarks || m.remarks}
+                                        </p>
+                                    </div>
+                            )}
+
                             {/* Remarks Section */}
                             {(m.reviewRemarks || m.rejectionReason) && (
                                 <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-2.5">

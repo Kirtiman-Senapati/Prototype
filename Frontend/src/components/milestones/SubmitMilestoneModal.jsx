@@ -3,6 +3,7 @@ import { X, UploadCloud } from 'lucide-react';
 
 const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitting }) => {
     const [file, setFile] = useState(null);
+    const [remarks, setRemarks] = useState("");
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -12,7 +13,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(milestone._id, file);
+        onSubmit(milestone._id, file,remarks);
     };
 
     if (!isOpen || !milestone) return null;
@@ -34,7 +35,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                         <p className="text-sm text-slate-600 leading-relaxed mb-4">
                             You are submitting work for the <span className="font-semibold text-slate-800">{milestone.title}</span> phase. Once submitted, it will be marked as "In Review" for your supervisor to evaluate.
                         </p>
-                        
+                        {/*file upload Section*/}
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Attach File (Optional)</label>
                         <div className="border border-slate-200 bg-slate-50 rounded-xl p-6 text-center hover:bg-slate-100 transition cursor-pointer relative">
                             <input 
@@ -53,8 +54,23 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                                 </div>
                             </div>
                         </div>
+
+                        {/*Remark Section */}
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                                Progress Update / Remarks
+                            </label>
+
+                            <textarea
+                                value={remarks}
+                                onChange={(e) => setRemarks(e.target.value)}
+                                placeholder="Explain what you completed, pending issues, or important notes..."
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-400 focus:ring-4 focus:ring-slate-100 transition outline-none text-sm min-h-[110px] resize-none"
+                            />
+                        </div>
+                        
                     </div>
-                    
+                    {/*Buttons Section*/}
                     <div className="pt-2 flex gap-3">
                         <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl text-slate-700 font-medium bg-slate-100 hover:bg-slate-200 transition text-sm">Cancel</button>
                         <button type="submit" disabled={isSubmitting} className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-slate-900 hover:bg-slate-800 active:scale-[0.98] transition flex justify-center items-center text-sm disabled:opacity-70">

@@ -28,6 +28,8 @@ const milestoneSchema = new mongoose.Schema({
     status: { type: String, enum: ["Pending", "In Progress", "In Review", "Approved", "Rejected", "Overdue"], default: "Pending" },
     deadline: { type: Date },
     files: [fileSchema], // Reuse existing fileSchema
+    studentRemarks: { type: String, default: "" },
+    submittedAt: { type: Date },
     reviewRemarks: { type: String, default: "" },
     rejectionReason: { type: String, default: "" },
     completedAt: { type: Date },
@@ -45,6 +47,8 @@ const workspaceItemSchema = new mongoose.Schema({
     feedback: { type: String, default: "" },
     completedAt: { type: Date },
     completedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    studentRemarks: { type: String, default: "" },
+    submittedAt: { type: Date },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     assignedByRole: { type: String, enum: ["admin", "supervisor"], default: "supervisor" },
     assignedByName: { type: String, default: "" }
