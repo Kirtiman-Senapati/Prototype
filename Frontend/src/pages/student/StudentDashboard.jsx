@@ -170,11 +170,17 @@ const StudentDashboard = () => {
   }, [dispatch]);
 
   // Real-Time Auto Refresh via Global Socket
-  useAutoRefresh(() => {
+useAutoRefresh(() => {
     dispatch(getStudentDashboard());
     dispatch(getStudentFeedback());
     dispatch(getActivities());
-  });
+}, "refreshData");
+
+useAutoRefresh(() => {
+    dispatch(getStudentDashboard());
+    dispatch(getStudentFeedback());
+    dispatch(getActivities());
+}, "newActivity");
 
   useAutoRefresh((data) => {
       if (data && data.status === "Accepted") toast.success("Great news! Your supervisor request was accepted.");

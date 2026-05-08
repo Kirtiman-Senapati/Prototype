@@ -221,9 +221,6 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
             uploadedBy: req.user._id
         };
         milestone.files.push(fileData);
-        
-        const workspaceItem = project.workspaceItems.id(milestoneId);
-        if (workspaceItem) workspaceItem.files.push(fileData);
     }
     
     milestone.status = "In Review";
@@ -235,13 +232,20 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
         workspaceItem.status = "In Review";
         workspaceItem.studentRemarks = remarks || "";
         workspaceItem.submittedAt = new Date();
-    }
 
+        if (req.file) 
+        {
+            workspaceItem.files.push(fileData);
+        }
+    }
     await project.save();
 
     const admins = await User.find({ role: "Admin" }).select("_id");
     const adminIds = admins.map(a => a._id);
+    
+    const io = getIo();
 
+    
     await logActivity({
         actor: req.user._id,
         targetUsers: [project.supervisor?._id, ...adminIds].filter(Boolean),
@@ -251,8 +255,17 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
         priority: "medium"
     });
 
-    const io = getIo();
-    if (io) emitRefresh(io);
+
+    if (io) {
+    emitRefresh(io);
+
+    io.emit("newActivity", {
+        actionType: "MILESTONE_SUBMITTED",
+        message: `${req.user.name} submitted milestone work`,
+        relatedProject: project._id,
+        createdAt: new Date(),
+    });
+    }
 
     res.status(200).json({
         success: true,
@@ -279,7 +292,7 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Unauthorized", 403));
     }
 
-    const milestone = project.milestones.id(milestoneId);
+    const milestone = project.milestones.id(milestoneId) || project.workspaceItems.id(milestoneId);
     if (!milestone) return next(new ErrorHandler("Milestone not found", 404));
 
     milestone.status = status;

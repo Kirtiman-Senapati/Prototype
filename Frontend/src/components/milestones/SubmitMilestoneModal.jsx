@@ -13,10 +13,19 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(milestone._id, file,remarks);
+    
+        if (isLocked) {
+            return;
+        }
+
+        onSubmit(milestone._id, file, remarks);
     };
 
     if (!isOpen || !milestone) return null;
+    const isLocked =
+    milestone.status === "In Review" ||
+    milestone.status === "Approved" ||
+    milestone.status === "Rejected";
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -40,6 +49,8 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                         <div className="border border-slate-200 bg-slate-50 rounded-xl p-6 text-center hover:bg-slate-100 transition cursor-pointer relative">
                             <input 
                                 type="file" 
+                                disabled={isLocked}
+
                                 onChange={handleFileChange} 
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
                             />
@@ -62,6 +73,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                             </label>
 
                             <textarea
+                                disabled={isLocked}
                                 value={remarks}
                                 onChange={(e) => setRemarks(e.target.value)}
                                 placeholder="Explain what you completed, pending issues, or important notes..."
@@ -73,8 +85,9 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                     {/*Buttons Section*/}
                     <div className="pt-2 flex gap-3">
                         <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl text-slate-700 font-medium bg-slate-100 hover:bg-slate-200 transition text-sm">Cancel</button>
-                        <button type="submit" disabled={isSubmitting} className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-slate-900 hover:bg-slate-800 active:scale-[0.98] transition flex justify-center items-center text-sm disabled:opacity-70">
-                            {isSubmitting ? <span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></span> : "Submit for Review"}
+                        <button type="submit" disabled={isSubmitting||isLocked} className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-slate-900 hover:bg-slate-800 active:scale-[0.98] transition flex justify-center items-center text-sm disabled:opacity-70">
+                            {isSubmitting ? <span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></span> : 
+                            isLocked ? "Milestone Locked" : "Submit for Review"}
                         </button>
                     </div>
                 </form>

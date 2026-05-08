@@ -119,16 +119,29 @@ const MilestoneTimeline = ({
                             </div>
 
                             {/* Student Submission Remarks */}
-                            {(m.studentRemarks||m.remarks)&& (
-                                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-2.5">
-                                        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
-                                            Student Update
-                                        </p>
+                            {(m.studentRemarks|| m.remarks) && (
+                                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-2.5">
+                                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
+                                        Student Update
+                                    </p>
 
-                                        <p className="text-sm text-slate-700 leading-relaxed">
-                                            {m.studentRemarks || m.remarks}
-                                        </p>
-                                    </div>
+                                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                                    {m.studentRemarks || m.remarks}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Teacher/Admin Review */}
+                            {(m.reviewRemarks || m.rejectionReason) && (
+                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2.5">
+                                    <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700 mb-1">
+                                        Supervisor Review
+                                    </p>
+
+                                    <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                                        {m.reviewRemarks || m.rejectionReason}
+                                    </p>
+                                </div>
                             )}
 
                             {/* Remarks Section */}
@@ -188,7 +201,10 @@ const MilestoneTimeline = ({
                                     {footerText}
                                 </p>
 
-                                {role === "student" && (m.status === "Pending" || m.status === "In Progress" || m.status === "Rejected") && (
+                                {role === "student" &&
+                                    m.status !== "In Review" &&
+                                    m.status !== "Approved" &&
+                                    m.status !== "Rejected" && (
                                     <button 
                                         onClick={() => onSubmitClick(m)}
                                         className="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-800 transition"
