@@ -5,6 +5,7 @@ import { Request } from "../models/request.js";
 import { User } from "../models/user.js";
 import { getIo, getReceiverSocketId } from "../utils/socket.js";
 import { logActivity } from "../utils/activityLogger.js";
+import mongoose from "mongoose";
 export const getPendingRequests = asyncHandler(async (req, res, next) => {
     const requests = await Request.find({ toUser: req.user._id, status: "Pending" }).populate("fromUser", "name email department");
     res.status(200).json({
@@ -113,7 +114,7 @@ export const getAssignedStudents = asyncHandler(async (req, res, next) => {
         students
     });
 });
-export const addTaskToProject = async (projectId, taskData, assignedByRole, userId) => {
+export const addTaskToProject = async (projectId, taskData, assignedByRole, userId, assignedByName) => {
     const project = await Project.findById(projectId);
     if (!project) throw new ErrorHandler("Project not found", 404);
 
@@ -127,7 +128,8 @@ export const addTaskToProject = async (projectId, taskData, assignedByRole, user
     const newTask = {
         _id: newId,
         ...taskData,
-        assignedByRole
+        assignedByRole,
+        assignedByName
     };
 
     project.tasks.push(newTask);
@@ -142,7 +144,7 @@ export const addTaskToProject = async (projectId, taskData, assignedByRole, user
 
 export const addTask = asyncHandler(async (req, res, next) => {
     const { projectId, title, description, deadline } = req.body;
-    const project = await addTaskToProject(projectId, { title, description, deadline }, "supervisor", req.user._id);
+    const project = await addTaskToProject(projectId, { title, description, deadline }, "supervisor", req.user._id, req.user.name);
 
     await project.populate("student", "name");
     

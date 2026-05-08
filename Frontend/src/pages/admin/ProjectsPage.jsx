@@ -173,8 +173,8 @@ const ProjectsPage = () => {
             setTaskData({ title: "", description: "", deadline: "" });
             setIsTaskModalOpen(false);
             // Refresh detailed project local state (merge tasks to preserve populated fields like student/supervisor)
-            if (res.project && res.project.tasks) {
-                setSelectedProject(prev => ({ ...prev, tasks: res.project.tasks }));
+            if (res.project) {
+                setSelectedProject(prev => ({ ...prev, tasks: res.project.tasks, workspaceItems: res.project.workspaceItems }));
             }
             // Refresh global list to keep state consistent
             fetchProjects();
@@ -619,7 +619,10 @@ const ProjectsPage = () => {
                                 </h3>
                                 <div className="mt-2">
                                     {(() => {
-                                        const tasks = selectedProject.tasks || [];
+                                        const itemMap = new Map();
+                                        (selectedProject.tasks || []).forEach(t => itemMap.set(t._id.toString(), { ...t, type: 'task' }));
+                                        (selectedProject.workspaceItems || []).forEach(wi => itemMap.set(wi._id.toString(), wi));
+                                        const tasks = Array.from(itemMap.values()).filter(i => i.type === 'task');
                                         const totalTasks = tasks.length;
                                         const completedTasks = tasks.filter(t => t.status === "Completed").length;
                                         const taskProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
@@ -658,7 +661,7 @@ const ProjectsPage = () => {
                                                                 {/* task status by student  */}
                                                                 <p className="flex justify-between items-center mt-2">
                                                                     <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                                                                        By {t.assignedByRole === "admin" ? "Admin" : "Supervisor"}
+                                                                        By {t.assignedByName || (t.assignedByRole === "admin" ? "Admin" : "Supervisor")}
                                                                     </span>
                                                                     {t.status === "Completed" && t.completedAt ? (
                                                                         <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Done {new Date(t.completedAt).toLocaleDateString("en-GB")}</span>
@@ -686,13 +689,22 @@ const ProjectsPage = () => {
                                     <FolderKanban size={15} className="text-slate-500" /> Project Phases
                                 </h3>
                                 <div className="h-[400px]">
-                                    <MilestoneTimeline 
-                                        milestones={selectedProject.milestones || []} 
-                                        role="admin" 
-                                        onAddClick={() => { setSelectedMilestone(null); setIsCreateMilestoneOpen(true); }}
-                                        onEditClick={(m) => { setSelectedMilestone(m); setIsCreateMilestoneOpen(true); }}
-                                        onReviewClick={(m) => { setSelectedMilestone(m); setIsReviewMilestoneOpen(true); }}
-                                    />
+                                    {(() => {
+                                        const itemMap = new Map();
+                                        (selectedProject.tasks || []).forEach(t => itemMap.set(t._id.toString(), { ...t, type: 'task' }));
+                                        (selectedProject.milestones || []).forEach(m => itemMap.set(m._id.toString(), { ...m, type: 'phase' }));
+                                        (selectedProject.workspaceItems || []).forEach(wi => itemMap.set(wi._id.toString(), wi));
+                                        const unifiedWorkspaceItems = Array.from(itemMap.values()).sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+                                        return (
+                                        <MilestoneTimeline 
+                                            milestones={unifiedWorkspaceItems} 
+                                            role="admin" 
+                                            onAddClick={() => { setSelectedMilestone(null); setIsCreateMilestoneOpen(true); }}
+                                            onEditClick={(m) => { setSelectedMilestone(m); setIsCreateMilestoneOpen(true); }}
+                                            onReviewClick={(m) => { setSelectedMilestone(m); setIsReviewMilestoneOpen(true); }}
+                                        />
+                                        );
+                                    })()}
                                 </div>
                             </div>
 

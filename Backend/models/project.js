@@ -46,7 +46,8 @@ const workspaceItemSchema = new mongoose.Schema({
     completedAt: { type: Date },
     completedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    assignedByRole: { type: String, enum: ["admin", "supervisor"], default: "supervisor" }
+    assignedByRole: { type: String, enum: ["admin", "supervisor"], default: "supervisor" },
+    assignedByName: { type: String, default: "" }
 });
 
 const projectSchema = new mongoose.Schema(

@@ -139,8 +139,8 @@ const AssignedStudents = () => {
 
             {/* Task Add Modal */}
             {selectedProject && (
-                <div className="modal-overlay">
-                    <div className="modal-content p-6 border border-slate-200 rounded-xl shadow-xl max-w-md w-full">
+                <div className="fixed inset-0 z-50 flex items-start justify-center pt-10 pb-10 overflow-y-auto bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto p-6 border border-slate-200">
                         <div className="mb-6">
                             <h2 className="text-xl font-bold text-slate-800">Assign Task</h2>
                             <p className="text-sm text-slate-500 mt-1">Project: <span className="font-semibold text-slate-700">{selectedProject.title}</span></p>
@@ -176,8 +176,19 @@ const AssignedStudents = () => {
             />
 
             {/* View Milestones Modal (Full Timeline) */}
-            {milestoneProject && (
-                <div className="fixed inset-0 z-[40] flex items-center justify-center pt-10 p-4 bg-slate-900/40 backdrop-blur-sm">
+            {milestoneProject && (() => {
+                const currentProject = assignedStudents.find(s => s.project?._id === milestoneProject._id)?.project;
+                let unifiedWorkspaceItems = [];
+                if (currentProject) {
+                    const itemMap = new Map();
+                    (currentProject.tasks || []).forEach(t => itemMap.set(t._id.toString(), { ...t, type: 'task' }));
+                    (currentProject.milestones || []).forEach(m => itemMap.set(m._id.toString(), { ...m, type: 'phase' }));
+                    (currentProject.workspaceItems || []).forEach(wi => itemMap.set(wi._id.toString(), wi));
+                    unifiedWorkspaceItems = Array.from(itemMap.values()).sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+                }
+                
+                return (
+                <div className="fixed inset-0 z-[40] flex items-start justify-center pt-10 pb-10 overflow-y-auto p-4 bg-slate-900/40 backdrop-blur-sm">
                     <div className="bg-white overflow-hidden rounded-xl w-full max-w-2xl border border-slate-200 flex flex-col max-h-[90vh]">
                         <div className="flex justify-between items-center p-5 border-b border-slate-100">
                             <div>
@@ -191,7 +202,7 @@ const AssignedStudents = () => {
                         </div>
                         <div className="p-5 overflow-y-auto custom-scrollbar flex-1 bg-white">
                             <MilestoneTimeline 
-                                milestones={assignedStudents.find(s => s.project?._id === milestoneProject._id)?.project?.milestones || []} 
+                                milestones={unifiedWorkspaceItems} 
                                 role="supervisor" 
                                 onAddClick={() => { setSelectedMilestone(null); setIsCreateMilestoneOpen(true); }}
                                 onEditClick={(m) => { setSelectedMilestone(m); setIsCreateMilestoneOpen(true); }}
@@ -200,7 +211,8 @@ const AssignedStudents = () => {
                         </div>
                     </div>
                 </div>
-            )}
+                );
+            })()}
 
             {/* Create/Edit Milestone Modal */}
             <CreateMilestoneModal 

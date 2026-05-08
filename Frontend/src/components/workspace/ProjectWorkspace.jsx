@@ -46,7 +46,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
 
             <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar">
                 <table className="w-full text-left border-collapse min-w-[600px]">
-                    <thead className="bg-slate-50/50 sticky top-0 z-10">
+                    <thead className="bg-white sticky top-0 z-20 shadow-sm backdrop-blur-none">
                         <tr className="border-b border-slate-100">
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Work Item</th>
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Type</th>
@@ -87,6 +87,9 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                                 }`}>
                                                     {item.title}
                                                 </h3>
+                                                <div className="text-[10px] font-medium text-slate-400 mt-0.5">
+                                                    Assigned by {item.assignedByName || (item.assignedByRole === 'admin' ? 'Admin' : 'Supervisor')}
+                                                </div>
                                                 {(item.files?.length > 0 || item.remarks || item.rejectionReason || item.feedback) && (
                                                     <div className="flex gap-2 mt-1">
                                                         {item.files?.length > 0 && <span className="flex items-center gap-1 text-[10px] font-medium text-slate-500"><FileText size={10} /> {item.files.length}</span>}

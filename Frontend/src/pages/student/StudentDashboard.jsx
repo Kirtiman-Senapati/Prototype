@@ -435,7 +435,7 @@ const StudentDashboard = () => {
                      />
 
                      {/* BOTTOM TWO CARDS */}
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[260px]">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
@@ -445,11 +445,11 @@ const StudentDashboard = () => {
                  {/* Right Column (span-2) */}
                  <div className="lg:col-span-2 flex flex-col gap-6">
 
-                    <div className="h-[260px]">
+                    <div>
                          <StudentActivityList activities={selfActivities} title="Your Recent Activity" />
                     </div>
 
-                    <div className="h-[320px]">
+                    <div>
                          <StudentActivityList activities={sysActivities} title="System Notifications" />
                     </div>
 

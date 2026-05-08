@@ -47,36 +47,33 @@ const StudentCard = ({ student, onAddTask, onAddFeedback, onViewMilestones }) =>
                 )}
 
                 {/* Tasks Section */}
-                {student.project && student.project.tasks && student.project.tasks.length > 0 && (
+                {student.project && (() => {
+                    const itemMap = new Map();
+                    (student.project.tasks || []).forEach(t => itemMap.set(t._id.toString(), { ...t, type: 'task' }));
+                    (student.project.workspaceItems || []).forEach(wi => itemMap.set(wi._id.toString(), wi));
+                    const tasks = Array.from(itemMap.values()).filter(i => i.type === 'task');
+                    
+                    if (tasks.length === 0) return null;
+
+                    const completed = tasks.filter(t => t.status === "Completed").length;
+                    const progress = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+
+                    return (
                     <div className="mb-6 flex-1">
                         <div className="flex justify-between items-center mb-2">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Assigned Tasks</p>
-                            {(() => {
-                                const tasks = student.project.tasks;
-                                const completed = tasks.filter(t => t.status === "Completed").length;
-                                const progress = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
-                                return (
-                                    <span className="text-[11px] font-extrabold text-slate-500">{progress}% Done</span>
-                                );
-                            })()}
+                            <span className="text-[11px] font-extrabold text-slate-500">{progress}% Done</span>
                         </div>
                         
                         {/* Progress Bar */}
-                        {(() => {
-                            const tasks = student.project.tasks;
-                            const completed = tasks.filter(t => t.status === "Completed").length;
-                            const progress = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
-                            return (
-                                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200 mb-3">
-                                    <div 
-                                        className="bg-slate-600 h-1.5 rounded-full transition-all duration-1000 ease-out" 
-                                        style={{ width: `${progress}%` }}
-                                    ></div>
-                                </div>
-                            );
-                        })()}
+                        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200 mb-3">
+                            <div 
+                                className="bg-slate-600 h-1.5 rounded-full transition-all duration-1000 ease-out" 
+                                style={{ width: `${progress}%` }}
+                            ></div>
+                        </div>
                         <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
-                            {[...student.project.tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task, i) => (
+                            {[...tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task, i) => (
                                 <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm flex flex-col gap-1.5">
                                     <div className="flex justify-between items-start gap-2">
                                         <p className={`font-semibold ${task.status === 'Completed' ? 'text-slate-500 line-through decoration-slate-300' : 'text-slate-800'}`}>{task.title}</p>
@@ -91,7 +88,7 @@ const StudentCard = ({ student, onAddTask, onAddFeedback, onViewMilestones }) =>
                                         </span>
                                     </div>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between">
-                                        <span>BY {task.assignedByRole === "admin" ? "ADMIN" : "SUPERVISOR"}</span>
+                                        <span>BY {task.assignedByName || (task.assignedByRole === "admin" ? "ADMIN" : "SUPERVISOR")}</span>
                                         {task.status === 'Completed' && task.completedAt ? (
                                             <span className="text-slate-500 flex items-center gap-1">✔ Completed on {new Date(task.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
                                         ) : task.deadline ? (
@@ -102,7 +99,8 @@ const StudentCard = ({ student, onAddTask, onAddFeedback, onViewMilestones }) =>
                             ))}
                         </div>
                     </div>
-                )}
+                    );
+                })()}
 
                 {/* Action Section */}
                 {student.project && (

@@ -78,13 +78,17 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
         title,
         description,
         deadline,
-        status: "Pending"
+        status: "Pending",
+        assignedByRole: req.user.role.toLowerCase(),
+        assignedByName: req.user.name
     };
 
     project.milestones.push(newMilestone);
     project.workspaceItems.push({
         ...newMilestone,
-        type: "phase"
+        type: "phase",
+        assignedByRole: req.user.role.toLowerCase(),
+        assignedByName: req.user.name
     });
 
     project.progress = recalculateProgress(project);
