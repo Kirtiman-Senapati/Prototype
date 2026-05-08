@@ -6,6 +6,9 @@ import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Downlo
 import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import FeedbackModal from "../../components/modal/FeedbackModal";
+import MilestoneTimeline from "../../components/milestones/MilestoneTimeline";
+import CreateMilestoneModal from "../../components/milestones/CreateMilestoneModal";
+import ReviewMilestoneModal from "../../components/milestones/ReviewMilestoneModal";
 
 const ProjectsPage = () => {
     const dispatch = useDispatch();
@@ -23,6 +26,13 @@ const ProjectsPage = () => {
     const [isSubmittingTask, setIsSubmittingTask] = useState(false);
     const [studentFeedbacks, setStudentFeedbacks] = useState([]);
     const [isLoadingFeedbacks, setIsLoadingFeedbacks] = useState(false);
+    
+    // Milestone states
+    const [isCreateMilestoneOpen, setIsCreateMilestoneOpen] = useState(false);
+    const [isReviewMilestoneOpen, setIsReviewMilestoneOpen] = useState(false);
+    const [selectedMilestone, setSelectedMilestone] = useState(null);
+    const [isSubmittingMilestone, setIsSubmittingMilestone] = useState(false);
+
     const { authUser } = useSelector((state) => state.auth);
 
     useEffect(() => {
@@ -175,6 +185,42 @@ const ProjectsPage = () => {
         }
     };
 
+    const handleCreateMilestone = async (data) => {
+        setIsSubmittingMilestone(true);
+        try {
+            if (selectedMilestone) {
+                await axiosInstance.patch(`/admin/project/${selectedProject._id}/milestone/${selectedMilestone._id}`, data);
+                toast.success("Milestone updated successfully");
+            } else {
+                await axiosInstance.post(`/admin/project/${selectedProject._id}/milestone`, data);
+                toast.success("Milestone created successfully");
+            }
+            setIsCreateMilestoneOpen(false);
+            setSelectedMilestone(null);
+            fetchProjects();
+            // Optional: update selectedProject's milestones by re-fetching or optimistic update
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to save milestone");
+        } finally {
+            setIsSubmittingMilestone(false);
+        }
+    };
+
+    const handleReviewMilestone = async (milestoneId, status, remarks) => {
+        setIsSubmittingMilestone(true);
+        try {
+            await axiosInstance.patch(`/admin/project/${selectedProject._id}/milestone/${milestoneId}/review`, { status, remarks });
+            toast.success(`Milestone ${status.toLowerCase()} successfully`);
+            setIsReviewMilestoneOpen(false);
+            setSelectedMilestone(null);
+            fetchProjects();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to review milestone");
+        } finally {
+            setIsSubmittingMilestone(false);
+        }
+    };
+
     // Filter Logic
     const cleanProjects = projects.filter(p => p.student && typeof p.student === "object" && p.student._id);
 
@@ -291,6 +337,7 @@ const ProjectsPage = () => {
                                 <th className="py-5 px-6 font-semibold">Supervisor</th>
                                 <th className="py-5 px-6 font-semibold text-center">Status</th>
                                 <th className="py-5 px-6 font-semibold">Deadline</th>
+                                <th className="py-5 px-6 font-semibold">Progress</th>
                                 <th className="py-5 px-6 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
@@ -342,6 +389,19 @@ const ProjectsPage = () => {
                                                 <span className={`text-sm font-medium ${getDeadlineStyle(proj).text}`}>
                                                     {proj.deadline ? new Date(proj.deadline).toLocaleDateString("en-GB") : 'N/A'}
                                                 </span>
+                                            </div>
+                                        </td>
+                                        <td className="py-5 px-6">
+                                            <div className="flex flex-col gap-1.5 w-24">
+                                                <div className="flex justify-between items-center text-[11px] font-bold text-slate-500">
+                                                    <span>{proj.progress || 0}%</span>
+                                                </div>
+                                                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
+                                                    <div 
+                                                        className="bg-slate-600 h-1.5 rounded-full transition-all duration-500 ease-out" 
+                                                        style={{ width: `${proj.progress || 0}%` }}
+                                                    ></div>
+                                                </div>
                                             </div>
                                         </td>
                                         <td className="py-5 px-6 text-right">
@@ -558,6 +618,22 @@ const ProjectsPage = () => {
                                     })()}
                                 </div>
                             </div>
+                            
+                            {/* MILESTONES (Phase-wise Task Management) */}
+                            <div className="pt-2">
+                                <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
+                                    <FolderKanban size={15} className="text-slate-500" /> Project Phases
+                                </h3>
+                                <div className="h-[400px]">
+                                    <MilestoneTimeline 
+                                        milestones={selectedProject.milestones || []} 
+                                        role="admin" 
+                                        onAddClick={() => { setSelectedMilestone(null); setIsCreateMilestoneOpen(true); }}
+                                        onEditClick={(m) => { setSelectedMilestone(m); setIsCreateMilestoneOpen(true); }}
+                                        onReviewClick={(m) => { setSelectedMilestone(m); setIsReviewMilestoneOpen(true); }}
+                                    />
+                                </div>
+                            </div>
 
                             {/* FILES SECTION */}
                             <div className="pt-2">
@@ -742,6 +818,23 @@ const ProjectsPage = () => {
                     </div>
                 </div>
             )}
+            
+            {/* Create/Edit Milestone Modal */}
+            <CreateMilestoneModal 
+                isOpen={isCreateMilestoneOpen}
+                onClose={() => { setIsCreateMilestoneOpen(false); setSelectedMilestone(null); }}
+                onSubmit={handleCreateMilestone}
+                initialData={selectedMilestone}
+            />
+
+            {/* Review Milestone Modal */}
+            <ReviewMilestoneModal 
+                isOpen={isReviewMilestoneOpen}
+                onClose={() => { setIsReviewMilestoneOpen(false); setSelectedMilestone(null); }}
+                onSubmit={handleReviewMilestone}
+                milestone={selectedMilestone}
+                isSubmitting={isSubmittingMilestone}
+            />
         </div>
     );
 };

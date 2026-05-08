@@ -6,6 +6,12 @@ import {
     addTask,
     getTeacherDashboard
 } from "../controllers/teacherController.js";
+import {
+    addMilestone,
+    updateMilestone,
+    deleteMilestone,
+    reviewMilestone
+} from "../controllers/milestoneController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -17,5 +23,11 @@ router.get("/requests", getPendingRequests);
 router.put("/request/handle", handleRequest);
 router.get("/students", getAssignedStudents);
 router.post("/task", addTask);
+
+// Milestone routes
+router.post("/project/:projectId/milestone", addMilestone);
+router.patch("/project/:projectId/milestone/:milestoneId", updateMilestone);
+router.delete("/project/:projectId/milestone/:milestoneId", deleteMilestone);
+router.patch("/project/:projectId/milestone/:milestoneId/review", reviewMilestone);
 
 export default router;

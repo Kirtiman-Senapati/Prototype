@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import MessageModal from "./components/MessageModal";
 import StatCard from "./components/StatCard";
 import StudentActivityList from './components/StudentActivityList';
+import MilestoneTimeline from "../../components/milestones/MilestoneTimeline";
+import SubmitMilestoneModal from "../../components/milestones/SubmitMilestoneModal";
 
 // Component: TasksList (Mirrors Admin ProjectList)
 const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
@@ -165,6 +167,11 @@ const StudentDashboard = () => {
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [completingTasks, setCompletingTasks] = useState({});
   const [isCompletingProject, setIsCompletingProject] = useState(false);
+  
+  // Milestone state
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [selectedMilestone, setSelectedMilestone] = useState(null);
+  const [isSubmittingMilestone, setIsSubmittingMilestone] = useState(false);
 
   const handleCompleteProject = async () => {
       try {
@@ -178,6 +185,29 @@ const StudentDashboard = () => {
           toast.error(error.response?.data?.message || "Failed to mark project as completed");
       } finally {
           setIsCompletingProject(false);
+      }
+  };
+
+  const handleMilestoneSubmit = async (milestoneId, file) => {
+      try {
+          setIsSubmittingMilestone(true);
+          const { axiosInstance } = await import("../../lib/axios");
+          const formData = new FormData();
+          if (file) formData.append("file", file);
+          
+          await axiosInstance.post(`/student/project/${project._id}/milestone/${milestoneId}/submit`, formData, {
+              headers: { "Content-Type": "multipart/form-data" }
+          });
+          
+          toast.success("Milestone submitted successfully!");
+          setIsSubmitModalOpen(false);
+          setSelectedMilestone(null);
+          dispatch(getStudentDashboard());
+          dispatch(getActivities());
+      } catch (error) {
+          toast.error(error.response?.data?.message || "Failed to submit milestone");
+      } finally {
+          setIsSubmittingMilestone(false);
       }
   };
 
@@ -435,6 +465,15 @@ const StudentDashboard = () => {
                          />
                      </div>
 
+                     {/* MILESTONES CARD */}
+                     <div className="h-[400px]">
+                         <MilestoneTimeline 
+                             milestones={project.milestones || []} 
+                             role="student" 
+                             onSubmitClick={(m) => { setSelectedMilestone(m); setIsSubmitModalOpen(true); }}
+                         />
+                     </div>
+
                      {/* BOTTOM TWO CARDS */}
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[260px]">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
@@ -465,6 +504,14 @@ const StudentDashboard = () => {
           onClose={() => setIsMessageModalOpen(false)}
           supervisorName={project?.supervisor?.name}
           projectId={project?._id}
+      />
+      
+      <SubmitMilestoneModal 
+          isOpen={isSubmitModalOpen}
+          onClose={() => { setIsSubmitModalOpen(false); setSelectedMilestone(null); }}
+          onSubmit={handleMilestoneSubmit}
+          milestone={selectedMilestone}
+          isSubmitting={isSubmittingMilestone}
       />
     </div>
   );

@@ -16,6 +16,12 @@ import {
     triggerReminders,
     sendManualReminder
 } from "../controllers/adminController.js";
+import {
+    addMilestone,
+    updateMilestone,
+    deleteMilestone,
+    reviewMilestone
+} from "../controllers/milestoneController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -37,5 +43,11 @@ router.patch("/user/:id", updateUserDetails);
 router.post("/task", addTaskAdmin);
 router.post("/trigger-reminders", triggerReminders);
 router.post("/project/:id/remind", sendManualReminder);
+
+// Milestone routes
+router.post("/project/:projectId/milestone", addMilestone);
+router.patch("/project/:projectId/milestone/:milestoneId", updateMilestone);
+router.delete("/project/:projectId/milestone/:milestoneId", deleteMilestone);
+router.patch("/project/:projectId/milestone/:milestoneId/review", reviewMilestone);
 
 export default router;

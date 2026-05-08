@@ -18,6 +18,18 @@ const taskSchema = new mongoose.Schema({
     assignedByRole: { type: String, enum: ["admin", "supervisor"], default: "supervisor" },
 });
 
+const milestoneSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    description: { type: String },
+    status: { type: String, enum: ["Pending", "In Progress", "In Review", "Approved", "Rejected", "Overdue"], default: "Pending" },
+    deadline: { type: Date },
+    files: [fileSchema], // Reuse existing fileSchema
+    reviewRemarks: { type: String, default: "" },
+    rejectionReason: { type: String, default: "" },
+    completedAt: { type: Date },
+    approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+});
+
 const projectSchema = new mongoose.Schema(
     {
         title: {
@@ -59,8 +71,13 @@ const projectSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        progress: {
+            type: Number,
+            default: 0,
+        },
         files: [fileSchema],
         tasks: [taskSchema],
+        milestones: [milestoneSchema],
     },
     { timestamps: true }
 );

@@ -8,6 +8,9 @@ import StudentCard from "./components/StudentCard";
 import DashboardHeader from "./components/DashboardHeader";
 import { Users, Loader } from "lucide-react";
 import FeedbackModal from "../../components/modal/FeedbackModal";
+import MilestoneTimeline from "../../components/milestones/MilestoneTimeline";
+import CreateMilestoneModal from "../../components/milestones/CreateMilestoneModal";
+import ReviewMilestoneModal from "../../components/milestones/ReviewMilestoneModal";
 
 const AssignedStudents = () => {
     const dispatch = useDispatch();
@@ -17,6 +20,13 @@ const AssignedStudents = () => {
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
     const [taskData, setTaskData] = useState({ title: "", description: "", deadline: "" });
+    
+    // Milestone states
+    const [milestoneProject, setMilestoneProject] = useState(null);
+    const [isCreateMilestoneOpen, setIsCreateMilestoneOpen] = useState(false);
+    const [isReviewMilestoneOpen, setIsReviewMilestoneOpen] = useState(false);
+    const [selectedMilestone, setSelectedMilestone] = useState(null);
+    const [isSubmittingMilestone, setIsSubmittingMilestone] = useState(false);
 
     const { authUser } = useSelector((state) => state.auth);
 
@@ -56,6 +66,41 @@ const AssignedStudents = () => {
         }
     };
 
+    const handleCreateMilestone = async (data) => {
+        setIsSubmittingMilestone(true);
+        try {
+            if (selectedMilestone) {
+                await axiosInstance.patch(`/teacher/project/${milestoneProject._id}/milestone/${selectedMilestone._id}`, data);
+                toast.success("Milestone updated successfully");
+            } else {
+                await axiosInstance.post(`/teacher/project/${milestoneProject._id}/milestone`, data);
+                toast.success("Milestone created successfully");
+            }
+            setIsCreateMilestoneOpen(false);
+            setSelectedMilestone(null);
+            dispatch(getAssignedStudents());
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to save milestone");
+        } finally {
+            setIsSubmittingMilestone(false);
+        }
+    };
+
+    const handleReviewMilestone = async (milestoneId, status, remarks) => {
+        setIsSubmittingMilestone(true);
+        try {
+            await axiosInstance.patch(`/teacher/project/${milestoneProject._id}/milestone/${milestoneId}/review`, { status, remarks });
+            toast.success(`Milestone ${status.toLowerCase()} successfully`);
+            setIsReviewMilestoneOpen(false);
+            setSelectedMilestone(null);
+            dispatch(getAssignedStudents());
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to review milestone");
+        } finally {
+            setIsSubmittingMilestone(false);
+        }
+    };
+
     if (isLoading && (!assignedStudents || assignedStudents.length === 0)) {
         return (
             <div className="flex justify-center items-center h-full min-h-[400px]">
@@ -80,6 +125,7 @@ const AssignedStudents = () => {
                             student={student} 
                             onAddTask={() => setSelectedProject(student.project)} 
                             onAddFeedback={() => setFeedbackStudent(student)}
+                            onViewMilestones={() => setMilestoneProject(student.project)}
                         />
                     ))}
                 </div>
@@ -127,6 +173,50 @@ const AssignedStudents = () => {
                 onSubmit={handleSendFeedback}
                 isSubmitting={isSubmittingFeedback}
                 studentName={feedbackStudent?.name}
+            />
+
+            {/* View Milestones Modal (Full Timeline) */}
+            {milestoneProject && (
+                <div className="fixed inset-0 z-[40] flex items-center justify-center pt-10 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+                        <div className="flex justify-between items-center p-5 border-b border-slate-100">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-800">Project Phases</h2>
+                                <p className="text-xs text-slate-500 font-medium mt-1">{milestoneProject.title}</p>
+                            </div>
+                            <button onClick={() => setMilestoneProject(null)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-lg transition">
+                                <Users size={20} className="hidden" /> {/* Placeholder just to use icon import without error if needed, but here we can just use text or simple X */}
+                                Close
+                            </button>
+                        </div>
+                        <div className="p-5 overflow-y-auto custom-scrollbar flex-1 bg-slate-50/50">
+                            <MilestoneTimeline 
+                                milestones={assignedStudents.find(s => s.project?._id === milestoneProject._id)?.project?.milestones || []} 
+                                role="supervisor" 
+                                onAddClick={() => { setSelectedMilestone(null); setIsCreateMilestoneOpen(true); }}
+                                onEditClick={(m) => { setSelectedMilestone(m); setIsCreateMilestoneOpen(true); }}
+                                onReviewClick={(m) => { setSelectedMilestone(m); setIsReviewMilestoneOpen(true); }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Create/Edit Milestone Modal */}
+            <CreateMilestoneModal 
+                isOpen={isCreateMilestoneOpen}
+                onClose={() => { setIsCreateMilestoneOpen(false); setSelectedMilestone(null); }}
+                onSubmit={handleCreateMilestone}
+                initialData={selectedMilestone}
+            />
+
+            {/* Review Milestone Modal */}
+            <ReviewMilestoneModal 
+                isOpen={isReviewMilestoneOpen}
+                onClose={() => { setIsReviewMilestoneOpen(false); setSelectedMilestone(null); }}
+                onSubmit={handleReviewMilestone}
+                milestone={selectedMilestone}
+                isSubmitting={isSubmittingMilestone}
             />
         </div>
     );

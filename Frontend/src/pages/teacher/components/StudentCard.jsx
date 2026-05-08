@@ -2,7 +2,7 @@ import { Plus, MessageSquare } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import FileItem from "./FileItem";
 
-const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
+const StudentCard = ({ student, onAddTask, onAddFeedback, onViewMilestones }) => {
     return (
         <div className="bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors flex flex-col h-full overflow-hidden">
             <div className="p-6 flex flex-col h-full">
@@ -106,20 +106,24 @@ const StudentCard = ({ student, onAddTask, onAddFeedback }) => {
 
                 {/* Action Section */}
                 {student.project && (
-                    <div className="mt-auto pt-2 flex gap-3">
+                    <div className="mt-auto pt-2 flex gap-2">
+                        <button 
+                            onClick={onViewMilestones}
+                            className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-200 font-semibold py-2.5 rounded-lg flex items-center justify-center transition-colors text-xs"
+                        >
+                            Phases
+                        </button>
                         <button 
                             onClick={onAddFeedback}
-                            className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-200 font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
+                            className="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-200 font-semibold py-2.5 rounded-lg flex items-center justify-center transition-colors text-xs"
                         >
-                            <MessageSquare size={16} />
                             Feedback
                         </button>
                         <button 
                             onClick={onAddTask}
-                            className="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
+                            className="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center transition-colors text-xs"
                         >
-                            <Plus size={16} strokeWidth={2.5} />
-                            Task
+                            + Task
                         </button>
                     </div>
                 )}

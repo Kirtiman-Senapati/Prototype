@@ -42,6 +42,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                             <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Project Name</th>
                             <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Supervisor</th>
                             <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Status</th>
+                            <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Progress</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -71,6 +72,19 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                         <span className={`text-xs font-medium ${getStatusStyle(project.status)}`}>
                                             {project.status === 'Approved' ? 'In Progress' : project.status}
                                         </span>
+                                    </div>
+                                </td>
+                                <td className="px-5 py-4">
+                                    <div className="flex flex-col gap-1.5 w-24">
+                                        <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                                            <span>{project.progress || 0}%</span>
+                                        </div>
+                                        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
+                                            <div 
+                                                className="bg-slate-600 h-1.5 rounded-full transition-all duration-500 ease-out" 
+                                                style={{ width: `${project.progress || 0}%` }}
+                                            ></div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
