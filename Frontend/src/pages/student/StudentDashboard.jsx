@@ -18,7 +18,7 @@ import ProjectWorkspace from "../../components/workspace/ProjectWorkspace";
 // Component: ProjectOverview
 const ProjectOverview = ({ project, onUpdate }) => {
     return (
-        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full overflow-hidden shadow-sm">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Project Overview</h2>
                 {project.supervisor && (
@@ -58,7 +58,7 @@ const ProjectOverview = ({ project, onUpdate }) => {
 const FeedbackList = ({ feedbacks }) => {
     if (!feedbacks || feedbacks.length === 0) {
         return (
-            <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden shadow-sm">
+            <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full overflow-hidden shadow-sm">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
                 </div>
@@ -71,7 +71,7 @@ const FeedbackList = ({ feedbacks }) => {
     }
     
     return (
-        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full overflow-hidden shadow-sm">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
             </div>
@@ -315,9 +315,8 @@ const StudentDashboard = () => {
           </div>
       )}
 
-      {/* 🟢 PROJECT EXISTS STATE (Main Dashboard) */}
       {project && (
-          <div className="space-y-8 max-w-full mx-auto">
+          <div className="space-y-6 max-w-full mx-auto">
              
             {/* Dynamic Alerts */}
              {project.status === "Pending" && (
@@ -425,17 +424,19 @@ const StudentDashboard = () => {
                  <div className="lg:col-span-3 flex flex-col gap-6">
 
                      {/* UNIFIED WORKSPACE */}
-                     <button id="open-timeline-modal-btn" className="hidden" onClick={() => setIsTimelineModalOpen(true)}></button>
-                     <ProjectWorkspace 
-                         project={project} 
-                         workspaceItems={unifiedWorkspaceItems}
-                         completingTasks={completingTasks} 
-                         onMarkTaskDone={handleMarkTaskDone} 
-                         onMilestoneSubmitClick={(m) => { setSelectedMilestone(m); setIsSubmitModalOpen(true); }}
-                     />
+                     <div className="h-[320px]">
+                         <button id="open-timeline-modal-btn" className="hidden" onClick={() => setIsTimelineModalOpen(true)}></button>
+                         <ProjectWorkspace 
+                             project={project} 
+                             workspaceItems={unifiedWorkspaceItems}
+                             completingTasks={completingTasks} 
+                             onMarkTaskDone={handleMarkTaskDone} 
+                             onMilestoneSubmitClick={(m) => { setSelectedMilestone(m); setIsSubmitModalOpen(true); }}
+                         />
+                     </div>
 
                      {/* BOTTOM TWO CARDS */}
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[260px]">
                          <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
@@ -445,11 +446,11 @@ const StudentDashboard = () => {
                  {/* Right Column (span-2) */}
                  <div className="lg:col-span-2 flex flex-col gap-6">
 
-                    <div>
+                    <div className="h-[320px]">
                          <StudentActivityList activities={selfActivities} title="Your Recent Activity" />
                     </div>
 
-                    <div>
+                    <div className="h-[260px]">
                          <StudentActivityList activities={sysActivities} title="System Notifications" />
                     </div>
 

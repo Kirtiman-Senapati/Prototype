@@ -29,7 +29,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
     }
 
     return (
-        <div className="bg-white border border-slate-200 rounded-2xl flex flex-col shadow-sm overflow-hidden h-auto lg:h-[350px]">
+        <div className="bg-white border border-slate-200 rounded-2xl flex flex-col shadow-sm overflow-hidden h-full">
             {/* Unified Header */}
             <div className="p-4 md:p-6 border-b border-slate-100 bg-white flex justify-between items-center">
                 <div>
@@ -72,7 +72,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
 
                             return (
                                 <tr key={item._id} className="hover:bg-slate-50/70 transition-colors group bg-white">
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-3">
                                         <div className="flex items-center gap-3">
                                             {isTask ? (
                                                 <CheckSquare size={16} className={`shrink-0 ${displayStatus === 'Completed' ? 'text-slate-300' : 'text-slate-500'}`} />
@@ -99,19 +99,19 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-3">
                                         <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md ${
                                             isTask ? 'bg-slate-100 text-slate-600' : 'bg-slate-800 text-white'
                                         }`}>
                                             {item.type}
                                         </span>
                                     </td>
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-3">
                                         <span className={`text-[12px] font-medium ${displayStatus === 'Overdue' ? 'text-red-500' : 'text-slate-500'}`}>
                                             {item.deadline ? new Date(item.deadline).toLocaleDateString("en-GB") : 'N/A'}
                                         </span>
                                     </td>
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-3">
                                         <span className={`text-[11px] font-bold uppercase tracking-wide ${
                                             (displayStatus === 'Completed' || displayStatus === 'Approved') ? 'text-slate-400' :
                                             displayStatus === 'Overdue' ? 'text-red-600' :
@@ -121,7 +121,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                             {displayStatus}
                                         </span>
                                     </td>
-                                    <td className="px-5 py-4 text-right">
+                                    <td className="px-5 py-3 text-right">
                                         {isTask && (
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
