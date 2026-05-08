@@ -73,11 +73,22 @@ const MilestoneTimeline = ({
 
                 <div className="flex flex-col gap-4">
                     {milestones.map((m, idx) => {
+
                         // Dynamic Overdue calculation
                         let displayStatus = m.status;
                         if (m.deadline && m.status !== "Approved" && m.status !== "Completed" && new Date(m.deadline) < new Date(new Date().setHours(0,0,0,0))) {
                             displayStatus = "Overdue";
                         }
+
+                        // Footer text
+                        const footerText =
+                                displayStatus === "Approved"
+                                ? "Milestone approved"
+                                : displayStatus === "Rejected"
+                                ? "Needs revision"
+                                : displayStatus === "In Review"
+                                ? "Waiting for review"
+                                : "Awaiting submission";
                         return (
                         <div key={m._id || idx} className="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:-translate-y-[1px] transition-all">
                             <div className="flex justify-between items-start mb-2">
@@ -161,7 +172,7 @@ const MilestoneTimeline = ({
                             <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-slate-100">
     
                                 <p className="text-[11px] text-slate-500 font-medium">
-                                    Awaiting submission
+                                    {footerText}
                                 </p>
 
                                 {role === "student" && (m.status === "Pending" || m.status === "In Progress" || m.status === "Rejected") && (
