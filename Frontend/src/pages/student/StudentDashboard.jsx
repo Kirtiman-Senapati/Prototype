@@ -266,7 +266,7 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="space-y-4 pb-10 bg-[#F9FAFB] min-h-screen">
+    <div className="space-y-6 pb-10 bg-[#F9FAFB] min-h-screen">
       
       {/* Premium Header Section */}
       <div className="pt-2 pb-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
@@ -446,12 +446,18 @@ const StudentDashboard = () => {
                  {/* Right Column (span-2) */}
                  <div className="lg:col-span-2 flex flex-col gap-6">
 
-                    <div className="h-[320px]">
-                         <StudentActivityList activities={selfActivities} title="Your Recent Activity" />
+                    <div className="h-[260px]">
+                         <StudentActivityList
+                            activities={selfActivities}
+                            title="Your Recent Activity"
+                        />
                     </div>
 
-                    <div className="h-[260px]">
-                         <StudentActivityList activities={sysActivities} title="System Notifications" />
+                    <div className="h-[320px]">
+                        <StudentActivityList
+                            activities={sysActivities}
+                            title="System Notifications"
+                        />
                     </div>
 
                 </div>

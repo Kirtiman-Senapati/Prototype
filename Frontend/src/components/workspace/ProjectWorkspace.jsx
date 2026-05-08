@@ -14,9 +14,9 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
     if (!sortedItems || sortedItems.length === 0) {
         return (
             <div className="bg-white border border-slate-200 rounded-2xl flex flex-col h-[280px] overflow-hidden shadow-sm">
-                <div className="p-4 md:p-6 border-b border-slate-100 bg-white flex justify-between items-center">
+                <div className="px-5 py-4 border-b border-slate-100 bg-white flex justify-between items-center">
                     <div>
-                        <h2 className="text-lg font-bold text-slate-900">Project Workspace</h2>
+                        <h2 className="text-[17px] font-semibold text-slate-900">Project Workspace</h2>
                         <p className="text-sm text-slate-500 mt-1 font-medium">Active Tasks & Phases</p>
                     </div>
                 </div>
@@ -31,14 +31,13 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
     return (
         <div className="bg-white border border-slate-200 rounded-2xl flex flex-col shadow-sm overflow-hidden h-full">
             {/* Unified Header */}
-            <div className="p-4 md:p-6 border-b border-slate-100 bg-white flex justify-between items-center">
+            <div className="px-5 py-4 border-b border-slate-100 bg-white flex justify-between items-center">
                 <div>
-                    <h2 className="text-lg font-bold text-slate-900">Project Workspace</h2>
-                    <p className="text-sm text-slate-500 mt-1 font-medium">Active Tasks & Phases</p>
+                    <h2 className="text-[17px] font-semibold text-slate-900">Workspace Tasks</h2>
                 </div>
                 <button 
                     onClick={() => document.getElementById('open-timeline-modal-btn')?.click()}
-                    className="text-[12px] font-semibold text-slate-600 hover:text-slate-900 transition-colors bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm"
+                    className="text-[12px] font-medium text-slate-600 hover:text-slate-900 transition-colors bg-slate-50 hover:bg-slate-100 px-3 py-1 rounded-lg border border-slate-200 shadow-sm"
                 >
                     View Timeline
                 </button>
@@ -73,21 +72,21 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                             return (
                                 <tr key={item._id} className="hover:bg-slate-50/70 transition-colors group bg-white">
                                     <td className="px-5 py-3">
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2.5">
                                             {isTask ? (
                                                 <CheckSquare size={16} className={`shrink-0 ${displayStatus === 'Completed' ? 'text-slate-300' : 'text-slate-500'}`} />
                                             ) : (
                                                 <FolderKanban size={16} className={`shrink-0 ${displayStatus === 'Approved' ? 'text-slate-300' : 'text-slate-500'}`} />
                                             )}
                                             <div className="min-w-0">
-                                                <h3 className={`text-[13px] font-bold leading-snug truncate transition-colors ${
+                                                <h3 className={`text-[13px] font-semibold leading-snug truncate transition-colors ${
                                                     (displayStatus === 'Completed' || displayStatus === 'Approved') 
                                                         ? 'text-slate-400 line-through' 
                                                         : 'text-slate-800'
                                                 }`}>
                                                     {item.title}
                                                 </h3>
-                                                <div className="text-[10px] font-medium text-slate-400 mt-0.5">
+                                                <div className="text-[10px] font-normal text-slate-500 mt-0">
                                                     Assigned by {item.assignedByName || (item.assignedByRole === 'admin' ? 'Admin' : 'Supervisor')}
                                                 </div>
                                                 {(item.files?.length > 0 || item.remarks || item.rejectionReason || item.feedback) && (
@@ -101,7 +100,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                     </td>
                                     <td className="px-5 py-3">
                                         <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md ${
-                                            isTask ? 'bg-slate-100 text-slate-600' : 'bg-slate-800 text-white'
+                                            isTask ? 'bg-slate-100 text-slate-600' : 'bg-slate-100 text-slate-700'
                                         }`}>
                                             {item.type}
                                         </span>
@@ -112,7 +111,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                         </span>
                                     </td>
                                     <td className="px-5 py-3">
-                                        <span className={`text-[11px] font-bold uppercase tracking-wide ${
+                                        <span className={`text-[11px] font-medium uppercase tracking-wide ${
                                             (displayStatus === 'Completed' || displayStatus === 'Approved') ? 'text-slate-400' :
                                             displayStatus === 'Overdue' ? 'text-red-600' :
                                             displayStatus === 'Rejected' ? 'text-orange-600' :
@@ -127,7 +126,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                                 <button
                                                     onClick={() => onMarkTaskDone(item)}
                                                     disabled={!canComplete || completingTasks[item._id]}
-                                                    className={`text-[11px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 ${
+                                                    className={`text-[11px] font-medium uppercase tracking-wide px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 ${
                                                         displayStatus === 'Completed' ? 'text-slate-400 bg-transparent' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-sm'
                                                     }`}
                                                 >
@@ -141,7 +140,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                                 {canSubmit && (
                                                     <button 
                                                         onClick={() => onMilestoneSubmitClick(item)}
-                                                        className="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wide hover:bg-slate-800 transition shadow-sm"
+                                                        className="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1 rounded-md text-[11px] font-medium uppercase tracking-wide hover:bg-slate-800 transition shadow-sm"
                                                     >
                                                         <UploadCloud size={14} /> Submit
                                                     </button>
@@ -151,7 +150,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                                         // Use the unified timeline modal
                                                         document.getElementById('open-timeline-modal-btn')?.click();
                                                     }}
-                                                    className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-slate-500 hover:text-slate-800 px-2 py-1.5 transition-colors"
+                                                    className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 hover:text-slate-800 px-2 py-1.5 transition-colors"
                                                 >
                                                     Details <ChevronRight size={14} />
                                                 </button>
