@@ -37,21 +37,21 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                 </div>
                 <button 
                     onClick={() => document.getElementById('open-timeline-modal-btn')?.click()}
-                    className="text-[12px] font-medium text-slate-600 hover:text-slate-900 transition-colors bg-slate-50 hover:bg-slate-100 px-3 py-1 rounded-lg border border-slate-200 shadow-sm"
+                    className="text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors"
                 >
-                    View Timeline
+                    View All
                 </button>
             </div>
 
             <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar">
                 <table className="w-full text-left border-collapse min-w-[600px]">
-                    <thead className="bg-white sticky top-0 z-20 shadow-sm backdrop-blur-none">
+                    <thead className="bg-white">
                         <tr className="border-b border-slate-100">
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Work Item</th>
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Type</th>
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Deadline</th>
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Status</th>
-                            <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide text-right">Action</th>
+                            <th className="px-5 py-3 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.18em] text-right">View</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -137,22 +137,14 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                                         
                                         {isPhase && (
                                             <div className="flex items-center justify-end gap-2">
-                                                {canSubmit && (
-                                                    <button 
-                                                        onClick={() => onMilestoneSubmitClick(item)}
-                                                        className="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1 rounded-md text-[11px] font-medium uppercase tracking-wide hover:bg-slate-800 transition shadow-sm"
-                                                    >
-                                                        <UploadCloud size={14} /> Submit
-                                                    </button>
-                                                )}
                                                 <button 
                                                     onClick={() => {
                                                         // Use the unified timeline modal
                                                         document.getElementById('open-timeline-modal-btn')?.click();
                                                     }}
-                                                    className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 hover:text-slate-800 px-2 py-1.5 transition-colors"
+                                                    className="flex items-center justify-end gap-1 text-[11px] font-medium text-slate-500 hover:text-slate-800 transition-colors"
                                                 >
-                                                    Details <ChevronRight size={14} />
+                                                    View <ChevronRight size={12} strokeWidth={1.8} />
                                                 </button>
                                             </div>
                                         )}
