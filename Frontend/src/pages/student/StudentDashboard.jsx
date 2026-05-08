@@ -13,70 +13,12 @@ import StudentActivityList from './components/StudentActivityList';
 import MilestoneTimeline from "../../components/milestones/MilestoneTimeline";
 import SubmitMilestoneModal from "../../components/milestones/SubmitMilestoneModal";
 
-// Component: TasksList (Mirrors Admin ProjectList)
-const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
-    if (!tasks || tasks.length === 0) {
-        return (
-            <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[320px] overflow-hidden">
-                <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
-                    <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
-                </div>
-                <div className="flex flex-col items-center justify-center h-full text-slate-400">
-                   <CheckSquare size={28} />
-                   <p className="mt-2 text-sm font-medium">No tasks yet</p>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[320px] overflow-hidden">
-            <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center z-10">
-                <h2 className="text-sm font-semibold text-slate-800">Assigned Tasks</h2>
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{tasks.length} Total</span>
-            </div>
-            <div className="overflow-y-auto custom-scrollbar flex-1 min-h-0">
-                <table className="w-full text-left border-collapse">
-                    <thead className="sticky top-0 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10">
-                        <tr>
-                            <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Task Name</th>
-                            <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Deadline</th>
-                            <th className="px-5 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {[...tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task) => (
-                            <tr key={task._id} className="hover:bg-slate-50/50 transition-colors group">
-                                <td className="px-5 py-4">
-                                    <h3 className={`text-sm font-semibold leading-snug line-clamp-1 transition-colors ${task.status === 'Completed' ? 'text-slate-400 line-through' : 'text-slate-900 group-hover:text-slate-700'}`}>{task.title}</h3>
-                                </td>
-                                <td className="px-5 py-4">
-                                    <span className="text-xs text-slate-500 font-medium">
-                                        {task.deadline ? new Date(task.deadline).toLocaleDateString("en-GB") : 'No Deadline'}
-                                    </span>
-                                </td>
-                                <td className="px-5 py-4 text-right">
-                                    <button
-                                        onClick={() => onMarkDone(task)}
-                                        disabled={task.status === 'Completed' || completingTasks[task._id]}
-                                        className={`text-[12px] font-medium px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 ${task.status === 'Completed' ? 'text-slate-400 bg-transparent' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'}`}
-                                    >
-                                        {task.status === 'Completed' ? "Done" : completingTasks[task._id] ? "..." : "Mark Done"}
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
-};
+import ProjectWorkspace from "../../components/workspace/ProjectWorkspace";
 
 // Component: ProjectOverview
 const ProjectOverview = ({ project, onUpdate }) => {
     return (
-        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden shadow-sm">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Project Overview</h2>
                 {project.supervisor && (
@@ -116,7 +58,7 @@ const ProjectOverview = ({ project, onUpdate }) => {
 const FeedbackList = ({ feedbacks }) => {
     if (!feedbacks || feedbacks.length === 0) {
         return (
-            <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden shadow-sm">
                 <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                     <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
                 </div>
@@ -129,7 +71,7 @@ const FeedbackList = ({ feedbacks }) => {
     }
     
     return (
-        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full min-h-[220px] max-h-[260px] overflow-hidden shadow-sm">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
                 <h2 className="text-sm font-semibold text-slate-800">Latest Feedback</h2>
             </div>
@@ -456,23 +398,13 @@ const StudentDashboard = () => {
                  {/* Left Column (span-3) */}
                  <div className="lg:col-span-3 flex flex-col gap-6">
 
-                     {/* TOP CARD */}
-                     <div className="h-[320px]">
-                         <TasksList 
-                             tasks={project.tasks} 
-                             completingTasks={completingTasks} 
-                             onMarkDone={handleMarkTaskDone} 
-                         />
-                     </div>
-
-                     {/* MILESTONES CARD */}
-                     <div className="min-h-[320px]">
-                         <MilestoneTimeline 
-                             milestones={project.milestones || []} 
-                             role="student" 
-                             onSubmitClick={(m) => { setSelectedMilestone(m); setIsSubmitModalOpen(true); }}
-                         />
-                     </div>
+                     {/* UNIFIED WORKSPACE */}
+                     <ProjectWorkspace 
+                         project={project} 
+                         completingTasks={completingTasks} 
+                         onMarkTaskDone={handleMarkTaskDone} 
+                         onMilestoneSubmitClick={(m) => { setSelectedMilestone(m); setIsSubmitModalOpen(true); }}
+                     />
 
                      {/* BOTTOM TWO CARDS */}
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[260px]">
