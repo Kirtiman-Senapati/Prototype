@@ -123,9 +123,17 @@ export const addTaskToProject = async (projectId, taskData, assignedByRole, user
         }
     }
 
-    project.tasks.push({
+    const newId = new mongoose.Types.ObjectId();
+    const newTask = {
+        _id: newId,
         ...taskData,
         assignedByRole
+    };
+
+    project.tasks.push(newTask);
+    project.workspaceItems.push({
+        ...newTask,
+        type: "task"
     });
 
     await project.save();

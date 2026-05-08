@@ -110,7 +110,8 @@ const StudentDashboard = () => {
   const [completingTasks, setCompletingTasks] = useState({});
   const [isCompletingProject, setIsCompletingProject] = useState(false);
   
-  // Milestone state
+  // Milestone & Timeline state
+  const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState(null);
   const [isSubmittingMilestone, setIsSubmittingMilestone] = useState(false);
@@ -238,6 +239,31 @@ const StudentDashboard = () => {
       const actorId = (a.actor?._id || a.actor)?.toString();
       return actorId !== authUser?._id?.toString();
   }) || [];
+
+  // ----------------------------------------------------
+  // BACKWARDS COMPATIBILITY MIGRATION (Unified Workspace)
+  // ----------------------------------------------------
+  let unifiedWorkspaceItems = [];
+  if (project) {
+      const itemMap = new Map();
+      
+      // 1. Old Tasks
+      (project.tasks || []).forEach(t => {
+          itemMap.set(t._id.toString(), { ...t, type: 'task' });
+      });
+      
+      // 2. Old Milestones
+      (project.milestones || []).forEach(m => {
+          itemMap.set(m._id.toString(), { ...m, type: 'phase' });
+      });
+      
+      // 3. New Workspace Items (overwrites dual-written old ones by ID)
+      (project.workspaceItems || []).forEach(wi => {
+          itemMap.set(wi._id.toString(), wi);
+      });
+      
+      unifiedWorkspaceItems = Array.from(itemMap.values()).sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+  }
 
   return (
     <div className="space-y-4 pb-10 bg-[#F9FAFB] min-h-screen">
@@ -399,8 +425,10 @@ const StudentDashboard = () => {
                  <div className="lg:col-span-3 flex flex-col gap-6">
 
                      {/* UNIFIED WORKSPACE */}
+                     <button id="open-timeline-modal-btn" className="hidden" onClick={() => setIsTimelineModalOpen(true)}></button>
                      <ProjectWorkspace 
                          project={project} 
+                         workspaceItems={unifiedWorkspaceItems}
                          completingTasks={completingTasks} 
                          onMarkTaskDone={handleMarkTaskDone} 
                          onMilestoneSubmitClick={(m) => { setSelectedMilestone(m); setIsSubmitModalOpen(true); }}
@@ -445,6 +473,30 @@ const StudentDashboard = () => {
           milestone={selectedMilestone}
           isSubmitting={isSubmittingMilestone}
       />
+
+      {/* View Timeline Modal (Full Unified Workspace Details) */}
+      {isTimelineModalOpen && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center pt-10 p-4 bg-slate-900/40 backdrop-blur-sm">
+              <div className="bg-white overflow-hidden rounded-xl w-full max-w-3xl border border-slate-200 flex flex-col max-h-[90vh] shadow-xl">
+                  <div className="flex justify-between items-center p-5 border-b border-slate-100">
+                      <div>
+                          <h2 className="text-xl font-bold text-slate-800">Workspace Details</h2>
+                          <p className="text-xs text-slate-500 font-medium mt-1">Full workflow timeline and submissions</p>
+                      </div>
+                      <button onClick={() => setIsTimelineModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition text-sm font-semibold">
+                          Close
+                      </button>
+                  </div>
+                  <div className="p-5 overflow-y-auto custom-scrollbar flex-1 bg-slate-50/50">
+                      <MilestoneTimeline 
+                          milestones={unifiedWorkspaceItems} 
+                          role="student" 
+                          onSubmitClick={(m) => { setSelectedMilestone(m); setIsSubmitModalOpen(true); setIsTimelineModalOpen(false); }}
+                      />
+                  </div>
+              </div>
+          </div>
+      )}
     </div>
   );
 };

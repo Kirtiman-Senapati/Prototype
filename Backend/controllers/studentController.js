@@ -231,10 +231,17 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
     }
 
     task.status = status;
+    let completionDate = undefined;
     if (status === "Completed") {
-        task.completedAt = new Date();
-    } else {
-        task.completedAt = undefined;
+        completionDate = new Date();
+    }
+    task.completedAt = completionDate;
+
+    // Dual update for workspaceItems
+    const workspaceItem = project.workspaceItems.id(taskId);
+    if (workspaceItem) {
+        workspaceItem.status = status;
+        workspaceItem.completedAt = completionDate;
     }
 
     await project.save();

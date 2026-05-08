@@ -34,6 +34,21 @@ const milestoneSchema = new mongoose.Schema({
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 });
 
+const workspaceItemSchema = new mongoose.Schema({
+    type: { type: String, enum: ["task", "phase"], required: true },
+    title: { type: String, required: true },
+    description: { type: String },
+    status: { type: String, enum: ["Pending", "In Progress", "In Review", "Approved", "Rejected", "Completed", "Overdue"], default: "Pending" },
+    deadline: { type: Date },
+    files: [fileSchema],
+    remarks: { type: String, default: "" },
+    feedback: { type: String, default: "" },
+    completedAt: { type: Date },
+    completedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    assignedByRole: { type: String, enum: ["admin", "supervisor"], default: "supervisor" }
+});
+
 const projectSchema = new mongoose.Schema(
     {
         title: {
@@ -82,6 +97,7 @@ const projectSchema = new mongoose.Schema(
         files: [fileSchema],
         tasks: [taskSchema],
         milestones: [milestoneSchema],
+        workspaceItems: [workspaceItemSchema],
     },
     { timestamps: true }
 );

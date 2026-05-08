@@ -5,6 +5,7 @@ import { User } from "../models/user.js";
 import { logActivity } from "../utils/activityLogger.js";
 import { getIo } from "../utils/socket.js";
 import { emitRefresh } from "../utils/socketEvents.js";
+import mongoose from "mongoose";
 import multer from "multer";
 import path from "path";
 
@@ -71,11 +72,19 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Unauthorized: Not the supervisor for this project", 403));
     }
 
-    project.milestones.push({
+    const newId = new mongoose.Types.ObjectId();
+    const newMilestone = {
+        _id: newId,
         title,
         description,
         deadline,
         status: "Pending"
+    };
+
+    project.milestones.push(newMilestone);
+    project.workspaceItems.push({
+        ...newMilestone,
+        type: "phase"
     });
 
     project.progress = recalculateProgress(project);
@@ -126,6 +135,14 @@ export const updateMilestone = asyncHandler(async (req, res, next) => {
     if (description !== undefined) milestone.description = description;
     if (deadline) milestone.deadline = deadline;
 
+    // Dual update for workspaceItems
+    const workspaceItem = project.workspaceItems.id(milestoneId);
+    if (workspaceItem) {
+        if (title) workspaceItem.title = title;
+        if (description !== undefined) workspaceItem.description = description;
+        if (deadline) workspaceItem.deadline = deadline;
+    }
+
     await project.save();
 
     const io = getIo();
@@ -152,6 +169,10 @@ export const deleteMilestone = asyncHandler(async (req, res, next) => {
     }
 
     project.milestones.pull(milestoneId);
+    
+    const workspaceItem = project.workspaceItems.id(milestoneId);
+    if (workspaceItem) project.workspaceItems.pull(milestoneId);
+
     project.progress = recalculateProgress(project);
     await project.save();
 
@@ -186,15 +207,22 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
     }
 
     if (req.file) {
-        milestone.files.push({
-        filename: req.file.originalname,
-        url: `/uploads/${req.file.filename}`,
-        type: "Document",
-        uploadedBy: req.user._id
-    });
+        const fileData = {
+            filename: req.file.originalname,
+            url: `/uploads/${req.file.filename}`,
+            type: "Document",
+            uploadedBy: req.user._id
+        };
+        milestone.files.push(fileData);
+        
+        const workspaceItem = project.workspaceItems.id(milestoneId);
+        if (workspaceItem) workspaceItem.files.push(fileData);
     }
 
     milestone.status = "In Review";
+    const workspaceItem = project.workspaceItems.id(milestoneId);
+    if (workspaceItem) workspaceItem.status = "In Review";
+
     await project.save();
 
     const admins = await User.find({ role: "Admin" }).select("_id");
@@ -241,13 +269,36 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
     if (!milestone) return next(new ErrorHandler("Milestone not found", 404));
 
     milestone.status = status;
+    let completedAt = undefined;
+    let approvedBy = undefined;
+    let reviewRemarks = "";
+    let rejectionReason = "";
+
     if (status === "Approved") {
-        milestone.completedAt = new Date();
-        milestone.approvedBy = req.user._id;
-        milestone.reviewRemarks = remarks || "Approved successfully.";
+        completedAt = new Date();
+        approvedBy = req.user._id;
+        reviewRemarks = remarks || "Approved successfully.";
+        milestone.completedAt = completedAt;
+        milestone.approvedBy = approvedBy;
+        milestone.reviewRemarks = reviewRemarks;
     } else {
-        milestone.rejectionReason = remarks || "Requires revision.";
-        milestone.reviewRemarks = remarks || "";
+        rejectionReason = remarks || "Requires revision.";
+        reviewRemarks = remarks || "";
+        milestone.rejectionReason = rejectionReason;
+        milestone.reviewRemarks = reviewRemarks;
+    }
+
+    // Dual update for workspaceItems
+    const workspaceItem = project.workspaceItems.id(milestoneId);
+    if (workspaceItem) {
+        workspaceItem.status = status;
+        if (status === "Approved") {
+            workspaceItem.completedAt = completedAt;
+            workspaceItem.approvedBy = approvedBy;
+            workspaceItem.remarks = reviewRemarks;
+        } else {
+            workspaceItem.remarks = reviewRemarks;
+        }
     }
 
     project.progress = recalculateProgress(project);

@@ -1,95 +1,165 @@
-import React from 'react';
-import { CheckSquare, FolderKanban } from 'lucide-react';
-import MilestoneTimeline from '../milestones/MilestoneTimeline';
+import React, { useState } from 'react';
+import { CheckSquare, FolderKanban, ChevronRight, FileText, UploadCloud, MessageSquare } from 'lucide-react';
 
-// Compact Tasks List Component
-const TasksList = ({ tasks, completingTasks, onMarkDone }) => {
-    if (!tasks || tasks.length === 0) {
+// Unified Project Workspace Component
+const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMarkTaskDone, onMilestoneSubmitClick }) => {
+    
+    // Sort items by deadline
+    const sortedItems = [...workspaceItems].sort((a,b) => {
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return new Date(a.deadline) - new Date(b.deadline);
+    });
+
+    if (!sortedItems || sortedItems.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center py-10 text-slate-400 border-b border-slate-100">
-                <CheckSquare size={28} />
-                <p className="mt-2 text-sm font-medium">No tasks yet</p>
+            <div className="bg-white border border-slate-200 rounded-2xl flex flex-col h-[280px] overflow-hidden shadow-sm">
+                <div className="p-4 md:p-6 border-b border-slate-100 bg-white flex justify-between items-center">
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-900">Project Workspace</h2>
+                        <p className="text-sm text-slate-500 mt-1 font-medium">Active Tasks & Phases</p>
+                    </div>
+                </div>
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+                    <FolderKanban size={28} />
+                    <p className="mt-2 text-sm font-medium">No workspace items yet</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="border-b border-slate-100">
-            <div className="px-6 py-4 flex justify-between items-center bg-slate-50/50">
-                <h3 className="text-[13px] font-bold text-slate-700 uppercase tracking-wide flex items-center gap-2">
-                    <CheckSquare size={16} className="text-slate-500" /> Assigned Tasks
-                </h3>
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{tasks.length} Total</span>
+        <div className="bg-white border border-slate-200 rounded-2xl flex flex-col shadow-sm overflow-hidden h-auto lg:h-[350px]">
+            {/* Unified Header */}
+            <div className="p-4 md:p-6 border-b border-slate-100 bg-white flex justify-between items-center">
+                <div>
+                    <h2 className="text-lg font-bold text-slate-900">Project Workspace</h2>
+                    <p className="text-sm text-slate-500 mt-1 font-medium">Active Tasks & Phases</p>
+                </div>
+                <button 
+                    onClick={() => document.getElementById('open-timeline-modal-btn')?.click()}
+                    className="text-[12px] font-semibold text-slate-600 hover:text-slate-900 transition-colors bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm"
+                >
+                    View Timeline
+                </button>
             </div>
-            <div className="overflow-y-auto overflow-x-auto max-h-[260px] custom-scrollbar">
-                <table className="w-full text-left border-collapse">
-                    <thead>
+
+            <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar">
+                <table className="w-full text-left border-collapse min-w-[600px]">
+                    <thead className="bg-slate-50/50 sticky top-0 z-10">
                         <tr className="border-b border-slate-100">
-                            <th className="px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Task Name</th>
-                            <th className="px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Deadline</th>
-                            <th className="px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide text-right">Action</th>
+                            <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Work Item</th>
+                            <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Type</th>
+                            <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Deadline</th>
+                            <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Status</th>
+                            <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {[...tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).map((task) => (
-                            <tr key={task._id} className="hover:bg-slate-50/50 transition-colors group">
-                                <td className="px-6 py-4">
-                                    <h3 className={`text-[13px] font-semibold leading-snug line-clamp-1 transition-colors ${task.status === 'Completed' ? 'text-slate-400 line-through' : 'text-slate-800 group-hover:text-slate-600'}`}>{task.title}</h3>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="text-[12px] text-slate-500 font-medium">
-                                        {task.deadline ? new Date(task.deadline).toLocaleDateString("en-GB") : 'No Deadline'}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <button
-                                        onClick={() => onMarkDone(task)}
-                                        disabled={task.status === 'Completed' || completingTasks[task._id]}
-                                        className={`text-[11px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 ${task.status === 'Completed' ? 'text-slate-400 bg-transparent' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-sm'}`}
-                                    >
-                                        {task.status === 'Completed' ? "Done" : completingTasks[task._id] ? "..." : "Mark Done"}
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {sortedItems.map((item) => {
+                            const isTask = item.type === "task";
+                            const isPhase = item.type === "phase";
+                            
+                            // Dynamic Overdue calculation
+                            let displayStatus = item.status;
+                            if (item.deadline && item.status !== "Approved" && item.status !== "Completed" && new Date(item.deadline) < new Date(new Date().setHours(0,0,0,0))) {
+                                displayStatus = "Overdue";
+                            }
+
+                            // Submittable checking
+                            const canSubmit = isPhase && (displayStatus === "Pending" || displayStatus === "In Progress" || displayStatus === "Rejected");
+                            const canComplete = isTask && displayStatus !== "Completed";
+
+                            return (
+                                <tr key={item._id} className="hover:bg-slate-50/70 transition-colors group bg-white">
+                                    <td className="px-5 py-4">
+                                        <div className="flex items-center gap-3">
+                                            {isTask ? (
+                                                <CheckSquare size={16} className={`shrink-0 ${displayStatus === 'Completed' ? 'text-slate-300' : 'text-slate-500'}`} />
+                                            ) : (
+                                                <FolderKanban size={16} className={`shrink-0 ${displayStatus === 'Approved' ? 'text-slate-300' : 'text-slate-500'}`} />
+                                            )}
+                                            <div className="min-w-0">
+                                                <h3 className={`text-[13px] font-bold leading-snug truncate transition-colors ${
+                                                    (displayStatus === 'Completed' || displayStatus === 'Approved') 
+                                                        ? 'text-slate-400 line-through' 
+                                                        : 'text-slate-800'
+                                                }`}>
+                                                    {item.title}
+                                                </h3>
+                                                {(item.files?.length > 0 || item.remarks || item.rejectionReason || item.feedback) && (
+                                                    <div className="flex gap-2 mt-1">
+                                                        {item.files?.length > 0 && <span className="flex items-center gap-1 text-[10px] font-medium text-slate-500"><FileText size={10} /> {item.files.length}</span>}
+                                                        {(item.remarks || item.rejectionReason || item.feedback) && <span className="flex items-center gap-1 text-[10px] font-medium text-slate-500"><MessageSquare size={10} /> Feedback</span>}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-5 py-4">
+                                        <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md ${
+                                            isTask ? 'bg-slate-100 text-slate-600' : 'bg-slate-800 text-white'
+                                        }`}>
+                                            {item.type}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-4">
+                                        <span className={`text-[12px] font-medium ${displayStatus === 'Overdue' ? 'text-red-500' : 'text-slate-500'}`}>
+                                            {item.deadline ? new Date(item.deadline).toLocaleDateString("en-GB") : 'N/A'}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-4">
+                                        <span className={`text-[11px] font-bold uppercase tracking-wide ${
+                                            (displayStatus === 'Completed' || displayStatus === 'Approved') ? 'text-slate-400' :
+                                            displayStatus === 'Overdue' ? 'text-red-600' :
+                                            displayStatus === 'Rejected' ? 'text-orange-600' :
+                                            'text-slate-700'
+                                        }`}>
+                                            {displayStatus}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-4 text-right">
+                                        {isTask && (
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    onClick={() => onMarkTaskDone(item)}
+                                                    disabled={!canComplete || completingTasks[item._id]}
+                                                    className={`text-[11px] font-bold uppercase tracking-wide px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 ${
+                                                        displayStatus === 'Completed' ? 'text-slate-400 bg-transparent' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-sm'
+                                                    }`}
+                                                >
+                                                    {displayStatus === 'Completed' ? "Done" : completingTasks[item._id] ? "..." : "Mark Done"}
+                                                </button>
+                                            </div>
+                                        )}
+                                        
+                                        {isPhase && (
+                                            <div className="flex items-center justify-end gap-2">
+                                                {canSubmit && (
+                                                    <button 
+                                                        onClick={() => onMilestoneSubmitClick(item)}
+                                                        className="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wide hover:bg-slate-800 transition shadow-sm"
+                                                    >
+                                                        <UploadCloud size={14} /> Submit
+                                                    </button>
+                                                )}
+                                                <button 
+                                                    onClick={() => {
+                                                        // Use the unified timeline modal
+                                                        document.getElementById('open-timeline-modal-btn')?.click();
+                                                    }}
+                                                    className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-slate-500 hover:text-slate-800 px-2 py-1.5 transition-colors"
+                                                >
+                                                    Details <ChevronRight size={14} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
-            </div>
-        </div>
-    );
-};
-
-// Unified Project Workspace Component
-const ProjectWorkspace = ({ project, completingTasks, onMarkTaskDone, onMilestoneSubmitClick }) => {
-    return (
-        <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-auto lg:h-[420px] overflow-hidden shadow-sm">
-            {/* Unified Header */}
-            <div className="p-4 md:p-6 border-b border-slate-100 bg-white">
-                <h2 className="text-lg font-bold text-slate-900">Project Workspace</h2>
-                <p className="text-sm text-slate-500 mt-1 font-medium">Track your tasks, submissions and project phases in one place.</p>
-            </div>
-
-            {/* Task Section - Compact Personality */}
-            <TasksList 
-                tasks={project.tasks} 
-                completingTasks={completingTasks} 
-                onMarkDone={onMarkTaskDone} 
-            />
-
-            {/* Milestone Section - Rich Personality */}
-            <div className="flex flex-col flex-1 min-h-0">
-                <div className="px-6 py-4 flex justify-between items-center bg-slate-50/50 border-b border-slate-100">
-                    <h3 className="text-[13px] font-bold text-slate-700 uppercase tracking-wide flex items-center gap-2">
-                        <FolderKanban size={16} className="text-slate-500" /> Project Phases
-                    </h3>
-                </div>
-                <div className="p-4 md:p-6 overflow-y-auto custom-scrollbar flex-1 min-h-0 max-h-[180px]">
-                    <MilestoneTimeline 
-                        milestones={project.milestones || []} 
-                        role="student" 
-                        onSubmitClick={onMilestoneSubmitClick}
-                    />
-                </div>
             </div>
         </div>
     );
