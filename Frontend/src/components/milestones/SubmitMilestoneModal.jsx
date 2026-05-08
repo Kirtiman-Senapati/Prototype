@@ -19,7 +19,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
                 <div className="flex justify-between items-center p-5 border-b border-slate-100">
                     <div>
                         <h2 className="text-lg font-bold text-slate-800">Submit Milestone</h2>
@@ -48,7 +48,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                                 </div>
                                 <div>
                                     <p className="text-sm font-semibold text-slate-700">{file ? file.name : "Click to upload a file"}</p>
-                                    <p className="text-[11px] text-slate-400 mt-1">PDF, DOCX, ZIP up to 5MB</p>
+                                    <p className="text-[11px] text-slate-400 mt-1">PDF, DOCX, ZIP up to 10MB</p>
                                 </div>
                             </div>
                         </div>

@@ -326,9 +326,10 @@ const ProjectsPage = () => {
                 </div>
             </div>
 
-            {/* Main Projects Table */}
+            {/* Main Projects Table / Cards */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[900px]">
                         <thead>
                             <tr className="bg-slate-50 text-slate-600 text-[11px] tracking-wide uppercase border-b border-slate-200">
@@ -439,12 +440,72 @@ const ProjectsPage = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Mobile Card View */}
+                <div className="block md:hidden flex flex-col divide-y divide-slate-100">
+                    {filteredProjects.length === 0 ? (
+                        <div className="p-8 text-center text-slate-500 bg-slate-50/50">
+                            <FolderKanban size={32} className="mx-auto text-slate-300 mb-3" />
+                            <p className="text-sm font-medium text-slate-600">No projects found.</p>
+                        </div>
+                    ) : (
+                        filteredProjects.map(proj => (
+                            <div key={proj._id} className="p-4 bg-white hover:bg-slate-50 transition-colors flex flex-col gap-3">
+                                <div className="flex justify-between items-start">
+                                    <div className="pr-2">
+                                        <h3 className="text-[14px] font-bold text-slate-900 leading-tight line-clamp-2">{proj.title}</h3>
+                                        <p className="text-xs text-slate-500 mt-1 font-medium">{proj.student?.name || <span className="text-red-500 italic">Deleted User</span>}</p>
+                                    </div>
+                                    <span className={`shrink-0 px-2.5 py-1 text-[10px] uppercase font-bold rounded-full border ${
+                                        proj.status === 'Completed' ? 'bg-green-50 text-slate-800 border-slate-500' :
+                                        proj.status === 'Approved' ? 'bg-slate-50 text-slate-700 border-slate-200' :
+                                        proj.status === 'Rejected' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                                        proj.status === 'Incomplete' ? 'bg-slate-100 text-slate-600 border-slate-200' :
+                                        'bg-amber-50 text-amber-700 border-amber-200'
+                                    }`}>
+                                        {proj.status === 'Approved' ? 'Active' : proj.status}
+                                    </span>
+                                </div>
+                                
+                                <div className="flex items-center gap-4 text-xs text-slate-500 mt-1">
+                                    <div className="flex items-center gap-1.5">
+                                        <Briefcase size={12} className="text-slate-400" />
+                                        <span className="font-medium">{proj.supervisor?.name || 'Unassigned'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <Calendar size={12} className="text-slate-400" />
+                                        <span className={`font-medium ${getDeadlineStyle(proj).text}`}>
+                                            {proj.deadline ? new Date(proj.deadline).toLocaleDateString("en-GB") : 'N/A'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between mt-2 pt-3 border-t border-slate-100">
+                                    <div className="flex flex-col gap-1.5 w-1/2">
+                                        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Progress</span>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                                <div className="bg-slate-600 h-1.5 rounded-full" style={{ width: `${Math.min(proj.progress || 0, 100)}%` }}></div>
+                                            </div>
+                                            <span className="text-[10px] font-bold text-slate-500">{Math.min(proj.progress || 0, 100)}%</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => setSelectedProject(proj)} className="text-[11px] font-bold text-slate-700 border border-slate-200 bg-white px-3 py-1.5 rounded-md hover:bg-slate-50 shadow-sm transition-all">
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
 
             {/*  PROJECT DETAILS MODAL */}
             {selectedProject && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-5xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh] shadow-xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm">
+                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-5xl border border-slate-200 flex flex-col max-h-[85vh] shadow-xl">
 
                         {/* Modal Header */}
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
@@ -786,7 +847,7 @@ const ProjectsPage = () => {
             {/* Task Add Modal for Admin */}
             {isTaskModalOpen && selectedProject && (
                 <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-                    <div className="modal-content bg-white p-6 border border-slate-200 rounded-xl shadow-xl max-w-md w-full animate-in zoom-in-95 duration-200">
+                    <div className="modal-content bg-white p-6 border border-slate-200 rounded-xl shadow-xl max-w-md w-full">
                         <div className="mb-6 flex justify-between items-start">
                             <div>
                                 <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><Plus className="text-slate-600" /> Assign Task</h2>

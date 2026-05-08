@@ -13,7 +13,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
                 <div className="flex justify-between items-center p-5 border-b border-slate-100">
                     <div>
                         <h2 className="text-lg font-bold text-slate-800">Review Milestone</h2>
@@ -35,7 +35,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, isSubmitti
                         <textarea 
                             value={remarks} 
                             onChange={(e) => setRemarks(e.target.value)} 
-                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none text-sm min-h-[100px] resize-none" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-400 focus:ring-4 focus:ring-slate-100 transition outline-none text-sm min-h-[100px] resize-none" 
                             placeholder="Provide feedback on the submission..." 
                         />
                     </div>

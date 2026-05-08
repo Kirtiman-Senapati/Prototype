@@ -49,7 +49,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                         {projects.map((project) => (
                             <tr key={project._id} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
                                 <td className="px-5 py-4">
-                                    <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">{project.title}</h3>
+                                    <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-slate-700 transition-colors line-clamp-1">{project.title}</h3>
                                     <p className="text-xs text-slate-500 mt-1">Student: {project.student?.name || 'Unknown'}</p>
                                 </td>
                                 <td className="px-5 py-4">
@@ -82,7 +82,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                         <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
                                             <div 
                                                 className="bg-slate-600 h-1.5 rounded-full transition-all duration-500 ease-out" 
-                                                style={{ width: `${project.progress || 0}%` }}
+                                                style={{ width: `${Math.min(proj.progress || 0, 100)}%` }}
                                             ></div>
                                         </div>
                                     </div>

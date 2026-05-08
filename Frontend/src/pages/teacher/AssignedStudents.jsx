@@ -104,13 +104,13 @@ const AssignedStudents = () => {
     if (isLoading && (!assignedStudents || assignedStudents.length === 0)) {
         return (
             <div className="flex justify-center items-center h-full min-h-[400px]">
-                <Loader className="animate-spin text-blue-500" size={40} />
+                <Loader className="animate-spin text-slate-500" size={40} />
             </div>
         );
     }
 
     return (
-        <div className="space-y-6 pb-10 animate-in fade-in duration-500">
+        <div className="space-y-6 pb-10">
             <DashboardHeader 
                 title="Assigned Students" 
                 subtitle="Manage tasks and review projects across your assigned mentees."
@@ -160,7 +160,7 @@ const AssignedStudents = () => {
                             </div>
                             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
                                 <button type="button" onClick={() => setSelectedProject(null)} className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
-                                <button type="submit" className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm">Assign Task</button>
+                                <button type="submit" className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white transition-colors shadow-sm">Assign Task</button>
                             </div>
                         </form>
                     </div>
@@ -177,8 +177,8 @@ const AssignedStudents = () => {
 
             {/* View Milestones Modal (Full Timeline) */}
             {milestoneProject && (
-                <div className="fixed inset-0 z-[40] flex items-center justify-center pt-10 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-2xl border border-slate-200 animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+                <div className="fixed inset-0 z-[40] flex items-center justify-center pt-10 p-4 bg-slate-900/40 backdrop-blur-sm">
+                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-2xl border border-slate-200 flex flex-col max-h-[90vh]">
                         <div className="flex justify-between items-center p-5 border-b border-slate-100">
                             <div>
                                 <h2 className="text-xl font-bold text-slate-800">Project Phases</h2>

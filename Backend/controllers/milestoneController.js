@@ -18,7 +18,37 @@ const storage = multer.diskStorage({
     }
 });
 
-export const uploadMilestoneFile = multer({ storage });
+const fileFilter = (req, file, cb) => {
+    const allowedExtensions = /pdf|doc|docx|ppt|pptx|zip|rar/;
+
+    const extname = allowedExtensions.test(
+        path.extname(file.originalname).toLowerCase()
+    );
+
+    const mimetype =
+        file.mimetype === "application/pdf" ||
+        file.mimetype.includes("word") ||
+        file.mimetype.includes("presentation") ||
+        file.mimetype.includes("zip") ||
+        file.mimetype.includes("compressed");
+
+    if (extname && mimetype) {
+        return cb(null, true);
+    }
+
+    cb(
+        new ErrorHandler(
+            "Only PDF, DOCX, PPT, ZIP files are allowed",
+            400
+        )
+    );
+};
+
+export const uploadMilestoneFile = multer({ 
+    storage,
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    fileFilter
+});
 
 // Helper function to recalculate progress
 const recalculateProgress = (project) => {

@@ -34,7 +34,7 @@ const MilestoneTimeline = ({
         switch (status) {
             case "Approved": return <CheckCircle2 size={18} className="text-emerald-500" />;
             case "Rejected": return <XCircle size={18} className="text-rose-500" />;
-            case "In Review": return <AlertCircle size={18} className="text-blue-500" />;
+            case "In Review": return <AlertCircle size={18} className="text-slate-500" />;
             case "In Progress": return <Clock size={18} className="text-amber-500" />;
             case "Overdue": return <XCircle size={18} className="text-rose-600" />;
             default: return <Clock size={18} className="text-slate-400" />;
@@ -45,7 +45,7 @@ const MilestoneTimeline = ({
         switch (status) {
             case "Approved": return "bg-emerald-50 text-emerald-700 border-emerald-200";
             case "Rejected": return "bg-rose-50 text-rose-700 border-rose-200";
-            case "In Review": return "bg-blue-50 text-blue-700 border-blue-200";
+            case "In Review": return "bg-slate-100 text-slate-700 border-slate-200";
             case "In Progress": return "bg-amber-50 text-amber-700 border-amber-200";
             case "Overdue": return "bg-rose-50 text-rose-700 border-rose-200";
             default: return "bg-slate-50 text-slate-600 border-slate-200";
@@ -59,28 +59,34 @@ const MilestoneTimeline = ({
                 {role !== "student" && (
                     <button 
                         onClick={onAddClick}
-                        className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 uppercase tracking-wide transition-colors"
+                        className="text-[11px] font-semibold text-slate-600 hover:text-slate-800 uppercase tracking-wide transition-colors"
                     >
                         + Add Milestone
                     </button>
                 )}
             </div>
 
-            <div className="p-5 overflow-y-auto custom-scrollbar flex-1">
+            <div className="p-5 overflow-y-auto custom-scrollbar flex-1 max-h-[70vh]">
                 <div className="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent hidden">
                     {/* Decorative timeline line (hidden for cleaner stacked cards layout) */}
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    {milestones.map((m, idx) => (
+                    {milestones.map((m, idx) => {
+                        // Dynamic Overdue calculation
+                        let displayStatus = m.status;
+                        if (m.deadline && m.status !== "Approved" && m.status !== "Completed" && new Date(m.deadline) < new Date(new Date().setHours(0,0,0,0))) {
+                            displayStatus = "Overdue";
+                        }
+                        return (
                         <div key={m._id || idx} className="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:-translate-y-[1px] transition-all shadow-sm">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
-                                    {getStatusIcon(m.status)}
+                                    {getStatusIcon(displayStatus)}
                                     <h3 className="text-sm font-bold text-slate-800">{m.title}</h3>
                                 </div>
-                                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${getStatusBadge(m.status)}`}>
-                                    {m.status}
+                                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${getStatusBadge(displayStatus)}`}>
+                                    {displayStatus}
                                 </span>
                             </div>
 
@@ -120,10 +126,10 @@ const MilestoneTimeline = ({
                                         {m.files.map((file, i) => (
                                             <a 
                                                 key={i} 
-                                                href={`http://localhost:5000${file.url}`} 
+                                                href={`http://localhost:4000${file.url}`} 
                                                 target="_blank" 
                                                 rel="noopener noreferrer"
-                                                className="text-[12px] text-blue-600 hover:underline flex items-center gap-1 truncate max-w-full"
+                                                className="text-[12px] text-slate-700 font-medium hover:text-slate-900 hover:underline flex items-center gap-1 truncate max-w-full"
                                             >
                                                 <FileText size={12} />
                                                 {file.filename}
@@ -164,7 +170,7 @@ const MilestoneTimeline = ({
                                 )}
                             </div>
                         </div>
-                    ))}
+                    )})}
                 </div>
             </div>
         </div>
