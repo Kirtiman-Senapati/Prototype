@@ -27,6 +27,11 @@ const groupInviteSchema = new mongoose.Schema(
             enum: ["Pending", "Accepted", "Rejected", "Cancelled"],
             default: "Pending",
         },
+        token: {
+            type: String,
+            unique: true,
+        },
+        
         expiresAt: {
             type: Date,
             required: true,

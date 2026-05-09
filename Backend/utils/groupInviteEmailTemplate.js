@@ -3,6 +3,8 @@ export const generateGroupInviteTemplate = ({
     adminName,
     projectTitle,
     groupName,
+    acceptUrl,
+    declineUrl,
 }) => {
     return `
     <!DOCTYPE html>
@@ -49,9 +51,8 @@ export const generateGroupInviteTemplate = ({
 
                 </div>
 
-                <p>
-                    Please login to your dashboard to accept or decline the invitation.
                 </p>
+
 
                 <p style="margin-top:30px;">
                     Academic Monitor System

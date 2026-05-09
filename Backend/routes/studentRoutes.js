@@ -10,7 +10,8 @@ import {
     completeProject,
     leaveProjectGroup,
     getPendingInvites,
-    respondToInvite
+    respondToInvite,
+    respondToInviteByToken
 } from "../controllers/studentController.js";
 import { submitMilestone, uploadMilestoneFile } from "../controllers/milestoneController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
@@ -29,6 +30,8 @@ router.put("/complete-project/:projectId", completeProject);
 router.patch("/project/leave", leaveProjectGroup);
 router.get("/invites", getPendingInvites);
 router.post("/invite/:inviteId/respond", respondToInvite);
+//route to respond to invite by token ya mail
+router.post("/invite/respond-token", respondToInviteByToken);
 
 // Milestone routes
 router.post("/project/:projectId/milestone/:milestoneId/submit", uploadMilestoneFile.single("file"), submitMilestone);

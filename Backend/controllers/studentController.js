@@ -55,7 +55,7 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
         if (project.status === "Pending" || project.status === "Approved") {
             return next(new ErrorHandler("You already have an active proposal or are part of a project group. Please wait for the admin's decision or submit only if rejected.", 400));
         }
-        
+
         project.title = title;
         project.description = description;
         if (groupName !== undefined) project.groupName = groupName;
@@ -284,7 +284,7 @@ export const completeProject = asyncHandler(async (req, res, next) => {
     const { projectId } = req.params;
 
     const project = await Project.findById(projectId).populate("student", "name email").populate("supervisor").populate("members", "name email");
-    
+
     if (!project) {
         return next(new ErrorHandler("Project not found", 404));
     }
@@ -354,7 +354,7 @@ export const completeProject = asyncHandler(async (req, res, next) => {
 // Member Leaves Group
 export const leaveProjectGroup = asyncHandler(async (req, res, next) => {
     const project = await Project.findOne({ members: req.user._id });
-    
+
     if (!project) {
         return next(new ErrorHandler("You are not a member of any project group", 400));
     }
@@ -390,14 +390,27 @@ export const leaveProjectGroup = asyncHandler(async (req, res, next) => {
 
 // Get Pending Invites
 export const getPendingInvites = asyncHandler(async (req, res, next) => {
-    const invites = await GroupInvite.find({ email: req.user.email, status: "Pending" }).populate({
-        path: "project",
-        populate: { path: "student", select: "name email" }
-    }).populate("invitedBy", "name email");
+    const invites = await GroupInvite.find({
+    email: req.user.email.toLowerCase(),
+    status: "Pending",
+})
+.populate({
+    path: "project",
+    populate: {
+        path: "student",
+        select: "name email",
+    },
+})
+.populate("invitedBy", "name email");;
+
+  const validInvites = invites.filter(
+        (invite) => invite.project
+    );
+
 
     res.status(200).json({
         success: true,
-        invites
+        invites: validInvites,
     });
 });
 
@@ -420,7 +433,7 @@ export const respondToInvite = asyncHandler(async (req, res, next) => {
     if (action === "reject") {
         invite.status = "Rejected";
         await invite.save();
-        
+
         const io = getIo();
         emitRefresh(io);
 
@@ -435,7 +448,7 @@ export const respondToInvite = asyncHandler(async (req, res, next) => {
         const existingProject = await Project.findOne({
             $or: [{ student: req.user._id }, { members: req.user._id }]
         });
-        
+
         if (existingProject) {
             return next(new ErrorHandler("You are already part of a project", 400));
         }
@@ -462,4 +475,103 @@ export const respondToInvite = asyncHandler(async (req, res, next) => {
     }
 
     return next(new ErrorHandler("Invalid action", 400));
+
+});
+
+
+export const respondToInviteByToken = asyncHandler(async (req, res, next) => {
+
+    const { token, action } = req.body;
+
+    const invite = await GroupInvite.findOne({
+        token,
+    }).populate("project");
+
+    if (!invite) {
+        return next(new ErrorHandler("Invitation not found", 404));
+    }
+
+    if (invite.status !== "Pending") {
+        return next(
+            new ErrorHandler(
+                `Invitation already ${invite.status}`,
+                400
+            )
+        );
+    }
+
+    if (action === "reject") {
+
+        invite.status = "Rejected";
+
+        await invite.save();
+
+        const io = getIo();
+        emitRefresh(io);
+
+        return res.status(200).json({
+            success: true,
+            message: "Invitation rejected successfully",
+        });
+    }
+
+    const student = await User.findOne({
+        email: invite.email,
+    });
+
+    if (!student) {
+        return next(
+            new ErrorHandler(
+                "Student account not found",
+                404
+            )
+        );
+    }
+
+    const existingProject = await Project.findOne({
+        $or: [
+            { student: student._id },
+            { members: student._id },
+        ],
+    });
+
+    if (existingProject) {
+        return next(
+            new ErrorHandler(
+                "Student already belongs to another project",
+                400
+            )
+        );
+    }
+
+    invite.project.members.push(student._id);
+
+    await invite.project.save();
+
+    invite.status = "Accepted";
+
+    await invite.save();
+
+    await logActivity({
+        actor: student._id,
+        targetUsers: [
+            invite.project.student,
+            student._id,
+            ...invite.project.members
+        ],
+        actionType: "MEMBER_JOINED",
+        message: `**${student.name}** accepted the invitation and joined **"${invite.project.title || invite.project.groupName}"**`,
+        relatedProject: invite.project._id,
+        priority: "high"
+    });
+
+    const io = getIo();
+
+    emitRefresh(io);
+
+    return res.status(200).json({
+        success: true,
+        message: "Invitation accepted successfully",
+    });
+
 });

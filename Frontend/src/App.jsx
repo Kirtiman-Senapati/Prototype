@@ -7,7 +7,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import CheckEmailPage from "./pages/auth/CheckEmailPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
-
+import InviteResponsePage from "./pages/common/InviteResponsePage";
 // Dashboard Layouts
 import DashboardLayout from "./components/layout/DashboardLayout";
 
@@ -91,6 +91,7 @@ const App = () => {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/check-email" element={<CheckEmailPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+          <Route path="/invite/respond" element={<InviteResponsePage />} />
 
           {/* Dashboard Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>

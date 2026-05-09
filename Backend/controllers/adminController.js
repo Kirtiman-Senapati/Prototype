@@ -15,6 +15,7 @@ import { generateGroupInviteTemplate } from "../utils/groupInviteEmailTemplate.j
 import { getEmailTemplate } from "../utils/emailTemplates.js";
 import { Notification } from "../models/notification.js";
 import { generateNotificationEmailTemplate } from "../utils/notificationEmailTemplate.js";
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { GroupInvite } from "../models/GroupInvite.js";
@@ -149,6 +150,12 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
 
     await Request.deleteMany({
         $or: [{ fromUser: user._id }, { toUser: user._id }]
+    });
+
+    await user.deleteOne();
+
+    await GroupInvite.deleteMany({
+        email: user.email.toLowerCase()
     });
 
     await user.deleteOne();
@@ -756,10 +763,13 @@ export const inviteMember = asyncHandler(async (req, res, next) => {
     const existingInvite = await GroupInvite.findOne({ project: projectId, email: email.toLowerCase(), status: "Pending" });
     if (existingInvite) return next(new ErrorHandler("An invitation is already pending for this email", 400));
 
+    const token = crypto.randomBytes(32).toString("hex");
+
     const invite = await GroupInvite.create({
         project: projectId,
         email: email.toLowerCase(),
-        invitedBy: req.user._id
+        invitedBy: req.user._id,
+        token,
     });
 
     let emailSent = false;
@@ -768,11 +778,21 @@ export const inviteMember = asyncHandler(async (req, res, next) => {
 
         console.log("INVITE EMAIL START");
 
+        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+
+        const acceptUrl =
+        `${frontendUrl}/invite/respond?token=${invite.token}&action=accept`;
+
+        const declineUrl =
+        `${frontendUrl}/invite/respond?token=${invite.token}&action=reject`;
+
         const html = generateGroupInviteTemplate({
             invitedStudentName: student.name,
             adminName: req.user.name,
             projectTitle: project.title,
             groupName: project.groupName,
+            acceptUrl,
+            declineUrl,
         });
 
         await sendEmail({
