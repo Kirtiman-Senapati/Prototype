@@ -368,16 +368,30 @@ export const leaveProjectGroup = asyncHandler(async (req, res, next) => {
     project.members = project.members.filter(m => m.toString() !== req.user._id.toString());
     await project.save();
 
-    const targetUsers = [project.student, req.user._id, ...project.members.map(m => m._id || m)];
+    const admins = await User.find({
+    role: "Admin",
+}).select("_id");
 
-    await logActivity({
-        actor: req.user._id,
-        targetUsers,
-        actionType: "MEMBER_LEFT",
-        message: `**${req.user.name}** left the project group "**${project.title || project.groupName || 'Project'}**"`,
-        relatedProject: project._id,
-        priority: "high"
-    });
+const adminIds = admins.map(admin => admin._id);
+
+const targetUsers = [
+    project.student,
+    ...project.members,
+    project.supervisor,
+    ...adminIds,
+]
+.filter(Boolean)
+.map(id => id.toString())
+.filter((id, index, self) => self.indexOf(id) === index);
+
+await logActivity({
+    actor: req.user._id,
+    targetUsers,
+    actionType: "MEMBER_LEFT",
+    message: `**${req.user.name}** left project group **${project.groupName || project.title || "Project"}**`,
+    relatedProject: project._id,
+    priority: "high",
+});
 
     const io = getIo();
     emitRefresh(io);
@@ -459,9 +473,28 @@ export const respondToInvite = asyncHandler(async (req, res, next) => {
         invite.status = "Accepted";
         await invite.save();
 
+        //fix message issue
+
+        const admins = await User.find({
+            role: "Admin",
+        }).select("_id");
+
+        const adminIds = admins.map(admin => admin._id);
+
+        const targetUsers = [
+            project.student,
+            req.user._id,
+            ...project.members,
+            project.supervisor,
+            ...adminIds,
+        ]
+            .filter(Boolean)
+            .map(id => id.toString())
+            .filter((id, index, self) => self.indexOf(id) === index);
+
         await logActivity({
             actor: req.user._id,
-            targetUsers: [project.student, req.user._id, ...project.members],
+            targetUsers,
             actionType: "MEMBER_JOINED",
             message: `**${req.user.name}** accepted the invitation and joined **"${project.title || project.groupName}"**`,
             relatedProject: project._id,
@@ -552,26 +585,39 @@ export const respondToInviteByToken = asyncHandler(async (req, res, next) => {
 
     await invite.save();
 
-    await logActivity({
-        actor: student._id,
-        targetUsers: [
-            invite.project.student,
-            student._id,
-            ...invite.project.members
-        ],
-        actionType: "MEMBER_JOINED",
-        message: `**${student.name}** accepted the invitation and joined **"${invite.project.title || invite.project.groupName}"**`,
-        relatedProject: invite.project._id,
-        priority: "high"
-    });
+    const admins = await User.find({
+    role: "Admin",
+}).select("_id");
 
-    const io = getIo();
+const adminIds = admins.map(admin => admin._id);
 
-    emitRefresh(io);
+const targetUsers = [
+    invite.project.student,
+    student._id,
+    ...invite.project.members,
+    invite.project.supervisor,
+    ...adminIds,
+]
+.filter(Boolean)
+.map(id => id.toString())
+.filter((id, index, self) => self.indexOf(id) === index);
 
-    return res.status(200).json({
-        success: true,
-        message: "Invitation accepted successfully",
-    });
+await logActivity({
+    actor: student._id,
+    targetUsers,
+    actionType: "MEMBER_JOINED",
+    message: `**${student.name}** accepted the invitation and joined **"${invite.project.title || invite.project.groupName || "Project"}**`,
+    relatedProject: invite.project._id,
+    priority: "high",
+});
+
+const io = getIo();
+
+emitRefresh(io);
+
+return res.status(200).json({
+    success: true,
+    message: "Invitation accepted successfully",
+});
 
 });

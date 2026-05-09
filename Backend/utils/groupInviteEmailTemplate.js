@@ -51,22 +51,66 @@ export const generateGroupInviteTemplate = ({
 
                 </div>
 
+
+               </div>
+
+                <p style="margin-top:10px;color:#475569;>
+                    You can accept or decline the invitation directly from email.
                 </p>
 
+                <div style="margin:30px 0;text-align:center;">
 
-                <p style="margin-top:30px;">
-                    Academic Monitor System
+                    <a
+                        href="${acceptUrl}"
+                        style="
+                            background:#0f172a;
+                            color:#ffffff;
+                            text-decoration:none;
+                            padding:12px 24px;
+                            border-radius:8px;
+                            display:inline-block;
+                            margin-right:12px;
+                            font-weight:bold;
+                        "
+                    >
+                        Accept Invitation
+                    </a>
+
+                    <a
+                        href="${declineUrl}"
+                        style="
+                            background:#e2e8f0;
+                            color:#0f172a;
+                            text-decoration:none;
+                            padding:12px 24px;
+                            border-radius:8px;
+                            display:inline-block;
+                            font-weight:bold;
+                        "
+                    >
+                        Decline Invitation
+                    </a>
+
+                </div>
+                <p style="margin-top:30px;color:#334155;">
+                    Academic Project Monitor System
                 </p>
 
             </div>
 
-            <div style="padding:18px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b;">
-                This is an automated email notification.
+                <div style="
+                    padding:18px;
+                    background:#f8fafc;
+                    border-top:1px solid #e2e8f0;
+                    text-align:center;
+                    font-size:12px;
+                    color:#64748b;
+                ">
+                    This is an automated email notification.
+                </div>
+
             </div>
-
-        </div>
-
-    </body>
-    </html>
+        </body>
+        </html>
     `;
 };

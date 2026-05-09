@@ -44,6 +44,8 @@ const activitySchema = new mongoose.Schema(
         "ADMIN_MESSAGE",
         "DEADLINE_REMINDER",
         "DEADLINE_MISSED",
+        "MEMBER_JOINED",
+        "MEMBER_LEFT",
       ],
       required: true,
     },
