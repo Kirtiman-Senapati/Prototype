@@ -272,18 +272,37 @@ const AssignSupervisor = () => {
                                             <td className="px-6 py-5">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 text-slate-700 flex items-center justify-center font-semibold shadow-sm shrink-0">
-                                                        {p.student?.name?.charAt(0) || <User size={16}/>}
+                                                        {p.student?.name?.charAt(0) || <User size={16} />}
                                                     </div>
-                                                    <div>
-                                                        <div className="text-slate-900 font-semibold tracking-tight">{p.student?.name}</div>
-                                                        <div className="text-xs text-slate-500">{p.student?.email}</div>
+                                                    <div className="flex flex-col">
+                                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                                            <span className="text-slate-900 font-semibold tracking-tight">
+                                                                {p.student?.name}
+                                                            </span>
+
+                                                        {p.members?.length > 0 && (
+                                                            <span className="text-[9px] uppercase tracking-wide bg-slate-800 text-white px-1.5 py-0.5 rounded shadow-sm font-bold">
+                                                                Leader
+                                                            </span>
+                                                        )}
                                                     </div>
+
+                                                    <div className="text-xs text-slate-500">
+                                                        {p.student?.email}
+                                                    </div>
+
+                                                    {p.members?.length > 0 && (
+                                                        <div className="mt-1 text-[11px] font-semibold text-slate-500">
+                                                            +{p.members.length} Member{p.members.length > 1 ? "s" : ""}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            </td>
-                                            <td className="px-6 py-5 align-middle">
-                                                <div className="flex flex-col">
-                                                    <p className="text-sm font-medium text-slate-700 line-clamp-2 max-w-[250px] transition-colors">
-                                                        {p.title}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5 align-middle">
+                                            <div className="flex flex-col">
+                                                <p className="text-sm font-medium text-slate-700 line-clamp-2 max-w-[250px] transition-colors">
+                                                    {p.title}
                                                     </p>
 
                                                     {(p.groupName || p.members?.length > 0) && (

@@ -305,8 +305,27 @@ const getDeadlineStyle = (project) =>
                                             {/* Student detail coloum */}
                                             <td className="px-6 py-5">
                                                 <div className="flex flex-col">
-                                                    <span className="text-slate-900 font-semibold tracking-tight">{proj.student?.name || "Unknown"}</span>
-                                                    <span className="text-xs text-slate-500">{proj.student?.email}</span>
+                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                                        <span className="text-slate-900 font-semibold tracking-tight">
+                                                            {proj.student?.name || "Unknown"}
+                                                        </span>
+
+                                                        {proj.members?.length > 0 && (
+                                                            <span className="text-[9px] uppercase tracking-wide bg-slate-800 text-white px-1.5 py-0.5 rounded shadow-sm font-bold">
+                                                                Leader
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    <span className="text-xs text-slate-500">
+                                                        {proj.student?.email}
+                                                    </span>
+
+                                                    {proj.members?.length > 0 && (
+                                                        <span className="mt-1 text-[11px] font-semibold text-slate-500">
+                                                            +{proj.members.length} Member{proj.members.length > 1 ? "s" : ""}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </td>
                                             
