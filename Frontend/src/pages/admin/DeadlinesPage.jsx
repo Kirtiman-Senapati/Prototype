@@ -317,9 +317,9 @@ const getDeadlineStyle = (project) =>
                                                         {proj.title}
                                                     </p>
 
-                                                    {proj.groupName && (
-                                                        <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block border border-slate-200 w-fit">
-                                                            {proj.groupName}
+                                                    {(proj.groupName || proj.members?.length > 0) && (
+                                                        <span className="mt-1 inline-flex w-fit items-center rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-700">
+                                                            {proj.groupName || `GROUP PROJECT (${proj.members?.length + 1} MEMBERS)`}
                                                         </span>
                                                     )}
                                                 </div>

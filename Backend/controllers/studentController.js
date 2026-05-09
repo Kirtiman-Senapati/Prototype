@@ -473,7 +473,40 @@ export const respondToInvite = asyncHandler(async (req, res, next) => {
         }
 
         project.members.push(req.user._id);
+        await project.populate("members", "name email");
+
         await project.save();
+
+        await User.findByIdAndUpdate(req.user._id, {
+            proposalStatus: project.status,
+            supervisor: project.supervisor || null,
+            project: project._id
+        });
+
+        if (global.io) {
+            global.io.emit("projectUpdated", {
+                projectId: project._id,
+                status: project.status,
+                supervisor: project.supervisor,
+            });
+        }
+
+
+
+
+
+        // Add proposal status when project status is changed to approved and user is not supervisor or admin
+        await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $set: {
+                    proposalStatus: project.status,
+                    supervisor: project.supervisor || null,
+                    project: project._id,
+                },
+            },
+            { new: true }
+        );
 
         invite.status = "Accepted";
         await invite.save();
@@ -572,10 +605,18 @@ export const respondToInviteByToken = asyncHandler(async (req, res, next) => {
     invite.project.members.push(student._id);
 
     await invite.project.save();
+    // Add proposal status when project status is changed to approved and user is not supervisor or admin
+    await User.findByIdAndUpdate(student._id, {
+        proposalStatus: invite.project.status,
+        supervisor: invite.project.supervisor || null,
+        project: invite.project._id
+    });
 
     invite.status = "Accepted";
 
     await invite.save();
+
+    
 
     const admins = await User.find({
     role: "Admin",

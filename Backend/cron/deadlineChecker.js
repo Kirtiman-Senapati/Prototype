@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { Project } from "../models/project.js";
 import { User } from "../models/user.js";
+import { getProjectTargetUsers } from "../utils/getProjectTargetUsers.js";
 import { sendEmail } from "../services/emailService.js";
 import { getEmailTemplate } from "../utils/emailTemplates.js";
 import { logActivity } from "../utils/activityLogger.js";
@@ -71,7 +72,7 @@ export const runDeadlineChecker = async () => {
                     await logActivity({
                         actionType: "DEADLINE_REMINDER",
                         message: ` Reminder: The submission deadline for your project "${project.title}" is in exactly 2 days (${new Date(project.deadline).toLocaleDateString("en-GB")}). Please prioritize its completion.`,
-                        targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
+                        targetUsers: await getProjectTargetUsers(project),
                         roles: [],
                         relatedProject: project._id,
                         priority: "medium"
@@ -112,7 +113,7 @@ export const runDeadlineChecker = async () => {
                     await logActivity({
                         actionType: "DEADLINE_REMINDER",
                         message: `Final Reminder: The submission deadline for your project "${project.title}" is tomorrow (${new Date(project.deadline).toLocaleDateString("en-GB")}). Please submit your work immediately.`,
-                        targetUsers: [project.student?._id, project.supervisor?._id].filter(Boolean),
+                        targetUsers: await getProjectTargetUsers(project),
                         roles: [],
                         relatedProject: project._id,
                         priority: "high"
@@ -182,10 +183,7 @@ export const runDeadlineChecker = async () => {
                 await logActivity({
                     actionType: "DEADLINE_MISSED",
                     message: `Deadline Passed: The project "${project.title}" assigned to ${project.student?.name} has crossed its submission deadline.`,
-                    targetUsers: [
-                        project.student?._id,
-                        project.supervisor?._id
-                    ].filter(Boolean),
+                    targetUsers: await getProjectTargetUsers(project),
                     roles: ["Admin"],
                     relatedProject: project._id,
                     priority: "high"

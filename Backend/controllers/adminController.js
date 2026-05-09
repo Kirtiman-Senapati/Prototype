@@ -74,20 +74,28 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
 
     // Map student IDs to their project
     const studentProjectMap = {};
-    const supervisorToStudentsMap = {};
 
-    allProjects.forEach(p => {
-        if (p.student && p.student._id) {
-            studentProjectMap[p.student._id.toString()] = p;
-        }
-        if (p.supervisor && p.student && p.student._id) {
-            const supId = p.supervisor.toString();
-            if (!supervisorToStudentsMap[supId]) {
-                supervisorToStudentsMap[supId] = new Set();
-            }
-            supervisorToStudentsMap[supId].add(p.student._id.toString());
-        }
-    });
+    allProjects.forEach((p) => {
+
+    // leader
+    if (p.student && p.student._id) {
+        studentProjectMap[p.student._id.toString()] = p;
+    }
+
+    // members
+    if (p.members && p.members.length > 0) {
+
+        p.members.forEach((member) => {
+
+            const memberId =
+                member._id
+                    ? member._id.toString()
+                    : member.toString();
+
+            studentProjectMap[memberId] = p;
+        });
+    }
+});
 
     // Populate supervisor and proposal status for students
     const populatedUsers = users.map(u => {
@@ -99,8 +107,6 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
             } else {
                 u.proposalStatus = null;
             }
-        } else if (u.role === "Supervisor") {
-            u.assignedStudentsCount = supervisorToStudentsMap[u._id.toString()] ? supervisorToStudentsMap[u._id.toString()].size : 0;
         }
         return u;
     });
@@ -232,7 +238,23 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
 
 
     // UPDATE the Student's User Document
-    await User.findByIdAndUpdate(project.student, { supervisor: supervisorId });
+    const studentIds = [
+        project.student,
+        ...(project.members || [])
+    ];
+
+    await User.updateMany(
+        {
+            _id: { $in: studentIds }
+        },
+        {
+            $set: {
+                supervisor: supervisorId,
+                proposalStatus: project.status,
+                project: project._id
+            }
+        }
+    );
 
     // Clear any pending requests this student made to other supervisors
     await Request.updateMany(

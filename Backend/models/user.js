@@ -91,6 +91,12 @@ const userSchema = new mongoose.Schema(
       ref: "Project",
       default: null,
     },
+    proposalStatus:
+    {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected", "Completed", "Incomplete"],
+      default: null,
+    },
 
   },
   

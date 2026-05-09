@@ -286,9 +286,9 @@ const AssignSupervisor = () => {
                                                         {p.title}
                                                     </p>
 
-                                                    {p.groupName && (
+                                                    {(p.groupName || p.members?.length > 0) && (
                                                         <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block border border-slate-200 w-fit">
-                                                            {p.groupName}
+                                                            {p.groupName || `GROUP PROJECT (${p.members?.length + 1} MEMBERS)`}
                                                         </span>
                                                     )}
                                                 </div>
