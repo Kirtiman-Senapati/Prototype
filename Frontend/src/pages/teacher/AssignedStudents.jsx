@@ -112,8 +112,8 @@ const AssignedStudents = () => {
     return (
         <div className="space-y-6 pb-10">
             <DashboardHeader 
-                title="Assigned Students" 
-                subtitle="Manage tasks and review projects across your assigned mentees."
+                title="Assigned Project Groups" 
+                subtitle="Manage tasks and review projects across your assigned groups."
                 icon={Users}
             />
             
@@ -132,8 +132,8 @@ const AssignedStudents = () => {
             ) : (
                 <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-12 text-center text-slate-500">
                     <Users size={48} className="mx-auto text-slate-300 mb-4" />
-                    <h3 className="text-lg font-semibold text-slate-700 mb-1">No Assigned Students</h3>
-                    <p className="text-sm">You currently do not have any students assigned to your supervision.</p>
+                    <h3 className="text-lg font-semibold text-slate-700 mb-1">No Assigned Project Groups</h3>
+                    <p className="text-sm">You currently do not have any groups assigned to your supervision.</p>
                 </div>
             )}
 

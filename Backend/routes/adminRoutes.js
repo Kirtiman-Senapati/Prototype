@@ -14,7 +14,8 @@ import {
     updateUserDetails,
     addTaskAdmin,
     triggerReminders,
-    sendManualReminder
+    sendManualReminder,
+    manageGroup
 } from "../controllers/adminController.js";
 import {
     addMilestone,
@@ -43,6 +44,7 @@ router.patch("/user/:id", updateUserDetails);
 router.post("/task", addTaskAdmin);
 router.post("/trigger-reminders", triggerReminders);
 router.post("/project/:id/remind", sendManualReminder);
+router.patch("/project/:id/group", manageGroup);
 
 // Milestone routes
 router.post("/project/:projectId/milestone", addMilestone);

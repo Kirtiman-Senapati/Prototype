@@ -173,7 +173,9 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllProjects = asyncHandler(async (req, res, next) => {
-    const projects = await Project.find().populate("student supervisor");
+    const projects = await Project.find()
+        .populate("student supervisor")
+        .populate("members");
     res.status(200).json({
         success: true,
         projects
@@ -181,7 +183,9 @@ export const getAllProjects = asyncHandler(async (req, res, next) => {
 });
 
 export const getUnassignedProjects = asyncHandler(async (req, res, next) => {
-    const projects = await Project.find({ status: "Approved", supervisor: null }).populate("student", "name email");
+    const projects = await Project.find({ status: "Approved", supervisor: null })
+        .populate("student", "name email")
+        .populate("members", "name email");
     res.status(200).json({
         success: true,
         projects
@@ -685,5 +689,49 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: "Reminder sent successfully"
+    });
+});
+
+export const manageGroup = asyncHandler(async (req, res, next) => {
+    const { id: projectId } = req.params;
+    const { groupName, memberEmails } = req.body;
+
+    const project = await Project.findById(projectId);
+    if (!project) {
+        return next(new ErrorHandler("Project not found", 404));
+    }
+
+    if (groupName !== undefined) {
+        project.groupName = groupName;
+    }
+
+    if (memberEmails !== undefined && Array.isArray(memberEmails)) {
+        // Validate members exist and are students
+        const validMembers = await User.find({ email: { $in: memberEmails }, role: "Student" }).select("_id");
+        project.members = validMembers.map(u => u._id);
+    }
+
+    await project.save();
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [req.user._id, project.student, ...project.members],
+        actionType: "GROUP_UPDATED",
+        message: `**Admin** updated group details for project **"${project.title}"**`,
+        relatedProject: project._id,
+        priority: "medium"
+    });
+
+    const io = getIo();
+    emitRefresh(io);
+
+    const updatedProject = await Project.findById(projectId)
+        .populate("student supervisor")
+        .populate("members", "name email");
+
+    res.status(200).json({
+        success: true,
+        message: "Project group updated successfully",
+        project: updatedProject
     });
 });

@@ -33,9 +33,16 @@ const TeacherFiles = () => {
             assignedStudents.forEach(student => {
                 if (student.project && student.project.files) {
                     student.project.files.forEach(file => {
+                        let uploaderName = student.name;
+                        if (file.uploadedBy && file.uploadedBy.toString() !== student._id.toString()) {
+                            const member = student.project.members?.find(m => m._id.toString() === file.uploadedBy.toString());
+                            if (member) uploaderName = member.name;
+                        }
+                        
                         files.push({
                             ...file,
-                            studentName: student.name,
+                            studentName: uploaderName,
+                            groupName: student.project.groupName,
                             studentId: student._id
                         });
                     });
@@ -231,7 +238,7 @@ const TeacherFiles = () => {
                                                 {file.filename}
                                             </span>
                                             <span className="text-xs text-slate-500">
-                                                {file.studentName}
+                                                {file.studentName} {file.groupName && <span className="font-medium text-[10px] bg-slate-100 px-1 py-0.5 rounded ml-1">({file.groupName})</span>}
                                             </span>
                                         </div>
                                     </div>
@@ -279,7 +286,10 @@ const TeacherFiles = () => {
                                             </td>
 
                                             <td className="py-4 px-6 text-[13px] text-slate-600 font-medium">
-                                                {file.studentName}
+                                                <div className="flex flex-col">
+                                                    <span>{file.studentName}</span>
+                                                    {file.groupName && <span className="text-[10px] text-slate-400 font-bold">{file.groupName}</span>}
+                                                </div>
                                             </td>
 
                                             <td className="py-4 px-6">
@@ -317,8 +327,9 @@ const TeacherFiles = () => {
                                  <h3 className="text-center font-bold text-slate-800 text-[13px] mb-1 truncate px-2" title={file.filename}>
                                      {file.filename.split('.').slice(0, -1).join('.')}
                                  </h3>
-                                 <p className="text-center text-slate-500 text-[12px] mb-4">
-                                     {file.studentName}
+                                 <p className="text-center text-slate-500 text-[12px] mb-4 flex flex-col items-center">
+                                     <span>{file.studentName}</span>
+                                     {file.groupName && <span className="text-[10px] text-slate-400 font-bold mt-0.5 bg-slate-50 px-1.5 py-0.5 rounded">{file.groupName}</span>}
                                  </p>
                                  
                                  <div className="flex items-center justify-center gap-3 mb-5 text-[11px] text-slate-400 font-medium">

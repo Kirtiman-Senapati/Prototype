@@ -21,9 +21,12 @@ const ProjectsPage = () => {
     const [selectedProject, setSelectedProject] = useState(null); // For modal
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+    const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
     const [taskData, setTaskData] = useState({ title: "", description: "", deadline: "" });
+    const [groupData, setGroupData] = useState({ groupName: "", memberEmails: "" });
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
     const [isSubmittingTask, setIsSubmittingTask] = useState(false);
+    const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
     const [studentFeedbacks, setStudentFeedbacks] = useState([]);
     const [isLoadingFeedbacks, setIsLoadingFeedbacks] = useState(false);
     
@@ -185,6 +188,28 @@ const ProjectsPage = () => {
         }
     };
 
+    const handleManageGroup = async (e) => {
+        e.preventDefault();
+        setIsSubmittingGroup(true);
+        try {
+            const emails = groupData.memberEmails.split(",").map(e => e.trim()).filter(Boolean);
+            const res = await axiosInstance.patch(`/admin/project/${selectedProject._id}/group`, {
+                groupName: groupData.groupName,
+                memberEmails: emails
+            });
+            toast.success("Group updated successfully");
+            setIsGroupModalOpen(false);
+            if (res.data.project) {
+                setSelectedProject(prev => ({ ...prev, groupName: res.data.project.groupName, members: res.data.project.members }));
+            }
+            fetchProjects();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to update group");
+        } finally {
+            setIsSubmittingGroup(false);
+        }
+    };
+
     const handleCreateMilestone = async (data) => {
         setIsSubmittingMilestone(true);
         try {
@@ -270,7 +295,12 @@ const ProjectsPage = () => {
     };
 
     const filteredProjects = cleanProjects.filter(p => {
-        const matchesSearch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || p.title?.toLowerCase().includes(searchTerm.toLowerCase());
+        const leaderMatch = p.student?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        const titleMatch = p.title?.toLowerCase().includes(searchTerm.toLowerCase());
+        const groupMatch = p.groupName?.toLowerCase().includes(searchTerm.toLowerCase());
+        const memberMatch = p.members?.some(m => m?.name?.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        const matchesSearch = leaderMatch || titleMatch || groupMatch || memberMatch;
 
         if (!matchesSearch) return false;
         if (filter === "All") return true;
@@ -355,6 +385,7 @@ const ProjectsPage = () => {
                                     <tr key={proj._id} className="group transition hover:bg-slate-50/80 border-l-2 border-transparent hover:border-slate-300">
                                         <td className="py-5 px-6 w-1/4">
                                             <p className="text-[15px] font-semibold text-slate-900 group-hover:text-slate-950 line-clamp-1" title={proj.title}>{proj.title}</p>
+                                            {proj.groupName && <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block border border-slate-200">{proj.groupName}</span>}
                                             <p className="text-xs text-slate-500 line-clamp-1 mt-1 leading-relaxed" title={proj.description}>{proj.description}</p>
                                         </td>
                                         <td className="py-5 px-6">
@@ -363,7 +394,15 @@ const ProjectsPage = () => {
                                                     {proj.student?.name?.charAt(0) || "D"}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-sm font-medium text-slate-700">{proj.student?.name || <span className="text-red-500 italic">Deleted User</span>}</span>
+                                                    <span className="text-sm font-medium text-slate-700">
+                                                        {proj.student?.name || <span className="text-red-500 italic">Deleted User</span>}
+                                                        {proj.members?.length > 0 && <span className="text-[10px] ml-1.5 text-slate-400 font-bold uppercase">(Leader)</span>}
+                                                    </span>
+                                                    {proj.members?.length > 0 && (
+                                                        <span className="text-[11px] font-semibold text-slate-500 mt-0.5">
+                                                            +{proj.members.length} Member{proj.members.length > 1 ? 's' : ''}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </td>
@@ -454,7 +493,11 @@ const ProjectsPage = () => {
                                 <div className="flex justify-between items-start">
                                     <div className="pr-2">
                                         <h3 className="text-[14px] font-bold text-slate-900 leading-tight line-clamp-2">{proj.title}</h3>
-                                        <p className="text-xs text-slate-500 mt-1 font-medium">{proj.student?.name || <span className="text-red-500 italic">Deleted User</span>}</p>
+                                        {proj.groupName && <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md mt-1 mb-1 inline-block border border-slate-200">{proj.groupName}</span>}
+                                        <p className="text-xs text-slate-500 mt-1 font-medium">
+                                            {proj.student?.name || <span className="text-red-500 italic">Deleted User</span>}
+                                            {proj.members?.length > 0 && <span className="ml-1 text-[10px] text-slate-400 font-bold"> (+{proj.members.length})</span>}
+                                        </p>
                                     </div>
                                     <span className={`shrink-0 px-2.5 py-1 text-[10px] uppercase font-bold rounded-full border ${
                                         proj.status === 'Completed' ? 'bg-green-50 text-slate-800 border-slate-500' :
@@ -525,6 +568,19 @@ const ProjectsPage = () => {
                                         Feedback
                                     </button>
                                     <button
+                                        onClick={() => {
+                                            setGroupData({
+                                                groupName: selectedProject.groupName || "",
+                                                memberEmails: selectedProject.members?.map(m => m.email).join(", ") || ""
+                                            });
+                                            setIsGroupModalOpen(true);
+                                        }}
+                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
+                                    >
+                                        <User size={16} />
+                                        Group
+                                    </button>
+                                    <button
                                         onClick={() => setIsTaskModalOpen(true)}
                                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                                     >
@@ -572,17 +628,37 @@ const ProjectsPage = () => {
 
                             {/* IDENTITIES */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Student */}
+                                {/* Team */}
                                 <div>
-                                    <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Student Information</h3>
-                                    <div className="flex items-center gap-4 pt-1">
-                                        <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-xl shrink-0 ${selectedProject.student ? 'bg-slate-100 text-slate-600' : 'bg-red-50 text-red-500'}`}>
-                                            {selectedProject.student?.name?.charAt(0) || "D"}
+                                    <div className="flex items-center justify-between mb-3 pl-1">
+                                        <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Team Information</h3>
+                                        {selectedProject.groupName && (
+                                            <span className="text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">{selectedProject.groupName}</span>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col gap-3 pt-1">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0 ${selectedProject.student ? 'bg-slate-100 text-slate-600' : 'bg-red-50 text-red-500'}`}>
+                                                {selectedProject.student?.name?.charAt(0) || "D"}
+                                            </div>
+                                            <div className="flex flex-col overflow-hidden">
+                                                <span className="text-md font-bold text-slate-800 flex items-center gap-2 truncate">
+                                                    {selectedProject.student?.name || <span className="text-red-500 italic">Deleted User</span>}
+                                                    {selectedProject.members?.length > 0 && <span className="text-[9px] uppercase tracking-wide bg-slate-800 text-white px-1.5 py-0.5 rounded shadow-sm">Leader</span>}
+                                                </span>
+                                                <span className="text-xs font-medium text-slate-500 truncate">{selectedProject.student?.email || "No email available"}</span>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col overflow-hidden">
-                                            <span className="text-lg font-bold text-slate-800 truncate">{selectedProject.student?.name || <span className="text-red-500 italic">Deleted User</span>}</span>
-                                            <span className="text-sm font-medium text-slate-500 truncate">{selectedProject.student?.email || "No email available"}</span>
-                                        </div>
+                                        {selectedProject.members?.map((member, idx) => (
+                                            <div key={idx} className="flex items-center gap-4 ml-4">
+                                                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 bg-slate-50 text-slate-500 border border-slate-200">
+                                                    {member?.name?.charAt(0) || "M"}
+                                                </div>
+                                                <div className="flex flex-col overflow-hidden">
+                                                    <span className="text-sm font-bold text-slate-700 truncate">{member?.name || "Unknown Member"}</span>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
 
@@ -855,6 +931,39 @@ const ProjectsPage = () => {
                 isSubmitting={isSubmittingFeedback}
                 studentName={selectedProject?.student?.name}
             />
+
+            {/* Group Management Modal */}
+            {isGroupModalOpen && selectedProject && (
+                <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                    <div className="modal-content bg-white p-6 border border-slate-200 rounded-xl shadow-xl max-w-md w-full">
+                        <div className="mb-6 flex justify-between items-start">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><User className="text-slate-600" /> Manage Group</h2>
+                                <p className="text-sm text-slate-500 mt-1">Project: <span className="font-semibold text-slate-700">{selectedProject.title}</span></p>
+                            </div>
+                            <button onClick={() => setIsGroupModalOpen(false)} className="text-slate-400 hover:text-slate-600 rounded-full p-1"><X size={20} /></button>
+                        </div>
+                        <form onSubmit={handleManageGroup} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Group Name (Optional)</label>
+                                <input className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none" placeholder="e.g. Alpha Team" value={groupData.groupName} onChange={e => setGroupData({ ...groupData, groupName: e.target.value })} />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Additional Member Emails</label>
+                                <textarea className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none min-h-[100px]" placeholder="Comma separated emails (e.g. member1@uni.edu, member2@uni.edu)" value={groupData.memberEmails} onChange={e => setGroupData({ ...groupData, memberEmails: e.target.value })} />
+                                <p className="text-xs text-slate-500 mt-1.5 font-medium">Team Leader ({selectedProject.student?.email}) is automatically included.</p>
+                            </div>
+                            <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
+                                <button type="button" onClick={() => setIsGroupModalOpen(false)} className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
+                                <button type="submit" disabled={isSubmittingGroup} className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2">
+                                    {isSubmittingGroup && <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>}
+                                    Save Group
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* Task Add Modal for Admin */}
             {isTaskModalOpen && selectedProject && (

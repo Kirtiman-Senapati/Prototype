@@ -16,11 +16,16 @@ import SubmitMilestoneModal from "../../components/milestones/SubmitMilestoneMod
 import ProjectWorkspace from "../../components/workspace/ProjectWorkspace";
 
 // Component: ProjectOverview
-const ProjectOverview = ({ project, onUpdate }) => {
+const ProjectOverview = ({ project, onUpdate, authUser }) => {
     return (
         <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full overflow-hidden shadow-sm">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
-                <h2 className="text-sm font-semibold text-slate-800">Project Overview</h2>
+                <div className="flex items-center gap-3">
+                    <h2 className="text-sm font-semibold text-slate-800">Project Overview</h2>
+                    {project.groupName && (
+                        <span className="text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">{project.groupName}</span>
+                    )}
+                </div>
                 {project.supervisor && (
                     <button 
                         onClick={onUpdate}
@@ -49,6 +54,26 @@ const ProjectOverview = ({ project, onUpdate }) => {
                 <p className="text-[13px] text-slate-600 leading-relaxed font-medium">
                     {project.description}
                 </p>
+
+                {/* Team Members */}
+                {project.members && project.members.length > 0 && (
+                    <div className="mt-6 border-t border-slate-100 pt-4">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Project Team</p>
+                        <div className="flex -space-x-2 overflow-hidden">
+                            <div className={`inline-flex h-8 w-8 rounded-full ring-2 ring-white border border-slate-200 items-center justify-center font-bold text-xs shadow-sm z-10 ${(!authUser || (project.student === authUser._id || (project.student?._id && authUser._id && project.student._id.toString() === authUser._id.toString()))) ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600'}`} title="Team Leader">
+                                {(!authUser || (project.student === authUser._id || (project.student?._id && authUser._id && project.student._id.toString() === authUser._id.toString()))) ? 'You' : 'L'}
+                            </div>
+                            {project.members.map((m, idx) => {
+                                const isCurrentUser = authUser && (m._id === authUser._id || m === authUser._id);
+                                return (
+                                <div key={idx} className={`inline-flex h-8 w-8 rounded-full ring-2 ring-white ${isCurrentUser ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600'} border border-slate-200 items-center justify-center font-bold text-xs shadow-sm`} style={{ zIndex: 9 - idx }} title={m.name || "Member"}>
+                                    {isCurrentUser ? "You" : (m.name?.charAt(0) || "M")}
+                                </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -445,7 +470,7 @@ useAutoRefresh(() => {
 
                      {/* BOTTOM TWO CARDS */}
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[260px]">
-                         <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} />
+                         <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} authUser={authUser} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
 

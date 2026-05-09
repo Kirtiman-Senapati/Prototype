@@ -8,8 +8,29 @@ const StudentCard = ({ student, onAddTask, onAddFeedback, onViewMilestones }) =>
             <div className="p-6 flex flex-col h-full">
                 {/* Header Section */}
                 <div className="mb-5 border-b border-slate-100 pb-4">
-                    <h2 className="font-bold text-lg text-slate-800 leading-tight">{student.name}</h2>
-                    <p className="text-[13px] font-medium text-slate-500 mt-1">{student.email}</p>
+                    <div className="flex justify-between items-start gap-2">
+                        <div className="flex-1 min-w-0">
+                            <h2 className="font-bold text-lg text-slate-800 leading-tight truncate">
+                                {student.project?.groupName || student.name}
+                            </h2>
+                            {student.project?.groupName ? (
+                                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate">Leader: {student.name}</p>
+                            ) : (
+                                <p className="text-[13px] font-medium text-slate-500 mt-1 truncate">{student.email}</p>
+                            )}
+                        </div>
+                        {/* Overlapping Avatars */}
+                        <div className="flex -space-x-2 shrink-0">
+                            <div className="inline-flex h-8 w-8 rounded-full ring-2 ring-white bg-slate-100 text-slate-600 items-center justify-center font-bold text-xs shadow-sm z-10" title={`Leader: ${student.name}`}>
+                                {student.name?.charAt(0) || "L"}
+                            </div>
+                            {student.project?.members?.map((m, idx) => (
+                                <div key={idx} className="inline-flex h-8 w-8 rounded-full ring-2 ring-white bg-white border border-slate-200 text-slate-500 items-center justify-center font-bold text-xs shadow-sm" style={{ zIndex: 9 - idx }} title={`Member: ${m.name}`}>
+                                    {m.name?.charAt(0) || "M"}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Project Section */}

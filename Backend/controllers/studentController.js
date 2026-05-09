@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 export const upload = multer({ storage });
 
 export const submitProposal = asyncHandler(async (req, res, next) => {
-    const { title, description, forceSubmit } = req.body;
+    const { title, description, groupName, forceSubmit } = req.body;
 
     if (!title || !description) {
         return next(new ErrorHandler("Please provide title and description", 400));
@@ -49,14 +49,15 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
     }
 
     // Check if project exists
-    let project = await Project.findOne({ student: req.user._id });
+    let project = await Project.findOne({ $or: [{ student: req.user._id }, { members: req.user._id }] });
     if (project) {
         if (project.status === "Pending" || project.status === "Approved") {
-            return next(new ErrorHandler("You already have an active proposal. Please wait for the admin's decision or submit only if rejected.", 400));
+            return next(new ErrorHandler("You already have an active proposal or are part of a project group. Please wait for the admin's decision or submit only if rejected.", 400));
         }
         
         project.title = title;
         project.description = description;
+        if (groupName !== undefined) project.groupName = groupName;
         project.status = "Pending"; // Reset status for Admin Review
         await project.save();
     } else {
@@ -64,6 +65,7 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
             title,
             description,
             student: req.user._id,
+            groupName: groupName || "",
         });
 
         req.user.project = project._id;
@@ -111,7 +113,7 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
     }
 
     // STRICT VALIDATION: Student MUST have a Project Proposal before requesting
-    const projectExists = await Project.findOne({ student: req.user._id });
+    const projectExists = await Project.findOne({ $or: [{ student: req.user._id }, { members: req.user._id }] });
     if (!projectExists) {
         return next(new ErrorHandler("Please submit your Project Proposal first before requesting a supervisor.", 400));
     }
@@ -157,7 +159,7 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Please upload a file", 400));
     }
 
-    const project = await Project.findOne({ student: req.user._id });
+    const project = await Project.findOne({ $or: [{ student: req.user._id }, { members: req.user._id }] });
     if (!project) {
         return next(new ErrorHandler("Project not found", 404));
     }
@@ -199,7 +201,9 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
 });
 
 export const getStudentDashboard = asyncHandler(async (req, res, next) => {
-    const project = await Project.findOne({ student: req.user._id }).populate("supervisor", "name email department experties");
+    const project = await Project.findOne({ $or: [{ student: req.user._id }, { members: req.user._id }] })
+        .populate("supervisor", "name email department experties")
+        .populate("members", "name email department");
 
     const requests = await Request.find({ fromUser: req.user._id }).populate("toUser", "name email department experties");
     const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(5);
@@ -216,7 +220,7 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
     const { taskId } = req.params;
     const { status } = req.body;
 
-    const project = await Project.findOne({ student: req.user._id });
+    const project = await Project.findOne({ $or: [{ student: req.user._id }, { members: req.user._id }] });
     if (!project) {
         return next(new ErrorHandler("Project not found", 404));
     }
