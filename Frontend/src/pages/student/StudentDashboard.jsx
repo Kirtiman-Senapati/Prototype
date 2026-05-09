@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getStudentDashboard, getStudentFeedback, updateTaskStatus } from "../../store/slices/studentSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
-import { BookOpen, Clock, Loader, XCircle, AlertCircle, ArrowRight, FolderKanban, GraduationCap, MessageSquare, CheckSquare } from "lucide-react";
+import { BookOpen, Clock, Loader, XCircle, AlertCircle, ArrowRight, FolderKanban, GraduationCap, MessageSquare, CheckSquare, Users } from "lucide-react";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { formatDateTime } from "../../utils/timeFormat";
 import { toast } from "../../utils/toast";
@@ -150,6 +150,31 @@ const StudentDashboard = () => {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState(null);
   const [isSubmittingMilestone, setIsSubmittingMilestone] = useState(false);
+  const [pendingInvites, setPendingInvites] = useState([]);
+
+  const fetchInvites = async () => {
+      try {
+          const { axiosInstance } = await import("../../lib/axios");
+          const res = await axiosInstance.get('/student/invites');
+          setPendingInvites(res.data.invites || []);
+      } catch (err) {
+          console.error("Failed to fetch invites", err);
+      }
+  };
+
+  const handleRespondToInvite = async (inviteId, action) => {
+      try {
+          const toastId = toast.loading(`${action === 'accept' ? 'Accepting' : 'Rejecting'} invitation...`);
+          const { axiosInstance } = await import("../../lib/axios");
+          await axiosInstance.post(`/student/invite/${inviteId}/respond`, { action });
+          toast.update(toastId, { render: `Invitation ${action}ed!`, type: "success", isLoading: false, autoClose: 3000 });
+          fetchInvites();
+          dispatch(getStudentDashboard());
+      } catch (err) {
+          toast.dismiss();
+          toast.error(err.response?.data?.message || "Failed to respond to invite");
+      }
+  };
 
   const handleCompleteProject = async () => {
       try {
@@ -214,6 +239,7 @@ const StudentDashboard = () => {
     dispatch(getStudentDashboard());
     dispatch(getStudentFeedback());
     dispatch(getActivities());
+    fetchInvites();
   }, [dispatch]);
 
   // Real-Time Auto Refresh via Global Socket
@@ -322,6 +348,34 @@ useAutoRefresh(() => {
 
   return (
     <div className="space-y-6 pb-10 bg-[#F9FAFB] min-h-screen">
+      {/* Pending Invites Banner */}
+      {pendingInvites && pendingInvites.length > 0 && (
+          <div className="flex flex-col gap-3 mb-6">
+              {pendingInvites.map(invite => (
+                  <div key={invite._id} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-start sm:items-center gap-4">
+                          <div className="p-3 bg-slate-100 rounded-full text-slate-700">
+                              <Users size={24} />
+                          </div>
+                          <div>
+                              <h3 className="text-sm font-bold text-slate-800">Project Invitation</h3>
+                              <p className="text-sm text-slate-600 mt-1">
+                                  <span className="font-semibold text-slate-700">{invite.invitedBy?.name}</span> invited you to join <span className="font-semibold text-slate-700">{invite.project?.title || invite.project?.groupName || "a project"}</span>.
+                              </p>
+                          </div>
+                      </div>
+                      <div className="flex gap-3 w-full sm:w-auto mt-2 sm:mt-0">
+                          <button onClick={() => handleRespondToInvite(invite._id, "reject")} className="flex-1 sm:flex-none px-4 py-2 border border-slate-200 rounded-md text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors text-center">
+                              Decline
+                          </button>
+                          <button onClick={() => handleRespondToInvite(invite._id, "accept")} className="flex-1 sm:flex-none px-4 py-2 bg-slate-900 text-white rounded-md text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm text-center">
+                              Accept Invite
+                          </button>
+                      </div>
+                  </div>
+              ))}
+          </div>
+      )}
       
       {/* Premium Header Section */}
       <div className="pt-2 pb-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">

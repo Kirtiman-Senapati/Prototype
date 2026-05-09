@@ -15,7 +15,11 @@ import {
     addTaskAdmin,
     triggerReminders,
     sendManualReminder,
-    manageGroup
+    updateGroupName,
+    inviteMember,
+    removeMember,
+    resendInvite,
+    cancelInvite
 } from "../controllers/adminController.js";
 import {
     addMilestone,
@@ -44,7 +48,11 @@ router.patch("/user/:id", updateUserDetails);
 router.post("/task", addTaskAdmin);
 router.post("/trigger-reminders", triggerReminders);
 router.post("/project/:id/remind", sendManualReminder);
-router.patch("/project/:id/group", manageGroup);
+router.patch("/project/:id/group-name", updateGroupName);
+router.post("/project/:id/invite", inviteMember);
+router.delete("/project/:id/member/:userId", removeMember);
+router.post("/project/:id/invite/:inviteId/resend", resendInvite);
+router.delete("/project/:id/invite/:inviteId", cancelInvite);
 
 // Milestone routes
 router.post("/project/:projectId/milestone", addMilestone);

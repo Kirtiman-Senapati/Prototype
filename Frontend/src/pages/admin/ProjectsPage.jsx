@@ -24,6 +24,8 @@ const ProjectsPage = () => {
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
     const [taskData, setTaskData] = useState({ title: "", description: "", deadline: "" });
     const [groupData, setGroupData] = useState({ groupName: "", memberEmails: "" });
+    const [pendingInvites, setPendingInvites] = useState([]);
+    const [inviteEmail, setInviteEmail] = useState("");
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
     const [isSubmittingTask, setIsSubmittingTask] = useState(false);
     const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
@@ -188,25 +190,90 @@ const ProjectsPage = () => {
         }
     };
 
-    const handleManageGroup = async (e) => {
+    const fetchPendingInvites = async (projectId) => {
+        try {
+            const res = await axiosInstance.get(`/admin/project/${projectId}`);
+            if (res.data.pendingInvites) {
+                setPendingInvites(res.data.pendingInvites);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        if (isGroupModalOpen && selectedProject) {
+            fetchPendingInvites(selectedProject._id);
+        }
+    }, [isGroupModalOpen, selectedProject]);
+
+    const handleUpdateGroupName = async (e) => {
         e.preventDefault();
         setIsSubmittingGroup(true);
         try {
-            const emails = groupData.memberEmails.split(",").map(e => e.trim()).filter(Boolean);
-            const res = await axiosInstance.patch(`/admin/project/${selectedProject._id}/group`, {
-                groupName: groupData.groupName,
-                memberEmails: emails
+            const res = await axiosInstance.patch(`/admin/project/${selectedProject._id}/group-name`, {
+                groupName: groupData.groupName
             });
-            toast.success("Group updated successfully");
-            setIsGroupModalOpen(false);
-            if (res.data.project) {
-                setSelectedProject(prev => ({ ...prev, groupName: res.data.project.groupName, members: res.data.project.members }));
+            toast.success("Group name updated successfully");
+            if (res.data.success) {
+                setSelectedProject(prev => ({ ...prev, groupName: groupData.groupName }));
+                fetchProjects();
             }
-            fetchProjects();
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to update group");
+            toast.error(error.response?.data?.message || "Failed to update group name");
         } finally {
             setIsSubmittingGroup(false);
+        }
+    };
+
+    const handleInviteMember = async (e) => {
+        e.preventDefault();
+        if (!inviteEmail) return;
+        setIsSubmittingGroup(true);
+        try {
+            await axiosInstance.post(`/admin/project/${selectedProject._id}/invite`, { email: inviteEmail });
+            toast.success("Invitation sent successfully");
+            setInviteEmail("");
+            fetchPendingInvites(selectedProject._id);
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to send invite");
+        } finally {
+            setIsSubmittingGroup(false);
+        }
+    };
+
+    const handleRemoveMember = async (userId) => {
+        if (!window.confirm("Are you sure you want to remove this member?")) return;
+        try {
+            await axiosInstance.delete(`/admin/project/${selectedProject._id}/member/${userId}`);
+            toast.success("Member removed");
+            setSelectedProject(prev => ({
+                ...prev,
+                members: prev.members.filter(m => m._id !== userId)
+            }));
+            fetchProjects();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to remove member");
+        }
+    };
+
+    const handleCancelInvite = async (inviteId) => {
+        if (!window.confirm("Cancel this invitation?")) return;
+        try {
+            await axiosInstance.delete(`/admin/project/${selectedProject._id}/invite/${inviteId}`);
+            toast.success("Invitation cancelled");
+            fetchPendingInvites(selectedProject._id);
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to cancel invite");
+        }
+    };
+
+    const handleResendInvite = async (inviteId) => {
+        try {
+            await axiosInstance.post(`/admin/project/${selectedProject._id}/invite/${inviteId}/resend`);
+            toast.success("Invitation resent");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to resend invite");
         }
     };
 
@@ -943,24 +1010,101 @@ const ProjectsPage = () => {
                             </div>
                             <button onClick={() => setIsGroupModalOpen(false)} className="text-slate-400 hover:text-slate-600 rounded-full p-1"><X size={20} /></button>
                         </div>
-                        <form onSubmit={handleManageGroup} className="space-y-4">
+                        <div className="space-y-6">
+                            {/* Group Name Section */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Group Name (Optional)</label>
-                                <input className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none" placeholder="e.g. Alpha Team" value={groupData.groupName} onChange={e => setGroupData({ ...groupData, groupName: e.target.value })} />
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Group Name</label>
+                                <form onSubmit={handleUpdateGroupName} className="flex gap-2">
+                                    <input className="flex-1 px-3 py-2 rounded-md border border-slate-200 bg-slate-50 text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none" placeholder="e.g. Alpha Team" value={groupData.groupName} onChange={e => setGroupData({ ...groupData, groupName: e.target.value })} />
+                                    <button type="submit" disabled={isSubmittingGroup || groupData.groupName === selectedProject.groupName} className="px-4 py-2 rounded-md text-xs font-bold bg-slate-800 hover:bg-slate-900 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Update
+                                    </button>
+                                </form>
                             </div>
+
+                            {/* Active Members */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Additional Member Emails</label>
-                                <textarea className="w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none min-h-[100px]" placeholder="Comma separated emails (e.g. member1@uni.edu, member2@uni.edu)" value={groupData.memberEmails} onChange={e => setGroupData({ ...groupData, memberEmails: e.target.value })} />
-                                <p className="text-xs text-slate-500 mt-1.5 font-medium">Team Leader ({selectedProject.student?.email}) is automatically included.</p>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Active Members</label>
+                                <div className="border border-slate-200 rounded-md overflow-hidden bg-white">
+                                    {/* Leader */}
+                                    <div className="flex justify-between items-center px-4 py-3 border-b border-slate-100 bg-slate-50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">
+                                                {selectedProject.student?.name?.charAt(0) || "L"}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-slate-700 leading-none">{selectedProject.student?.name || "Unknown"}</span>
+                                                <span className="text-[10px] text-slate-500 mt-0.5">{selectedProject.student?.email}</span>
+                                            </div>
+                                        </div>
+                                        <span className="text-[10px] uppercase font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded">Leader</span>
+                                    </div>
+                                    
+                                    {/* Members */}
+                                    {selectedProject.members && selectedProject.members.length > 0 ? (
+                                        selectedProject.members.map(member => (
+                                            <div key={member._id} className="flex justify-between items-center px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-[10px] font-bold border border-slate-200">
+                                                        {member.name?.charAt(0) || "M"}
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-semibold text-slate-700 leading-none">{member.name}</span>
+                                                        <span className="text-[10px] text-slate-500 mt-0.5">{member.email}</span>
+                                                    </div>
+                                                </div>
+                                                <button onClick={() => handleRemoveMember(member._id)} className="text-[10px] font-bold text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors">
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="px-4 py-4 text-center text-xs font-medium text-slate-400 italic">No additional members</div>
+                                    )}
+                                </div>
                             </div>
-                            <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
-                                <button type="button" onClick={() => setIsGroupModalOpen(false)} className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
-                                <button type="submit" disabled={isSubmittingGroup} className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2">
-                                    {isSubmittingGroup && <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>}
-                                    Save Group
-                                </button>
+
+                            {/* Pending Invites */}
+                            {pendingInvites && pendingInvites.length > 0 && (
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Pending Invites</label>
+                                    <div className="border border-slate-200 rounded-md overflow-hidden bg-white">
+                                        {pendingInvites.map(invite => (
+                                            <div key={invite._id} className="flex justify-between items-center px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-6 h-6 rounded-full border border-dashed border-slate-300 text-slate-400 flex items-center justify-center text-[10px] font-bold">
+                                                        ?
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-medium text-slate-600 leading-none">{invite.email}</span>
+                                                        <span className="text-[10px] text-orange-500 font-semibold mt-0.5">Pending Approval</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <button onClick={() => handleResendInvite(invite._id)} className="text-[10px] font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-200 px-2 py-1 rounded transition-colors">
+                                                        Resend
+                                                    </button>
+                                                    <button onClick={() => handleCancelInvite(invite._id)} className="text-[10px] font-bold text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors">
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Invite New Member */}
+                            <div className="pt-2">
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Invite Member</label>
+                                <form onSubmit={handleInviteMember} className="flex gap-2">
+                                    <input type="email" required className="flex-1 px-3 py-2 rounded-md border border-slate-200 bg-white text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition outline-none" placeholder="student@university.edu" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} />
+                                    <button type="submit" disabled={isSubmittingGroup || !inviteEmail} className="px-4 py-2 rounded-md text-xs font-bold bg-slate-800 hover:bg-slate-900 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Send Invite
+                                    </button>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             )}

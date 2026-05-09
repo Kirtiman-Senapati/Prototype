@@ -16,6 +16,7 @@ import { Notification } from "../models/notification.js";
 import { generateNotificationEmailTemplate } from "../utils/notificationEmailTemplate.js";
 import fs from "fs";
 import path from "path";
+import { GroupInvite } from "../models/GroupInvite.js";
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
@@ -627,6 +628,14 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Project not found", 404));
     }
 
+    const pendingInvites = await GroupInvite.find({ project: projectId, status: "Pending" });
+
+    res.status(200).json({
+        success: true,
+        project,
+        pendingInvites
+    });
+    
     if (project.student._id.toString() !== studentId) {
         return next(new ErrorHandler("Student does not match the project", 400));
     }
@@ -694,75 +703,138 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
     });
 });
 
-export const manageGroup = asyncHandler(async (req, res, next) => {
+export const updateGroupName = asyncHandler(async (req, res, next) => {
     const { id: projectId } = req.params;
-    const { groupName, memberEmails } = req.body;
+    const { groupName } = req.body;
 
     const project = await Project.findById(projectId);
-    if (!project) {
-        return next(new ErrorHandler("Project not found", 404));
-    }
+    if (!project) return next(new ErrorHandler("Project not found", 404));
 
     if (groupName !== undefined) {
         project.groupName = groupName;
+        await project.save();
     }
-
-    if (memberEmails !== undefined && Array.isArray(memberEmails)) {
-        // Find users matching the emails and ensure they are Students
-        const validMembers = await User.find({ email: { $in: memberEmails }, role: "Student" }).select("_id email");
-        
-        // Find emails that were not found or were not students
-        const validEmails = validMembers.map(u => u.email);
-        const invalidEmails = memberEmails.filter(e => !validEmails.includes(e));
-
-        if (invalidEmails.length > 0) {
-            return next(new ErrorHandler(`Invalid or non-student emails: ${invalidEmails.join(", ")}`, 400));
-        }
-
-        const validIds = validMembers.map(u => u._id);
-
-        // Check if any validId is the leader
-        if (validIds.some(id => id.toString() === project.student.toString())) {
-            return next(new ErrorHandler("Team leader cannot be added as a member", 400));
-        }
-
-        // Check if any validId is already part of ANOTHER project
-        const existingProject = await Project.findOne({
-            _id: { $ne: project._id },
-            $or: [
-                { student: { $in: validIds } },
-                { members: { $in: validIds } }
-            ]
-        });
-
-        if (existingProject) {
-            return next(new ErrorHandler("One or more students are already assigned to another project", 400));
-        }
-
-        project.members = validIds;
-    }
-
-    await project.save();
 
     await logActivity({
         actor: req.user._id,
         targetUsers: [req.user._id, project.student, ...project.members],
         actionType: "GROUP_UPDATED",
-        message: `**Admin** updated group details for project **"${project.title}"**`,
+        message: `**Admin** updated group name for project **"${project.title}"**`,
         relatedProject: project._id,
-        priority: "medium"
+        priority: "low"
     });
 
     const io = getIo();
     emitRefresh(io);
 
-    const updatedProject = await Project.findById(projectId)
-        .populate("student supervisor")
-        .populate("members", "name email");
+    res.status(200).json({ success: true, message: "Group name updated" });
+});
 
-    res.status(200).json({
-        success: true,
-        message: "Project group updated successfully",
-        project: updatedProject
+export const inviteMember = asyncHandler(async (req, res, next) => {
+    const { id: projectId } = req.params;
+    const { email } = req.body;
+
+    if (!email) return next(new ErrorHandler("Email is required", 400));
+
+    const project = await Project.findById(projectId);
+    if (!project) return next(new ErrorHandler("Project not found", 404));
+
+    const student = await User.findOne({ email: email.toLowerCase(), role: "Student" });
+    if (!student) return next(new ErrorHandler("Student with this email not found", 404));
+
+    if (project.student.toString() === student._id.toString() || project.members.includes(student._id)) {
+        return next(new ErrorHandler("Student is already a member of this project", 400));
+    }
+
+    const existingProject = await Project.findOne({
+        _id: { $ne: project._id },
+        $or: [{ student: student._id }, { members: student._id }]
     });
+    if (existingProject) return next(new ErrorHandler("Student is already in another project", 400));
+
+    const existingInvite = await GroupInvite.findOne({ project: projectId, email: email.toLowerCase(), status: "Pending" });
+    if (existingInvite) return next(new ErrorHandler("An invitation is already pending for this email", 400));
+
+    const invite = await GroupInvite.create({
+        project: projectId,
+        email: email.toLowerCase(),
+        invitedBy: req.user._id
+    });
+
+    try {
+        await sendEmail({
+            email: email,
+            subject: "You've been invited to join a project",
+            message: `Admin has invited you to join the project "${project.title || project.groupName}". Please log in to your dashboard to accept.`
+        });
+    } catch (err) {
+        console.error("Email sending failed:", err.message);
+    }
+
+    const io = getIo();
+    emitRefresh(io);
+
+    res.status(200).json({ success: true, message: "Invitation sent", invite });
+});
+
+export const cancelInvite = asyncHandler(async (req, res, next) => {
+    const { inviteId } = req.params;
+    const invite = await GroupInvite.findById(inviteId);
+    if (!invite) return next(new ErrorHandler("Invite not found", 404));
+
+    invite.status = "Cancelled";
+    await invite.save();
+
+    const io = getIo();
+    emitRefresh(io);
+
+    res.status(200).json({ success: true, message: "Invitation cancelled" });
+});
+
+export const resendInvite = asyncHandler(async (req, res, next) => {
+    const { inviteId } = req.params;
+    const invite = await GroupInvite.findById(inviteId).populate("project");
+    if (!invite || invite.status !== "Pending") return next(new ErrorHandler("Pending invite not found", 404));
+
+    try {
+        await sendEmail({
+            email: invite.email,
+            subject: "Reminder: You've been invited to join a project",
+            message: `Admin has invited you to join the project "${invite.project.title || invite.project.groupName}". Please log in to your dashboard to accept.`
+        });
+    } catch (err) {
+        console.error("Email sending failed:", err.message);
+    }
+
+    res.status(200).json({ success: true, message: "Invitation resent" });
+});
+
+export const removeMember = asyncHandler(async (req, res, next) => {
+    const { id: projectId, userId } = req.params;
+    
+    const project = await Project.findById(projectId);
+    if (!project) return next(new ErrorHandler("Project not found", 404));
+
+    if (project.student.toString() === userId.toString()) {
+        return next(new ErrorHandler("Cannot remove team leader", 400));
+    }
+
+    project.members = project.members.filter(m => m.toString() !== userId.toString());
+    await project.save();
+
+    const removedUser = await User.findById(userId);
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers: [req.user._id, project.student, ...project.members, userId],
+        actionType: "MEMBER_REMOVED",
+        message: `**Admin** removed **${removedUser?.name || 'a member'}** from project **"${project.title}"**`,
+        relatedProject: project._id,
+        priority: "high"
+    });
+
+    const io = getIo();
+    emitRefresh(io);
+
+    res.status(200).json({ success: true, message: "Member removed" });
 });
