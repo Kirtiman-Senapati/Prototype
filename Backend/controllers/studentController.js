@@ -3,6 +3,7 @@ import ErrorHandler from "../middlewares/error.js";
 import { Project } from "../models/project.js";
 import { Request } from "../models/request.js";
 import { User } from "../models/user.js";
+import { getProjectTargetUsers } from "../utils/getProjectTargetUsers.js";
 import { Notification } from "../models/notification.js";
 import multer from "multer";
 import path from "path";
@@ -183,12 +184,15 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
         emitRefresh(io);
     });
 
-    const admins = await User.find({ role: "Admin" }).select("_id");
-    const adminIds = admins.map(a => a._id);
+    //Added helper in Notification and fixed the logic of targetUsers
+
+    const targetUsers = await getProjectTargetUsers(project, [
+        req.user._id,
+    ]);
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.supervisor, ...adminIds].filter(Boolean),
+        targetUsers,
         actionType: "FILE_UPLOADED",
         message: `**${req.user.name}** uploaded a new file: **${req.file.originalname}**`,
         relatedProject: project._id,
@@ -259,13 +263,14 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
     });
 
     if (status === "Completed") {
-        // Fetch Admins for Event Routing (CASE 3)
-        const admins = await User.find({ role: "Admin" }).select("_id");
-        const adminIds = admins.map(a => a._id);
-
+        // Fetch Admins for Event Routing (CASE 3) logic shifted to getProjectTargetUsers helper function
+        //Aded helper in Notification and fixed the logic of targetUsers
+        const targetUsers = await getProjectTargetUsers(project, [
+            req.user._id,
+        ]);
         await logActivity({
             actor: req.user._id,
-            targetUsers: [project.supervisor, ...adminIds].filter(Boolean),
+            targetUsers,
             actionType: "TASK_COMPLETED",
             message: `**${req.user.name}** marked task **"${task.title}"** as completed`,
             relatedProject: project._id,
@@ -474,23 +479,10 @@ export const respondToInvite = asyncHandler(async (req, res, next) => {
         await invite.save();
 
         //fix message issue
-
-        const admins = await User.find({
-            role: "Admin",
-        }).select("_id");
-
-        const adminIds = admins.map(admin => admin._id);
-
-        const targetUsers = [
-            project.student,
+        //Added helper in Notification and fixed the logic of targetUsers
+        const targetUsers = await getProjectTargetUsers(project, [
             req.user._id,
-            ...project.members,
-            project.supervisor,
-            ...adminIds,
-        ]
-            .filter(Boolean)
-            .map(id => id.toString())
-            .filter((id, index, self) => self.indexOf(id) === index);
+        ]);
 
         await logActivity({
             actor: req.user._id,

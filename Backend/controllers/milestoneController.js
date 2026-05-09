@@ -2,6 +2,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Project } from "../models/project.js";
 import { User } from "../models/user.js";
+import { getProjectTargetUsers } from "../utils/getProjectTargetUsers.js";
 import { logActivity } from "../utils/activityLogger.js";
 import { getIo } from "../utils/socket.js";
 import { emitRefresh } from "../utils/socketEvents.js";
@@ -94,13 +95,15 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
     project.progress = recalculateProgress(project);
     await project.save();
 
-    // Fetch Admins for Event Routing
-    const admins = await User.find({ role: "Admin" }).select("_id");
-    const adminIds = admins.map(a => a._id);
+    // Fetch Admins for Event Routing shift to getProjectTargetUsers helper function
+    //Added helper in Notification and fixed the logic of targetUsers
+    const targetUsers = await getProjectTargetUsers(project, [
+        req.user._id,
+    ]);
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student._id, ...(project.members?.map(m => m._id || m) || []), ...adminIds],
+        targetUsers,
         actionType: "MILESTONE_ADDED",
         message: `**${req.user.name}** added a new milestone "**${title}**" to the project "**${project.title}**"`,
         details: description,
@@ -240,15 +243,14 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
     }
     await project.save();
 
-    const admins = await User.find({ role: "Admin" }).select("_id");
-    const adminIds = admins.map(a => a._id);
+    //Added helper in Notification and fixed the logic of targetUsers
+    const targetUsers = await getProjectTargetUsers(project);
     
     const io = getIo();
 
-    
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.supervisor?._id, ...adminIds].filter(Boolean),
+        targetUsers,
         actionType: "MILESTONE_SUBMITTED",
         message: `**${req.user.name}** submitted work for the milestone "**${milestone.title}**"`,
         relatedProject: project._id,
@@ -334,9 +336,13 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
     project.progress = recalculateProgress(project);
     await project.save();
 
+    //Added helper in Notification and fixed the logic of targetUsers
+    const targetUsers = await getProjectTargetUsers(project,[req.user._id,
+    ]);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student._id, ...(project.members?.map(m => m._id || m) || [])],
+        targetUsers,
         actionType: "MILESTONE_REVIEWED",
         message: `Milestone "**${milestone.title}**" was **${status}** by ${req.user.name}`,
         details: remarks,

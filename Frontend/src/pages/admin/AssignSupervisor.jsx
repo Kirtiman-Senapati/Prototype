@@ -281,7 +281,17 @@ const AssignSupervisor = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-5 align-middle">
-                                                <p className="text-sm font-medium text-slate-700 line-clamp-2 max-w-[250px] transition-colors">{p.title}</p>
+                                                <div className="flex flex-col">
+                                                    <p className="text-sm font-medium text-slate-700 line-clamp-2 max-w-[250px] transition-colors">
+                                                        {p.title}
+                                                    </p>
+
+                                                    {p.groupName && (
+                                                        <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block border border-slate-200 w-fit">
+                                                            {p.groupName}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td className="px-6 py-5 align-middle text-left">
                                                 <div className="flex flex-col gap-0.5">

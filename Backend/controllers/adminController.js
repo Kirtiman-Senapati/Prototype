@@ -9,16 +9,19 @@ import { Activity } from "../models/activity.js";
 import { Request } from "../models/request.js";
 import { Feedback } from "../models/Feedback.js";
 import { getIo } from "../utils/socket.js";
-import { emitRefresh,EVENTS } from "../utils/socketEvents.js";
+import { emitRefresh, EVENTS } from "../utils/socketEvents.js";
 import { sendEmail } from "../services/emailService.js";
 import { generateGroupInviteTemplate } from "../utils/groupInviteEmailTemplate.js";
 import { getEmailTemplate } from "../utils/emailTemplates.js";
+import { getProjectTargetUsers } from "../utils/getProjectTargetUsers.js";
 import { Notification } from "../models/notification.js";
 import { generateNotificationEmailTemplate } from "../utils/notificationEmailTemplate.js";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { GroupInvite } from "../models/GroupInvite.js";
+
+
 export const getAdminDashboard = asyncHandler(async (req, res, next) => {
     const totalStudents = await User.countDocuments({ role: "Student" });
     const totalTeachers = await User.countDocuments({ role: "Supervisor" });
@@ -253,9 +256,16 @@ export const assignSupervisor = asyncHandler(async (req, res, next) => {
         }
     });
 
+    //Added helper in Notification and fixed the logic of targetUsers
+
+    const targetUsers = await getProjectTargetUsers(project, [
+        supervisorId,
+        req.user._id,
+    ]);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student, supervisorId, req.user._id],
+        targetUsers,
         actionType: "SUPERVISOR_ASSIGNED",
         message: `**Admin** assigned supervisor for project **"${project.title}"**`,
         relatedProject: project._id,
@@ -340,9 +350,15 @@ export const updateProjectStatus = asyncHandler(async (req, res, next) => {
     const admins = await User.find({ role: "Admin" }).select("_id");
     const adminIds = admins.map(a => a._id);
 
+    //Added helper in Notification and fixed the logic of targetUsers
+
+    const targetUsers = await getProjectTargetUsers(project, [
+        req.user._id,
+    ]);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
+        targetUsers,
         actionType: status === "Approved" ? "PROJECT_APPROVED" : "PROJECT_REJECTED",
         message: `Project proposal **"${project.title}"** was ${status.toLowerCase()} by **Admin**`,
         relatedProject: project._id,
@@ -391,8 +407,8 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
             status: project.status,
             deadline: project.deadline,
             supervisor: project.supervisor,
-    });
-}
+        });
+    }
 
     //  Socket.IO: Real-Time Event Emmision to Student
     import("../utils/socket.js").then(({ getIo, getReceiverSocketId }) => {
@@ -414,9 +430,17 @@ export const updateProjectDeadline = asyncHandler(async (req, res, next) => {
     const admins = await User.find({ role: "Admin" }).select("_id");
     const adminIds = admins.map(a => a._id);
 
+
+    //Added helper in Notification and fixed the logic of targetUsers
+
+    const targetUsers = await getProjectTargetUsers(project, [
+        req.user._id,
+    ]);
+
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student?._id, project.supervisor?._id, ...adminIds].filter(Boolean),
+        targetUsers,
         actionType: "DEADLINE_SET",
         message: `**Deadline Updated**: Admin has officially scheduled the submission deadline for the project **"${project.title}"** to ${new Date(deadline).toLocaleDateString("en-GB")}.`,
         relatedProject: project._id,
@@ -463,11 +487,11 @@ export const addStudent = asyncHandler(async (req, res, next) => {
         role: "Student",
     });
 
-   const activity = await logActivity({
-    actor: req.user._id,
-    actionType: "USER_ADDED",
-    message: `**Admin** added a new Student: **${name}**`,
-});
+    const activity = await logActivity({
+        actor: req.user._id,
+        actionType: "USER_ADDED",
+        message: `**Admin** added a new Student: **${name}**`,
+    });
 
     const io = getIo();
 
@@ -479,7 +503,7 @@ export const addStudent = asyncHandler(async (req, res, next) => {
         io.emit(EVENTS.USER_UPDATED, {
             type: "studentAdded",
         });
-}
+    }
 
     res.status(201).json({
         success: true,
@@ -603,9 +627,15 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
     const admins = await User.find({ role: "Admin" }).select("_id");
     const adminIds = admins.map(a => a._id);
 
+    //Added helper in Notification and fixed the logic of targetUsers
+
+    const targetUsers = await getProjectTargetUsers(project, [
+        req.user._id,
+    ]);
+
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student, project.supervisor, ...adminIds].filter(Boolean),
+        targetUsers,
         actionType: "TASK_ASSIGNED",
         message: `**Admin** assigned a new task **"${title}"** to project **"${project.title}"**`,
         details: description,
@@ -622,7 +652,7 @@ export const addTaskAdmin = asyncHandler(async (req, res, next) => {
         project
     });
 });
-
+// sendManualReminder 
 export const sendManualReminder = asyncHandler(async (req, res, next) => {
     const { id: projectId } = req.params;
     const { studentId, message } = req.body;
@@ -632,21 +662,26 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
     }
 
     const project = await Project.findById(projectId).populate("student", "name email").populate("members", "name email");
+
     if (!project) {
         return next(new ErrorHandler("Project not found", 404));
     }
 
-    const pendingInvites = await GroupInvite.find({ project: projectId, status: "Pending" });
-
-    res.status(200).json({
-        success: true,
-        project,
-        pendingInvites
-    });
+    //Add new logic for leader and member of project
+    const isLeader = project.student?._id.toString() === studentId;
+    const isMember =project.members?.some(member => member._id.toString() === studentId);
     
-    if (project.student._id.toString() !== studentId) {
-        return next(new ErrorHandler("Student does not match the project", 400));
-    }
+    if (!isLeader && !isMember) {
+    return next(new ErrorHandler("Student does not belong to this project",400));
+}
+
+//Add notification for leader and member
+    const isGroupProject =
+        project.members &&
+        project.members.length > 0;
+
+    //get pending invites for the project
+    const pendingInvites = await GroupInvite.find({ project: projectId, status: "Pending" });
 
     const defaultMessage = "This is a reminder from the admin regarding your project deadline. Please review your progress and ensure timely completion.";
     const finalMessage = message && message.trim() ? message : defaultMessage;
@@ -663,7 +698,11 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
     // 2. Log Activity
     await logActivity({
         actor: req.user._id,
-        targetUsers: [studentId, req.user._id],
+        targetUsers: isGroupProject
+    ? await getProjectTargetUsers(project, [
+          req.user._id,
+      ])
+    : [studentId, req.user._id],
         actionType: "DEADLINE_REMINDER",
         message: `**Admin** sent a manual reminder to **${project.student.name}** for project **"${project.title}"**`,
         details: finalMessage,
@@ -773,18 +812,17 @@ export const inviteMember = asyncHandler(async (req, res, next) => {
     });
 
     let emailSent = false;
-    try 
-    {
+    try {
 
         console.log("INVITE EMAIL START");
 
         const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
         const acceptUrl =
-        `${frontendUrl}/invite/respond?token=${invite.token}&action=accept`;
+            `${frontendUrl}/invite/respond?token=${invite.token}&action=accept`;
 
         const declineUrl =
-        `${frontendUrl}/invite/respond?token=${invite.token}&action=reject`;
+            `${frontendUrl}/invite/respond?token=${invite.token}&action=reject`;
 
         const html = generateGroupInviteTemplate({
             invitedStudentName: student.name,
@@ -806,9 +844,8 @@ export const inviteMember = asyncHandler(async (req, res, next) => {
 
         console.log("INVITE EMAIL SUCCESS");
 
-    } 
-    catch (err) 
-    {
+    }
+    catch (err) {
 
         console.error("INVITE EMAIL FAILED:", err.message);
 
@@ -865,7 +902,7 @@ export const resendInvite = asyncHandler(async (req, res, next) => {
 
 export const removeMember = asyncHandler(async (req, res, next) => {
     const { id: projectId, userId } = req.params;
-    
+
     const project = await Project.findById(projectId);
     if (!project) return next(new ErrorHandler("Project not found", 404));
 

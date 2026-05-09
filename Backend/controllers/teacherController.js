@@ -2,6 +2,8 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Project } from "../models/project.js";
 import { Request } from "../models/request.js";
+import { Notification } from "../models/notification.js";
+import { getProjectTargetUsers } from "../utils/getProjectTargetUsers.js";
 import { User } from "../models/user.js";
 import { getIo, getReceiverSocketId } from "../utils/socket.js";
 import { logActivity } from "../utils/activityLogger.js";
@@ -63,9 +65,15 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
             { $set: { status: "Rejected" } }
         );
 
+        //Added helper in Notification and fixed the logic of targetUsers
+
+        const targetUsers = await getProjectTargetUsers(project, [
+            req.user._id,
+        ]);
+
         await logActivity({
             actor: req.user._id,
-            targetUsers: [studentToAssign._id],
+            targetUsers,
             actionType: "REQUEST_ACCEPTED",
             message: `Supervisor **${req.user.name}** accepted **${studentToAssign.name}**'s request`,
             priority: "high"
@@ -151,13 +159,17 @@ export const addTask = asyncHandler(async (req, res, next) => {
     await project.populate("student", "name");
     await project.populate("members", "name");
     
-    // Fetch Admins for Event Routing (CASE 2)
-    const admins = await User.find({ role: "Admin" }).select("_id");
-    const adminIds = admins.map(a => a._id);
+    // Fetch Admins for Event Routing (CASE 2) shifted to getProjectTargetUsers
+
+    //Added helper in Notification and fixed the logic of targetUsers
+
+   const targetUsers = await getProjectTargetUsers(project, [
+    req.user._id,
+   ]);
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student._id, ...(project.members?.map(m => m._id || m) || []), ...adminIds],
+        targetUsers,
         actionType: "TASK_ASSIGNED",
         message: `Supervisor **${req.user.name}** assigned a new task "**${title}**" to **${project.student.name}**`,
         details: description,
