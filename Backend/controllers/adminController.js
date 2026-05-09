@@ -28,13 +28,15 @@ export const getAdminDashboard = asyncHandler(async (req, res, next) => {
         .sort({ createdAt: -1 })
         .limit(5)
         .populate("student", "name email")
+        .populate("members", "name email")
         .populate("supervisor", "name email");
 
     // Get pending projects explicitly
     const pendingProjects = await Project.find({ status: "Pending" })
         .sort({ createdAt: -1 })
         .limit(5)
-        .populate("student", "name email");
+        .populate("student", "name email")
+        .populate("members", "name email");
 
     // Get recent users as activity
     const recentActivity = await User.find({ role: { $ne: "Admin" } })
@@ -62,7 +64,7 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
     const users = await User.find({ role: { $ne: "Admin" } }).select("-password").lean();
 
     // Fetch all projects and populate student to ignore ghost projects (deleted students)
-    const allProjects = await Project.find().populate("student");
+    const allProjects = await Project.find().populate("student").populate("members");
 
     // Map student IDs to their project
     const studentProjectMap = {};
@@ -620,7 +622,7 @@ export const sendManualReminder = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Please provide a student ID", 400));
     }
 
-    const project = await Project.findById(projectId).populate("student", "name email");
+    const project = await Project.findById(projectId).populate("student", "name email").populate("members", "name email");
     if (!project) {
         return next(new ErrorHandler("Project not found", 404));
     }
@@ -706,9 +708,38 @@ export const manageGroup = asyncHandler(async (req, res, next) => {
     }
 
     if (memberEmails !== undefined && Array.isArray(memberEmails)) {
-        // Validate members exist and are students
-        const validMembers = await User.find({ email: { $in: memberEmails }, role: "Student" }).select("_id");
-        project.members = validMembers.map(u => u._id);
+        // Find users matching the emails and ensure they are Students
+        const validMembers = await User.find({ email: { $in: memberEmails }, role: "Student" }).select("_id email");
+        
+        // Find emails that were not found or were not students
+        const validEmails = validMembers.map(u => u.email);
+        const invalidEmails = memberEmails.filter(e => !validEmails.includes(e));
+
+        if (invalidEmails.length > 0) {
+            return next(new ErrorHandler(`Invalid or non-student emails: ${invalidEmails.join(", ")}`, 400));
+        }
+
+        const validIds = validMembers.map(u => u._id);
+
+        // Check if any validId is the leader
+        if (validIds.some(id => id.toString() === project.student.toString())) {
+            return next(new ErrorHandler("Team leader cannot be added as a member", 400));
+        }
+
+        // Check if any validId is already part of ANOTHER project
+        const existingProject = await Project.findOne({
+            _id: { $ne: project._id },
+            $or: [
+                { student: { $in: validIds } },
+                { members: { $in: validIds } }
+            ]
+        });
+
+        if (existingProject) {
+            return next(new ErrorHandler("One or more students are already assigned to another project", 400));
+        }
+
+        project.members = validIds;
     }
 
     await project.save();

@@ -65,7 +65,7 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
     const { projectId } = req.params;
     const { title, description, deadline } = req.body;
 
-    const project = await Project.findById(projectId).populate("student");
+    const project = await Project.findById(projectId).populate("student").populate("members");
     if (!project) return next(new ErrorHandler("Project not found", 404));
 
     if (req.user.role === "Supervisor" && project.supervisor?.toString() !== req.user._id.toString()) {
@@ -100,7 +100,7 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student._id, ...adminIds],
+        targetUsers: [req.user._id, project.student._id, ...(project.members?.map(m => m._id || m) || []), ...adminIds],
         actionType: "MILESTONE_ADDED",
         message: `**${req.user.name}** added a new milestone "**${title}**" to the project "**${project.title}**"`,
         details: description,
@@ -285,7 +285,7 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Invalid status", 400));
     }
 
-    const project = await Project.findById(projectId).populate("student");
+    const project = await Project.findById(projectId).populate("student").populate("members");
     if (!project) return next(new ErrorHandler("Project not found", 404));
 
     if (req.user.role === "Supervisor" && project.supervisor?.toString() !== req.user._id.toString()) {
@@ -336,7 +336,7 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [project.student._id],
+        targetUsers: [project.student._id, ...(project.members?.map(m => m._id || m) || [])],
         actionType: "MILESTONE_REVIEWED",
         message: `Milestone "**${milestone.title}**" was **${status}** by ${req.user.name}`,
         details: remarks,

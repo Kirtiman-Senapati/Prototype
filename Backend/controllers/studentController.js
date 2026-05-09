@@ -202,6 +202,7 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
 
 export const getStudentDashboard = asyncHandler(async (req, res, next) => {
     const project = await Project.findOne({ $or: [{ student: req.user._id }, { members: req.user._id }] })
+        .populate("student", "name email")
         .populate("supervisor", "name email department experties")
         .populate("members", "name email department");
 
@@ -281,7 +282,7 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
 export const completeProject = asyncHandler(async (req, res, next) => {
     const { projectId } = req.params;
 
-    const project = await Project.findById(projectId).populate("student supervisor");
+    const project = await Project.findById(projectId).populate("student", "name email").populate("supervisor").populate("members", "name email");
     
     if (!project) {
         return next(new ErrorHandler("Project not found", 404));
@@ -346,5 +347,42 @@ export const completeProject = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: "Project marked as completed successfully"
+    });
+});
+
+// Member Leaves Group
+export const leaveProjectGroup = asyncHandler(async (req, res, next) => {
+    const project = await Project.findOne({ members: req.user._id });
+    
+    if (!project) {
+        return next(new ErrorHandler("You are not a member of any project group", 400));
+    }
+
+    // Leader cannot leave through this route
+    if (project.student.toString() === req.user._id.toString()) {
+        return next(new ErrorHandler("Team leader cannot leave the group. Delete project instead.", 403));
+    }
+
+    // Remove user from members
+    project.members = project.members.filter(m => m.toString() !== req.user._id.toString());
+    await project.save();
+
+    const targetUsers = [project.student, req.user._id, ...project.members.map(m => m._id || m)];
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers,
+        actionType: "MEMBER_LEFT",
+        message: `**${req.user.name}** left the project group "**${project.title || project.groupName || 'Project'}**"`,
+        relatedProject: project._id,
+        priority: "high"
+    });
+
+    const io = getIo();
+    emitRefresh(io);
+
+    res.status(200).json({
+        success: true,
+        message: "Successfully left the project group"
     });
 });

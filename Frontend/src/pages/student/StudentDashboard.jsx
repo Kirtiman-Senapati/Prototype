@@ -16,7 +16,7 @@ import SubmitMilestoneModal from "../../components/milestones/SubmitMilestoneMod
 import ProjectWorkspace from "../../components/workspace/ProjectWorkspace";
 
 // Component: ProjectOverview
-const ProjectOverview = ({ project, onUpdate, authUser }) => {
+const ProjectOverview = ({ project, onUpdate, authUser, onLeaveGroup }) => {
     return (
         <div className="bg-white border border-slate-200 rounded-xl flex flex-col h-full overflow-hidden shadow-sm">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
@@ -58,7 +58,17 @@ const ProjectOverview = ({ project, onUpdate, authUser }) => {
                 {/* Team Members */}
                 {project.members && project.members.length > 0 && (
                     <div className="mt-6 border-t border-slate-100 pt-4">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Project Team</p>
+                        <div className="flex justify-between items-center mb-3">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Project Team</p>
+                            {authUser && project.student && project.student.toString() !== authUser._id.toString() && project.student?._id?.toString() !== authUser._id.toString() && (
+                                <button 
+                                    onClick={onLeaveGroup}
+                                    className="text-[10px] font-semibold text-red-500 hover:text-red-600 transition-colors bg-red-50 hover:bg-red-100 px-2 py-1 rounded"
+                                >
+                                    Leave Group
+                                </button>
+                            )}
+                        </div>
                         <div className="flex -space-x-2 overflow-hidden">
                             <div className={`inline-flex h-8 w-8 rounded-full ring-2 ring-white border border-slate-200 items-center justify-center font-bold text-xs shadow-sm z-10 ${(!authUser || (project.student === authUser._id || (project.student?._id && authUser._id && project.student._id.toString() === authUser._id.toString()))) ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600'}`} title="Team Leader">
                                 {(!authUser || (project.student === authUser._id || (project.student?._id && authUser._id && project.student._id.toString() === authUser._id.toString()))) ? 'You' : 'L'}
@@ -153,6 +163,18 @@ const StudentDashboard = () => {
           toast.error(error.response?.data?.message || "Failed to mark project as completed");
       } finally {
           setIsCompletingProject(false);
+      }
+  };
+
+  const handleLeaveGroup = async () => {
+      if (!window.confirm("Are you sure you want to leave this project group? You will lose access to all project data.")) return;
+      try {
+          const { axiosInstance } = await import("../../lib/axios");
+          await axiosInstance.patch("/student/project/leave");
+          toast.success("Successfully left the project group.");
+          dispatch(getStudentDashboard());
+      } catch (error) {
+          toast.error(error.response?.data?.message || "Failed to leave group.");
       }
   };
 
@@ -470,7 +492,7 @@ useAutoRefresh(() => {
 
                      {/* BOTTOM TWO CARDS */}
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-[260px]">
-                         <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} authUser={authUser} />
+                         <ProjectOverview project={project} onUpdate={() => setIsMessageModalOpen(true)} authUser={authUser} onLeaveGroup={handleLeaveGroup} />
                          <FeedbackList feedbacks={feedbacks} />
                      </div>
 

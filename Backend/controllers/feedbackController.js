@@ -2,6 +2,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Feedback } from "../models/Feedback.js";
 import { User } from "../models/user.js";
+import { Project } from "../models/project.js";
 import { getIo, getReceiverSocketId } from "../utils/socket.js";
 import { logActivity } from "../utils/activityLogger.js";
 
@@ -75,6 +76,13 @@ export const sendFeedback = asyncHandler(async (req, res, next) => {
     const adminIds = admins.map(a => a._id);
 
     let recipients = [studentId, ...adminIds];
+    
+    // Fetch project to include members in recipients
+    const project = await Project.findOne({ $or: [{ student: studentId }, { members: studentId }] });
+    if (project && project.members) {
+        recipients.push(...project.members.map(m => m._id || m));
+    }
+
     if (senderRole === "Admin" && student.supervisor) {
         recipients.push(student.supervisor);
     } else if (senderRole === "Supervisor") {
@@ -109,7 +117,14 @@ export const getStudentFeedback = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Unauthorized", 403));
     }
 
-    const feedbacks = await Feedback.find({ student: studentId })
+    // Fetch project to get leader and members
+    const project = await Project.findOne({ $or: [{ student: studentId }, { members: studentId }] });
+    let queryIds = [studentId];
+    if (project) {
+        queryIds = [project.student, ...project.members];
+    }
+
+    const feedbacks = await Feedback.find({ student: { $in: queryIds } })
         .populate("sender", "name email")
         .sort({ createdAt: -1 });
 

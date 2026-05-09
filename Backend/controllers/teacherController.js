@@ -149,6 +149,7 @@ export const addTask = asyncHandler(async (req, res, next) => {
     const project = await addTaskToProject(projectId, { title, description, deadline }, "supervisor", req.user._id, req.user.name);
 
     await project.populate("student", "name");
+    await project.populate("members", "name");
     
     // Fetch Admins for Event Routing (CASE 2)
     const admins = await User.find({ role: "Admin" }).select("_id");
@@ -156,7 +157,7 @@ export const addTask = asyncHandler(async (req, res, next) => {
 
     await logActivity({
         actor: req.user._id,
-        targetUsers: [req.user._id, project.student._id, ...adminIds],
+        targetUsers: [req.user._id, project.student._id, ...(project.members?.map(m => m._id || m) || []), ...adminIds],
         actionType: "TASK_ASSIGNED",
         message: `Supervisor **${req.user.name}** assigned a new task "**${title}**" to **${project.student.name}**`,
         details: description,
