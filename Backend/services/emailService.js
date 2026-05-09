@@ -14,7 +14,8 @@ export const sendEmail = async ({to, subject, html, role}) =>
                 user: process.env.SMTP_USER,
                 pass: process.env.SMTP_PASSWORD,
             },
-            service: process.env.SMTP_SERVICE,
+            
+            
         });
 
         const senderName = role ? `${role} - Academic Project System` : "Academic Project System";

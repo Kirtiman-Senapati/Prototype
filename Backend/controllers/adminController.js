@@ -11,6 +11,7 @@ import { Feedback } from "../models/Feedback.js";
 import { getIo } from "../utils/socket.js";
 import { emitRefresh,EVENTS } from "../utils/socketEvents.js";
 import { sendEmail } from "../services/emailService.js";
+import { generateGroupInviteTemplate } from "../utils/groupInviteEmailTemplate.js";
 import { getEmailTemplate } from "../utils/emailTemplates.js";
 import { Notification } from "../models/notification.js";
 import { generateNotificationEmailTemplate } from "../utils/notificationEmailTemplate.js";
@@ -740,7 +741,7 @@ export const inviteMember = asyncHandler(async (req, res, next) => {
     if (!project) return next(new ErrorHandler("Project not found", 404));
 
     const student = await User.findOne({ email: email.toLowerCase(), role: "Student" });
-    if (!student) return next(new ErrorHandler("Student with this email not found", 404));
+    if (!student) return next(new ErrorHandler("No registered student account was found with this email address", 404));
 
     if (project.student.toString() === student._id.toString() || project.members.includes(student._id)) {
         return next(new ErrorHandler("Student is already a member of this project", 400));
@@ -761,20 +762,48 @@ export const inviteMember = asyncHandler(async (req, res, next) => {
         invitedBy: req.user._id
     });
 
-    try {
-        await sendEmail({
-            email: email,
-            subject: "You've been invited to join a project",
-            message: `Admin has invited you to join the project "${project.title || project.groupName}". Please log in to your dashboard to accept.`
+    let emailSent = false;
+    try 
+    {
+
+        console.log("INVITE EMAIL START");
+
+        const html = generateGroupInviteTemplate({
+            invitedStudentName: student.name,
+            adminName: req.user.name,
+            projectTitle: project.title,
+            groupName: project.groupName,
         });
-    } catch (err) {
-        console.error("Email sending failed:", err.message);
+
+        await sendEmail({
+            to: student.email,
+            subject: `Project Invitation - ${project.title}`,
+            html,
+            role: "Admin",
+        });
+
+        emailSent = true;
+
+        console.log("INVITE EMAIL SUCCESS");
+
+    } 
+    catch (err) 
+    {
+
+        console.error("INVITE EMAIL FAILED:", err.message);
+
     }
 
     const io = getIo();
     emitRefresh(io);
 
-    res.status(200).json({ success: true, message: "Invitation sent", invite });
+    res.status(200).json({
+        success: true,
+        emailSent,
+        message: emailSent
+            ? "Invitation sent successfully."
+            : "Invitation created successfully, but email delivery failed.",
+    });
 });
 
 export const cancelInvite = asyncHandler(async (req, res, next) => {
@@ -796,17 +825,22 @@ export const resendInvite = asyncHandler(async (req, res, next) => {
     const invite = await GroupInvite.findById(inviteId).populate("project");
     if (!invite || invite.status !== "Pending") return next(new ErrorHandler("Pending invite not found", 404));
 
+    let emailSent = false;
+    let message = "Failed to resend email. Student can still accept from dashboard.";
+
     try {
         await sendEmail({
             email: invite.email,
             subject: "Reminder: You've been invited to join a project",
             message: `Admin has invited you to join the project "${invite.project.title || invite.project.groupName}". Please log in to your dashboard to accept.`
         });
+        emailSent = true;
+        message = "Invitation resent successfully";
     } catch (err) {
         console.error("Email sending failed:", err.message);
     }
 
-    res.status(200).json({ success: true, message: "Invitation resent" });
+    res.status(200).json({ success: true, message, emailSent });
 });
 
 export const removeMember = asyncHandler(async (req, res, next) => {

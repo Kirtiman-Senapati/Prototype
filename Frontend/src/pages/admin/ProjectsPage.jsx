@@ -231,8 +231,12 @@ const ProjectsPage = () => {
         if (!inviteEmail) return;
         setIsSubmittingGroup(true);
         try {
-            await axiosInstance.post(`/admin/project/${selectedProject._id}/invite`, { email: inviteEmail });
-            toast.success("Invitation sent successfully");
+            const res = await axiosInstance.post(`/admin/project/${selectedProject._id}/invite`, { email: inviteEmail });
+            if (res.data.emailSent === false) {
+                toast.warning(res.data.message, { autoClose: 5000 });
+            } else {
+                toast.success(res.data.message || "Invitation sent successfully");
+            }
             setInviteEmail("");
             fetchPendingInvites(selectedProject._id);
         } catch (error) {
@@ -270,8 +274,12 @@ const ProjectsPage = () => {
 
     const handleResendInvite = async (inviteId) => {
         try {
-            await axiosInstance.post(`/admin/project/${selectedProject._id}/invite/${inviteId}/resend`);
-            toast.success("Invitation resent");
+            const res = await axiosInstance.post(`/admin/project/${selectedProject._id}/invite/${inviteId}/resend`);
+            if (res.data.emailSent === false) {
+                toast.warning(res.data.message, { autoClose: 5000 });
+            } else {
+                toast.success(res.data.message || "Invitation resent");
+            }
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to resend invite");
         }
@@ -1029,12 +1037,17 @@ const ProjectsPage = () => {
                                     {/* Leader */}
                                     <div className="flex justify-between items-center px-4 py-3 border-b border-slate-100 bg-slate-50">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">
+                                            <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold border border-slate-300">
                                                 {selectedProject.student?.name?.charAt(0) || "L"}
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-slate-700 leading-none">{selectedProject.student?.name || "Unknown"}</span>
-                                                <span className="text-[10px] text-slate-500 mt-0.5">{selectedProject.student?.email}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-bold text-slate-800 leading-none">{selectedProject.student?.name || "Unknown"}</span>
+                                                    {selectedProject.student?.department && (
+                                                        <span className="text-[9px] uppercase font-bold text-slate-500 bg-white border border-slate-200 px-1.5 py-0.5 rounded">{selectedProject.student.department}</span>
+                                                    )}
+                                                </div>
+                                                <span className="text-[11px] font-medium text-slate-500 mt-1">{selectedProject.student?.email}</span>
                                             </div>
                                         </div>
                                         <span className="text-[10px] uppercase font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded">Leader</span>
@@ -1045,12 +1058,18 @@ const ProjectsPage = () => {
                                         selectedProject.members.map(member => (
                                             <div key={member._id} className="flex justify-between items-center px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-[10px] font-bold border border-slate-200">
+                                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-600 flex items-center justify-center text-xs font-bold border border-slate-200 shadow-sm">
                                                         {member.name?.charAt(0) || "M"}
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-sm font-semibold text-slate-700 leading-none">{member.name}</span>
-                                                        <span className="text-[10px] text-slate-500 mt-0.5">{member.email}</span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-sm font-semibold text-slate-800 leading-none">{member.name}</span>
+                                                            <span className="text-[9px] uppercase font-bold text-slate-500 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">Active Member</span>
+                                                            {member.department && (
+                                                                <span className="text-[9px] uppercase font-bold text-slate-400 border border-slate-100 px-1.5 py-0.5 rounded">{member.department}</span>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-[11px] font-medium text-slate-500 mt-1">{member.email}</span>
                                                     </div>
                                                 </div>
                                                 <button onClick={() => handleRemoveMember(member._id)} className="text-[10px] font-bold text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors">
@@ -1072,12 +1091,15 @@ const ProjectsPage = () => {
                                         {pendingInvites.map(invite => (
                                             <div key={invite._id} className="flex justify-between items-center px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-6 h-6 rounded-full border border-dashed border-slate-300 text-slate-400 flex items-center justify-center text-[10px] font-bold">
-                                                        ?
+                                                    <div className="w-8 h-8 rounded-full border border-dashed border-slate-300 bg-slate-50 text-slate-400 flex items-center justify-center text-xs font-bold">
+                                                        <Users size={14} />
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-sm font-medium text-slate-600 leading-none">{invite.email}</span>
-                                                        <span className="text-[10px] text-orange-500 font-semibold mt-0.5">Pending Approval</span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-sm font-medium text-slate-800 leading-none">{invite.email}</span>
+                                                            <span className="text-[9px] uppercase font-bold text-orange-600 bg-orange-50 border border-orange-100 px-1.5 py-0.5 rounded">Pending</span>
+                                                        </div>
+                                                        <span className="text-[10px] font-medium text-slate-500 mt-1">Invited {new Date(invite.createdAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
