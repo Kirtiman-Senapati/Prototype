@@ -29,7 +29,7 @@ export const generateResetPasswordEmailTemplate = (resetPasswordUrl) =>
         overflow: hidden;
       }
       .email-header {
-        background-color: #1e3a8a; /* Professional Dark Blue for Academic Theme */
+        background-color: #0f172a; /* Professional Slate-900 Theme */
         padding: 25px 20px;
         text-align: center;
       }
@@ -47,7 +47,7 @@ export const generateResetPasswordEmailTemplate = (resetPasswordUrl) =>
       }
       .project-name {
         font-weight: 600;
-        color: #1e3a8a;
+        color: #0f172a;
       }
       .button-container {
         text-align: center;
@@ -55,7 +55,7 @@ export const generateResetPasswordEmailTemplate = (resetPasswordUrl) =>
       }
       .reset-button {
         display: inline-block;
-        background-color: #2563eb;
+        background-color: #0f172a;
         color: #ffffff !important;
         text-decoration: none;
         padding: 14px 32px;
@@ -65,7 +65,7 @@ export const generateResetPasswordEmailTemplate = (resetPasswordUrl) =>
         transition: background-color 0.3s ease;
       }
       .reset-button:hover {
-        background-color: #1d4ed8;
+        background-color: #1e293b;
       }
       .fallback-link {
         font-size: 14px;
@@ -107,7 +107,7 @@ export const generateResetPasswordEmailTemplate = (resetPasswordUrl) =>
           </div>
 
           <p>If the button above doesn't work, you can copy and paste the following secure link into your web browser:</p>
-          <p class="fallback-link"><a href="${resetPasswordUrl}" style="color: #2563eb; text-decoration: none;">${resetPasswordUrl}</a></p>
+          <p class="fallback-link"><a href="${resetPasswordUrl}" style="color: #0f172a; text-decoration: underline;">${resetPasswordUrl}</a></p>
           
           <p style="margin-top: 30px;">If you did not request a password reset, you can safely ignore this email. Your account is secure.</p>
         </div>

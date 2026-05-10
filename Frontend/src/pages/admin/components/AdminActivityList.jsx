@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearActivities, markActivitiesRead, getActivities } from '../../../store/slices/activitySlice';
 import { formatDateTime } from '../../../utils/timeFormat';
 import { groupActivitiesByDate } from '../../../utils/groupActivities';
+import { renderFormattedMessage } from '../../../utils/renderFormattedMessage';
 
 const AdminActivityList = ({ activities }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -66,33 +67,6 @@ const AdminActivityList = ({ activities }) => {
 
     const displayActivities = isExpanded ? activities : activities.slice(0, 5);
 
-    const renderMessage = (text) => {
-        if (!text) return null;
-        // Strip emojis and leading spaces/punctuation sometimes left by emoji removal
-        const cleanText = text.replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').replace(/^[:\s\-]+/, '').trim();
-        const parts = cleanText.split(/\*\*(.*?)\*\*/g);
-
-        return parts.map((part, i) => {
-            if (!part.trim()) return null;
-
-            return i % 2 === 1 ? (
-                <span
-                    key={i}
-                    className="font-semibold text-slate-900"
-                >
-                    {part}
-                </span>
-            ) : (
-                <span
-                    key={i}
-                    className="text-slate-600 font-medium"
-                >
-                    {part}
-                </span>
-            );
-        });
-    };
-
     return (
         <div className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden h-full">
             <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center sticky top-0 z-10">
@@ -142,7 +116,7 @@ const AdminActivityList = ({ activities }) => {
                                             
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm leading-relaxed">
-                                                    {renderMessage(activity.message)}
+                                                    {renderFormattedMessage(activity.message)}
                                                 </p>
 
                                                 {activity.details && (

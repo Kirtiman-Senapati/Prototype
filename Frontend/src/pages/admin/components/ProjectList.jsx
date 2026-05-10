@@ -55,13 +55,13 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                 <td className="px-5 py-4">
                                     <span className="text-sm font-medium text-slate-800 tracking-tight">{project.supervisor?.name || 'Pending'}</span>
                                 </td>
-                                <td className="px-5 py-4">
+                                 <td className="px-5 py-4">
                                     <div className="flex items-center gap-2">
                                         <span className={`w-1.5 h-1.5 rounded-full ${
                                             project.status === 'Completed'
                                                 ? 'bg-slate-600'
                                                 : project.status === 'In Progress' || project.status === 'Approved'
-                                                ? 'bg-indigo-500/80'
+                                                ? 'bg-green-500/80'
                                                 : project.status === 'Pending'
                                                 ? 'bg-orange-500/80'
                                                 : project.status === 'Incomplete'
@@ -70,7 +70,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                         }`} />
                                         
                                         <span className={`text-xs font-medium ${getStatusStyle(project.status)}`}>
-                                            {project.status === 'Approved' ? 'In Progress' : project.status}
+                                            {project.status === 'Approved' || project.status === 'In Progress' ? 'Progress' : project.status}
                                         </span>
                                     </div>
                                 </td>

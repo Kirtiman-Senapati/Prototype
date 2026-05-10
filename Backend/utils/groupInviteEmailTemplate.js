@@ -51,10 +51,7 @@ export const generateGroupInviteTemplate = ({
 
                 </div>
 
-
-               </div>
-
-                <p style="margin-top:10px;color:#475569;>
+                <p style="margin-top:10px;color:#475569;">
                     You can accept or decline the invitation directly from email.
                 </p>
 

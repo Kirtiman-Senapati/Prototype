@@ -8,7 +8,7 @@ export const showToast = (message, type = 'success', isLoading = false) => {
                 {/* Icon */}
                 <div className="mt-1 shrink-0">
                     {isLoading ? (
-                        <div className="w-2.5 h-2.5 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                        <div className="w-2.5 h-2.5 border-2 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
                     ) : (
                         <div className={`w-2 h-2 rounded-full ${type === 'error' ? 'bg-rose-500' : type === 'info' ? 'bg-blue-500' : type === 'warning' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
                     )}

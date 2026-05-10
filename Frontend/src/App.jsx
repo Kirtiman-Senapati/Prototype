@@ -45,7 +45,7 @@ const ProtectedRoute = ({ children }) => {
   if (isCheckingAuth) {
     return (
       <div className="flex justify-center items-center h-screen bg-slate-50">
-        <Loader className="animate-spin text-blue-600" size={32} />
+        <Loader className="animate-spin text-slate-900" size={32} />
       </div>
     );
   }

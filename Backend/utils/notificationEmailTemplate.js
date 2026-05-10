@@ -26,7 +26,7 @@ export const generateNotificationEmailTemplate = (message, details) => {
           overflow: hidden;
         }
         .email-header {
-          background-color: #1e3a8a;
+          background-color: #0f172a;
           padding: 25px 20px;
           text-align: center;
         }
@@ -46,7 +46,7 @@ export const generateNotificationEmailTemplate = (message, details) => {
           font-size: 16px;
           padding: 15px;
           background-color: #f9fafb;
-          border-left: 4px solid #2563eb;
+          border-left: 4px solid #0f172a;
           margin: 20px 0;
           border-radius: 4px;
         }

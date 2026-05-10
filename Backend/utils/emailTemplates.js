@@ -1,7 +1,7 @@
 export const getEmailTemplate = (type, data) => {
   const baseHtml = (content) => `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-      <div style="background-color: #1e3a8a; padding: 20px; text-align: center;">
+      <div style="background-color: #0f172a; padding: 20px; text-align: center;">
         <h2 style="color: #ffffff; margin: 0; font-size: 20px;">Academic Project System</h2>
       </div>
       <div style="padding: 30px; color: #374151; line-height: 1.6;">
