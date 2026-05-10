@@ -1181,6 +1181,7 @@ const ProjectsPage = () => {
                 onClose={() => { setIsReviewMilestoneOpen(false); setSelectedMilestone(null); }}
                 onSubmit={handleReviewMilestone}
                 milestone={selectedMilestone}
+                projectId={selectedProject?._id}
                 isSubmitting={isSubmittingMilestone}
             />
         </div>

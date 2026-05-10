@@ -13,7 +13,7 @@ import {
     respondToInvite,
     respondToInviteByToken
 } from "../controllers/studentController.js";
-import { submitMilestone, uploadMilestoneFile } from "../controllers/milestoneController.js";
+import { submitMilestone, uploadMilestoneFile, addMilestoneComment } from "../controllers/milestoneController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -35,6 +35,7 @@ router.post("/invite/respond-token", respondToInviteByToken);
 
 // Milestone routes
 router.post("/project/:projectId/milestone/:milestoneId/submit", uploadMilestoneFile.single("file"), submitMilestone);
+router.post("/project/:projectId/milestone/:milestoneId/comment", addMilestoneComment);
 
 export default router;
 

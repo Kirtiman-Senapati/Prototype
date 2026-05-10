@@ -228,6 +228,7 @@ const AssignedStudents = () => {
                 onClose={() => { setIsReviewMilestoneOpen(false); setSelectedMilestone(null); }}
                 onSubmit={handleReviewMilestone}
                 milestone={selectedMilestone}
+                projectId={milestoneProject?._id}
                 isSubmitting={isSubmittingMilestone}
             />
         </div>

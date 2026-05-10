@@ -22,6 +22,15 @@ const taskSchema = new mongoose.Schema({
     assignedByRole: { type: String, enum: ["admin", "supervisor"], default: "supervisor" },
 });
 
+const workspaceCommentSchema = new mongoose.Schema({
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    name: { type: String, required: true },
+    role: { type: String, required: true },
+    message: { type: String, required: true },
+    actionType: { type: String },
+    createdAt: { type: Date, default: Date.now }
+});
+
 const milestoneSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String },
@@ -33,7 +42,8 @@ const milestoneSchema = new mongoose.Schema({
     reviewRemarks: { type: String, default: "" },
     rejectionReason: { type: String, default: "" },
     completedAt: { type: Date },
-    approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+    approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    comments: { type: [workspaceCommentSchema], default: [] }
 });
 
 const workspaceItemSchema = new mongoose.Schema({
@@ -51,7 +61,8 @@ const workspaceItemSchema = new mongoose.Schema({
     submittedAt: { type: Date },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     assignedByRole: { type: String, enum: ["admin", "supervisor"], default: "supervisor" },
-    assignedByName: { type: String, default: "" }
+    assignedByName: { type: String, default: "" },
+    comments: { type: [workspaceCommentSchema], default: [] }
 });
 
 const projectSchema = new mongoose.Schema(

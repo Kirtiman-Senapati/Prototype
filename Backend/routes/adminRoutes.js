@@ -25,7 +25,8 @@ import {
     addMilestone,
     updateMilestone,
     deleteMilestone,
-    reviewMilestone
+    reviewMilestone,
+    addMilestoneComment
 } from "../controllers/milestoneController.js";
 import { isAuthenticated, authorizeRoles } from "../middlewares/authMiddleware.js";
 
@@ -59,5 +60,6 @@ router.post("/project/:projectId/milestone", addMilestone);
 router.patch("/project/:projectId/milestone/:milestoneId", updateMilestone);
 router.delete("/project/:projectId/milestone/:milestoneId", deleteMilestone);
 router.patch("/project/:projectId/milestone/:milestoneId/review", reviewMilestone);
+router.post("/project/:projectId/milestone/:milestoneId/comment", addMilestoneComment);
 
 export default router;

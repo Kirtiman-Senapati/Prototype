@@ -215,9 +215,10 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
     }
 
     const { remarks } = req.body;
+    let fileData = null;
 
     if (req.file) {
-        const fileData = {
+        fileData = {
             filename: req.file.originalname,
             url: `/uploads/${req.file.filename}`,
             type: "Document",
@@ -229,14 +230,25 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
     milestone.status = "In Review";
     milestone.submittedAt = new Date();
     milestone.studentRemarks = remarks || "";
+    const commentEntry = {
+        user: req.user._id,
+        name: req.user.name,
+        role: req.user.role,
+        message: remarks || "Submitted milestone work.",
+        actionType: "SUBMITTED"
+    };
+
+    milestone.comments.push(commentEntry);
+
     const workspaceItem = project.workspaceItems.id(milestoneId);
     if (workspaceItem) 
     {
         workspaceItem.status = "In Review";
         workspaceItem.studentRemarks = remarks || "";
         workspaceItem.submittedAt = new Date();
+        workspaceItem.comments.push(commentEntry);
 
-        if (req.file) 
+        if (req.file && fileData) 
         {
             workspaceItem.files.push(fileData);
         }
@@ -317,10 +329,24 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
         milestone.reviewRemarks = reviewRemarks;
     }
 
+    const commentEntry = {
+        user: req.user._id,
+        name: req.user.name,
+        role: req.user.role,
+        message: reviewRemarks || `Milestone ${status.toLowerCase()}.`,
+        actionType: status.toUpperCase()
+    };
+    
+    // We only push to milestone if it was found in project.milestones to avoid duplicate pushes if milestone === workspaceItem
+    if (project.milestones.id(milestoneId)) {
+        project.milestones.id(milestoneId).comments.push(commentEntry);
+    }
+
     // Dual update for workspaceItems
     const workspaceItem = project.workspaceItems.id(milestoneId);
     if (workspaceItem) {
         workspaceItem.status = status;
+        workspaceItem.comments.push(commentEntry);
        if (status === "Approved") 
         {
             workspaceItem.completedAt = completedAt;
@@ -356,6 +382,76 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: `Milestone ${status.toLowerCase()} successfully`,
+        project
+    });
+});
+
+// @desc    Add a comment to a milestone
+// @route   POST /project/:projectId/milestone/:milestoneId/comment
+// @access  Admin/Teacher/Student
+export const addMilestoneComment = asyncHandler(async (req, res, next) => {
+    const { projectId, milestoneId } = req.params;
+    const { message } = req.body;
+
+    if (!message) {
+        return next(new ErrorHandler("Comment message is required", 400));
+    }
+
+    const project = await Project.findById(projectId);
+    if (!project) return next(new ErrorHandler("Project not found", 404));
+
+    // Authorization
+    const isStudentOrMember = project.student.toString() === req.user._id.toString() || project.members.some(m => m.toString() === req.user._id.toString());
+    const isSupervisor = project.supervisor && project.supervisor.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === "Admin";
+
+    if (!isStudentOrMember && !isSupervisor && !isAdmin) {
+        return next(new ErrorHandler("Unauthorized", 403));
+    }
+
+    const commentEntry = {
+        user: req.user._id,
+        name: req.user.name,
+        role: req.user.role,
+        message: message,
+        actionType: "COMMENT"
+    };
+
+    const milestone = project.milestones.id(milestoneId);
+    if (milestone) {
+        milestone.comments.push(commentEntry);
+    }
+
+    const workspaceItem = project.workspaceItems.id(milestoneId);
+    if (workspaceItem) {
+        workspaceItem.comments.push(commentEntry);
+    }
+
+    if (!milestone && !workspaceItem) {
+        return next(new ErrorHandler("Milestone not found", 404));
+    }
+
+    await project.save();
+
+    // Notify other users
+    const targetUsers = await getProjectTargetUsers(project, [req.user._id]);
+
+    await logActivity({
+        actor: req.user._id,
+        targetUsers,
+        actionType: "MILESTONE_COMMENTED",
+        message: `**${req.user.name}** commented on milestone "**${milestone?.title || workspaceItem?.title}**"`,
+        details: message,
+        relatedProject: project._id,
+        priority: "low"
+    });
+
+    const io = getIo();
+    if (io) emitRefresh(io);
+
+    res.status(200).json({
+        success: true,
+        message: "Comment added successfully",
         project
     });
 });

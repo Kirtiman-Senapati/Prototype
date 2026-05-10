@@ -587,6 +587,7 @@ useAutoRefresh(() => {
           onClose={() => { setIsSubmitModalOpen(false); setSelectedMilestone(null); }}
           onSubmit={handleMilestoneSubmit}
           milestone={selectedMilestone}
+          projectId={project?._id}
           isSubmitting={isSubmittingMilestone}
       />
 
