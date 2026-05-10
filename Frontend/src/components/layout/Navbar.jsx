@@ -67,8 +67,8 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             </button>
 
             {/* Logo and title */}
-            <div className="flex items-center ml-4">
-               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+             <div className="flex items-center ml-4">
+               <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center shadow-sm">
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
@@ -99,7 +99,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none"
               >
-                <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center shadow-sm">
+                <div className="w-7 h-7 bg-slate-900 rounded-full flex items-center justify-center shadow-sm">
                   <span className="text-[11px] font-bold text-white">
                     {getInitials(authUser?.name)}
                   </span>
@@ -135,7 +135,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                       <p className="text-xs text-slate-500 truncate max-w-[140px] leading-tight">
                         {authUser?.email}
                       </p>
-                      <p className="text-xs text-blue-600 capitalize font-medium mt-1">
+                      <p className="text-xs text-slate-500 capitalize font-medium mt-1">
                         {authUser?.role}
                       </p>
                     </div>

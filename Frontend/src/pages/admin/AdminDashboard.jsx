@@ -276,21 +276,21 @@ const AdminDashboard = () => {
                         <form onSubmit={handleStudentSubmit} className="p-5 space-y-4">
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Full Name <span className="text-red-500">*</span></label>
-                                <input type="text" name="name" value={studentFormData.name} onChange={handleStudentChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="e.g. Ali Reza" />
+                                <input type="text" name="name" value={studentFormData.name} onChange={handleStudentChange} required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-slate-400 transition outline-none" placeholder="e.g. Ali Reza" />
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email Address <span className="text-red-500">*</span></label>
-                                <input type="email" name="email" value={studentFormData.email} onChange={handleStudentChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="student@university.edu" />
+                                <input type="email" name="email" value={studentFormData.email} onChange={handleStudentChange} required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-slate-400 transition outline-none" placeholder="student@university.edu" />
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-1.5 flex justify-between">
                                     <span>Temporary Password <span className="text-red-500">*</span></span>
                                 </label>
-                                <input type="password" name="password" value={studentFormData.password} onChange={handleStudentChange} required className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none" placeholder="••••••••" />
+                                <input type="password" name="password" value={studentFormData.password} onChange={handleStudentChange} required className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-slate-400 transition outline-none" placeholder="••••••••" />
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Department (Optional)</label>
-                                <select name="department" value={studentFormData.department} onChange={handleStudentChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none bg-white">
+                                <select name="department" value={studentFormData.department} onChange={handleStudentChange} className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-slate-400 transition outline-none bg-white">
                                     <option value="">Select a department...</option>
                                     {departments.map((dep, index) => (
                                         <option key={index} value={dep}>{dep}</option>
@@ -298,8 +298,8 @@ const AdminDashboard = () => {
                                 </select>
                             </div>
                             <div className="pt-4 flex gap-3">
-                                <button type="button" onClick={() => setIsStudentModalOpen(false)} className="flex-1 px-4 py-2.5 rounded-xl text-slate-700 font-medium bg-slate-100 hover:bg-slate-200 transition">Cancel</button>
-                                <button type="submit" disabled={isSubmittingStudent} className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-70 transition flex justify-center items-center">
+                                <button type="button" onClick={() => setIsStudentModalOpen(false)} className="flex-1 px-4 py-2.5 rounded-lg text-slate-700 font-medium bg-slate-100 hover:bg-slate-200 transition">Cancel</button>
+                                <button type="submit" disabled={isSubmittingStudent} className="flex-1 px-4 py-2.5 rounded-lg text-white font-medium bg-slate-900 hover:bg-slate-800 disabled:opacity-70 transition flex justify-center items-center">
                                     {isSubmittingStudent ? <span className="animate-spin h-5 w-5 border-2 border-white/30 border-t-white rounded-full"></span> : "Add Student"}
                                 </button>
                             </div>

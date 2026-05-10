@@ -25,26 +25,27 @@ const CheckEmailPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8 sm:p-10 border border-slate-100 flex flex-col items-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F8FAFC] p-4">
+      <div className="w-full max-w-md bg-white rounded-xl border border-slate-200 p-8 sm:p-10 shadow-sm flex flex-col items-center">
         
-        <div className="h-20 w-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center shadow-inner mb-6">
-          <CheckCircle2 size={40} strokeWidth={2} />
+        <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 mb-6">
+          <CheckCircle2 size={22} strokeWidth={2} />
         </div>
         
-        <h1 className="text-2xl font-extrabold text-center text-slate-800 tracking-tight mb-3">Check Your Email</h1>
+        <h1 className="text-2xl font-bold text-center text-slate-900 tracking-tight mb-2">Check Your Email</h1>
+        <p className="text-sm text-slate-500 text-center mb-6">Reset instructions have been dispatched</p>
         
-        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-8 w-full text-center">
+        <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-8 w-full text-center">
             <p className="text-sm text-slate-600">
             We've sent a password reset link to: <br/>
-            <span className="font-semibold text-slate-800 mt-1 block">{email}</span>
+            <span className="font-semibold text-slate-900 mt-1 block">{email}</span>
             </p>
         </div>
         
         <div className="space-y-3 w-full">
             <Link 
                 to="/login"
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition-all shadow-md hover:shadow-lg flex justify-center items-center"
+                className="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg text-sm transition-all flex justify-center items-center shadow-sm"
             >
                 Back to Login
             </Link>
@@ -53,7 +54,7 @@ const CheckEmailPage = () => {
                 <button 
                     onClick={handleResend}
                     disabled={isResending}
-                    className="w-full py-3 px-4 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-2.5 px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-lg text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
                 >
                     {isResending ? (
                     <>
