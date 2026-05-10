@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, deleteUser, adminAddStudent, adminUpdateUser } from "../../store/slices/adminSlice";
 import { Users, Trash2, ShieldAlert, Plus, X, Search, Filter, Edit2 } from "lucide-react";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
+import { playNotificationSound } from "../../utils/sound";
 
 const ManageStudents = () => {
     const dispatch = useDispatch();
@@ -67,10 +68,10 @@ const ManageStudents = () => {
 
     // Apply strict filtering
     const filteredStudents = students.filter(student => {
-        const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                              student.email.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            student.email.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesDept = departmentFilter === "" || student.department === departmentFilter;
-        
+
         const statusInfo = getStudentStatus(student);
         const matchesStatus = statusFilter === "" || statusInfo.label === statusFilter;
 
@@ -97,12 +98,12 @@ const ManageStudents = () => {
         e.preventDefault();
         setIsSubmitting(true);
         let resultAction;
-        
+
         if (editId) {
             // Edit user flow
             const dataToSubmit = { ...formData };
             if (!dataToSubmit.password) delete dataToSubmit.password;
-            
+
             resultAction = await dispatch(adminUpdateUser({ userId: editId, userData: dataToSubmit }));
             setIsSubmitting(false);
             if (adminUpdateUser.fulfilled.match(resultAction)) {
@@ -141,7 +142,7 @@ const ManageStudents = () => {
                         <p className="text-slate-500 mt-1">View, edit, filter, and safely provision student accounts.</p>
                     </div>
                 </div>
-                <button 
+                <button
                     onClick={openCreateModal}
                     className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-md flex items-center gap-2"
                 >
@@ -154,9 +155,9 @@ const ManageStudents = () => {
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input 
-                        type="text" 
-                        placeholder="Search student by name or email..." 
+                    <input
+                        type="text"
+                        placeholder="Search student by name or email..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none"
@@ -164,7 +165,7 @@ const ManageStudents = () => {
                 </div>
                 <div className="relative w-full md:w-64">
                     <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <select 
+                    <select
                         value={departmentFilter}
                         onChange={(e) => setDepartmentFilter(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none bg-white appearance-none"
@@ -177,7 +178,7 @@ const ManageStudents = () => {
                 </div>
                 <div className="relative w-full md:w-56">
                     <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <select 
+                    <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition outline-none bg-white appearance-none"
@@ -230,19 +231,18 @@ const ManageStudents = () => {
                                                     <div className="flex flex-col gap-0.5">
                                                         <div className="flex items-center gap-2">
                                                             <span
-                                                                className={`w-2 h-2 shadow-sm rounded-full ${
-                                                                        statusInfo.label === "Completed"
+                                                                className={`w-2 h-2 shadow-sm rounded-full ${statusInfo.label === "Completed"
                                                                         ? "bg-emerald-500"
                                                                         : statusInfo.label === "Rejected"
-                                                                        ? "bg-red-500"
-                                                                        : statusInfo.label === "Assigned"
-                                                                        ? "bg-blue-500"
-                                                                        : statusInfo.label === "Incomplete"
-                                                                        ? "bg-slate-500"
-                                                                        : statusInfo.label === "Pending Approval" || statusInfo.label === "Waiting Supervisor"
-                                                                        ? "bg-amber-500"
-                                                                        : "bg-slate-400"
-                                                                }`}
+                                                                            ? "bg-red-500"
+                                                                            : statusInfo.label === "Assigned"
+                                                                                ? "bg-blue-500"
+                                                                                : statusInfo.label === "Incomplete"
+                                                                                    ? "bg-slate-500"
+                                                                                    : statusInfo.label === "Pending Approval" || statusInfo.label === "Waiting Supervisor"
+                                                                                        ? "bg-amber-500"
+                                                                                        : "bg-slate-400"
+                                                                    }`}
                                                             />
                                                             <span className="text-sm font-medium text-slate-800">
                                                                 {statusInfo.label}
@@ -257,7 +257,7 @@ const ManageStudents = () => {
                                         </td>
                                         <td className="px-6 py-5 text-right">
                                             <div className="flex justify-end items-center gap-1">
-                                                <button 
+                                                <button
                                                     className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
                                                     onClick={() => openEditModal(user)}
                                                     title="Edit Student"
@@ -266,9 +266,14 @@ const ManageStudents = () => {
                                                 </button>
                                                 <button 
                                                     className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors group"
-                                                    onClick={() => {
+                                                    onClick={async () => {
                                                         if (window.confirm(`Are you sure you want to delete ${user.name}? This action cannot be undone.`)) {
-                                                            dispatch(deleteUser(user._id));
+                                                            try {
+                                                                await dispatch(deleteUser(user._id)).unwrap();
+                                                                playNotificationSound();
+                                                            } catch (err) {
+                                                                console.error("Failed to delete user", err);
+                                                            }
                                                         }
                                                     }}
                                                     title="Delete Student"

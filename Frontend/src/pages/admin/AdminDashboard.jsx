@@ -5,6 +5,7 @@ import { getAdminDashboard, adminAddStudent, adminAddSupervisor } from "../../st
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
 import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare, UserPlus, X } from "lucide-react";
 import { toast } from "../../utils/toast";
+import { playNotificationSound } from "../../utils/sound";
 
 import { Link } from "react-router-dom";
 
@@ -44,6 +45,7 @@ const AdminDashboard = () => {
         const resultAction = await dispatch(adminAddStudent(studentFormData));
         setIsSubmittingStudent(false);
         if (adminAddStudent.fulfilled.match(resultAction)) {
+            playNotificationSound();
             setIsStudentModalOpen(false);
             setStudentFormData({ name: "", email: "", password: "", department: "" });
             dispatch(getAdminDashboard());
