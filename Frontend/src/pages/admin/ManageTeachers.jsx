@@ -206,18 +206,10 @@ const ManageTeachers = () => {
                                 </div>
                             </div>
                             
-                            <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-2 gap-4">
+                            <div className="mt-5 pt-4 border-t border-slate-100">
                                 <div>
                                     <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Assigned</p>
                                     <p className="font-medium text-slate-800 text-base tabular-nums">{user.assignedStudentsCount !== undefined ? user.assignedStudentsCount : (user.assignedStudents?.length || 0)}</p>
-                                </div>
-                                {/* Capacity / Max Students visual placeholder */}
-                                <div className="text-right">
-                                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">Status</p>
-                                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600">
-                                        <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                                        Active
-                                    </span>
                                 </div>
                             </div>
                         </div>
