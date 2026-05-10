@@ -90,7 +90,7 @@ const MilestoneTimeline = ({
                                 ? "Waiting for review"
                                 : "Awaiting submission";
                         return (
-                        <div key={m._id || idx} className="bg-white border border-slate-200 rounded-xl p-3.5 hover:border-slate-300 transition-all">
+                    <div key={m._id || idx} className="bg-white border border-slate-200 rounded-xl p-3.5 hover:border-slate-300 transition-all">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
                                     {getStatusIcon(displayStatus)}
@@ -131,35 +131,50 @@ const MilestoneTimeline = ({
                             </div>
                         )}
 
-                        {/* Teacher/Admin Review */}
-                            {displayStatus === "Rejected" && (m.reviewRemarks || m.rejectionReason) && (
-                                <div className={`rounded-lg p-3 mb-2.5 border ${
-                                    displayStatus === "Approved"
-                                        ? "bg-green-50 border-green-200"
-                                        : "bg-orange-50 border-orange-200"
-                                }`}>
-                                    <p className="text-[11px] font-bold uppercase tracking-wide text-orange-700 mb-1">
-                                       {displayStatus === "Approved"
+                         {/* Teacher/Admin Review */}
+                            {(() => {
+                                    const teacherComment = [...(m.comments || [])]
+                                    .reverse()
+                                    .find
+                                    (
+                                        (c) =>
+                                            c.role !== "Student" &&
+                                            c.actionType !== "COMMENT"
+                                    );
+
+                                    if (!teacherComment) return null;
+
+                                    return (
+                                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-2.5">
+
+                                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-600 mb-1">
+                                        {displayStatus === "Approved"
                                             ? "Approval Remarks"
                                             : "Revision Remarks"}
                                     </p>
 
-                                    <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                                        {m.reviewRemarks || m.rejectionReason}
-                                    </p>
-                                </div>
-                            )}
+                                <div className="space-y-1">
 
-                            {/* Remarks Section */}
-                           {displayStatus === "Rejected" && (m.reviewRemarks || m.rejectionReason) && (
-                                <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-2.5">
-                                    <MessageSquare size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                                    <div>
-                                        <p className="text-[11px] font-bold text-slate-700 mb-0.5">Review Remarks</p>
-                                        <p className="text-[12px] text-slate-600">{m.reviewRemarks || m.rejectionReason}</p>
-                                    </div>
+                                    <p className="text-[13px] font-semibold text-slate-800">
+                                        Supervisor {teacherComment.name}{" "}
+                                        <span className="font-bold text-slate-700">
+                                            {displayStatus === "Approved"
+                                            ? "approved"
+                                            : "requested revision for"}
+                                        </span>{" "}
+                                        milestone "{m.title}"
+                                    </p>
+
+                                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                        {teacherComment.message}
+                                    </p>
+
                                 </div>
-                            )}
+                            </div>
+                            );
+                        })()}
+
+
 
                             {/* Attached Files */}
                             {m.files && m.files.length > 0 && (

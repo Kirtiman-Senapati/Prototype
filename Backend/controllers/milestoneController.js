@@ -367,13 +367,26 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
 
     if (status === "Approved") {
 
-        workspaceItem.remarks =
-            remarks || reviewRemarks || "";
+    workspaceItem.completedAt = completedAt;
+    workspaceItem.approvedBy = approvedBy;
 
-    } else {
+    workspaceItem.reviewRemarks =
+        remarks || reviewRemarks || "Approved successfully.";
 
-        workspaceItem.remarks =
-            remarks || reviewRemarks || "";
+    workspaceItem.remarks =
+        remarks || reviewRemarks || "Approved successfully.";
+    }
+    else
+    {
+
+    workspaceItem.reviewRemarks =
+        remarks || rejectionReason || "Requires revision.";
+
+    workspaceItem.rejectionReason =
+        remarks || rejectionReason || "Requires revision.";
+
+    workspaceItem.remarks =
+        remarks || rejectionReason || "Requires revision.";
     }
 }
 
