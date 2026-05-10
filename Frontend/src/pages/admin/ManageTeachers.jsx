@@ -206,10 +206,10 @@ const ManageTeachers = () => {
                                 </div>
                             </div>
                             
-                            <div className="mt-5 pt-4 border-t border-slate-100">
-                                <div>
+                            <div className="mt-5 pt-4 border-t border-slate-100 flex justify-end pr-2">
+                                <div className="text-center">
                                     <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Assigned</p>
-                                    <p className="font-medium text-slate-800 text-base tabular-nums">{user.assignedStudentsCount !== undefined ? user.assignedStudentsCount : (user.assignedStudents?.length || 0)}</p>
+                                    <p className="font-semibold text-slate-800 text-base tabular-nums">{user.assignedStudentsCount !== undefined ? user.assignedStudentsCount : (user.assignedStudents?.length || 0)}</p>
                                 </div>
                             </div>
                         </div>

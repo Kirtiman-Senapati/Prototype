@@ -424,10 +424,10 @@ const ConversationsPage = () => {
                                                 e.preventDefault();
                                                 setReplyTo(msg);
                                             }}
-                                            className={`max-w-[70%] px-4 py-2.5 relative cursor-pointer ${
+                                            className={`max-w-[70%] px-4 py-2.5 relative cursor-pointer border ${
                                             isMe 
-                                            ? 'bg-blue-500 text-white rounded-2xl rounded-tr-sm' 
-                                            : 'bg-slate-50 text-slate-800 rounded-2xl rounded-tl-sm'
+                                            ? 'bg-slate-100 text-slate-800 border-slate-200/60 rounded-2xl rounded-tr-sm' 
+                                            : 'bg-slate-50 text-slate-800 border-slate-100 rounded-2xl rounded-tl-sm'
                                         }`}>
                                             {msg.replyTo && (
                                                 (() => {
@@ -435,20 +435,12 @@ const ConversationsPage = () => {
                                                     if (!repliedMsg) return null;
 
                                                     return (
-                                                        <div className={`mb-1 px-2 py-1 rounded-md border-l-4 ${
-                                                            isMe
-                                                            ? "bg-white/10 backdrop-blur-[2px] border-white/30"
-                                                            : "bg-slate-200 backdrop-blur-[2px] border-slate-400"
-                                                        }`}>
-                                                            <p className={`text-[10px] font-semibold ${
-                                                            isMe ? "text-blue-100" : "text-slate-600"
-                                                            }`}>
+                                                        <div className="mb-1 px-2 py-1 rounded-md border-l-4 bg-slate-200/50 border-slate-400">
+                                                            <p className="text-[10px] font-semibold text-slate-600">
                                                             {repliedMsg.actor?._id === authUser._id ? "You" : repliedMsg.actor?.name || "Unknown"}
                                                             </p>
 
-                                                            <p className={`text-[11px] truncate ${
-                                                            isMe ? "text-blue-200" : "text-slate-500"
-                                                            }`}>
+                                                            <p className="text-[11px] truncate text-slate-500">
                                                             {renderMessageBody(repliedMsg.message)}
                                                             </p>
                                                         </div>
@@ -459,15 +451,11 @@ const ConversationsPage = () => {
                                             
                                             {/* Tag Visual Indicator */}
                                             {msg.tag && (
-                                                <div className={`mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${
-                                                    msg.tag === 'Completed' ? 'bg-emerald-500/20 text-emerald-100' :
-                                                    msg.tag === 'Issue' || msg.tag === 'Blocked' ? 'bg-rose-500/20 text-rose-100' :
-                                                    'bg-white/20 text-blue-50'
-                                                } ${!isMe && (
-                                                    msg.tag === 'Completed' ? '!bg-emerald-200/50 !text-emerald-700' :
-                                                    msg.tag === 'Issue' || msg.tag === 'Blocked' ? '!bg-rose-200/50 !text-rose-700' :
-                                                    '!bg-slate-200 !text-slate-600'
-                                                )}`}>
+                                                <div className={`mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${
+                                                    msg.tag === 'Completed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :
+                                                    msg.tag === 'Issue' || msg.tag === 'Blocked' ? 'bg-rose-50 text-rose-700 border border-rose-100' :
+                                                    'bg-slate-200/60 text-slate-700 border border-slate-200'
+                                                }`}>
                                                     {msg.tag}
                                                 </div>
                                             )}
@@ -478,7 +466,7 @@ const ConversationsPage = () => {
                                                     <span
                                                         className={`text-[10px] font-bold tracking-tighter ${
                                                             msg.seen
-                                                                ? "text-blue-400"      // seen (blue)
+                                                                ? "text-slate-600"      // seen (dark slate)
                                                                 : msg.delivered
                                                                 ? "text-slate-400"     // delivered (gray)
                                                                 : "text-slate-300"     // sent (light gray)
@@ -499,7 +487,7 @@ const ConversationsPage = () => {
                         {/* Input Area */}
                         <div className="p-4 bg-white border-t border-slate-100 shrink-0">
                             {replyTo && (
-                                <div className="bg-slate-50 border-l-4 border-blue-500 px-3 py-2 rounded-md mb-2 flex justify-between items-start">
+                                <div className="bg-slate-50 border-l-4 border-slate-600 px-3 py-2 rounded-md mb-2 flex justify-between items-start">
                                     <div>
                                         <p className="text-xs font-semibold text-slate-600">
                                             Replying to {replyTo.actor?.name}
@@ -543,7 +531,7 @@ const ConversationsPage = () => {
                                 <button
                                     type="submit"
                                     disabled={!messageInput.trim() || isSending}
-                                    className="p-2 mb-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 flex-shrink-0"
+                                    className="p-2 mb-0.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-colors disabled:opacity-50 flex-shrink-0"
                                 >
                                     <Send size={16} strokeWidth={2} />
                                 </button>

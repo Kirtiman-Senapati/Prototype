@@ -22,7 +22,7 @@ const StatCard = ({ title, value, icon: Icon, colorTheme = "blue" }) => {
             </div>
 
             {/* Value */}
-            <p className="text-lg font-semibold text-slate-900 tracking-tight leading-tight">
+            <p className="text-lg font-semibold text-slate-900 tracking-tight leading-tight pl-3">
                 {value}
             </p>
 
