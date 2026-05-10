@@ -154,13 +154,13 @@ const ManageTeachers = () => {
                         <div key={user._id} className="bg-white border border-slate-200 rounded-xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:-translate-y-[1px] transition-all duration-200 flex flex-col relative group overflow-hidden">
                             <div className="absolute left-0 top-0 h-full w-[2px] bg-slate-200 group-hover:bg-slate-300 transition-colors duration-300"></div>
                             
-                            <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-opacity bg-slate-50/80 rounded-lg p-1 gap-1">
+                            <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-opacity bg-white border border-slate-200 shadow-sm rounded-lg p-1 gap-1">
                                 <button 
                                     onClick={() => openEditModal(user)}
-                                    className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors"
+                                    className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-50 border border-slate-200 rounded-md transition-colors"
                                     title="Edit Supervisor"
                                 >
-                                    <Edit2 size={16} />
+                                    <Edit2 size={14} />
                                 </button>
                                 <button 
                                     onClick={() => {
@@ -168,10 +168,10 @@ const ManageTeachers = () => {
                                             dispatch(deleteUser(user._id));
                                         }
                                     }}
-                                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                    className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-50 border border-slate-200 rounded-md transition-colors"
                                     title="Delete Supervisor"
                                 >
-                                    <Trash2 size={16} />
+                                    <Trash2 size={14} />
                                 </button>
                             </div>
                             

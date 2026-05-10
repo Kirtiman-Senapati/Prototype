@@ -48,7 +48,7 @@ const TeacherActivityList = ({ activities }) => {
             return 'bg-emerald-500/80';
     
         if (type?.includes('ASSIGNED') || type?.includes('ADDED')) 
-            return 'bg-indigo-500/80';
+            return 'bg-slate-500';
     
         if (type?.includes('UPDATED') || type?.includes('SET')) 
             return 'bg-amber-500/80';

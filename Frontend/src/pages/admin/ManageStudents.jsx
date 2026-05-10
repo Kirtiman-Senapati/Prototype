@@ -258,14 +258,14 @@ const ManageStudents = () => {
                                         <td className="px-6 py-5 text-right">
                                             <div className="flex justify-end items-center gap-1">
                                                 <button
-                                                    className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
+                                                    className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-50 border border-slate-200 rounded-md transition-colors"
                                                     onClick={() => openEditModal(user)}
                                                     title="Edit Student"
                                                 >
-                                                    <Edit2 size={18} className="group-hover:scale-110 transition-transform" />
+                                                    <Edit2 size={15} />
                                                 </button>
                                                 <button 
-                                                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors group"
+                                                    className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-50 border border-slate-200 rounded-md transition-colors"
                                                     onClick={async () => {
                                                         if (window.confirm(`Are you sure you want to delete ${user.name}? This action cannot be undone.`)) {
                                                             try {
@@ -278,7 +278,7 @@ const ManageStudents = () => {
                                                     }}
                                                     title="Delete Student"
                                                 >
-                                                    <Trash2 size={18} className="group-hover:scale-110 transition-transform" />
+                                                    <Trash2 size={15} />
                                                 </button>
                                             </div>
                                         </td>

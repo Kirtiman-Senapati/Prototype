@@ -136,7 +136,7 @@ const TeacherFiles = () => {
                              <select 
                                 value={filterType} 
                                 onChange={(e) => setFilterType(e.target.value)}
-                                className="w-full appearance-none bg-white border border-slate-200 text-slate-700 py-2.5 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 ring-slate-200 focus:border-slate-300 focus:border-blue-500 text-sm transition-shadow"
+                                className="w-full appearance-none bg-white border border-slate-200 text-slate-700 py-2.5 pl-4 pr-10 rounded-lg focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100 text-sm transition-all"
                              >
                                  <option value="All">All Files</option>
                                  <option value="Report">Reports</option>

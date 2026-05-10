@@ -2,9 +2,9 @@ import { FileText, MonitorPlay, Archive, Download } from "lucide-react";
 
 const FileItem = ({ file }) => {
     const getFileIcon = (type, className = "") => {
-        if (type === "Report") return <FileText className={`text-blue-500 ${className}`} size={16} />;
-        if (type === "Presentation") return <MonitorPlay className={`text-amber-500 ${className}`} size={16} />;
-        if (type === "Code") return <Archive className={`text-purple-500 ${className}`} size={16} />;
+        if (type === "Report") return <FileText className={`text-slate-500 ${className}`} size={16} />;
+        if (type === "Presentation") return <MonitorPlay className={`text-slate-500 ${className}`} size={16} />;
+        if (type === "Code") return <Archive className={`text-slate-500 ${className}`} size={16} />;
         return <FileText className={`text-slate-500 ${className}`} size={16} />;
     };
 

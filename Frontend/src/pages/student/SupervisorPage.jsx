@@ -65,7 +65,7 @@ const SupervisorPage = () => {
                </div>
                
                <div className="flex flex-col sm:flex-row gap-5 items-start">
-                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 text-slate-700 flex items-center justify-center text-2xl font-semibold shadow-sm">
+                   <div className="w-16 h-16 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-2xl font-semibold border border-slate-200">
                        {project.supervisor.name.charAt(0)}
                    </div>
                    <div className="flex flex-col">
@@ -168,15 +168,13 @@ const SupervisorPage = () => {
           </div>
       ) : (
         <>
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-6 md:p-8 text-white shadow-lg overflow-hidden relative mb-8">
+          <div className="bg-slate-950 rounded-xl p-6 md:p-8 text-white relative mb-8">
             <div className="relative z-10">
-                <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Available Supervisors</h1>
-                <p className="mt-2 text-slate-300 text-md font-medium opacity-90">
+                <h1 className="text-2xl font-bold tracking-tight">Available Supervisors</h1>
+                <p className="mt-2 text-slate-400 text-sm">
                     Browse and request a supervisor for your approved project.
                 </p>
             </div>
-            {/* Decorative background shape */}
-            <div className="absolute -top-10 -right-10 w-48 h-48 bg-white opacity-5 rounded-full blur-2xl"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                  {supervisors && supervisors.length > 0 ? (
@@ -194,7 +192,7 @@ const SupervisorPage = () => {
                                 
                                 
                                 <div className="flex items-start justify-between relative z-10 mb-4">
-                                   <div className="w-12 h-12 rounded-xl bg-slate-200 text-slate-700 text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                                   <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-lg font-bold border border-slate-200">
                                        {teacher.name.charAt(0)}
                                    </div>
                                 </div>
@@ -245,14 +243,14 @@ const SupervisorPage = () => {
       {/* 🚀 Modal Content for Supervisor Request */}
       {isModalOpen && !project?.supervisor && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl animate-in zoom-in-95 duration-200">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6">Request Supervisor</h2>
+          <div className="bg-white rounded-xl p-6 w-full max-w-md border border-slate-200 animate-in zoom-in-95 duration-200">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">Request Supervisor</h2>
             <form onSubmit={handleRequest} className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">Project Title</label>
+                <label className="block text-[11px] uppercase text-slate-400 mb-1.5 font-bold">Project Title</label>
                 <input 
                   type="text" 
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors bg-slate-50/50" 
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100 transition-colors bg-white text-slate-800 text-sm" 
                   value={title} 
                   onChange={(e) => setTitle(e.target.value)} 
                   placeholder="Enter your proposed project title"
@@ -260,9 +258,9 @@ const SupervisorPage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">Proposal Message</label>
+                <label className="block text-[11px] uppercase text-slate-400 mb-1.5 font-bold">Proposal Message</label>
                 <textarea 
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors min-h-[120px] resize-none bg-slate-50/50 hover:bg-white" 
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100 transition-colors min-h-[120px] resize-none bg-white text-slate-800 text-sm hover:bg-slate-50/50" 
                   value={description} 
                   onChange={(e) => setDescription(e.target.value)} 
                   placeholder="Explain why you want this supervisor and briefly describe your project..." 
@@ -270,8 +268,8 @@ const SupervisorPage = () => {
                 />
               </div>
               <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
-                <button type="submit" className="px-6 py-2.5 rounded-xl font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors flex items-center gap-2">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-lg font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition-colors text-sm">Cancel</button>
+                <button type="submit" className="px-6 py-2.5 rounded-lg font-medium text-white bg-slate-900 hover:bg-slate-800 transition-colors flex items-center gap-2 text-sm">
                     Send Request
                 </button>
               </div>

@@ -54,7 +54,7 @@ const FeedbackPage = () => {
 
       {isLoading && (!feedbacks || feedbacks.length === 0) ? (
         <div className="flex justify-center py-20">
-            <div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-blue-600 animate-spin"></div>
+            <div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-slate-800 animate-spin"></div>
         </div>
       ) : (
         <div className="space-y-4">
@@ -107,9 +107,7 @@ const FeedbackPage = () => {
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-sm font-bold text-slate-700">{f.sender?.name || "Unknown"}</span>
-                                <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                                    f.senderRole === "Admin" ? "text-purple-600" : "text-blue-500"
-                                }`}>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                     {f.senderRole}
                                 </span>
                             </div>
@@ -118,10 +116,9 @@ const FeedbackPage = () => {
                  </div>
               ))
           ) : (
-              <div className="text-center py-20 bg-slate-50/50 rounded-2xl border border-slate-200 border-dashed">
-                  <MessageSquare size={48} className="mx-auto text-slate-300 mb-4" />
-                  <h3 className="text-lg font-bold text-slate-700">No Feedback Yet</h3>
-                  <p className="text-slate-500 mt-1 max-w-sm mx-auto text-sm">You haven't received any feedback from your supervisors or administrators yet.</p>
+              <div className="flex flex-col items-center justify-center py-16 bg-white border border-slate-200 rounded-xl">
+                  <MessageSquare className="text-slate-300 mb-3" size={28} />
+                  <p className="text-slate-400 text-sm">No feedback available</p>
               </div>
           )}
         </div>

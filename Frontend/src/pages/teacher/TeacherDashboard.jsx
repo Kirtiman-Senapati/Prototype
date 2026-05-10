@@ -65,7 +65,7 @@ const TeacherDashboard = () => {
   if (isLoading && !stats) {
     return (
       <div className="flex justify-center items-center h-full min-h-[400px]">
-        <Loader className="animate-spin text-blue-500" size={40} />
+        <Loader className="animate-spin text-slate-800" size={40} />
       </div>
     );
   }
