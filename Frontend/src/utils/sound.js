@@ -2,6 +2,44 @@
 
 let lastNotificationTime = 0;
 let lastChatTime = 0;
+let sharedAudioCtx = null;
+
+// Lazily gets or initializes a single global AudioContext to avoid browser-limit crashes (max 6 contexts)
+const getAudioContext = () => {
+    try {
+        if (!sharedAudioCtx) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                sharedAudioCtx = new AudioContextClass();
+            }
+        }
+        // If suspended by browser autoplay policy, attempt to resume
+        if (sharedAudioCtx && sharedAudioCtx.state === "suspended") {
+            sharedAudioCtx.resume().catch(() => {});
+        }
+        return sharedAudioCtx;
+    } catch (e) {
+        console.warn("Could not retrieve AudioContext", e);
+        return null;
+    }
+};
+
+// Auto-unlock AudioContext on first user click or touch on the document
+if (typeof window !== "undefined") {
+    const unlock = () => {
+        const ctx = getAudioContext();
+        if (ctx && ctx.state === "suspended") {
+            ctx.resume().catch(() => {});
+        }
+        // Remove listeners after initial interaction
+        window.removeEventListener("click", unlock);
+        window.removeEventListener("touchstart", unlock);
+        window.removeEventListener("keydown", unlock);
+    };
+    window.addEventListener("click", unlock);
+    window.addEventListener("touchstart", unlock);
+    window.addEventListener("keydown", unlock);
+}
 
 // Dual-tone high-fidelity professional chime
 export const playNotificationSound = () => {
@@ -11,9 +49,8 @@ export const playNotificationSound = () => {
     lastNotificationTime = nowTime;
 
     try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        const ctx = new AudioContext();
+        const ctx = getAudioContext();
+        if (!ctx) return;
         const now = ctx.currentTime;
 
         // Sound node 1 (Primary lower tone)
@@ -55,9 +92,8 @@ export const playChatSound = () => {
     lastChatTime = nowTime;
 
     try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        const ctx = new AudioContext();
+        const ctx = getAudioContext();
+        if (!ctx) return;
         const now = ctx.currentTime;
 
         const osc = ctx.createOscillator();
