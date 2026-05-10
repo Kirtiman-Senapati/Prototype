@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, XCircle, Send, MessageCircle } from 'lucide-react';
 import { toast } from '../../utils/toast';
+import { useSelector } from "react-redux";
 
 const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId, isSubmitting }) => {
     const [remarks, setRemarks] = useState("");
     const [commentText, setCommentText] = useState("");
     const [isCommenting, setIsCommenting] = useState(false);
+    
+    const authUser = useSelector((state) => state.auth.authUser);
     useEffect(() => {
         if (!isOpen) {
             setRemarks("");
@@ -27,9 +30,10 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
         try {
 
             const { axiosInstance } = await import("../../lib/axios");
+            const rolePath = authUser?.role?.toLowerCase() === "supervisor" ? "teacher" : authUser?.role?.toLowerCase();
 
             await axiosInstance.post(
-                `/project/${projectId}/milestone/${milestone._id}/comment`,
+                `/${rolePath}/project/${projectId}/milestone/${milestone._id}/comment`,
                 { message: commentText }
             );
 

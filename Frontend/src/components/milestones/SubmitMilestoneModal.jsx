@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { X, UploadCloud, Send, MessageCircle } from 'lucide-react';
 import { toast } from '../../utils/toast';
+import { useSelector } from "react-redux";
 
 const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId, isSubmitting }) => {
     const [file, setFile] = useState(null);
     const [remarks, setRemarks] = useState("");
     const [commentText, setCommentText] = useState("");
     const [isCommenting, setIsCommenting] = useState(false);
+    
+    const authUser = useSelector((state) => state.auth.authUser);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -27,8 +30,10 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
         setIsCommenting(true);
         try {
             const { axiosInstance } = await import("../../lib/axios");
+            const rolePath = authUser?.role?.toLowerCase() === "supervisor" ? "teacher" : authUser?.role?.toLowerCase();
+            
             await axiosInstance.post(
-                `/project/${projectId}/milestone/${milestone._id}/comment`,
+                `/${rolePath}/project/${projectId}/milestone/${milestone._id}/comment`,
                 { message: commentText }
             );
             toast.success("Comment added");

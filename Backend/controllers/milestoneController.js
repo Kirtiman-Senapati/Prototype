@@ -448,14 +448,13 @@ export const addMilestoneComment = asyncHandler(async (req, res, next) => {
 
     const milestone = project.milestones.id(milestoneId);
     if (milestone) {
-   milestone.comments.push(commentEntry);
-}
-
-if (workspaceItem) {
-   workspaceItem.comments.push(commentEntry);
-}
+        milestone.comments.push(commentEntry);
+    }
 
     const workspaceItem = project.workspaceItems.id(milestoneId);
+    if (workspaceItem) {
+        workspaceItem.comments.push(commentEntry);
+    }
 
     if (!milestone && !workspaceItem) {
         return next(new ErrorHandler("Milestone not found", 404));
