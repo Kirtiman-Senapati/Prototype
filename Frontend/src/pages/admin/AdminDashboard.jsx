@@ -3,7 +3,7 @@ import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminDashboard, adminAddStudent, adminAddSupervisor, updateProjectStatusAdmin } from "../../store/slices/adminSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
-import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare, UserPlus, X, ArrowRight, XCircle, FileText, MonitorPlay, Archive, File } from "lucide-react";
+import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare, UserPlus, X, ArrowRight, XCircle, FileText, MonitorPlay, Archive, File, MessageSquare, User, Plus, Calendar, Briefcase, CheckCircle } from "lucide-react";
 import { toast } from "../../utils/toast";
 import { playNotificationSound } from "../../utils/sound";
 
@@ -321,7 +321,7 @@ const AdminDashboard = () => {
 
             {/* Pending Proposals Modal */}
             {isPendingModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                <div className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 ${selectedProjectForView ? "hidden" : ""}`}>
                     <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[85vh] border border-slate-200">
                         <div className="flex justify-between items-center p-5 border-b border-slate-100 bg-white">
                             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -436,62 +436,140 @@ const AdminDashboard = () => {
 
             {/* Project Documentation Details Modal */}
             {selectedProjectForView && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white overflow-hidden rounded-2xl border border-slate-200 flex flex-col w-full max-w-4xl max-h-[85vh] shadow-xl animate-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm">
+                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-5xl border border-slate-200 flex flex-col max-h-[85vh] shadow-xl">
                         
                         {/* Modal Header */}
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
-                            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2.5">
-                                <div className="p-1.5 bg-slate-50 text-slate-500 rounded-lg border border-slate-200/60">
-                                    <FolderKanban size={18} /> 
+                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
+                                <div className="p-2 bg-slate-100 text-slate-600 rounded-lg">
+                                    <FolderKanban size={20} />
                                 </div>
-                                Project Documentation
+                                Project Details
                             </h2>
                             <button 
                                 onClick={() => setSelectedProjectForView(null)}
-                                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
                             >
                                 <X size={20} />
                             </button>
                         </div>
                         
                         {/* Modal Body (Scrollable) */}
-                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+                        <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-8">
                             
                             {/* BASIC INFO */}
-                            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative">
-                                <div className="absolute top-6 right-6">
-                                    <div className="flex items-center justify-end gap-2 text-xs font-medium">
-                                        <span className={`w-1.5 h-1.5 rounded-full ${
-                                            selectedProjectForView.status === 'Completed' ? 'bg-emerald-500' :
-                                            selectedProjectForView.status === 'Approved' ? 'bg-blue-500' :
-                                            selectedProjectForView.status === 'Rejected' ? 'bg-red-500' :
-                                            selectedProjectForView.status === 'Incomplete' ? 'bg-slate-500' :
-                                            'bg-amber-500'
-                                        }`} />
-                                        <span className="text-slate-600 font-semibold">
-                                            {selectedProjectForView.status}
-                                        </span>
+                            <div className="relative">
+                                <div className="absolute top-0 right-0">
+                                    <div className="px-3 py-1 text-xs font-medium bg-slate-900 text-white rounded-full shadow-sm">
+                                        {selectedProjectForView.status}
                                     </div>
                                 </div>
-                                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Project Title</h3>
-                                <h4 className="text-xl font-bold text-slate-800 mb-4 pr-24 leading-snug">{selectedProjectForView.title}</h4>
+                                <h4 className="text-2xl font-bold text-slate-900 tracking-tight pr-24">{selectedProjectForView.title}</h4>
+                                <div className="mt-2 flex items-center gap-3 text-sm mb-6">
+                                    <span className="text-slate-500">Project</span>
+                                    <span className="h-1 w-1 bg-slate-300 rounded-full"></span>
+                                    <span className="text-slate-600 font-medium">
+                                        {selectedProjectForView.student?.name || "Deleted User"}
+                                    </span>
+                                </div>
                                 
                                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 mt-6">Description</h3>
-                                <p className="text-xs text-slate-600 leading-relaxed mb-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100">{selectedProjectForView.description || "No description provided."}</p>
+                                <p className="text-sm text-slate-600 leading-relaxed mb-6">{selectedProjectForView.description || "No description provided."}</p>
+
+                                <div className="flex items-center gap-2 text-sm text-slate-700 inline-flex py-1">
+                                    <Calendar size={16} className="text-slate-400" />
+                                    <span className="font-semibold text-slate-500">Deadline:</span>
+                                    <span className="font-bold">{selectedProjectForView.deadline ? new Date(selectedProjectForView.deadline).toLocaleDateString("en-GB") : 'Not Set'}</span>
+                                </div>
                             </div>
 
-                            {/* Student Information */}
-                            <div>
-                                <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Student Information</h3>
-                                <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-slate-300 transition-colors">
-                                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-lg shrink-0 border border-slate-200 shadow-sm">
-                                        {selectedProjectForView.student?.name?.charAt(0) || "U"}
+                            {/* IDENTITIES */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Team */}
+                                <div>
+                                    <div className="flex items-center justify-between mb-3 pl-1">
+                                        <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Team Information</h3>
+                                        {selectedProjectForView.groupName && (
+                                            <span className="text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">{selectedProjectForView.groupName}</span>
+                                        )}
                                     </div>
-                                    <div className="flex flex-col overflow-hidden">
-                                        <span className="text-base font-bold text-slate-800 truncate">{selectedProjectForView.student?.name || "Unknown"}</span>
-                                        <span className="text-xs font-medium text-slate-500 truncate">{selectedProjectForView.student?.email}</span>
+                                    <div className="flex flex-col gap-3 pt-1">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0 bg-slate-100 text-slate-600">
+                                                {selectedProjectForView.student?.name?.charAt(0) || "D"}
+                                            </div>
+                                            <div className="flex flex-col overflow-hidden">
+                                                <span className="text-md font-bold text-slate-800 flex items-center gap-2 truncate">
+                                                    {selectedProjectForView.student?.name || <span className="text-red-500 italic">Deleted User</span>}
+                                                </span>
+                                                <span className="text-xs font-medium text-slate-500 truncate">{selectedProjectForView.student?.email || "No email available"}</span>
+                                            </div>
+                                        </div>
                                     </div>
+                                </div>
+
+                                {/* Supervisor */}
+                                <div>
+                                    <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Supervisor Assignment</h3>
+                                    <div className="flex items-center gap-4 pt-1 h-[56px]">
+                                        {selectedProjectForView.supervisor ? (
+                                            <>
+                                                <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xl shrink-0">
+                                                    {selectedProjectForView.supervisor.name.charAt(0)}
+                                                </div>
+                                                <div className="flex flex-col overflow-hidden">
+                                                    <span className="text-lg font-bold text-slate-800 truncate">{selectedProjectForView.supervisor.name}</span>
+                                                    <span className="text-sm font-medium text-slate-500 truncate">{selectedProjectForView.supervisor.email}</span>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="flex items-center gap-3 w-full">
+                                                <div className="w-14 h-14 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-200 border-dashed shrink-0">
+                                                    <Briefcase size={20} />
+                                                </div>
+                                                <span className="text-slate-500 italic font-medium">Not Assigned Yet</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* TASK TRACKING & PROGRESS */}
+                            <div className="pt-2">
+                                <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
+                                    <CheckCircle size={14} className="text-slate-500" /> Task Progress
+                                </h3>
+                                <div className="mt-2">
+                                    {(() => {
+                                        const itemMap = new Map();
+                                        (selectedProjectForView.tasks || []).forEach(t => itemMap.set(t._id.toString(), { ...t, type: 'task' }));
+                                        (selectedProjectForView.workspaceItems || []).forEach(wi => itemMap.set(wi._id.toString(), wi));
+                                        const tasks = Array.from(itemMap.values()).filter(i => i.type === 'task');
+                                        const totalTasks = tasks.length;
+                                        const completedTasks = tasks.filter(t => t.status === "Completed").length;
+                                        const taskProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+                                        return (
+                                            <div className="flex flex-col gap-4 bg-slate-50 p-5 rounded-xl">
+                                                <div className="flex justify-between items-end">
+                                                    <div>
+                                                        <p className="text-sm font-bold text-slate-700">Completion Status</p>
+                                                        <p className="text-xs text-slate-500 mt-0.5">{completedTasks} of {totalTasks} tasks completed</p>
+                                                    </div>
+                                                    <span className="text-3xl font-semibold text-slate-900">{taskProgress}%</span>
+                                                </div>
+
+                                                {/* Progress Bar (SaaS Feel) */}
+                                                <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                                                    <div
+                                                        className="bg-slate-900 h-3 rounded-full transition-all duration-1000 ease-out"
+                                                        style={{ width: `${taskProgress}%` }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             </div>
 
@@ -555,28 +633,29 @@ const AdminDashboard = () => {
                         </div>
                         
                         {/* Modal Footer Actions */}
-                        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3 rounded-b-2xl">
-                            <button 
-                                onClick={() => setSelectedProjectForView(null)}
-                                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-md transition shadow-sm"
-                            >
-                                Close View
-                            </button>
-                            {selectedProjectForView.status === "Pending" && (
+                        <div className="px-6 py-5 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 rounded-b-xl w-full">
+                            {selectedProjectForView.status === "Pending" ? (
                                 <>
                                     <button 
                                         onClick={() => handleStatusUpdateFromView(selectedProjectForView._id, "Rejected")}
-                                        className="px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-md transition shadow-sm"
+                                        className="px-6 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 bg-transparent transition"
                                     >
                                         Reject Proposal
                                     </button>
                                     <button 
                                         onClick={() => handleStatusUpdateFromView(selectedProjectForView._id, "Approved")}
-                                        className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-md transition shadow-sm"
+                                        className="px-6 py-2.5 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-md transition shadow-sm"
                                     >
                                         Approve Proposal
                                     </button>
                                 </>
+                            ) : (
+                                <button 
+                                    onClick={() => setSelectedProjectForView(null)}
+                                    className="px-6 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 bg-transparent transition"
+                                >
+                                    Close
+                                </button>
                             )}
                         </div>
                     </div>
