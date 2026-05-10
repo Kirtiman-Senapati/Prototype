@@ -31,7 +31,7 @@ const ProjectOverview = ({ project, onUpdate, authUser, onLeaveGroup }) => {
                         onClick={onUpdate}
                         className="text-[11px] font-semibold text-slate-700 hover:text-slate-900 transition-colors uppercase tracking-wide"
                     >
-                        Update Supervisor
+                        Message Supervisor
                     </button>
                 )}
             </div>
@@ -116,7 +116,7 @@ const FeedbackList = ({ feedbacks }) => {
                         <div className="flex justify-between items-start mb-1">
                             <h4 className="text-[13px] font-semibold text-slate-800">{fb.title}</h4>
                             <span className={`text-[10px] font-bold uppercase tracking-wide ${
-                                fb.type === 'Positive' ? 'text-emerald-600' :
+                                fb.type === 'Positive' ? 'text-slate-900' :
                                 fb.type === 'Needs Revision' ? 'text-rose-600' :
                                 'text-slate-500'
                             }`}>

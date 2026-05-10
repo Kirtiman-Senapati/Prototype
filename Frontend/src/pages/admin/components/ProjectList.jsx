@@ -61,7 +61,7 @@ const ProjectList = ({ projects, title = "Recent Projects", viewAllLink = "/dash
                                             project.status === 'Completed'
                                                 ? 'bg-slate-600'
                                                 : project.status === 'In Progress' || project.status === 'Approved'
-                                                ? 'bg-green-500/80'
+                                                ? 'bg-blue-500'
                                                 : project.status === 'Pending'
                                                 ? 'bg-orange-500/80'
                                                 : project.status === 'Incomplete'

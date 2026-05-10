@@ -38,7 +38,7 @@ const FeedbackPage = () => {
             <div className="flex flex-col items-center justify-center p-5 gap-1 bg-white border border-slate-200 rounded-xl 
                 transition-all duration-200 
                 hover:border-slate-300 hover:-translate-y-[1px]">
-                <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><CheckCircle size={14}/> Positive</span>
+                <span className="text-[11px] font-bold text-slate-700 uppercase tracking-widest mb-1 flex items-center gap-1.5"><CheckCircle size={14}/> Positive</span>
                 <span className="text-2xl font-black text-slate-900">{positiveCount}</span>
             </div>
 
