@@ -72,6 +72,8 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
     if (req.user.role === "Supervisor" && project.supervisor?.toString() !== req.user._id.toString()) {
         return next(new ErrorHandler("Unauthorized: Not the supervisor for this project", 403));
     }
+    
+    
 
     const newId = new mongoose.Types.ObjectId();
     const newMilestone = {
@@ -104,7 +106,7 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
     await logActivity({
         actor: req.user._id,
         targetUsers,
-        actionType: "MILESTONE_ADDED",
+        actionType: "MILESTONE_CREATED",
         message: `**${req.user.name}** added a new milestone "**${title}**" to the project "**${project.title}**"`,
         details: description,
         relatedProject: project._id,
@@ -126,7 +128,6 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
 // @access  Teacher/Admin
 export const updateMilestone = asyncHandler(async (req, res, next) => {
     const { projectId, milestoneId } = req.params;
-    const { remarks } = req.body;
     const { title, description, deadline } = req.body;
 
     const project = await Project.findById(projectId);
@@ -226,11 +227,13 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
         };
         milestone.files.push(fileData);
     }
+
     
     milestone.status = "In Review";
     milestone.submittedAt = new Date();
     milestone.studentRemarks = remarks || "";
     const commentEntry = {
+        
         user: req.user._id,
         name: req.user.name,
         role: req.user.role,
@@ -306,8 +309,14 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Unauthorized", 403));
     }
 
-    const milestone = project.milestones.id(milestoneId) || project.workspaceItems.id(milestoneId);
-    if (!milestone) return next(new ErrorHandler("Milestone not found", 404));
+    //Add milestone id
+
+    const milestone = project.milestones.id(milestoneId);
+
+    if (!milestone) {
+        return next(new ErrorHandler("Milestone not found", 404));
+    }
+
 
     milestone.status = status;
     let completedAt = undefined;
@@ -334,30 +343,39 @@ export const reviewMilestone = asyncHandler(async (req, res, next) => {
         name: req.user.name,
         role: req.user.role,
         message: reviewRemarks || `Milestone ${status.toLowerCase()}.`,
-        actionType: status.toUpperCase()
+        actionType: status === "Approved"? "APPROVED": "REJECTED"
     };
     
-    // We only push to milestone if it was found in project.milestones to avoid duplicate pushes if milestone === workspaceItem
-    if (project.milestones.id(milestoneId)) {
-        project.milestones.id(milestoneId).comments.push(commentEntry);
-    }
+    milestone.comments.push(commentEntry);
 
+    
     // Dual update for workspaceItems
     const workspaceItem = project.workspaceItems.id(milestoneId);
     if (workspaceItem) {
-        workspaceItem.status = status;
-        workspaceItem.comments.push(commentEntry);
-       if (status === "Approved") 
-        {
-            workspaceItem.completedAt = completedAt;
-            workspaceItem.approvedBy = approvedBy;
-            workspaceItem.remarks = remarks || reviewRemarks || "";
-        } 
-       else 
-       {
-            workspaceItem.remarks = remarks || reviewRemarks || "";
-       }
+
+    workspaceItem.status = status;
+
+    workspaceItem.reviewRemarks = reviewRemarks;
+
+    workspaceItem.rejectionReason = rejectionReason;
+
+    workspaceItem.completedAt = completedAt;
+
+    workspaceItem.approvedBy = approvedBy;
+
+    workspaceItem.comments.push(commentEntry);
+
+    if (status === "Approved") {
+
+        workspaceItem.remarks =
+            remarks || reviewRemarks || "";
+
+    } else {
+
+        workspaceItem.remarks =
+            remarks || reviewRemarks || "";
     }
+}
 
     project.progress = recalculateProgress(project);
     await project.save();

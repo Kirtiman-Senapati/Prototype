@@ -132,10 +132,16 @@ const MilestoneTimeline = ({
                         )}
 
                         {/* Teacher/Admin Review */}
-                            {(m.reviewRemarks || m.rejectionReason) && (
-                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2.5">
-                                    <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700 mb-1">
-                                        Supervisor Review
+                            {displayStatus === "Rejected" && (m.reviewRemarks || m.rejectionReason) && (
+                                <div className={`rounded-lg p-3 mb-2.5 border ${
+                                    displayStatus === "Approved"
+                                        ? "bg-green-50 border-green-200"
+                                        : "bg-orange-50 border-orange-200"
+                                }`}>
+                                    <p className="text-[11px] font-bold uppercase tracking-wide text-orange-700 mb-1">
+                                       {displayStatus === "Approved"
+                                            ? "Approval Remarks"
+                                            : "Revision Remarks"}
                                     </p>
 
                                     <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
@@ -145,7 +151,7 @@ const MilestoneTimeline = ({
                             )}
 
                             {/* Remarks Section */}
-                            {(m.reviewRemarks || m.rejectionReason) && (
+                           {displayStatus === "Rejected" && (m.reviewRemarks || m.rejectionReason) && (
                                 <div className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-2.5">
                                     <MessageSquare size={14} className="text-slate-400 mt-0.5 shrink-0" />
                                     <div>

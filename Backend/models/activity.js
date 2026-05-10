@@ -50,6 +50,7 @@ const activitySchema = new mongoose.Schema(
         "MILESTONE_UPDATED",
         "MILESTONE_SUBMITTED",
         "MILESTONE_REVIEWED",
+        "MILESTONE_COMMENTED",
         "GROUP_UPDATED"
       ],
       required: true,
