@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import { useDispatch, useSelector } from "react-redux";
-import { getAdminDashboard, adminAddStudent, adminAddSupervisor } from "../../store/slices/adminSlice";
+import { getAdminDashboard, adminAddStudent, adminAddSupervisor, updateProjectStatusAdmin } from "../../store/slices/adminSlice";
 import { getActivities, addRealtimeActivity } from "../../store/slices/activitySlice";
-import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare, UserPlus, X } from "lucide-react";
+import { Users, GraduationCap, FolderKanban, ShieldCheck, Clock, CheckSquare, UserPlus, X, ArrowRight, XCircle, FileText, MonitorPlay, Archive, File } from "lucide-react";
 import { toast } from "../../utils/toast";
 import { playNotificationSound } from "../../utils/sound";
 
@@ -23,6 +23,9 @@ const AdminDashboard = () => {
 
     const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
     const [isSupervisorModalOpen, setIsSupervisorModalOpen] = useState(false);
+    const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
+    const [selectedProjectId, setSelectedProjectId] = useState("");
+    const [selectedProjectForView, setSelectedProjectForView] = useState(null);
     const [studentFormData, setStudentFormData] = useState({ name: "", email: "", password: "", department: "" });
     const [supervisorFormData, setSupervisorFormData] = useState({ name: "", email: "", password: "", department: "", experties: "" });
     const [isSubmittingStudent, setIsSubmittingStudent] = useState(false);
@@ -68,6 +71,87 @@ const AdminDashboard = () => {
         dispatch(getAdminDashboard());
         dispatch(getActivities());
     }, [dispatch]);
+
+    const handleApproveDirect = (projectId) => {
+        if (!projectId) return;
+        dispatch(updateProjectStatusAdmin({ id: projectId, status: "Approved" }))
+            .unwrap()
+            .then(() => {
+                toast.success("Proposal approved successfully");
+                dispatch(getAdminDashboard());
+                const remaining = (pendingProjects || []).filter(p => p._id !== projectId);
+                if (remaining.length > 0) {
+                    setSelectedProjectId(remaining[0]._id);
+                } else {
+                    setIsPendingModalOpen(false);
+                    setSelectedProjectId("");
+                }
+                if (selectedProjectForView && selectedProjectForView._id === projectId) {
+                    setSelectedProjectForView(null);
+                }
+            })
+            .catch(() => toast.error("Failed to approve proposal"));
+    };
+
+    const handleStatusUpdateFromView = (projectId, status) => {
+        dispatch(updateProjectStatusAdmin({ id: projectId, status }))
+            .unwrap()
+            .then(() => {
+                toast.success(`Proposal ${status.toLowerCase()} successfully`);
+                setSelectedProjectForView(null);
+                dispatch(getAdminDashboard());
+                
+                const remaining = (pendingProjects || []).filter(p => p._id !== projectId);
+                if (remaining.length > 0) {
+                    setSelectedProjectId(remaining[0]._id);
+                } else {
+                    setIsPendingModalOpen(false);
+                    setSelectedProjectId("");
+                }
+            })
+            .catch(() => toast.error(`Failed to ${status.toLowerCase()} proposal`));
+    };
+
+    const handleDownload = async (fileUrl, originalFilename) => {
+        try {
+            const toastId = toast.loading("Downloading file...");
+            const response = await fetch(`http://localhost:4000${fileUrl}`);
+            if (!response.ok) throw new Error("Download failed");
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.href = url;
+            a.download = originalFilename; 
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            toast.update(toastId, { render: "File downloaded successfully!", type: "success", isLoading: false, autoClose: 3000 });
+        } catch (error) {
+            toast.dismiss();
+            toast.error("Failed to download file");
+        }
+    };
+
+    const getFileIcon = (type, className = "") => {
+        if (type === "Report") return <FileText className={`text-slate-800 ${className}`} />;
+        if (type === "Presentation") return <MonitorPlay className={`text-slate-800 ${className}`} />;
+        if (type === "Code") return <Archive className={`text-slate-800 ${className}`} />;
+        return <File className={`text-slate-800 ${className}`} />;
+    };
+
+    const handleClosePendingModal = () => {
+        setIsPendingModalOpen(false);
+        setSelectedProjectId("");
+    };
+
+    useEffect(() => {
+        if (isPendingModalOpen && pendingProjects?.length > 0 && !selectedProjectId) {
+            setSelectedProjectId(pendingProjects[0]._id);
+        }
+    }, [isPendingModalOpen, pendingProjects, selectedProjectId]);
 
     useAutoRefresh(() => {
     dispatch(getAdminDashboard());
@@ -121,11 +205,21 @@ const AdminDashboard = () => {
                     value={stats?.totalProjects || 0} 
                     icon={FolderKanban}
                 />
-                <StatCard 
-                    title="Pending Proposals" 
-                    value={stats?.pendingProposals || 0} 
-                    icon={Clock}
-                />
+                <div
+                    onClick={() => setIsPendingModalOpen(true)}
+                    className="cursor-pointer hover:border-slate-300 transition-colors relative group block outline-none"
+                >
+                    <StatCard 
+                        title="Pending Proposals" 
+                        value={stats?.pendingProposals || 0} 
+                        icon={Clock}
+                    />
+                    <div className="absolute right-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 shadow-sm">
+                            View List &rarr;
+                        </span>
+                    </div>
+                </div>
             </div>
 
             {/* Quick Actions Section */}
@@ -166,11 +260,6 @@ const AdminDashboard = () => {
                     <div className="h-[420px]">
                         <ProjectList projects={recentProjects} title="Recent Projects" viewAllLink="/dashboard/projects" />
                     </div>
-                    {pendingProjects?.length > 0 && (
-                        <div className="h-[420px]">
-                            <ProjectList projects={pendingProjects} title="Pending Proposals" viewAllLink="/dashboard/assign-supervisor" />
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -229,6 +318,270 @@ const AdminDashboard = () => {
                 isSubmitting={isSubmittingSupervisor}
                 editId={null}
             />
+
+            {/* Pending Proposals Modal */}
+            {isPendingModalOpen && (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[85vh] border border-slate-200">
+                        <div className="flex justify-between items-center p-5 border-b border-slate-100 bg-white">
+                            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <Clock className="text-slate-500" size={20} /> Pending Proposals
+                            </h2>
+                            <button onClick={handleClosePendingModal} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="flex-1 overflow-x-auto overflow-y-auto custom-scrollbar p-1">
+                            {!pendingProjects || pendingProjects.length === 0 ? (
+                                <div className="text-center py-12 text-slate-400">
+                                    <Clock size={32} strokeWidth={1.5} className="mx-auto text-slate-300 mb-3" />
+                                    <p className="text-[13px] font-medium">No pending proposals found</p>
+                                </div>
+                            ) : (
+                                <table className="w-full text-left border-collapse min-w-[800px]">
+                                    <thead>
+                                        <tr className="border-b border-slate-100">
+                                            <th className="px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Project Name</th>
+                                            <th className="px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Supervisor</th>
+                                            <th className="px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Status</th>
+                                            <th className="px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Progress</th>
+                                            <th className="px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wide text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {pendingProjects.map((project) => (
+                                            <tr 
+                                                key={project._id} 
+                                                onClick={() => setSelectedProjectId(project._id)}
+                                                className={`hover:bg-slate-50/50 transition-colors group cursor-pointer ${
+                                                    selectedProjectId === project._id ? "bg-slate-50/70 border-l-2 border-slate-400" : ""
+                                                }`}
+                                            >
+                                                <td className="px-6 py-4">
+                                                    <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-slate-700 transition-colors line-clamp-1">{project.title}</h3>
+                                                    <p className="text-xs text-slate-500 mt-1">Student: {project.student?.name || 'Unknown'}</p>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="text-sm font-medium text-slate-800 tracking-tight">{project.supervisor?.name || 'Pending'}</span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${
+                                                            project.status === 'Completed'
+                                                                ? 'bg-slate-600'
+                                                                : project.status === 'In Progress' || project.status === 'Approved'
+                                                                ? 'bg-indigo-500/80'
+                                                                : project.status === 'Pending'
+                                                                ? 'bg-orange-500/80'
+                                                                : project.status === 'Incomplete'
+                                                                ? 'bg-slate-500/80'
+                                                                : 'bg-slate-400'
+                                                        }`} />
+                                                        
+                                                        <span className="text-xs font-medium text-slate-500">
+                                                            {project.status}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex flex-col gap-1.5 w-24">
+                                                        <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+                                                            <span>{project.progress || 0}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
+                                                            <div 
+                                                                className="bg-slate-600 h-1.5 rounded-full transition-all duration-500 ease-out" 
+                                                                style={{ width: `${Math.min(project.progress || 0, 100)}%` }}
+                                                            ></div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedProjectForView(project);
+                                                        }}
+                                                        className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition shadow-sm"
+                                                    >
+                                                        View
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+
+                        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
+                            <button
+                                onClick={() => setSelectedProjectForView(pendingProjects.find(p => p._id === selectedProjectId))}
+                                disabled={!selectedProjectId}
+                                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-md transition shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                                View Details
+                            </button>
+                            <button
+                                onClick={handleClosePendingModal}
+                                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-md transition shadow-sm"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Project Documentation Details Modal */}
+            {selectedProjectForView && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white overflow-hidden rounded-2xl border border-slate-200 flex flex-col w-full max-w-4xl max-h-[85vh] shadow-xl animate-in zoom-in-95 duration-200">
+                        
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white">
+                            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2.5">
+                                <div className="p-1.5 bg-slate-50 text-slate-500 rounded-lg border border-slate-200/60">
+                                    <FolderKanban size={18} /> 
+                                </div>
+                                Project Documentation
+                            </h2>
+                            <button 
+                                onClick={() => setSelectedProjectForView(null)}
+                                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        
+                        {/* Modal Body (Scrollable) */}
+                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+                            
+                            {/* BASIC INFO */}
+                            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative">
+                                <div className="absolute top-6 right-6">
+                                    <div className="flex items-center justify-end gap-2 text-xs font-medium">
+                                        <span className={`w-1.5 h-1.5 rounded-full ${
+                                            selectedProjectForView.status === 'Completed' ? 'bg-emerald-500' :
+                                            selectedProjectForView.status === 'Approved' ? 'bg-blue-500' :
+                                            selectedProjectForView.status === 'Rejected' ? 'bg-red-500' :
+                                            selectedProjectForView.status === 'Incomplete' ? 'bg-slate-500' :
+                                            'bg-amber-500'
+                                        }`} />
+                                        <span className="text-slate-600 font-semibold">
+                                            {selectedProjectForView.status}
+                                        </span>
+                                    </div>
+                                </div>
+                                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Project Title</h3>
+                                <h4 className="text-xl font-bold text-slate-800 mb-4 pr-24 leading-snug">{selectedProjectForView.title}</h4>
+                                
+                                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 mt-6">Description</h3>
+                                <p className="text-xs text-slate-600 leading-relaxed mb-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100">{selectedProjectForView.description || "No description provided."}</p>
+                            </div>
+
+                            {/* Student Information */}
+                            <div>
+                                <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Student Information</h3>
+                                <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-slate-300 transition-colors">
+                                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-lg shrink-0 border border-slate-200 shadow-sm">
+                                        {selectedProjectForView.student?.name?.charAt(0) || "U"}
+                                    </div>
+                                    <div className="flex flex-col overflow-hidden">
+                                        <span className="text-base font-bold text-slate-800 truncate">{selectedProjectForView.student?.name || "Unknown"}</span>
+                                        <span className="text-xs font-medium text-slate-500 truncate">{selectedProjectForView.student?.email}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* FILES SECTION */}
+                            <div className="pt-2">
+                                <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
+                                    <Archive size={14} className="text-slate-500" /> Uploaded Files
+                                </h3>
+                                
+                                {!selectedProjectForView.files || selectedProjectForView.files.length === 0 ? (
+                                    <div className="bg-white border border-slate-200 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-slate-500 shadow-sm">
+                                        <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3 border border-slate-100">
+                                            <File size={20} className="text-slate-300" />
+                                        </div>
+                                        <p className="text-sm font-bold text-slate-700 mb-1">No files uploaded yet</p>
+                                        <p className="text-xs font-medium text-slate-400">Student has not attached any project files.</p>
+                                    </div>
+                                ) : (
+                                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-left">
+                                                <thead>
+                                                    <tr className="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                                        <th className="py-4 px-6">File Name</th>
+                                                        <th className="py-4 px-6">Type</th>
+                                                        <th className="py-4 px-6">Uploaded On</th>
+                                                        <th className="py-4 px-6 text-right">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-100">
+                                                    {selectedProjectForView.files.map((file, idx) => (
+                                                        <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                                                            <td className="py-4 px-6">
+                                                                <div className="flex items-center gap-3">
+                                                                    {getFileIcon(file.type, "shrink-0 w-8 h-8 p-1.5 bg-white border border-slate-100 rounded-md shadow-sm")}
+                                                                    <span className="text-sm font-bold text-slate-800 truncate max-w-[200px] md:max-w-xs">{file.filename}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="py-4 px-6">
+                                                                <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">{file.type}</span>
+                                                            </td>
+                                                            <td className="py-4 px-6 text-xs font-medium text-slate-500">
+                                                                {new Date(file.uploadedAt).toLocaleDateString("en-GB")}
+                                                            </td>
+                                                            <td className="py-4 px-6 text-right">
+                                                                <button 
+                                                                    onClick={() => handleDownload(file.url, file.filename)}
+                                                                    className="text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 text-xs font-semibold py-2 px-4 rounded-md transition-colors"
+                                                                >
+                                                                    Download
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        {/* Modal Footer Actions */}
+                        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3 rounded-b-2xl">
+                            <button 
+                                onClick={() => setSelectedProjectForView(null)}
+                                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-md transition shadow-sm"
+                            >
+                                Close View
+                            </button>
+                            {selectedProjectForView.status === "Pending" && (
+                                <>
+                                    <button 
+                                        onClick={() => handleStatusUpdateFromView(selectedProjectForView._id, "Rejected")}
+                                        className="px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-md transition shadow-sm"
+                                    >
+                                        Reject Proposal
+                                    </button>
+                                    <button 
+                                        onClick={() => handleStatusUpdateFromView(selectedProjectForView._id, "Approved")}
+                                        className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-md transition shadow-sm"
+                                    >
+                                        Approve Proposal
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
