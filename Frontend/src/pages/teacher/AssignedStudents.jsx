@@ -6,7 +6,7 @@ import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import StudentCard from "./components/StudentCard";
 import DashboardHeader from "./components/DashboardHeader";
-import { Users, Loader } from "lucide-react";
+import { Users, Loader, Search, Filter } from "lucide-react";
 import FeedbackModal from "../../components/modal/FeedbackModal";
 import MilestoneTimeline from "../../components/milestones/MilestoneTimeline";
 import CreateMilestoneModal from "../../components/milestones/CreateMilestoneModal";
@@ -29,6 +29,24 @@ const AssignedStudents = () => {
     const [isSubmittingMilestone, setIsSubmittingMilestone] = useState(false);
 
     const { authUser } = useSelector((state) => state.auth);
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filter, setFilter] = useState("All");
+
+    const filteredGroups = (assignedStudents || []).filter((student) => {
+        const project = student.project || {};
+        const matchesSearch =
+            student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            project.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            project.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
+        if (!matchesSearch) return false;
+
+        if (filter === "All") return true;
+
+        return project.status === filter;
+    });
 
     useEffect(() => {
         dispatch(getAssignedStudents());
@@ -117,18 +135,56 @@ const AssignedStudents = () => {
                 icon={Users}
             />
             
-            {assignedStudents && assignedStudents.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {assignedStudents.map((student) => (
-                        <StudentCard 
-                            key={student._id} 
-                            student={student} 
-                            onAddTask={() => setSelectedProject(student.project)} 
-                            onAddFeedback={() => setFeedbackStudent(student)}
-                            onViewMilestones={() => setMilestoneProject(student.project)}
+            {assignedStudents && assignedStudents.length > 0 && (
+                <div className="bg-white p-4 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-slate-200 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div className="relative w-full md:w-96">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search by student or project..."
+                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-colors text-sm"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                    ))}
+                    </div>
+
+                    <div className="flex items-center w-full sm:w-auto gap-2">
+                        <Filter className="text-slate-400" size={18} />
+                        <select
+                            className="w-full sm:w-48 px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-400 cursor-pointer text-sm"
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                        >
+                            <option value="All">All Projects</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Incomplete">Incomplete</option>
+                        </select>
+                    </div>
                 </div>
+            )}
+
+            {assignedStudents && assignedStudents.length > 0 ? (
+                filteredGroups.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredGroups.map((student) => (
+                            <StudentCard 
+                                key={student._id} 
+                                student={student} 
+                                onAddTask={() => setSelectedProject(student.project)} 
+                                onAddFeedback={() => setFeedbackStudent(student)}
+                                onViewMilestones={() => setMilestoneProject(student.project)}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-12 text-center text-slate-500">
+                        <Users size={48} className="mx-auto text-slate-300 mb-4 opacity-50" />
+                        <h3 className="text-lg font-semibold text-slate-700 mb-1">No matches found</h3>
+                        <p className="text-sm">Try adjusting your search query or status filter.</p>
+                    </div>
+                )
             ) : (
                 <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-12 text-center text-slate-500">
                     <Users size={48} className="mx-auto text-slate-300 mb-4" />

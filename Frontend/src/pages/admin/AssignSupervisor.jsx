@@ -346,9 +346,9 @@ const AssignSupervisor = () => {
                                                 {p.status === "Pending" ? (
                                                     <button
                                                         onClick={() => setSelectedProject(p)}
-                                                        className="w-full bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition"
+                                                        className="px-3 py-1.5 text-xs font-medium text-slate-900 bg-white border border-slate-200 rounded-md hover:bg-slate-100 transition"
                                                     >
-                                                        <Eye size={14} /> Review Proposal
+                                                        Review Proposal
                                                     </button>
                                                 ) : p.status === "Completed" ? (
                                                     <div className="flex flex-col gap-0.5">
@@ -413,13 +413,13 @@ const AssignSupervisor = () => {
 
             {/* 🚀 PROJECT DETAILS MODAL */}
             {selectedProject && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl overflow-hidden w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white overflow-hidden rounded-xl w-full max-w-5xl border border-slate-200 flex flex-col max-h-[85vh] shadow-xl animate-in zoom-in-95 duration-200">
                         
                         {/* Modal Header */}
                         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-3">
-                                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                                <div className="p-2 bg-slate-100 text-slate-600 rounded-lg">
                                     <FolderKanban size={20} /> 
                                 </div>
                                 Project Documentation
@@ -469,8 +469,8 @@ const AssignSupervisor = () => {
                                 {/* Student */}
                                 <div>
                                     <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Student Information</h3>
-                                    <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-blue-200 transition-colors">
-                                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-700 font-bold text-xl shrink-0 border border-blue-200 shadow-sm">
+                                    <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-4 shadow-sm hover:border-slate-300 transition-colors">
+                                        <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-xl shrink-0 border border-slate-200 shadow-sm">
                                             {selectedProject.student?.name?.charAt(0) || "U"}
                                         </div>
                                         <div className="flex flex-col overflow-hidden">
@@ -484,7 +484,7 @@ const AssignSupervisor = () => {
                             {/* FILES SECTION */}
                             <div className="pt-2">
                                 <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
-                                    <Archive size={14} className="text-blue-500" /> Uploaded Files
+                                    <Archive size={14} className="text-slate-500" /> Uploaded Files
                                 </h3>
                                 
                                 {!selectedProject.files || selectedProject.files.length === 0 ? (
@@ -509,7 +509,7 @@ const AssignSupervisor = () => {
                                                 </thead>
                                                 <tbody className="divide-y divide-slate-100">
                                                     {selectedProject.files.map((file, idx) => (
-                                                        <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
+                                                        <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
                                                             <td className="py-4 px-6">
                                                                 <div className="flex items-center gap-3">
                                                                     {getFileIcon(file.type, "shrink-0 w-8 h-8 p-1.5 bg-white border border-slate-100 rounded-md shadow-sm")}
@@ -525,9 +525,9 @@ const AssignSupervisor = () => {
                                                             <td className="py-4 px-6 text-right">
                                                                 <button 
                                                                     onClick={() => handleDownload(file.url, file.filename)}
-                                                                    className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg text-xs font-bold shadow-sm hover:shadow-md"
+                                                                    className="text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 text-[12px] font-semibold py-2 px-4 rounded-md transition-colors"
                                                                 >
-                                                                    <Download size={14} /> Download
+                                                                    Download
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -545,13 +545,13 @@ const AssignSupervisor = () => {
                             <div className="px-6 py-5 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 rounded-b-2xl">
                                 <button 
                                     onClick={() => handleStatusUpdate(selectedProject._id, "Rejected")}
-                                    className="px-6 py-2.5 text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-xl transition-all shadow-sm"
+                                    className="px-5 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-all shadow-sm active:scale-[0.98]"
                                 >
                                     Reject Proposal
                                 </button>
                                 <button 
                                     onClick={() => handleStatusUpdate(selectedProject._id, "Approved")}
-                                    className="px-6 py-2.5 text-sm font-bold text-white bg-green-500 hover:bg-green-600 rounded-xl transition-all shadow-md hover:shadow-lg"
+                                    className="px-5 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-all shadow-sm active:scale-[0.98]"
                                 >
                                     Approve Proposal
                                 </button>
