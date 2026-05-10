@@ -34,6 +34,8 @@ const workspaceCommentSchema = new mongoose.Schema({
 const milestoneSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String },
+    assignedByRole: {type: String, enum: ["admin", "supervisor"],default: "supervisor" },
+    assignedByName: {type: String,default: ""},
     status: { type: String, enum: ["Pending", "In Progress", "In Review", "Approved", "Rejected", "Overdue"], default: "Pending" },
     deadline: { type: Date },
     files: [fileSchema], // Reuse existing fileSchema

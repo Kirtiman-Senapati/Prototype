@@ -73,8 +73,6 @@ export const addMilestone = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Unauthorized: Not the supervisor for this project", 403));
     }
     
-    
-
     const newId = new mongoose.Types.ObjectId();
     const newMilestone = {
         _id: newId,
@@ -450,17 +448,20 @@ export const addMilestoneComment = asyncHandler(async (req, res, next) => {
 
     const milestone = project.milestones.id(milestoneId);
     if (milestone) {
-        milestone.comments.push(commentEntry);
-    }
+   milestone.comments.push(commentEntry);
+}
+
+if (workspaceItem) {
+   workspaceItem.comments.push(commentEntry);
+}
 
     const workspaceItem = project.workspaceItems.id(milestoneId);
-    if (workspaceItem) {
-        workspaceItem.comments.push(commentEntry);
-    }
 
     if (!milestone && !workspaceItem) {
         return next(new ErrorHandler("Milestone not found", 404));
     }
+
+
 
     await project.save();
 

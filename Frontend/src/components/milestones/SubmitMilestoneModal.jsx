@@ -27,7 +27,10 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
         setIsCommenting(true);
         try {
             const { axiosInstance } = await import("../../lib/axios");
-            await axiosInstance.post(`/student/project/${projectId}/milestone/${milestone._id}/comment`, { message: commentText });
+            await axiosInstance.post(
+                `/project/${projectId}/milestone/${milestone._id}/comment`,
+                { message: commentText }
+            );
             toast.success("Comment added");
             setCommentText("");
             // Refresh is handled by socket `emitRefresh` on the backend
@@ -90,7 +93,7 @@ const SubmitMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
                     {/* New Timeline Comments */}
                     {hasComments && (
                         <div className="space-y-4">
-                            {milestone.comments.map((comment, index) => (
+                            {(milestone.comments || []).map((comment, index) => (
                                 <div key={comment._id || index} className="p-4 bg-white border border-slate-200 shadow-sm rounded-xl">
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="flex items-center gap-2">

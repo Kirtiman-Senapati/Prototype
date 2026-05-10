@@ -94,7 +94,23 @@ const MilestoneTimeline = ({
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
                                     {getStatusIcon(displayStatus)}
-                                    <h3 className="text-sm font-bold text-slate-800">{m.title}</h3>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-slate-800">
+                                            {m.title}
+                                        </h3>
+
+                                        {(m.assignedByName || m.assignedByRole) && (
+                                            <p className="text-[11px] text-slate-500 mt-0.5">
+                                                Assigned by{" "}
+                                                <span className="font-semibold text-slate-700">
+                                                    {m.assignedByName ||
+                                                        (m.assignedByRole === "admin"
+                                                            ? "Admin"
+                                                            : "Supervisor")}
+                                                </span>
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                                 <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${getStatusBadge(displayStatus)}`}>
                                     {displayStatus}

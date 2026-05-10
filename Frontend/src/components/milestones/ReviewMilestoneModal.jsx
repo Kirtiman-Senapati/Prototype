@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, XCircle, Send, MessageCircle } from 'lucide-react';
 import { toast } from '../../utils/toast';
 
@@ -6,6 +6,12 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
     const [remarks, setRemarks] = useState("");
     const [commentText, setCommentText] = useState("");
     const [isCommenting, setIsCommenting] = useState(false);
+    useEffect(() => {
+        if (!isOpen) {
+            setRemarks("");
+            setCommentText("");
+        }
+    }, [isOpen]);
 
     const handleSubmit = (e, status) => {
         e.preventDefault();
@@ -19,24 +25,26 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
 
         setIsCommenting(true);
         try {
+
             const { axiosInstance } = await import("../../lib/axios");
-            await axiosInstance.post(`/teacher/project/${projectId}/milestone/${milestone._id}/comment`, { message: commentText });
+
+            await axiosInstance.post(
+                `/project/${projectId}/milestone/${milestone._id}/comment`,
+                { message: commentText }
+            );
+
             toast.success("Comment added");
             setCommentText("");
-            // The existing socket `emitRefresh` in the backend will automatically refresh the UI and `milestone` prop.
+
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to add comment");
-            
-            // Try admin route as fallback in case teacher route fails if the user is an admin
-            try {
-                const { axiosInstance } = await import("../../lib/axios");
-                await axiosInstance.post(`/admin/project/${projectId}/milestone/${milestone._id}/comment`, { message: commentText });
-                toast.success("Comment added");
-                setCommentText("");
-            } catch(adminErr) {
-                // If both fail, it might just be the error.
-            }
+
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to add comment"
+            );
+
         } finally {
+
             setIsCommenting(false);
         }
     };
@@ -45,7 +53,9 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
 
     // Combine legacy fields and new comments into a unified array if needed, but the backend now tracks comments.
     const hasLegacyRemarks = milestone.studentRemarks || milestone.reviewRemarks;
-    const hasComments = milestone.comments && milestone.comments.length > 0;
+    const comments = milestone?.comments || [];
+
+    const hasComments = comments.length > 0;
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -92,7 +102,7 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
                     {/* New Timeline Comments */}
                     {hasComments && (
                         <div className="space-y-4">
-                            {milestone.comments.map((comment, index) => (
+                            {comments.map((comment, index) => (
                                 <div key={comment._id || index} className="p-4 bg-white border border-slate-200 shadow-sm rounded-xl">
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="flex items-center gap-2">
@@ -109,12 +119,18 @@ const ReviewMilestoneModal = ({ isOpen, onClose, onSubmit, milestone, projectId,
                                             )}
                                         </div>
                                         <span className="text-[10px] text-slate-400 font-medium">
-                                            {new Date(comment.createdAt).toLocaleDateString('en-GB')} • {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {comment.createdAt
+                                                ? `${new Date(comment.createdAt).toLocaleDateString('en-GB')} • ${new Date(comment.createdAt).toLocaleTimeString([], {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                })}`
+                                                : 'Now'}
                                         </span>
                                     </div>
                                     <p className="text-sm text-slate-600 whitespace-pre-wrap">{comment.message}</p>
                                 </div>
                             ))}
+                            
                         </div>
                     )}
 
