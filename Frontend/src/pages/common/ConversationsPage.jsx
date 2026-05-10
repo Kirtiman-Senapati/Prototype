@@ -5,6 +5,7 @@ import { MessageSquare, Send, CheckCircle, Clock, AlertCircle, ChevronRight, Bri
 import { toast } from "../../utils/toast";
 import { axiosInstance } from "../../lib/axios";
 import { socket } from "../../socket/socket";
+import { playChatSound } from "../../utils/sound";
 
 const ConversationsPage = () => {
     const dispatch = useDispatch();
@@ -48,6 +49,12 @@ const ConversationsPage = () => {
             if (['STUDENT_MESSAGE', 'SUPERVISOR_MESSAGE', 'ADMIN_MESSAGE'].includes(activity.actionType)) {
                 dispatch(addRealtimeActivity(activity));
                 scrollToBottom();
+
+                const actorId = activity.actor?._id || activity.actor;
+                const isFromMe = actorId && authUser && actorId.toString() === authUser._id.toString();
+                if (!isFromMe) {
+                    playChatSound();
+                }
             }
         };
 
