@@ -76,7 +76,7 @@ export const generateNotificationEmailTemplate = (message, details) => {
             <p>Hello,</p>
             <p>You have a new update in your Project Management account:</p>
             <div class="message-content">
-              <strong>${message}</strong>
+              ${message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
               ${details ? `<div class="details-content">${details}</div>` : ''}
             </div>
             <p>Please log in to your dashboard to view more details.</p>
