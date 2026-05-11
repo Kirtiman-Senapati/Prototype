@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance } from "../../lib/axios";
-import { updateProjectStatusAdmin, sendFeedbackAdminData, assignTaskAdminData } from "../../store/slices/adminSlice";
-import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X, MessageSquare, Plus, CheckCircle } from "lucide-react";
+import { updateProjectStatusAdmin, sendFeedbackAdminData, assignTaskAdminData, sendManualReminderAdmin } from "../../store/slices/adminSlice";
+import { FolderKanban, Clock, CheckCircle2, XCircle, Search, Filter, Eye, Download, FileText, MonitorPlay, Archive, File, User, Briefcase, Calendar, X, MessageSquare, Plus, CheckCircle, Bell } from "lucide-react";
 import { toast } from "../../utils/toast";
 import useAutoRefresh from "../../hooks/useAutoRefresh";
 import FeedbackModal from "../../components/modal/FeedbackModal";
@@ -37,6 +37,11 @@ const ProjectsPage = () => {
     const [isReviewMilestoneOpen, setIsReviewMilestoneOpen] = useState(false);
     const [selectedMilestone, setSelectedMilestone] = useState(null);
     const [isSubmittingMilestone, setIsSubmittingMilestone] = useState(false);
+
+    // Reminder states
+    const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
+    const [reminderMessage, setReminderMessage] = useState("");
+    const [isSendingReminder, setIsSendingReminder] = useState(false);
 
     const { authUser } = useSelector((state) => state.auth);
 
@@ -170,13 +175,14 @@ const ProjectsPage = () => {
         }
     };
 
-    const handleAssignTask = async (e) => {
+    const handleTaskSubmit = async (e) => {
         e.preventDefault();
+        if (!selectedProject || !taskData.title) return;
         setIsSubmittingTask(true);
         try {
-            const res = await dispatch(assignTaskAdminData({ projectId: selectedProject._id, ...taskData })).unwrap();
-            setTaskData({ title: "", description: "", deadline: "" });
+            await dispatch(assignTaskAdminData({ projectId: selectedProject._id, taskData })).unwrap();
             setIsTaskModalOpen(false);
+            setTaskData({ title: "", description: "", deadline: "" });
             // Refresh detailed project local state (merge tasks to preserve populated fields like student/supervisor)
             if (res.project) {
                 setSelectedProject(prev => ({ ...prev, tasks: res.project.tasks, workspaceItems: res.project.workspaceItems }));
@@ -303,6 +309,29 @@ const ProjectsPage = () => {
             toast.error(error.response?.data?.message || "Failed to save milestone");
         } finally {
             setIsSubmittingMilestone(false);
+        }
+    };
+
+    const openReminderModal = () => {
+        setReminderMessage("");
+        setIsReminderModalOpen(true);
+    };
+
+    const handleSendReminder = async () => {
+        if (!selectedProject || !selectedProject.student?._id) return;
+        setIsSendingReminder(true);
+        try {
+            await dispatch(sendManualReminderAdmin({
+                projectId: selectedProject._id,
+                studentId: selectedProject.student._id,
+                message: reminderMessage
+            })).unwrap();
+            setIsReminderModalOpen(false);
+            setReminderMessage("");
+        } catch (error) {
+            // Handled by toast
+        } finally {
+            setIsSendingReminder(false);
         }
     };
 
@@ -636,6 +665,13 @@ const ProjectsPage = () => {
                                 </h2>
                                 <div className="flex gap-2">
                                     <button
+                                        onClick={openReminderModal}
+                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
+                                    >
+                                        <Bell size={16} />
+                                        Remind
+                                    </button>
+                                    <button
                                         onClick={() => setIsFeedbackModalOpen(true)}
                                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                                     >
@@ -706,31 +742,35 @@ const ProjectsPage = () => {
                                 {/* Team */}
                                 <div>
                                     <div className="flex items-center justify-between mb-3 pl-1">
-                                        <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Team Information</h3>
+                                        <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Project Group</h3>
                                         {selectedProject.groupName && (
                                             <span className="text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">{selectedProject.groupName}</span>
                                         )}
                                     </div>
-                                    <div className="flex flex-col gap-3 pt-1">
+                                    <div className="flex flex-col gap-3 pt-1 border border-slate-100 rounded-xl p-4 bg-slate-50/50">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0 ${selectedProject.student ? 'bg-slate-100 text-slate-600' : 'bg-red-50 text-red-500'}`}>
+                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 shadow-sm border border-slate-200 ${selectedProject.student ? 'bg-white text-slate-600' : 'bg-red-50 text-red-500'}`}>
                                                 {selectedProject.student?.name?.charAt(0) || "D"}
                                             </div>
                                             <div className="flex flex-col overflow-hidden">
-                                                <span className="text-md font-bold text-slate-800 flex items-center gap-2 truncate">
+                                                <span className="text-sm font-bold text-slate-800 flex items-center gap-2 truncate">
                                                     {selectedProject.student?.name || <span className="text-red-500 italic">Deleted User</span>}
                                                     {selectedProject.members?.length > 0 && <span className="text-[9px] uppercase tracking-wide bg-slate-800 text-white px-1.5 py-0.5 rounded shadow-sm">Leader</span>}
                                                 </span>
                                                 <span className="text-xs font-medium text-slate-500 truncate">{selectedProject.student?.email || "No email available"}</span>
                                             </div>
                                         </div>
+                                        {selectedProject.members?.length > 0 && (
+                                            <div className="w-full h-px bg-slate-100 my-1"></div>
+                                        )}
                                         {selectedProject.members?.map((member, idx) => (
-                                            <div key={idx} className="flex items-center gap-4 ml-4">
-                                                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 bg-slate-50 text-slate-500 border border-slate-200">
+                                            <div key={idx} className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 bg-white text-slate-500 border border-slate-200 shadow-sm">
                                                     {member?.name?.charAt(0) || "M"}
                                                 </div>
                                                 <div className="flex flex-col overflow-hidden">
                                                     <span className="text-sm font-bold text-slate-700 truncate">{member?.name || "Unknown Member"}</span>
+                                                    <span className="text-xs font-medium text-slate-400 truncate">{member?.email || "Member"}</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -1184,6 +1224,48 @@ const ProjectsPage = () => {
                 projectId={selectedProject?._id}
                 isSubmitting={isSubmittingMilestone}
             />
+            {/* Reminder Modal */}
+            {isReminderModalOpen && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl w-full max-w-md shadow-lg border border-slate-200 animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col p-5">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-lg font-semibold text-slate-900">Send Reminder</h2>
+                            <button 
+                                onClick={() => setIsReminderModalOpen(false)}
+                                className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <p className="text-sm text-slate-600 mb-4">
+                            Send a manual deadline reminder to this student. The system will automatically notify them via email and in-app notification.
+                        </p>
+                        <textarea
+                            className="w-full p-3 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-400 resize-y min-h-[100px] mb-6"
+                            placeholder="Optional custom message..."
+                            value={reminderMessage}
+                            onChange={(e) => setReminderMessage(e.target.value)}
+                        />
+                        <div className="flex items-center justify-end gap-3">
+                            <button 
+                                onClick={() => setIsReminderModalOpen(false)}
+                                disabled={isSendingReminder}
+                                className="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                onClick={handleSendReminder}
+                                disabled={isSendingReminder}
+                                className="px-4 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-2"
+                            >
+                                {isSendingReminder ? <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div> : <Bell size={16} />}
+                                {isSendingReminder ? "Sending..." : "Send Reminder"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

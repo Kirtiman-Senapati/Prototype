@@ -3,11 +3,14 @@ import { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { useSelector } from "react-redux";
+import { useNotificationSound } from "../../hooks/useNotificationSound";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const { authUser } = useSelector((state) => state.auth);
+
+  useNotificationSound();
 
   useEffect(() => {
     if (sidebarOpen && window.innerWidth < 1024) {

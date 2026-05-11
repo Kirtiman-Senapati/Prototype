@@ -16,13 +16,13 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
             <div className="bg-white border border-slate-200 rounded-2xl flex flex-col h-[280px] overflow-hidden shadow-sm">
                 <div className="px-5 py-4 border-b border-slate-100 bg-white flex justify-between items-center">
                     <div>
-                        <h2 className="text-[17px] font-semibold text-slate-900">Project Workspace</h2>
-                        <p className="text-sm text-slate-500 mt-1 font-medium">Active Tasks & Phases</p>
+                        <h2 className="text-[17px] font-semibold text-slate-900">Project Milestones</h2>
+                        <p className="text-sm text-slate-500 mt-1 font-medium">Active Milestones</p>
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
                     <FolderKanban size={28} />
-                    <p className="mt-2 text-sm font-medium">No workspace items yet</p>
+                    <p className="mt-2 text-sm font-medium">No milestones yet</p>
                 </div>
             </div>
         );
@@ -33,7 +33,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
             {/* Unified Header */}
             <div className="px-5 py-4 border-b border-slate-100 bg-white flex justify-between items-center">
                 <div>
-                    <h2 className="text-[17px] font-semibold text-slate-900">Workspace Tasks</h2>
+                    <h2 className="text-[17px] font-semibold text-slate-900">Milestones</h2>
                 </div>
                 <button 
                     onClick={() => document.getElementById('open-timeline-modal-btn')?.click()}
@@ -47,7 +47,7 @@ const ProjectWorkspace = ({ project, workspaceItems = [], completingTasks, onMar
                 <table className="w-full text-left border-collapse min-w-[600px]">
                     <thead className="bg-white">
                         <tr className="border-b border-slate-100">
-                            <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Work Item</th>
+                            <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Milestone</th>
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Type</th>
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Deadline</th>
                             <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wide">Status</th>

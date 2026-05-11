@@ -35,10 +35,16 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
 
     if (!forceSubmit) {
         const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const similarProjects = await Project.find({
-            student: { $ne: req.user._id },
-            title: { $regex: new RegExp(`^${escapeRegex(title.trim())}$`, 'i') }
-        });
+        const queryStr = title.trim();
+        let similarProjects = [];
+        
+        if (queryStr.length > 5) {
+            similarProjects = await Project.find({
+                student: { $ne: req.user._id },
+                title: { $regex: new RegExp(escapeRegex(queryStr), 'i') },
+                status: { $in: ["Pending", "Approved", "Completed"] }
+            });
+        }
 
         if (similarProjects.length > 0) {
             return res.status(200).json({

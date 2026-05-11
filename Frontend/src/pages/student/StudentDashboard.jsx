@@ -597,7 +597,7 @@ useAutoRefresh(() => {
               <div className="bg-white overflow-hidden rounded-xl w-full max-w-3xl border border-slate-200 flex flex-col max-h-[90vh] shadow-xl">
                   <div className="flex justify-between items-center p-5 border-b border-slate-100">
                       <div>
-                          <h2 className="text-xl font-bold text-slate-800">Workspace Details</h2>
+                          <h2 className="text-xl font-bold text-slate-800">Milestone Timeline</h2>
                           <p className="text-xs text-slate-500 font-medium mt-1">Full workflow timeline and submissions</p>
                       </div>
                       <button onClick={() => setIsTimelineModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition text-sm font-semibold">

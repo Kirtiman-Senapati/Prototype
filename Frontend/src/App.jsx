@@ -8,6 +8,8 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import CheckEmailPage from "./pages/auth/CheckEmailPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import InviteResponsePage from "./pages/common/InviteResponsePage";
+import LandingPage from "./pages/public/LandingPage";
+
 // Dashboard Layouts
 import DashboardLayout from "./components/layout/DashboardLayout";
 
@@ -126,8 +128,9 @@ const App = () => {
             <Route path="conversations" element={<ConversationsPage />} />
           </Route>
 
-          {/* Redirect to login if not authenticated */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Public Landing Page */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
       <AcademicAssistant />
