@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { X, Send, HelpCircle, Minimize2, Maximize2, Minus } from "lucide-react";
+import { HelpCircle, User, Minimize2, Maximize2, X, Send, Minus } from "lucide-react";
 import { toggleAssistant, addMessage, sendMessage, clearHistory } from "../../store/slices/assistantSlice";
 import ChatMessage from "./ChatMessage";
+import SupportRequestModal from "../modal/SupportRequestModal";
 
 const AcademicAssistant = () => {
     const dispatch = useDispatch();
     const { isOpen, messages, isLoading } = useSelector((state) => state.assistant);
     const [input, setInput] = useState("");
+    const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -41,6 +43,7 @@ const AcademicAssistant = () => {
     };
 
     return (
+        <>
         <div className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 transition-all duration-300 ease-in-out w-full sm:w-[380px] h-[100dvh] sm:h-[550px] sm:max-h-[85vh] rounded-none sm:rounded-2xl bg-white shadow-xl border border-slate-200 flex flex-col overflow-hidden">
             
             {/* Header */}
@@ -110,6 +113,17 @@ const AcademicAssistant = () => {
                 ))}
             </div>
 
+            {/* Support Banner */}
+            <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between flex-shrink-0">
+                <span className="text-[11px] text-slate-500 font-medium">Need administrator support?</span>
+                <button 
+                    onClick={() => setIsSupportModalOpen(true)}
+                    className="text-[11px] font-medium px-2 py-1 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded transition-colors"
+                >
+                    Contact Support
+                </button>
+            </div>
+
             {/* Input Area */}
             <div className="p-1.5 bg-white border-t border-slate-100 flex-shrink-0">
                 <form onSubmit={handleSend} className="relative flex items-center">
@@ -135,6 +149,12 @@ const AcademicAssistant = () => {
                 </div>
             </div>
         </div>
+        
+        <SupportRequestModal 
+            isOpen={isSupportModalOpen} 
+            onClose={() => setIsSupportModalOpen(false)} 
+        />
+        </>
     );
 };
 
