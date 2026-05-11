@@ -8,7 +8,6 @@ const AcademicAssistant = () => {
     const dispatch = useDispatch();
     const { isOpen, messages, isLoading } = useSelector((state) => state.assistant);
     const [input, setInput] = useState("");
-    const [isExpanded, setIsExpanded] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -42,11 +41,7 @@ const AcademicAssistant = () => {
     };
 
     return (
-        <div className={`fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 transition-all duration-300 ease-in-out ${
-            isExpanded 
-            ? "w-full sm:w-[600px] h-full sm:h-[700px] rounded-none sm:rounded-2xl" 
-            : "w-full sm:w-[420px] h-[500px] rounded-t-2xl sm:rounded-2xl"
-        } bg-white shadow-xl border border-slate-200 flex flex-col overflow-hidden`}>
+        <div className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 transition-all duration-300 ease-in-out w-full sm:w-[380px] h-[100dvh] sm:h-[550px] sm:max-h-[85vh] rounded-none sm:rounded-2xl bg-white shadow-xl border border-slate-200 flex flex-col overflow-hidden">
             
             {/* Header */}
             <div className="bg-slate-800 text-white px-4 py-3 flex items-center justify-between flex-shrink-0 border-b border-slate-700/50">
@@ -63,13 +58,6 @@ const AcademicAssistant = () => {
                         <Minus size={18} />
                     </button>
                     <button 
-                        onClick={() => setIsExpanded(!isExpanded)} 
-                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors hidden sm:block"
-                        title={isExpanded ? "Restore Down" : "Expand"}
-                    >
-                        {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                    </button>
-                    <button 
                         onClick={() => dispatch(toggleAssistant())} 
                         className="p-1.5 hover:bg-white/10 rounded-lg transition-colors ml-1"
                         title="Close"
@@ -80,20 +68,26 @@ const AcademicAssistant = () => {
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 overflow-y-auto p-4 bg-slate-50/50 scroll-smooth">
+            <div 
+                className="flex-1 overflow-y-auto p-4 bg-slate-50/50 scroll-smooth"
+                style={{ scrollbarWidth: 'thin' }}
+            >
                 {messages.map((msg) => (
                     <ChatMessage key={msg.id} message={msg} />
                 ))}
                 
                 {isLoading && (
-                    <div className="flex gap-3 mb-4">
-                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
-                            <HelpCircle size={16} className="text-slate-700" />
+                    <div className="flex gap-2 mb-3 items-center">
+                        <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
+                            <HelpCircle size={12} className="text-slate-700" />
                         </div>
-                        <div className="px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 rounded-tl-sm flex items-center gap-1">
-                            <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                            <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                            <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+                        <div className="px-3 py-2 rounded-2xl bg-slate-50 border border-slate-200 rounded-tl-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-2">
+                            <span className="text-[11px] text-slate-500 font-medium">Thinking</span>
+                            <div className="flex items-center gap-0.5">
+                                <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                <div className="w-1 h-1 bg-slate-400 rounded-full animate-bounce"></div>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -117,14 +111,14 @@ const AcademicAssistant = () => {
             </div>
 
             {/* Input Area */}
-            <div className="p-2 bg-white border-t border-slate-100 flex-shrink-0">
+            <div className="p-1.5 bg-white border-t border-slate-100 flex-shrink-0">
                 <form onSubmit={handleSend} className="relative flex items-center">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Ask your academic project question..."
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-10 py-2.5 text-[13px] focus:outline-none focus:ring-1 focus:ring-slate-300 focus:border-slate-300"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-10 py-2 text-[13px] focus:outline-none focus:ring-1 focus:ring-slate-300 focus:border-slate-300"
                     />
                     <button
                         type="submit"

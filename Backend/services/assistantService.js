@@ -7,21 +7,41 @@ let ai = null;
 // Layer 3: Escalation Keywords
 const escalationKeywords = [
     "deadline over", "deadline expired", "extend deadline", "change deadline", "missed deadline",
-    "project incomplete", "help incomplete", "cannot complete",
-    "abuse", "idiot", "stupid", "fuck", "shit" // Basic filter placeholder
+    "project incomplete", "help incomplete", "cannot complete"
+];
+
+const abuseKeywords = [
+    "abuse", "idiot", "stupid", "fuck", "shit"
 ];
 
 const escalationMessage = "Recommended Actions:\n\n• Contact your supervisor immediately\n• Review the submission policy\n• Prepare justification documents\n• Request a deadline discussion\n\nIf you require administrator support, please provide your contact number.";
+const abuseMessage = "Please maintain professional communication. This is an academic support system.";
+
+// Simple in-memory session tracking for escalation flows
+const userSessions = new Map();
 
 export const handleAssistantQuery = async (query, user) => {
     try {
-        const lowerQuery = query.toLowerCase();
+        const lowerQuery = query.toLowerCase().trim();
+        const userId = user._id.toString();
+
+        // 0. LAYER 0: Session State Check (Awaiting Contact)
+        const session = userSessions.get(userId);
+        if (session && session.awaitingContact) {
+            userSessions.delete(userId); // Clear state after receiving
+            return "Your request has been recorded.\n\nThe administrator/support team will contact you shortly regarding your issue.";
+        }
 
         // 1. LAYER 3: Human Escalation Check (Overrides everything)
         const needsEscalation = escalationKeywords.some(keyword => lowerQuery.includes(keyword));
         if (needsEscalation) {
-            // In a full implementation, you could trigger a mail notification to the admin here.
+            userSessions.set(userId, { awaitingContact: true });
             return escalationMessage;
+        }
+
+        const isAbuse = abuseKeywords.some(keyword => lowerQuery.includes(keyword));
+        if (isAbuse) {
+            return abuseMessage;
         }
 
         // 2. LAYER 1: Manual Knowledge Base Check
