@@ -41,6 +41,7 @@ import { ToastContainer } from "react-toastify";
 import { Loader } from "lucide-react";
 import { checkAuth } from "./store/slices/authSlice";
 import { connectSocket, disconnectSocket } from "./socket/socket";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const ProtectedRoute = ({ children }) => {
   const { authUser, isCheckingAuth } = useSelector((state) => state.auth);
@@ -85,7 +86,7 @@ const App = () => {
   }, [authUser]);
 
   return (
-    <>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "PLACEHOLDER_CLIENT_ID"}>
       <BrowserRouter>
         <Routes>
           {/* Auth Routes */}
@@ -132,7 +133,7 @@ const App = () => {
       </BrowserRouter>
       <AcademicAssistant />
       <ToastContainer position="top-right" autoClose={3000} />
-    </>
+    </GoogleOAuthProvider>
   );
 };
 

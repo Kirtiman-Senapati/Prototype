@@ -27,6 +27,19 @@ export const login = createAsyncThunk("auth/login",async (data ,thunkAPI) =>
   }
 );
 
+export const googleLogin = createAsyncThunk("auth/google", async (data, thunkAPI) => {
+    try {
+        const response = await axiosInstance.post("/auth/google", data, {
+            headers: { "Content-Type": "application/json" }
+        });
+        toast.success(response.data.message || "Google Login successful!");
+        return response.data;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Google Login failed!");
+        return thunkAPI.rejectWithValue(error.response?.data);
+    }
+});
+
 export const registerUser = createAsyncThunk("auth/register", async (data, thunkAPI) => {
     try {
         const response = await axiosInstance.post("/auth/register", data, {
@@ -106,6 +119,16 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state) => 
       {
+        state.isLoggingIn = false;
+      })
+      .addCase(googleLogin.pending, (state) => {
+        state.isLoggingIn = true;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.isLoggingIn = false;
+        state.authUser = action.payload.user;
+      })
+      .addCase(googleLogin.rejected, (state) => {
         state.isLoggingIn = false;
       })
       .addCase(checkAuth.pending, (state) => { state.isCheckingAuth = true; })

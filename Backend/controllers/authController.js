@@ -75,6 +75,70 @@ export const login = asyncHandler(async (req, res, next) => {
 
 });
 
+//create google auth function
+export const googleAuth = asyncHandler(async (req, res, next) => {
+    const { token } = req.body; // This is the access_token from frontend
+    
+    if (!token) {
+        return next(new ErrorHandler("Google Token is missing", 400));
+    }
+
+    let payload;
+    try {
+        const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`);
+        
+        if (!response.ok) {
+            throw new Error("Failed to fetch user profile with token");
+        }
+        
+        payload = await response.json();
+    } catch (error) {
+        return next(new ErrorHandler("Invalid Google Token", 401));
+    }
+
+    const { email, name } = payload;
+
+    if (!email) {
+        return next(new ErrorHandler("Email not found in Google profile", 400));
+    }
+
+    // Check if user already exists
+    let user = await User.findOne({ email }).select("+password");
+
+    if (user) {
+        // Safe login: preserve existing role
+        generateToken(user, 200, "Google Login Successful", res);
+    } else {
+        // Safe registration: strictly default to 'Student' for new users
+        const randomPassword = crypto.randomBytes(16).toString("hex");
+        
+        user = new User({
+            name,
+            email,
+            password: randomPassword,
+            role: "Student" // Enforced default
+        });
+        await user.save();
+
+        const admins = await User.find({ role: "Admin" }).select("_id");
+        const adminIds = admins.map(a => a._id);
+
+        // Log activity
+        await logActivity({
+            actor: user._id,
+            targetUsers: [user._id, ...adminIds],
+            actionType: "NEW_USER_REGISTERED",
+            message: `New student registered via Google: ${name}`,
+            priority: "low"
+        });
+
+        const io = getIo();
+        emitRefresh(io);
+
+        generateToken(user, 201, "User registered successfully via Google", res);
+    }
+});
+
 //create logout function
 export const logout = asyncHandler(async (req, res, next) => {
     res.status(200).cookie("token", "",
