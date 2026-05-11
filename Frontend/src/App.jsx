@@ -21,12 +21,14 @@ import NotificationsPage from "./pages/student/NotificationsPage";
 
 // Teacher Pages
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
+import TeacherAnalyticsPage from "./pages/teacher/TeacherAnalyticsPage";
 import PendingRequests from "./pages/teacher/PendingRequests";
 import AssignedStudents from "./pages/teacher/AssignedStudents";
 import TeacherFiles from "./pages/teacher/TeacherFiles";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 import ManageStudents from "./pages/admin/ManageStudents";
 import ManageTeachers from "./pages/admin/ManageTeachers";
 import AssignSupervisor from "./pages/admin/AssignSupervisor";
@@ -106,6 +108,7 @@ const App = () => {
 
             {/* Teacher Routes */}
             <Route path="teacher" element={<TeacherDashboard />} />
+            <Route path="teacher-analytics" element={<TeacherAnalyticsPage />} />
             <Route path="pending-requests" element={<PendingRequests />} />
             <Route path="assigned-students" element={<AssignedStudents />} />
             <Route path="teacher-files" element={<TeacherFiles />} />
@@ -113,6 +116,7 @@ const App = () => {
 
             {/* Admin Routes */}
             <Route path="admin" element={<AdminDashboard />} />
+            <Route path="admin-analytics" element={<AdminAnalyticsPage />} />
             <Route path="manage-students" element={<ManageStudents />} />
             <Route path="manage-teachers" element={<ManageTeachers />} />
             <Route path="assign-supervisor" element={<AssignSupervisor />} />
