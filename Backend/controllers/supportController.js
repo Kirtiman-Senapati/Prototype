@@ -2,6 +2,7 @@ import { SupportRequest } from "../models/SupportRequest.js";
 import { Notification } from "../models/notification.js";
 import { User } from "../models/user.js";
 import { sendEmail } from "../services/emailService.js";
+import { getEmailTemplate } from "../utils/emailTemplates.js";
 
 export const createSupportRequest = async (req, res, next) => {
     try {
@@ -52,28 +53,24 @@ export const createSupportRequest = async (req, res, next) => {
             await Notification.insertMany(notifications);
 
             // Async Email Sending (Non-blocking)
-            const emailHtml = `
-                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                    <h2>New Student Support Request</h2>
-                    <p><strong>Student Name:</strong> ${user.name}</p>
-                    <p><strong>Contact Phone:</strong> ${phone}</p>
-                    <p><strong>Issue Type:</strong> ${type}</p>
-                    <p><strong>Issue / Reason:</strong><br/>${reason}</p>
-                    <p><strong>Time:</strong> ${new Date().toLocaleString('en-IN')}</p>
-                    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-                    <p style="font-size: 12px; color: #777;">This is an automated message from the Academic Project System Support Module.</p>
-                </div>
-            `;
-
-            admins.forEach(admin => {
-                if (admin.email) {
-                    sendEmail({
-                        to: admin.email,
-                        subject: "New Student Support Request",
-                        html: emailHtml
-                    }).catch(err => console.error("Escalation email failed:", err.message));
-                }
+            const emailData = getEmailTemplate("SUPPORT_REQUEST", {
+                studentName: user.name,
+                phone,
+                type,
+                reason
             });
+
+            if (emailData) {
+                admins.forEach(admin => {
+                    if (admin.email) {
+                        sendEmail({
+                            to: admin.email,
+                            subject: emailData.subject,
+                            html: emailData.html
+                        }).catch(err => console.error("Escalation email failed:", err.message));
+                    }
+                });
+            }
         }
 
         res.status(201).json({

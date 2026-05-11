@@ -24,12 +24,12 @@ export const handleAssistantQuery = async (query, user) => {
         // 1. LAYER 3: Human Escalation Check (Overrides everything)
         const needsEscalation = escalationKeywords.some(keyword => lowerQuery.includes(keyword));
         if (needsEscalation) {
-            return escalationMessage;
+            return { message: escalationMessage, type: "ESCALATION" };
         }
 
         const isAbuse = abuseKeywords.some(keyword => lowerQuery.includes(keyword));
         if (isAbuse) {
-            return abuseMessage;
+            return { message: abuseMessage, type: "NORMAL" };
         }
 
         // 2. LAYER 1: Manual Knowledge Base Check
@@ -45,12 +45,12 @@ export const handleAssistantQuery = async (query, user) => {
         }
 
         if (bestMatch && maxOverlap > 0) {
-            return bestMatch.answer;
+            return { message: bestMatch.answer, type: "NORMAL" };
         }
 
         // 3. LAYER 2: Gemini AI Fallback
         if (!process.env.GEMINI_API_KEY) {
-            return "I couldn't find an answer in my predefined knowledge base, and my AI fallback is currently disabled. Please contact your administrator.";
+            return { message: "I couldn't find an answer in my predefined knowledge base, and my AI fallback is currently disabled. Please contact your administrator.", type: "NORMAL" };
         }
 
         if (!ai) {
@@ -75,10 +75,10 @@ If the query is completely unrelated to academics or projects, politely refuse a
             }
         });
 
-        return response.text;
+        return { message: response.text, type: "NORMAL" };
 
     } catch (error) {
         console.error("Assistant Service Error:", error);
-        return "I am experiencing technical difficulties. Please contact your administrator for further assistance.";
+        return { message: "I am experiencing technical difficulties. Please contact your administrator for further assistance.", type: "NORMAL" };
     }
 };

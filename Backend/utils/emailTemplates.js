@@ -74,6 +74,23 @@ export const getEmailTemplate = (type, data) => {
         `)
       };
 
+    case "SUPPORT_REQUEST":
+      return {
+        subject: "New Student Support Request",
+        html: baseHtml(`
+          <h3 style="color: #1f2937; margin-top: 0;">New Support Request Received</h3>
+          <p>Hello,</p>
+          <p>A new support request has been submitted by <strong>${data.studentName}</strong>.</p>
+          <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+            <p style="margin: 0 0 10px 0;"><strong>Issue Type:</strong> ${data.type}</p>
+            <p style="margin: 0 0 10px 0;"><strong>Contact Phone:</strong> ${data.phone}</p>
+            <p style="margin: 0 0 5px 0;"><strong>Description:</strong></p>
+            <p style="margin: 0; background: #ffffff; padding: 10px; border: 1px solid #e5e7eb; border-radius: 4px;">${data.reason}</p>
+          </div>
+          <p>Please review this request in the administrative dashboard to assist the student.</p>
+        `)
+      };
+
     default:
       return null;
   }

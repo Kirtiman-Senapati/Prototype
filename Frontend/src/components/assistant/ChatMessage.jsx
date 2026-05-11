@@ -5,8 +5,8 @@ const ChatMessage = ({ message, onOpenSupportModal }) => {
     const isUser = message.role === "user";
     
     // Strip basic markdown that AI might accidentally send
-    const cleanContent = message.content.replace(/\*\*/g, "").replace(/#/g, "");
-    const isEscalation = !isUser && message.content.includes("Contact Support form");
+    const cleanContent = message.content?.replace(/\*\*/g, "").replace(/#/g, "") || "";
+    const isEscalation = message.type === "ESCALATION";
 
     return (
         <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"} mb-3`}>

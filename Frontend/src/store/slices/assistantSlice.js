@@ -55,7 +55,8 @@ const assistantSlice = createSlice({
                 state.messages.push({
                     id: Date.now(),
                     role: "assistant",
-                    content: action.payload.reply
+                    content: action.payload.reply.message,
+                    type: action.payload.reply.type
                 });
                 if (state.messages.length > 20) {
                     state.messages = state.messages.slice(state.messages.length - 20);
