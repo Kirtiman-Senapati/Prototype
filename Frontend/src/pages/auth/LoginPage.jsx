@@ -39,14 +39,20 @@ const LoginPage = () => {
 
     if (!formData.email) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
 
-    if (!formData.password) {
+    const strongPassword =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    if (!formData.password) 
+    {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } 
+    
+    else if (!strongPassword.test(formData.password)) 
+    {
+      newErrors.password = "Use 8+ chars with uppercase, lowercase and number";
     }
 
     setErrors(newErrors);
@@ -100,6 +106,8 @@ const LoginPage = () => {
                   </div>
                   <input 
                       type="email" 
+                      inputMode="email"
+                      autoComplete="email"
                       name="email"
                       placeholder="Enter your email" 
                       className={`block w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}

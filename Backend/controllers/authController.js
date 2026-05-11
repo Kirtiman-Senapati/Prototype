@@ -26,14 +26,23 @@ export const registerUser = asyncHandler(async (req, res, next) => {
     if (name.length < 3) {
         return next(new ErrorHandler("Name must be at least 3 characters long", 400));
     }
+    //regex for institutional or personal email addresses
 
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const emailRegex =/^[a-zA-Z0-9._%+-]+@([a-zA-Z-]+\.)+[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
         return next(new ErrorHandler("Please provide a valid email address", 400));
     }
 
-    if (password.length < 6) {
-        return next(new ErrorHandler("Password must be at least 6 characters long", 400));
+   const strongPassword=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    if (!strongPassword.test(password)) 
+    {
+    return next(
+        new ErrorHandler(
+            "Password must contain uppercase, lowercase and number",
+            400
+        )
+    );
     }
 
 

@@ -49,19 +49,24 @@ const RegisterPage = () => {
         newErrors.name = "Name should only contain letters";
     }
 
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    //Email validation
+
+   const emailRegex=/^[a-zA-Z0-9._%+-]+@([a-zA-Z-]+\.)+[a-zA-Z]{2,}$/;
+
     if (!email) {
         newErrors.email = "Email Address is required";
     } else if (!emailRegex.test(email)) {
         newErrors.email = "Please enter a valid email address";
     }
 
+    //Password validation
+
+    const strongPassword=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
     if (!password) {
-        newErrors.password = "Password is required";
-    } else if (password.length < 6) {
-        newErrors.password = "Password must be at least 6 characters";
-    } else if (/\s/.test(password)) {
-        newErrors.password = "Password cannot contain spaces";
+    newErrors.password = "Password is required";
+    } else if (!strongPassword.test(password)) {
+    newErrors.password = "Password must contain uppercase, lowercase and number";
     }
 
     setErrors(newErrors);
@@ -129,6 +134,8 @@ const RegisterPage = () => {
                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Email Address</label>
                 <input 
                     type="email" 
+                    inputMode="email"
+                    autoComplete="email"
                     name="email"
                     placeholder="Enter your email" 
                     className={`block w-full px-3 py-2.5 border ${errors.email ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
