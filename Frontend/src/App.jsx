@@ -35,6 +35,7 @@ import AssignSupervisor from "./pages/admin/AssignSupervisor";
 import DeadlinesPage from "./pages/admin/DeadlinesPage";
 import ProjectsPage from "./pages/admin/ProjectsPage";
 import ConversationsPage from "./pages/common/ConversationsPage";
+import AcademicAssistant from "./components/assistant/AcademicAssistant";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { Loader } from "lucide-react";
@@ -129,6 +130,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
+      <AcademicAssistant />
       <ToastContainer position="top-right" autoClose={3000} />
     </>
   );

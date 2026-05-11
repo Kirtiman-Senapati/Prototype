@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { toggleAssistant } from "../../store/slices/assistantSlice";
 
 const Sidebar = ({ open, setOpen, userRole }) => {
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const getNavigationItems = () => {
     switch (userRole) {
@@ -355,6 +358,25 @@ const Sidebar = ({ open, setOpen, userRole }) => {
             })}
           </nav>
 
+          {/* Assistant Button */}
+          <div className="px-4 pb-4">
+            <button
+              onClick={() => dispatch(toggleAssistant())}
+              className={`flex items-center w-full px-3 py-2.5 rounded-md transition-all duration-150 group text-slate-600 hover:bg-slate-100 hover:text-slate-900 ${!open && "justify-center"}`}
+            >
+              <div className="flex-shrink-0 transition-colors text-slate-500 group-hover:text-slate-700">
+                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </div>
+              <span
+                className={`ml-3 text-sm font-medium transition-opacity duration-300 ${open ? "opacity-100 block" : "opacity-0 hidden lg:hidden"}`}
+              >
+                Academic Assistant
+              </span>
+            </button>
+          </div>
+
           {/* Sidebar footer */}
           <div className="p-4 border-t border-slate-200">
             <div
@@ -452,6 +474,24 @@ const Sidebar = ({ open, setOpen, userRole }) => {
               );
             })}
           </nav>
+
+          {/* Mobile Assistant Button */}
+          <div className="px-4 pb-4">
+            <button
+              onClick={() => {
+                dispatch(toggleAssistant());
+                setOpen(false);
+              }}
+              className="flex items-center w-full px-3 py-2.5 rounded-md transition-all duration-150 group text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            >
+              <div className="flex-shrink-0 transition-colors text-slate-500 group-hover:text-slate-700">
+                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </div>
+              <span className="ml-3 font-medium">Academic Assistant</span>
+            </button>
+          </div>
 
           {/* Mobile footer */}
           <div className="p-4 border-t border-slate-200">

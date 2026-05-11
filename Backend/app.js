@@ -11,6 +11,7 @@ import adminRouter from "./routes/adminRoutes.js";
 import projectRouter from "./routes/projectRoutes.js";
 import feedbackRouter from "./routes/feedbackRoutes.js";
 import activityRouter from "./routes/activityRoutes.js";
+import assistantRouter from "./routes/assistantRoutes.js";
 import { errorMiddleware } from "./middlewares/error.js";
 //change dns servers to avoid dns resolution issues in some environments
 
@@ -49,6 +50,7 @@ app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/project", projectRouter);
 app.use("/api/v1/feedback", feedbackRouter);
 app.use("/api/v1/activities", activityRouter);
+app.use("/api/v1/assistant", assistantRouter);
 
 //test route last
 if (process.env.NODE_ENV === "development") {

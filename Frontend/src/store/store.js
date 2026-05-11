@@ -8,6 +8,7 @@ import requestReducer from "./slices/requestSlice";
 import studentReducer from "./slices/studentSlice";
 import teacherReducer from "./slices/teacherSlice";
 import activityReducer from "./slices/activitySlice";
+import assistantReducer from "./slices/assistantSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
     student: studentReducer,
     teacher: teacherReducer,
     activity: activityReducer,
+    assistant: assistantReducer,
   },
 });
