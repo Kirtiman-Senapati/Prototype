@@ -22,6 +22,6 @@ export const knowledgeBase = [
     },
     {
         keywords: ["hello", "hi", "hey", "help", "who are you"],
-        answer: "Hello! I am your Academic Assistant. I can help you with project guidelines, report structures, presentation formats, and workflow queries. How can I assist you today?"
+        answer: "I can help you with:\n\n• Project ideas\n• Report formatting\n• PPT structure\n• Technology suggestions\n• Milestone guidance\n\nPlease ask your academic question."
     }
 ];

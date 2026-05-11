@@ -18,7 +18,11 @@ export const sendMessage = createAsyncThunk(
 const initialState = {
     isOpen: false,
     messages: [
-        { id: 1, role: "assistant", content: "Hello! I am your Academic Assistant. I can help you with project guidelines, report structures, presentation formats, and workflow queries. How can I assist you today?" }
+        { 
+            id: 1, 
+            role: "assistant", 
+            content: "I can help you with:\n\n• Project ideas\n• Report formatting\n• PPT structure\n• Technology suggestions\n• Milestone guidance\n\nPlease ask your academic question." 
+        }
     ],
     isLoading: false,
 };

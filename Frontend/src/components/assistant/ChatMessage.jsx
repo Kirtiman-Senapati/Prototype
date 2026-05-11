@@ -1,5 +1,5 @@
 import React from "react";
-import { User, Bot } from "lucide-react";
+import { User, HelpCircle } from "lucide-react";
 
 const ChatMessage = ({ message }) => {
     const isUser = message.role === "user";
@@ -8,7 +8,7 @@ const ChatMessage = ({ message }) => {
         <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"} mb-4`}>
             {/* Avatar */}
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isUser ? "bg-slate-800 text-white" : "bg-slate-200 text-slate-700"}`}>
-                {isUser ? <User size={16} /> : <Bot size={16} />}
+                {isUser ? <User size={16} /> : <HelpCircle size={16} />}
             </div>
 
             {/* Message Bubble */}

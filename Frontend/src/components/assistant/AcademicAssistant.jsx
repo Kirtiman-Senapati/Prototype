@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { X, Send, Bot, Minimize2, Maximize2 } from "lucide-react";
+import { X, Send, HelpCircle, Minimize2, Maximize2 } from "lucide-react";
 import { toggleAssistant, addMessage, sendMessage, clearHistory } from "../../store/slices/assistantSlice";
 import ChatMessage from "./ChatMessage";
 
@@ -44,19 +44,19 @@ const AcademicAssistant = () => {
     return (
         <div className={`fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 transition-all duration-300 ease-in-out ${
             isExpanded 
-            ? "w-full sm:w-[500px] h-full sm:h-[700px] rounded-none sm:rounded-2xl" 
-            : "w-full sm:w-[380px] h-[500px] rounded-t-2xl sm:rounded-2xl"
-        } bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-200 flex flex-col overflow-hidden`}>
+            ? "w-full sm:w-[600px] h-full sm:h-[700px] rounded-none sm:rounded-2xl" 
+            : "w-full sm:w-[420px] h-[500px] rounded-t-2xl sm:rounded-2xl"
+        } bg-white shadow-xl border border-slate-200 flex flex-col overflow-hidden`}>
             
             {/* Header */}
-            <div className="bg-slate-900 text-white p-4 flex items-center justify-between flex-shrink-0">
+            <div className="bg-slate-800 text-white p-4 flex items-center justify-between flex-shrink-0 border-b border-slate-700/50">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                        <Bot size={18} className="text-white" />
+                        <HelpCircle size={18} className="text-white" />
                     </div>
                     <div>
                         <h3 className="font-semibold text-sm">Academic Assistant</h3>
-                        <p className="text-[10px] text-slate-300 font-medium tracking-wide uppercase">Support & Guidance</p>
+                        <p className="text-[10px] text-slate-300 font-medium tracking-wide uppercase">Academic Support System</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-1 text-slate-400">
@@ -86,7 +86,7 @@ const AcademicAssistant = () => {
                 {isLoading && (
                     <div className="flex gap-3 mb-4">
                         <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
-                            <Bot size={16} className="text-slate-700" />
+                            <HelpCircle size={16} className="text-slate-700" />
                         </div>
                         <div className="px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 rounded-tl-sm flex items-center gap-1">
                             <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
@@ -100,31 +100,25 @@ const AcademicAssistant = () => {
 
             {/* Input Area */}
             <div className="p-3 bg-white border-t border-slate-100 flex-shrink-0">
-                <form onSubmit={handleSend} className="relative flex items-end gap-2">
-                    <textarea
+                <form onSubmit={handleSend} className="relative flex items-center">
+                    <input
+                        type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                handleSend(e);
-                            }
-                        }}
-                        placeholder="Ask about reports, presentations, or project ideas..."
-                        className="w-full max-h-32 min-h-[44px] bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-slate-300 focus:border-slate-300 resize-none custom-scrollbar"
-                        rows={1}
+                        placeholder="Ask your academic project question..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-slate-300 focus:border-slate-300"
                     />
                     <button
                         type="submit"
                         disabled={!input.trim() || isLoading}
-                        className="absolute right-2 bottom-1.5 p-2 rounded-lg bg-slate-900 text-white disabled:bg-slate-100 disabled:text-slate-400 transition-colors"
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-slate-900 text-white disabled:bg-slate-100 disabled:text-slate-400 transition-colors"
                     >
                         <Send size={16} className={input.trim() && !isLoading ? "translate-x-0.5 -translate-y-0.5 transition-transform" : ""} />
                     </button>
                 </form>
                 <div className="text-center mt-2">
-                    <span className="text-[10px] text-slate-400 font-medium flex items-center justify-center gap-1">
-                        <Bot size={10} /> AI academic assistant. Check important guidelines manually.
+                    <span className="text-[10px] text-slate-400 font-medium">
+                        Project guidance and support system
                     </span>
                 </div>
             </div>
