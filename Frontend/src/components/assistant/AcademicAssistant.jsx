@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { X, Send, HelpCircle, Minimize2, Maximize2 } from "lucide-react";
+import { X, Send, HelpCircle, Minimize2, Maximize2, Minus } from "lucide-react";
 import { toggleAssistant, addMessage, sendMessage, clearHistory } from "../../store/slices/assistantSlice";
 import ChatMessage from "./ChatMessage";
 
@@ -49,27 +49,29 @@ const AcademicAssistant = () => {
         } bg-white shadow-xl border border-slate-200 flex flex-col overflow-hidden`}>
             
             {/* Header */}
-            <div className="bg-slate-800 text-white p-4 flex items-center justify-between flex-shrink-0 border-b border-slate-700/50">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                        <HelpCircle size={18} className="text-white" />
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-sm">Academic Assistant</h3>
-                        <p className="text-[10px] text-slate-300 font-medium tracking-wide uppercase">Academic Support System</p>
-                    </div>
+            <div className="bg-slate-800 text-white px-4 py-3 flex items-center justify-between flex-shrink-0 border-b border-slate-700/50">
+                <div className="flex items-center gap-2.5">
+                    <HelpCircle size={18} className="text-slate-300" />
+                    <h3 className="font-medium text-sm tracking-wide">Academic Support Assistant</h3>
                 </div>
-                <div className="flex items-center gap-1 text-slate-400">
+                <div className="flex items-center text-slate-400">
+                    <button 
+                        onClick={() => dispatch(toggleAssistant())} 
+                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                        title="Minimize"
+                    >
+                        <Minus size={18} />
+                    </button>
                     <button 
                         onClick={() => setIsExpanded(!isExpanded)} 
                         className="p-1.5 hover:bg-white/10 rounded-lg transition-colors hidden sm:block"
-                        title={isExpanded ? "Collapse" : "Expand"}
+                        title={isExpanded ? "Restore Down" : "Expand"}
                     >
                         {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
                     </button>
                     <button 
                         onClick={() => dispatch(toggleAssistant())} 
-                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors ml-1"
                         title="Close"
                     >
                         <X size={18} />
@@ -98,15 +100,31 @@ const AcademicAssistant = () => {
                 <div ref={messagesEndRef} />
             </div>
 
+            {/* Quick Suggestions */}
+            <div className="px-3 pb-2 pt-1 flex flex-wrap gap-1.5 bg-slate-50/50">
+                {['Project Ideas', 'Report Format', 'PPT Structure', 'Deadline Help'].map(topic => (
+                    <button
+                        key={topic}
+                        onClick={() => {
+                            dispatch(addMessage({ id: Date.now(), role: "user", content: topic }));
+                            dispatch(sendMessage(topic));
+                        }}
+                        className="text-[11px] px-2.5 py-1 rounded-md bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
+                    >
+                        {topic}
+                    </button>
+                ))}
+            </div>
+
             {/* Input Area */}
-            <div className="p-3 bg-white border-t border-slate-100 flex-shrink-0">
+            <div className="p-2 bg-white border-t border-slate-100 flex-shrink-0">
                 <form onSubmit={handleSend} className="relative flex items-center">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Ask your academic project question..."
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-slate-300 focus:border-slate-300"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-10 py-2.5 text-[13px] focus:outline-none focus:ring-1 focus:ring-slate-300 focus:border-slate-300"
                     />
                     <button
                         type="submit"

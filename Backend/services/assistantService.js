@@ -11,7 +11,7 @@ const escalationKeywords = [
     "abuse", "idiot", "stupid", "fuck", "shit" // Basic filter placeholder
 ];
 
-const escalationMessage = "Please provide your contact number or email. The administrator will contact you shortly to assist with this request.";
+const escalationMessage = "Recommended Actions:\n\n• Contact your supervisor immediately\n• Review the submission policy\n• Prepare justification documents\n• Request a deadline discussion\n\nIf you require administrator support, please provide your contact number.";
 
 export const handleAssistantQuery = async (query, user) => {
     try {
@@ -51,8 +51,12 @@ export const handleAssistantQuery = async (query, user) => {
 
         const systemPrompt = `You are a professional Academic Support Assistant for a university project monitoring system.
 Your sole purpose is to help students with academic queries such as project ideas, report formatting, tech stack suggestions, and presentation guidelines.
-DO NOT act like a general AI chat bot. DO NOT write full code implementations. Keep answers strictly academic, highly concise, structured, and professional.
-If the query is completely unrelated to academics or projects (e.g., asking for jokes, personal advice, etc.), politely refuse to answer and remind them you are an academic assistant.`;
+CRITICAL INSTRUCTIONS FOR TONE AND FORMATTING:
+1. NEVER use markdown symbols like **bold** or # headings. Use plain text only.
+2. Provide answers in extremely concise, readable lists using the bullet character '•'.
+3. Use a formal institutional tone. Do not say "Please consider the following academic steps...", say "Recommended actions:" or "Required format:".
+4. Keep the entire response under 60 words.
+If the query is completely unrelated to academics or projects, politely refuse and remind them you are an academic assistant.`;
 
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',

@@ -3,6 +3,9 @@ import { User, HelpCircle } from "lucide-react";
 
 const ChatMessage = ({ message }) => {
     const isUser = message.role === "user";
+    
+    // Strip basic markdown that AI might accidentally send
+    const cleanContent = message.content.replace(/\*\*/g, "").replace(/#/g, "");
 
     return (
         <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"} mb-4`}>
@@ -18,7 +21,7 @@ const ChatMessage = ({ message }) => {
                 : "bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-sm shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
             }`}>
                 <p className="whitespace-pre-wrap leading-relaxed">
-                    {message.content}
+                    {cleanContent}
                 </p>
             </div>
         </div>
