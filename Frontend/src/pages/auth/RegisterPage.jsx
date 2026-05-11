@@ -3,7 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser, googleLogin } from "../../store/slices/authSlice";
 import { useGoogleLogin } from '@react-oauth/google';
-import { User } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  UserCircle,
+} from "lucide-react"
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
@@ -109,7 +114,7 @@ const RegisterPage = () => {
       <div className="w-full max-w-[420px] bg-white rounded-xl border border-slate-200 p-7 sm:p-8">
         <div className="flex justify-center mb-4">
           <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600">
-            <User size={20} />
+            <User size={28} />
           </div>
         </div>
 
@@ -119,15 +124,24 @@ const RegisterPage = () => {
         <form onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-1">
                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
-                <input 
-                    type="text" 
-                    name="name"
-                    placeholder="John Doe" 
-                    className={`block w-full px-3 py-2.5 border ${errors.name ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
-                    value={formData.name}
-                    onChange={handleChange}
+                <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <User size={18} />
+                    </div>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Enter your name"
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${
+                        errors.name
+                          ? "border-rose-200 focus:border-rose-300"
+                          : "border-slate-200"
+                      } rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 bg-white transition-colors`}
+                  value={formData.name}
+                  onChange={handleChange}
                 />
-                {errors.name && <p className="text-rose-500 text-[11px] font-medium mt-1 pl-1">{errors.name}</p>}
+              </div>
+                {errors.name && <p className="text-amber-700 text-[11px] font-medium mt-1 pl-1">{errors.name}</p>}
             </div>
 
             <div className="space-y-1">
@@ -138,7 +152,7 @@ const RegisterPage = () => {
                     autoComplete="email"
                     name="email"
                     placeholder="Enter your email" 
-                    className={`block w-full px-3 py-2.5 border ${errors.email ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
+                    className={`block w-full px-3 py-2.5 border ${errors.email ? 'border-red-300 focus:border-red-400' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
                     value={formData.email}
                     onChange={handleChange}
                 />
