@@ -6,6 +6,30 @@ import { PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 import { FolderKanban, CheckCircle2, Clock, CalendarDays, Loader } from "lucide-react";
 import StatCard from "./components/StatCard";
 
+const renderLegendText = (value) => {
+    return <span className="text-slate-600 font-medium text-xs ml-1">{value}</span>;
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-white border border-slate-200/80 p-3 rounded-lg shadow-[0_2px_8px_rgba(15,23,42,0.06)]">
+                {label && <p className="text-xs font-bold text-slate-800 mb-1.5">{label}</p>}
+                <div className="space-y-1.5">
+                    {payload.map((pld, index) => (
+                        <div key={index} className="flex items-center gap-2 text-xs">
+                            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: pld.fill || pld.color }} />
+                            <span className="text-slate-500 font-medium">{pld.name}:</span>
+                            <span className="text-slate-800 font-semibold">{pld.value}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
 const TeacherAnalyticsPage = () => {
     const dispatch = useDispatch();
     const { assignedStudents, isLoading } = useSelector((state) => state.teacher);
@@ -187,11 +211,8 @@ const TeacherAnalyticsPage = () => {
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
-                                <RechartsTooltip 
-                                    contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                                    itemStyle={{ color: '#334155', fontWeight: 600 }}
-                                />
-                                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '13px', color: '#64748b' }}/>
+                                <RechartsTooltip content={<CustomTooltip />} />
+                                <Legend verticalAlign="bottom" height={36} iconType="circle" formatter={renderLegendText} />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
@@ -204,7 +225,7 @@ const TeacherAnalyticsPage = () => {
                     </h3>
                     <div className="h-[320px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={analyticsData.timelineData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <AreaChart data={analyticsData.timelineData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorSub" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
@@ -218,10 +239,8 @@ const TeacherAnalyticsPage = () => {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                 <XAxis dataKey="display" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                                <RechartsTooltip 
-                                    contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                                />
-                                <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '13px', color: '#64748b' }}/>
+                                <RechartsTooltip content={<CustomTooltip />} />
+                                <Legend verticalAlign="top" height={36} iconType="circle" formatter={renderLegendText} />
                                 <Area type="monotone" dataKey="Submissions" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorSub)" />
                                 <Area type="monotone" dataKey="Approvals" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorApp)" />
                             </AreaChart>
@@ -238,15 +257,12 @@ const TeacherAnalyticsPage = () => {
                 </h3>
                 <div className="h-[350px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={analyticsData.milestoneData} layout="vertical" margin={{ top: 10, right: 30, left: -20, bottom: 0 }}>
+                        <BarChart data={analyticsData.milestoneData} layout="vertical" margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e2e8f0" />
                             <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                            <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }} dx={-10} />
-                            <RechartsTooltip 
-                                cursor={{ fill: '#f1f5f9' }}
-                                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                            />
-                            <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '13px', color: '#64748b' }} />
+                            <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#475569', fontWeight: 500 }} width={90} />
+                            <RechartsTooltip cursor={{ fill: '#f8fafc' }} content={<CustomTooltip />} />
+                            <Legend verticalAlign="top" height={36} iconType="circle" formatter={renderLegendText} />
                             <Bar dataKey="Completed" stackId="a" fill="#10b981" radius={[0, 0, 0, 0]} />
                             <Bar dataKey="InReview" name="In Review" stackId="a" fill="#f59e0b" radius={[0, 0, 0, 0]} />
                             <Bar dataKey="Pending" stackId="a" fill="#cbd5e1" radius={[0, 4, 4, 0]} />
