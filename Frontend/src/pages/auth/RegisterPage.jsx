@@ -25,12 +25,53 @@ const RegisterPage = () => {
     onError: (error) => console.log('Google Signup Failed:', error)
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const password = formData.password.trim();
+
+    if (!name) {
+        newErrors.name = "Full Name is required";
+    } else if (name.length < 3) {
+        newErrors.name = "Name must be at least 3 characters";
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+        newErrors.name = "Name should only contain letters";
+    }
+
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!email) {
+        newErrors.email = "Email Address is required";
+    } else if (!emailRegex.test(email)) {
+        newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!password) {
+        newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters";
+    } else if (/\s/.test(password)) {
+        newErrors.password = "Password cannot contain spaces";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
     dispatch(registerUser(formData)).then((res) => {
       setIsSubmitting(false);
@@ -59,62 +100,62 @@ const RegisterPage = () => {
   }, [authUser, navigate]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F8FAFC] p-4">
-      <div className="card w-full max-w-md p-8 sm:p-10">
-        <div className="flex justify-center mb-6">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-[#F8FAFC] p-4 py-8 md:py-12">
+      <div className="w-full max-w-[420px] bg-white rounded-xl border border-slate-200 p-7 sm:p-8">
+        <div className="flex justify-center mb-4">
           <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600">
             <User size={20} />
           </div>
         </div>
 
-        <h1 className="text-2xl font-bold text-center text-slate-900 tracking-tight mb-1">Create an Account</h1>
-        <p className="text-center text-slate-500 mb-8 text-sm">Register to access the platform</p>
+        <h1 className="text-2xl font-bold text-center text-slate-900 tracking-tight mb-1">Student Registration</h1>
+        <p className="text-center text-slate-500 mb-5 text-sm">Register to access the platform</p>
         
-        <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-                <label className="label">Full Name</label>
+        <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-1">
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
                 <input 
                     type="text" 
                     name="name"
                     placeholder="John Doe" 
-                    className="input"
+                    className={`block w-full px-3 py-2.5 border ${errors.name ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
                     value={formData.name}
                     onChange={handleChange}
-                    required
                 />
+                {errors.name && <p className="text-rose-500 text-[11px] font-medium mt-1 pl-1">{errors.name}</p>}
             </div>
 
-            <div>
-                <label className="label">Email Address</label>
+            <div className="space-y-1">
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Email Address</label>
                 <input 
                     type="email" 
                     name="email"
                     placeholder="Enter your email" 
-                    className="input"
+                    className={`block w-full px-3 py-2.5 border ${errors.email ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
                     value={formData.email}
                     onChange={handleChange}
-                    required
                 />
+                {errors.email && <p className="text-rose-500 text-[11px] font-medium mt-1 pl-1">{errors.email}</p>}
             </div>
 
-            <div>
-                <label className="label">Password</label>
+            <div className="space-y-1">
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Password</label>
                 <input 
                     type="password" 
                     name="password"
                     placeholder="••••••••" 
-                    className="input"
+                    className={`block w-full px-3 py-2.5 border ${errors.password ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
                     value={formData.password}
                     onChange={handleChange}
-                    required
                 />
+                {errors.password && <p className="text-rose-500 text-[11px] font-medium mt-1 pl-1">{errors.password}</p>}
             </div>
 
-            <div>
-                 <label className="label">Account Role</label>
+            <div className="space-y-1">
+                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Account Role</label>
                  <select 
                      name="role" 
-                     className="input bg-white w-full"
+                     className="block w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-400 transition-all bg-white appearance-none text-slate-800"
                      value={formData.role} 
                      onChange={handleChange}
                  >
@@ -126,7 +167,7 @@ const RegisterPage = () => {
 
             <button 
                 type="submit" 
-                className="btn-primary w-full mt-4 flex justify-center items-center h-11"
+                className="w-full mt-5 py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed h-11"
                 disabled={isSubmitting}
             >
                 {isSubmitting ? "Registering..." : "Sign Up"}
@@ -141,7 +182,7 @@ const RegisterPage = () => {
             <button 
                 type="button" 
                 onClick={() => handleGoogleSignup()}
-                className="w-full mt-4 py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold rounded-lg text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed shadow-sm h-11"
+                className="w-full mt-3 py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold rounded-lg text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed h-11"
                 disabled={isSubmitting}
             >
                 <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -153,7 +194,7 @@ const RegisterPage = () => {
                 Sign up with Google
             </button>
 
-            <div className="text-center mt-6">
+            <div className="text-center mt-4">
                   <p className="text-sm text-slate-500">
                     Already have an account? <Link to="/login" className="font-semibold text-slate-600 hover:text-slate-900 hover:underline transition-colors">Sign In</Link>
                   </p>

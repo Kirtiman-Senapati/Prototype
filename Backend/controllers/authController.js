@@ -12,11 +12,28 @@ import { emitRefresh } from "../utils/socketEvents.js";
 
 //REGISTER USER
 export const registerUser = asyncHandler(async (req, res, next) => {
-    const { name, email, password, role } = req.body;
+    let { name, email, password, role } = req.body;
 
+    // Trim all inputs
+    name = name?.trim();
+    email = email?.trim()?.toLowerCase();
+    password = password?.trim();
 
     if (!name || !email || !password || !role) {
         return next(new ErrorHandler("Please fill all the required fields", 400));
+    }
+
+    if (name.length < 3) {
+        return next(new ErrorHandler("Name must be at least 3 characters long", 400));
+    }
+
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!emailRegex.test(email)) {
+        return next(new ErrorHandler("Please provide a valid email address", 400));
+    }
+
+    if (password.length < 6) {
+        return next(new ErrorHandler("Password must be at least 6 characters long", 400));
     }
 
 

@@ -80,18 +80,18 @@ const LoginPage = () => {
   }, [authUser, navigate]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F8FAFC] p-4">
-      <div className="w-full max-w-md bg-white rounded-xl border border-slate-200 p-8 sm:p-10 shadow-sm">
-        <div className="flex justify-center mb-6">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-[#F8FAFC] p-4 py-8 md:py-12">
+      <div className="w-full max-w-[420px] bg-white rounded-xl border border-slate-200 p-7 sm:p-8">
+        <div className="flex justify-center mb-4">
           <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600">
             <Lock size={20} />
           </div>
         </div>
         
-        <h1 className="text-2xl font-bold text-center text-slate-900 tracking-tight mb-1">Welcome Back</h1>
-        <p className="text-center text-slate-500 mb-8 text-sm">Sign in to continue to your dashboard</p>
+        <h1 className="text-2xl font-bold text-center text-slate-900 tracking-tight mb-1">Portal Login</h1>
+        <p className="text-center text-slate-500 mb-5 text-sm">Sign in to continue to your dashboard</p>
         
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Email Address</label>
                 <div className="relative">
@@ -102,12 +102,12 @@ const LoginPage = () => {
                       type="email" 
                       name="email"
                       placeholder="Enter your email" 
-                      className={`block w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-red-300 focus:border-red-400' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
                       value={formData.email}
                       onChange={handleChange}
                   />
                 </div>
-                {errors.email && <p className="text-red-500 text-xs mt-1 ml-1">{errors.email}</p>}
+                {errors.email && <p className="text-rose-500 text-[11px] font-medium mt-1 pl-1">{errors.email}</p>}
             </div>
 
             <div className="space-y-1">
@@ -125,12 +125,12 @@ const LoginPage = () => {
                       type="password" 
                       name="password"
                       placeholder="••••••••" 
-                      className={`block w-full pl-10 pr-3 py-2.5 border ${errors.password ? 'border-red-300 focus:border-red-400' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${errors.password ? 'border-rose-200 focus:border-rose-300' : 'border-slate-200'} rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-all bg-white`}
                       value={formData.password}
                       onChange={handleChange}
                   />
                 </div>
-                {errors.password && <p className="text-red-500 text-xs mt-1 ml-1">{errors.password}</p>}
+                {errors.password && <p className="text-rose-500 text-[11px] font-medium mt-1 pl-1">{errors.password}</p>}
             </div>
 
             <div className="space-y-1">
@@ -154,7 +154,7 @@ const LoginPage = () => {
 
             <button 
                 type="submit" 
-                className="w-full mt-6 py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
+                className="w-full mt-6 py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed"
                 disabled={isLoggingIn}
             >
                 {isLoggingIn ? (
@@ -176,7 +176,7 @@ const LoginPage = () => {
             <button 
                 type="button" 
                 onClick={() => handleGoogleLogin()}
-                className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold rounded-lg text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
+                className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold rounded-lg text-sm transition-all flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed"
                 disabled={isLoggingIn}
             >
                 <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
