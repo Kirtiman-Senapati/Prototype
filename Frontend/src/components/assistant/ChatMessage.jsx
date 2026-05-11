@@ -1,11 +1,12 @@
 import React from "react";
 import { User, HelpCircle } from "lucide-react";
 
-const ChatMessage = ({ message }) => {
+const ChatMessage = ({ message, onOpenSupportModal }) => {
     const isUser = message.role === "user";
     
     // Strip basic markdown that AI might accidentally send
     const cleanContent = message.content.replace(/\*\*/g, "").replace(/#/g, "");
+    const isEscalation = !isUser && message.content.includes("Contact Support form");
 
     return (
         <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"} mb-3`}>
@@ -23,6 +24,16 @@ const ChatMessage = ({ message }) => {
                 <p className="whitespace-pre-wrap leading-[1.5]">
                     {cleanContent}
                 </p>
+                {isEscalation && (
+                    <div className="mt-2.5">
+                        <button 
+                            onClick={onOpenSupportModal}
+                            className="text-[11.5px] font-medium px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 rounded-md transition-colors"
+                        >
+                            Open Support Form
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

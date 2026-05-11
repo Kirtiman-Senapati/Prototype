@@ -25,8 +25,8 @@ const supportRequestSchema = new mongoose.Schema(
         },
         type: {
             type: String,
-            enum: ["DEADLINE_EXTENSION", "GENERAL_SUPPORT"],
-            default: "DEADLINE_EXTENSION",
+            enum: ["Deadline Extension", "Technical Problem", "Supervisor Issue", "Submission Issue", "Other"],
+            default: "Deadline Extension",
         },
         status: {
             type: String,

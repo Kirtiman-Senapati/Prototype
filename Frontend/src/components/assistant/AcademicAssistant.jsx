@@ -76,7 +76,11 @@ const AcademicAssistant = () => {
                 style={{ scrollbarWidth: 'thin' }}
             >
                 {messages.map((msg) => (
-                    <ChatMessage key={msg.id} message={msg} />
+                    <ChatMessage 
+                        key={msg.id} 
+                        message={msg} 
+                        onOpenSupportModal={() => setIsSupportModalOpen(true)}
+                    />
                 ))}
                 
                 {isLoading && (
@@ -111,17 +115,6 @@ const AcademicAssistant = () => {
                         {topic}
                     </button>
                 ))}
-            </div>
-
-            {/* Support Banner */}
-            <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between flex-shrink-0">
-                <span className="text-[11px] text-slate-500 font-medium">Need administrator support?</span>
-                <button 
-                    onClick={() => setIsSupportModalOpen(true)}
-                    className="text-[11px] font-medium px-2 py-1 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded transition-colors"
-                >
-                    Contact Support
-                </button>
             </div>
 
             {/* Input Area */}
