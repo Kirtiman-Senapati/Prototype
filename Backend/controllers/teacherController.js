@@ -7,6 +7,7 @@ import { getProjectTargetUsers } from "../utils/getProjectTargetUsers.js";
 import { User } from "../models/user.js";
 import { getIo, getReceiverSocketId } from "../utils/socket.js";
 import { logActivity } from "../utils/activityLogger.js";
+import { emitRefresh } from "../utils/socketEvents.js";
 import mongoose from "mongoose";
 export const getPendingRequests = asyncHandler(async (req, res, next) => {
     const requests = await Request.find({ toUser: req.user._id, status: "Pending" }).populate("fromUser", "name email department");
@@ -81,12 +82,14 @@ export const handleRequest = asyncHandler(async (req, res, next) => {
 
         const io = getIo();
         if (io) {
+            emitRefresh(io);
             const studentSocket = getReceiverSocketId(studentToAssign._id.toString());
             if (studentSocket) io.to(studentSocket).emit("requestStatusUpdated", { status: "Accepted" });
         }
     } else if (status === "Rejected") {
         const io = getIo();
         if (io) {
+            emitRefresh(io);
             const studentSocket = getReceiverSocketId(request.fromUser.toString());
             if (studentSocket) io.to(studentSocket).emit("requestStatusUpdated", { status: "Rejected" });
         }

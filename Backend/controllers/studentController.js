@@ -75,10 +75,10 @@ export const submitProposal = asyncHandler(async (req, res, next) => {
     }
 
     // Socket Emission for Admin Dashboard Updates
-    import("../utils/socket.js").then(({ getIo }) => {
-        const io = getIo();
+    const io = getIo();
+    if (io) {
         emitRefresh(io);
-    });
+    }
 
     const admins = await User.find({ role: "Admin" }).select("_id");
     const adminIds = admins.map(a => a._id);
@@ -149,6 +149,11 @@ export const requestSupervisor = asyncHandler(async (req, res, next) => {
         priority: "high"
     });
 
+    const io = getIo();
+    if (io) {
+        emitRefresh(io);
+    }
+
     res.status(201).json({
         success: true,
         message: "Supervisor request sent",
@@ -179,10 +184,10 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
     await project.save();
 
     // Socket Emission for Admin Dashboard Updates
-    import("../utils/socket.js").then(({ getIo }) => {
-        const io = getIo();
+    const io = getIo();
+    if (io) {
         emitRefresh(io);
-    });
+    }
 
     //Added helper in Notification and fixed the logic of targetUsers
 
@@ -257,10 +262,10 @@ export const updateTaskStatus = asyncHandler(async (req, res, next) => {
     await project.save();
 
     // Socket Emission for Admin and Supervisor Dashboard Updates
-    import("../utils/socket.js").then(({ getIo }) => {
-        const io = getIo();
+    const io = getIo();
+    if (io) {
         emitRefresh(io);
-    });
+    }
 
     if (status === "Completed") {
         // Fetch Admins for Event Routing (CASE 3) logic shifted to getProjectTargetUsers helper function
