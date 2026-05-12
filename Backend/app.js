@@ -59,7 +59,7 @@ if (process.env.NODE_ENV === "development") {
     app.use("/api/test", testRoutes);
 }
 
-app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+// Files are served directly from Cloudinary URLs now.
 
 //------------------ERROR HANDLING-----------------
 app.use(errorMiddleware);

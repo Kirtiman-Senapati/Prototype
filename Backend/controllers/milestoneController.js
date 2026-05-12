@@ -10,15 +10,11 @@ import mongoose from "mongoose";
 import multer from "multer";
 import path from "path";
 
-// Multer storage for milestone submissions
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "public/uploads/");
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
+import cloudinary from "../utils/cloudinary.js";
+import streamifier from "streamifier";
+
+// Multer storage for milestone submissions (Memory Storage for Cloudinary)
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     const allowedExtensions = /pdf|doc|docx|ppt|pptx|zip|rar/;
@@ -217,13 +213,27 @@ export const submitMilestone = asyncHandler(async (req, res, next) => {
     let fileData = null;
 
     if (req.file) {
-        fileData = {
-            filename: req.file.originalname,
-            url: `/uploads/${req.file.filename}`,
-            type: "Document",
-            uploadedBy: req.user._id
-        };
-        milestone.files.push(fileData);
+        try {
+            const uploadResponse = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { resource_type: "auto", folder: "academic_milestones" },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                streamifier.createReadStream(req.file.buffer).pipe(stream);
+            });
+            fileData = {
+                filename: req.file.originalname,
+                url: uploadResponse.secure_url,
+                type: "Document",
+                uploadedBy: req.user._id
+            };
+            milestone.files.push(fileData);
+        } catch (error) {
+            return next(new ErrorHandler("Cloudinary upload failed", 500));
+        }
     }
 
     

@@ -14,15 +14,11 @@ import { sendEmail } from "../services/emailService.js";
 import { getEmailTemplate } from "../utils/emailTemplates.js";
 import { getIo } from "../utils/socket.js";
 
-// Set up Multer for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "public/uploads/");
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
+import cloudinary from "../utils/cloudinary.js";
+import streamifier from "streamifier";
+
+// Set up Multer for file uploads (Memory Storage for Cloudinary)
+const storage = multer.memoryStorage();
 
 export const upload = multer({ storage });
 
@@ -171,8 +167,25 @@ export const uploadProjectFile = asyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("Project not found", 404));
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
     const fileType = req.body.fileType || "Report";
+
+    // Upload to Cloudinary
+    let fileUrl = "";
+    try {
+        const uploadResponse = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                { resource_type: "auto", folder: "academic_projects" },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            );
+            streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+        fileUrl = uploadResponse.secure_url;
+    } catch (error) {
+        return next(new ErrorHandler("Cloudinary upload failed", 500));
+    }
 
     project.files.push({
         filename: req.file.originalname,
