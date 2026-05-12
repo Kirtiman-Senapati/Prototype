@@ -43,17 +43,12 @@ const LoginPage = () => {
       newErrors.email = "Email is invalid";
     }
 
-    const strongPassword =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-
-    if (!formData.password) 
-    {
-      newErrors.password = "Password is required";
+    if (!formData.password) {
+        newErrors.password = "Password is required";
     } 
-    
-    else if (!strongPassword.test(formData.password)) 
-    {
-      newErrors.password = "Use 8+ chars with uppercase, lowercase and number";
-    }
+    // Yahan hum strict regex ya length check nahi lagayenge 
+    // kyunki agar password galat hoga to backend waise bhi error de dega.
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
