@@ -171,6 +171,8 @@ export const logout = asyncHandler(async (req, res, next) => {
         {
             expires: new Date(Date.now()),
             httpOnly: true,
+            secure:true,
+            sameSite: "none",
         }).json({
             success: true,
             message: "User logged out successfully"
