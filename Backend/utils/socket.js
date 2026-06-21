@@ -6,7 +6,11 @@ const userSockets = {};
 export const initSocket = (server) => {
     io = new Server(server, {
         cors: {
-            origin: [process.env.FRONTEND_URL || "http://localhost:5173", "http://localhost:5174"],
+            // Yahan .trim() add kiya gaya hai taaki extra space automatically delete ho jaye
+            origin: [
+                process.env.FRONTEND_URL ? process.env.FRONTEND_URL.trim() : "http://localhost:5173", 
+                "http://localhost:5174"
+            ],
             methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
             credentials: true,
         }
