@@ -88,7 +88,9 @@ const AssignSupervisor = () => {
     const handleDownload = async (fileUrl, originalFilename) => {
         try {
             const toastId = toast.loading("Downloading file...");
-            const response = await fetch(`http://localhost:4000${fileUrl}`);
+            const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+           const response = await fetch(`${BACKEND_URL}${fileUrl}`);
             if (!response.ok) throw new Error("Download failed");
             
             const blob = await response.blob();
